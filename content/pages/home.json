@@ -4,9 +4,13 @@
     {
       "type": "hero",
       "props": {
-        "title_de": "digitale & visuelle\nkunst",
+        "title_de": "digitale und\nvisuelle kunst",
         "titleSize": "s",
-        "title": "digital & visual\nartist\n\n"
+        "title": "digital and\nvisual artist\n\n",
+        "cycle": true,
+        "subtitle_de": "",
+        "cards": 4,
+        "mobileCount": 4
       }
     },
     {
@@ -16,7 +20,8 @@
         "text": "Moving pictures. Brands that stick. Websites that feel like films – all from one desk in Flensburg.",
         "size": "l",
         "text_de": "Bewegte Bilder. Marken, die hängen bleiben. Websites, die sich wie Filme anfühlen – alles von einem Schreibtisch in Flensburg."
-      }
+      },
+      "hidden": true
     },
     {
       "type": "chapter",
@@ -110,7 +115,11 @@
             "text_de": "Festivalbegleitung für das Qrue Collective und Künstler"
           }
         ],
-        "front": "phone"
+        "front": "laptop",
+        "kicker_de": "",
+        "kicker": "",
+        "shortTitle": "16:9",
+        "shortTitle_de": "16:9"
       },
       "id": "video"
     },

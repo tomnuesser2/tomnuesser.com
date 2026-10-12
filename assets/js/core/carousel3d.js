@@ -11,6 +11,7 @@ const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const wrap = (d) => ((((d + 180) % 360) + 360) % 360) - 180;
 const easeOut = (t) => 1 - Math.pow(1 - t, 4);
 const easeQuint = (t) => 1 - Math.pow(1 - t, 5);
+const inOut = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const rotX = (p, d) => { const r = d * RAD, c = Math.cos(r), s = Math.sin(r); return [p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c]; };
 const rotY = (p, d) => { const r = d * RAD, c = Math.cos(r), s = Math.sin(r); return [p[0] * c + p[2] * s, p[1], -p[0] * s + p[2] * c]; };
 
@@ -121,7 +122,7 @@ export function carousel3d(root, items, o = {}) {
   const frame = (now) => {
     raf = 0; if (dead) return;
     const dt = S.last ? Math.min((now - S.last) / 1000, .05) : 1 / 60; S.last = now;
-    const busy = advance(dt, now); render(now);
+    const busy = S.scrub ? false : advance(dt, now); render(now);
     if (busy && visible && !document.hidden) raf = requestAnimationFrame(frame); else S.last = 0;
   };
   const wake = () => { if (!raf && visible && !document.hidden && !dead) raf = requestAnimationFrame(frame); };
@@ -174,6 +175,10 @@ export function carousel3d(root, items, o = {}) {
 
   build(); measure(); render(performance.now()); ro.observe(root); io.observe(root); root.setAttribute('data-ready', ''); wake();
   return {
+    // Scroll-gesteuertes Drehen auf Karte 0: begin() merkt den Startwinkel, scrub(0..1) dreht, release() gibt wieder frei
+    begin() { if (S.scrub) return; S.a0 = S.angle; S.a1 = 360 * Math.round(S.angle / 360); S.scrub = true; S.target = null; S.vel = 0; S.press = null; S.drag = false; },
+    scrub(t) { if (!S.scrub) this.begin(); const e = inOut(clamp(t, 0, 1)); S.angle = S.a0 + (S.a1 - S.a0) * e; S.vel = 0; S.target = null; render(performance.now()); wake(); },
+    release() { if (!S.scrub) return; S.scrub = false; S.target = null; S.hold = 0; wake(); },
     focus: (i) => { S.paused = true; focus(i); },
     pause: (on) => { S.paused = !!on; if (!on) S.hold = 0; wake(); },
     get index() { return active; },

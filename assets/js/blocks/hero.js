@@ -76,7 +76,7 @@ function mobileHero(p, ctx) {
     return { a, img: a.firstChild, cap };
   });
   const stage = h('div', { class: 'hm__stage' }, carEl, title, cue, shots.map(s => s.a));
-  const T = 0.8 + 1 + .6 + (N - 1) * 1.6 + .25;                 // Länge der Animation in "Einheiten"
+  const OFF = .2, T = 0.8 + OFF + 1 + .6 + (N - 1) * 1.6 + .25;                 // Länge der Animation in "Einheiten"
   const el = h('section', { class: 'hm', 'aria-label': p.title || '', style: { '--len': (T * .5).toFixed(2) } }, h('div', { class: 'hm__track' }, stage));
   if (still()) { el.classList.add('is-still'); return el; }
 
@@ -94,15 +94,16 @@ function mobileHero(p, ctx) {
   requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true }); });
   const apply = (u) => {
     if (!R) measure();
-    const z = ease(clamp((u - .8) / 1)), intro = clamp(u / 1.6);
-    const dk = z > .12; if (dk !== stage.classList.contains('is-dark')) { stage.classList.toggle('is-dark', dk); dispatchEvent(new Event('tn-dark')); }
-    if (car && (u > .02) !== frozen) { frozen = u > .02; if (frozen) car.focus(0); else car.pause(false); }
-    carEl.style.opacity = (1 - clamp((u - .5) / .9)).toFixed(3); carEl.style.transform = `scale(${(1 + .22 * intro).toFixed(4)})`;
+    const z = ease(clamp((u - 1) / 1)), rot = clamp((u - .04) / .96);
+    // Phase 1: Das Karussell dreht per Scroll auf die erste Karte und zoomt dabei heran. Phase 2: diese Karte wächst auf Vollbild.
+    if (car) { if (u > .02) car.scrub(rot); else car.release(); }
+    carEl.style.transform = `scale(${(1 + .2 * ease(clamp(u / 1))).toFixed(4)})`; carEl.style.opacity = (1 - clamp((u - 1) / .75)).toFixed(3);
     carEl.style.display = z >= 1 ? 'none' : ''; carEl.style.pointerEvents = u > .02 ? 'none' : '';
+    const dk = z > .12; if (dk !== stage.classList.contains('is-dark')) { stage.classList.toggle('is-dark', dk); dispatchEvent(new Event('tn-dark')); }
     const tOp = 1 - clamp((u - .15) / .55); title.style.opacity = tOp.toFixed(3); title.style.transform = `translateY(${(-(1 - tOp) * 26).toFixed(1)}px)`; cue.style.opacity = (1 - clamp(u / .25)).toFixed(3);
     title.style.visibility = cue.style.visibility = tOp <= 0 ? 'hidden' : 'visible';
     shots.forEach((s, i) => {
-      const start = i === 0 ? .8 : 2.4 + (i - 1) * 1.6, e = ease(clamp((u - start) / 1));
+      const start = i === 0 ? 1 : 2.6 + (i - 1) * 1.6, e = ease(clamp((u - start) / 1));
       if (i === 0) {
         const k = 1 - e, rad = 10 * k;
         s.a.style.clipPath = e >= 1 ? 'none' : `inset(${(R.t * k).toFixed(1)}px ${(R.r * k).toFixed(1)}px ${(R.b * k).toFixed(1)}px ${(R.l * k).toFixed(1)}px round ${rad.toFixed(1)}px)`;
@@ -111,7 +112,7 @@ function mobileHero(p, ctx) {
       s.a.style.visibility = (i === 0 ? e > 0 : e > 0) ? 'visible' : 'hidden';
       s.img.style.transform = `scale(${(lerp(i === 0 ? 1.35 : 1.25, 1, e)).toFixed(4)})`;
       // Bildschiebung des vorherigen Bildes, wenn das nächste kommt
-      const nstart = 2.4 + i * 1.6, ne = i < N - 1 ? ease(clamp((u - nstart) / 1)) : 0;
+      const nstart = 2.6 + i * 1.6, ne = i < N - 1 ? ease(clamp((u - nstart) / 1)) : 0;
       s.a.firstChild.style.transform = `translateY(${(-ne * 7).toFixed(2)}%)`;
       s.cap.style.opacity = (clamp((e - .55) / .3) * (1 - clamp(ne / .3))).toFixed(3);
       s.cap.style.transform = `translateY(${((1 - clamp((e - .55) / .3)) * 18).toFixed(1)}px)`;
