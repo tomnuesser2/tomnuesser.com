@@ -2,6 +2,7 @@ import { h } from '../core/dom.js';
 import { track, still, clamp, trackProgress, kick } from '../core/scrollhub.js';
 import { isFinePointer } from '../core/dom.js';
 import { ui } from '../core/i18n.js';
+import { carousel3d } from '../core/carousel3d.js';
 // Hero: auffächernde Projekt-Karten (zentriert, Hover = größer), darunter frei editierbarer Titel / Untertitel / Text.
 export default {
   type: 'hero', label: 'Hero (Karten + Titel)',
@@ -58,40 +59,41 @@ function mobileHero(p, ctx) {
   if (all.length < 2) return null;
   let feat = all.filter(x => x.featured);
   if (!feat.length) feat = all.slice(0, Math.max(1, Math.min(8, Number(p.mobileCount) || 4)));
-  const N = feat.length, COLS = 3, ROWS = 5, CENTER = 7, G = 3;
-  const others = all.filter(x => x !== feat[0]); let o = 0;
-  const tiles = Array.from({ length: COLS * ROWS }, (_, i) => (i === CENTER ? feat[0] : others[o++ % others.length]));
+  const N = feat.length;
+  const rest = all.filter(x => x !== feat[0]);
+  const ring = [feat[0], ...rest];                              // vorne beginnt das erste ausgewählte Projekt
   const name = (x) => String(x.title || x.slug).replace(/\n/g, ' ');
-
-  const tileEls = tiles.map((t, i) => h('i', { class: 'hm__tile', style: { '--c': i % COLS } }, h('img', { src: t.image, alt: '', decoding: 'async', loading: i < 6 ? 'eager' : 'lazy' })));
-  const grid = h('div', { class: 'hm__grid' }, tileEls);
+  const carEl = h('div', { class: 'hm__car' });
+  const cardSize = (r) => ({ w: Math.min(r.width * .56, r.height * .8 * .5625), aspect: .5625 });
+  let car = null;
   const lines = String(p.title || '').split('\n').map(s => s.trim()).filter(Boolean);
   const title = h('h1', { class: 'hm__title' }, lines.map(l => h('span', {}, l)));
   const cue = h('p', { class: 'hm__cue' }, p.cue || 'scroll', h('i', { 'aria-hidden': 'true' }, '↓'));
-  const veil = h('div', { class: 'hm__veil' });
   const shots = feat.map((f, i) => {
     const img = h('img', { src: f.image, alt: '', decoding: 'async' });
     const cap = h('div', { class: 'hm__cap' }, h('span', { class: 'hm__n' }, `${String(i + 1).padStart(2, '0')} / ${String(N).padStart(2, '0')}`), h('strong', { class: 'hm__t' }, name(f)), f.roles ? h('em', { class: 'hm__r' }, f.roles) : null);
     const a = h('a', { class: 'hm__shot', href: f.slug, 'data-link': '', 'aria-label': name(f) }, h('div', { class: 'hm__img' }, img), h('i', { class: 'hm__shade' }), cap);
     return { a, img: a.firstChild, cap };
   });
-  const stage = h('div', { class: 'hm__stage' }, grid, veil, title, cue, shots.map(s => s.a));
+  const stage = h('div', { class: 'hm__stage' }, carEl, title, cue, shots.map(s => s.a));
   const T = 0.8 + 1 + .6 + (N - 1) * 1.6 + .25;                 // Länge der Animation in "Einheiten"
   const el = h('section', { class: 'hm', 'aria-label': p.title || '', style: { '--len': (T * .5).toFixed(2) } }, h('div', { class: 'hm__track' }, stage));
   if (still()) { el.classList.add('is-still'); return el; }
 
-  let W = 0, H = 0, R = null;
+  let W = 0, H = 0, R = null, frozen = false;
   const measure = () => {
-    W = stage.clientWidth; H = stage.clientHeight; const w = (W - (COLS - 1) * G) / COLS, hh = (H - (ROWS - 1) * G) / ROWS, c = CENTER % COLS, r = Math.floor(CENTER / COLS);
-    const l = c * (w + G), t = r * (hh + G); R = { t, r: W - l - w, b: H - t - hh, l };
+    W = stage.clientWidth; H = stage.clientHeight; const cr = carEl.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+    const cs = cardSize(cr), cw = cs.w * 1.08, ch = cw / cs.aspect, cx = cr.left - sr.left + cr.width / 2, cy = cr.top - sr.top + cr.height / 2;
+    const l = cx - cw / 2, t = cy - ch / 2; R = { t, r: W - l - cw, b: H - t - ch, l };
   };
+  const open = (it) => { const a = document.createElement('a'); a.href = it.href; a.setAttribute('data-link', ''); a.hidden = true; document.body.append(a); a.click(); a.remove(); };
+  requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100 }); });
   const apply = (u) => {
     if (!R) measure();
     const z = ease(clamp((u - .8) / 1)), intro = clamp(u / 1.6);
-    // Mosaik: Spalten laufen gegenläufig, leichter Zoom, dann verschwindet es hinter dem ersten Vollbild
-    grid.style.transform = `scale(${(1 + .1 * intro).toFixed(4)})`; grid.style.visibility = z >= 1 ? 'hidden' : 'visible';
-    tileEls.forEach((t, i) => { const dir = (i % COLS) % 2 ? 1 : -1; t.style.transform = `translateY(${(dir * intro * H * .035).toFixed(1)}px)`; });
-    veil.style.opacity = String(1 - z * .6);
+    if (car && (u > .02) !== frozen) { frozen = u > .02; if (frozen) car.focus(0); else car.pause(false); }
+    carEl.style.opacity = (1 - clamp((u - .5) / .9)).toFixed(3); carEl.style.transform = `scale(${(1 + .22 * intro).toFixed(4)})`;
+    carEl.style.visibility = z >= 1 ? 'hidden' : 'visible'; carEl.style.pointerEvents = u > .02 ? 'none' : '';
     const tOp = 1 - clamp((u - .15) / .55); title.style.opacity = tOp.toFixed(3); title.style.transform = `translateY(${(-(1 - tOp) * 26).toFixed(1)}px)`; cue.style.opacity = (1 - clamp(u / .25)).toFixed(3);
     title.style.visibility = cue.style.visibility = tOp <= 0 ? 'hidden' : 'visible';
     shots.forEach((s, i) => {
