@@ -28,7 +28,7 @@ function renderStack(p, ctx) {
     const grp = h('div', { class: 'p-group' });
     for (const pr of list) {
       const card = h('a', { class: 'p-card', href: pr.slug, 'data-link': '', 'aria-label': pr.title || pr.slug });
-      card.append(mediaEl({ src: pr.image, vimeo: pr.vimeo, poster: pr.image ? '' : 'auto', ratio: pr.ratio || '16/9', radius: 'sm', alt: pr.title, hud: false }));
+      card.append(mediaEl({ sound: false, src: pr.image, vimeo: pr.vimeo, poster: pr.image ? '' : 'auto', ratio: pr.ratio || '16/9', radius: 'sm', alt: pr.title, hud: false }));
       card.querySelector('.media-play')?.remove();
       card.append(h('span', { class: 'p-card__label' }, pr.title || ''));
       grp.append(card);

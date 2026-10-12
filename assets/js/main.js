@@ -1,3 +1,4 @@
+import { videoCfg } from './core/media.js';
 import { h, svg, prefersReducedMotion } from './core/dom.js';
 import { renderBlocks } from './core/registry.js';
 import { localize, getLang, setLang, ui } from './core/i18n.js';
@@ -14,7 +15,7 @@ async function getJSON(path) {
 }
 
 const state = { site: null, index: null, raw: null, fx: {}, els: {} };
-function applyLang() { state.site = localize(state.raw.site); state.index = localize(state.raw.index); state.fx.site = state.site; state.fx.index = state.index; }
+function applyLang() { state.site = localize(state.raw.site); Object.assign(videoCfg, state.site.video || {}); state.index = localize(state.raw.index); state.fx.site = state.site; state.fx.index = state.index; }
 // Vorschau-Modus (z. B. als gehostete Probe-Seite): Seitenwechsel bleiben im Speicher, die Adresszeile wird nicht verändert.
 const VIRT = !!window.__VIRTUAL_ROUTER__;
 let V = { pathname: location.pathname, hash: '' };

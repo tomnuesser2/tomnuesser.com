@@ -510,3 +510,7 @@
   .hero--car .hero__cards { height: clamp(300px, 56svh, 620px); margin-top: 0; }
   .hero--car .hero__roles { margin-top: clamp(10px, 2.4svh, 28px); }
 }
+
+/* Projekt-Kopf: Ausrichtung links / mitte / rechts */
+.ph--center { text-align: center; } .ph--center .ph__t { margin-left: auto; margin-right: auto; } .ph--center .ph__meta { justify-items: center; }
+.ph--right { text-align: right; } .ph--right .ph__t { margin-left: auto; } .ph--right .ph__meta { justify-items: end; }

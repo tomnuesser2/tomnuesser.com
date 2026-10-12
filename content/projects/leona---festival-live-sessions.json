@@ -30,11 +30,11 @@
       "type": "projectHead",
       "props": {
         "back": "← all projects",
-        "title": "LEONA – festival live sessions",
-        "meta": "Role: Videography, editing, grading\nPlace: Deutsches Haus, Flensburg\nCameras: Sony FX3, Sony A7 IV\nYear: 2026",
+        "title": "LEONA\nfestival live session\n",
+        "meta": "",
         "back_de": "← alle Projekte",
-        "title_de": "LEONA – Festival-Live-Sessions",
-        "meta_de": "Rolle: Videografie, Schnitt, Color Grading\nOrt: Deutsches Haus, Flensburg\nKameras: Sony FX3, Sony A7 IV\nJahr: 2026"
+        "title_de": "LEONA\n\nfestival live session\n",
+        "meta_de": ""
       }
     },
     {

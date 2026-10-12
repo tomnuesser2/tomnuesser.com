@@ -37,6 +37,9 @@ export async function vimeoThumb(v) {
   return p;
 }
 
+// Ton-Einstellung der Besucher-Seite (kommt aus content/site.json → video; im Admin unter „Einstellungen“)
+export const videoCfg = { volume: 40, button: true };
+const SND = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.6L12 18.5v-13L7.6 9.5z"/><path class="on" d="M15 8.5a5 5 0 0 1 0 7M17.6 6a8.600 8.600 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="off" d="M15.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 const PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>';
 
 /**
@@ -69,21 +72,31 @@ export function mediaEl(p = {}) {
 
   if (v) {
     if (!posterSrc && p.poster === 'auto') vimeoThumb(v).then(t => { if (t) setImage(t); });
-    const btn = h('button', { class: 'media-play', type: 'button', 'aria-label': `Play video${p.alt ? ': ' + p.alt : ''}`, 'data-cursor': 'play' },
-      h('span', { class: 'media-play__dot' }, svg(PLAY)));
-    frame.append(btn);
-    btn.addEventListener('click', () => {
-      const q = new URLSearchParams(v.yt ? { autoplay: '1', rel: '0', playsinline: '1', modestbranding: '1' } : { autoplay: '1', title: '0', byline: '0', portrait: '0', dnt: '1', playsinline: '1' });
-      if (v.hash) q.set('h', v.hash);
-      const ifr = h('iframe', {
-        src: v.yt ? `https://www.youtube-nocookie.com/embed/${v.id}?${q}` : `https://player.vimeo.com/video/${v.id}?${q}`, allow: 'autoplay; fullscreen; picture-in-picture', allowfullscreen: '',
-        title: p.alt || 'Video', loading: 'eager', referrerpolicy: 'strict-origin-when-cross-origin',
+    // Kein Play-Button: das Video startet von selbst, läuft in Dauerschleife, zunächst ohne Ton.
+    // Besucher können den Ton per Knopf an/aus schalten – die Lautstärke ist fest (Admin → Einstellungen → Video-Ton).
+    const canSnd = p.sound !== false && videoCfg.button !== false && Number(videoCfg.volume) > 0;
+    const q = new URLSearchParams(v.yt ? { autoplay: '1', mute: '1', loop: '1', playlist: v.id, controls: '0', rel: '0', playsinline: '1', modestbranding: '1', disablekb: '1', iv_load_policy: '3', enablejsapi: '1' }
+      : { ...(canSnd ? { controls: '0', api: '1' } : { background: '1' }), autoplay: '1', loop: '1', muted: '1', autopause: '0', title: '0', byline: '0', portrait: '0', dnt: '1', playsinline: '1' });
+    if (v.hash) q.set('h', v.hash);
+    let started = false, ifr = null, on = false;
+    const send = (o) => { try { ifr.contentWindow.postMessage(v.yt ? JSON.stringify(o) : JSON.stringify(o), v.yt ? 'https://www.youtube-nocookie.com' : 'https://player.vimeo.com'); } catch { /* weg */ } };
+    const setSound = (flag) => {
+      on = flag; const vol = Math.max(0, Math.min(100, Number(videoCfg.volume) || 0));
+      if (v.yt) { send({ event: 'command', func: 'setVolume', args: [vol] }); send({ event: 'command', func: flag ? 'unMute' : 'mute', args: [] }); }
+      else { send({ method: 'setVolume', value: vol / 100 }); send({ method: 'setMuted', value: !flag }); }
+      if (snd) { snd.classList.toggle('is-on', flag); snd.setAttribute('aria-pressed', String(flag)); }
+    };
+    const snd = canSnd ? h('button', { class: 'media-snd', type: 'button', 'aria-label': 'Ton an/aus', 'aria-pressed': 'false' }) : null;
+    if (snd) { snd.innerHTML = SND; snd.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); setSound(!on); }); frame.append(snd); }
+    const start = () => {
+      if (started) return; started = true;
+      ifr = h('iframe', {
+        src: v.yt ? `https://www.youtube-nocookie.com/embed/${v.id}?${q}` : `https://player.vimeo.com/video/${v.id}?${q}`, allow: 'autoplay; fullscreen; picture-in-picture', tabindex: '-1', 'aria-hidden': 'true',
+        title: p.alt || 'Video', loading: 'lazy', referrerpolicy: 'strict-origin-when-cross-origin', class: 'media-embed',
       });
-      inner.replaceChildren(ifr);
-      frame.classList.add('is-playing');
-      frame.removeAttribute('data-parallax');
-      inner.style.transform = 'none';
-    });
+      inner.append(ifr);
+    };
+    if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); start(); } }, { rootMargin: '200px' }); io.observe(frame); } else start();
   }
   return frame;
 }
