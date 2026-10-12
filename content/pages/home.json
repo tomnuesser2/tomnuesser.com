@@ -1,5 +1,5 @@
 {
-  "title": "tom nuesser",
+  "title": "tomnuesser",
   "blocks": [
     {
       "type": "hero",
@@ -250,5 +250,6 @@
         "impressumLabel_de": "Impressum"
       }
     }
-  ]
+  ],
+  "title_de": "tomnuesser"
 }

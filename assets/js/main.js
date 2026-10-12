@@ -21,12 +21,21 @@ let V = { pathname: location.pathname, hash: '' };
 const loc = () => (VIRT ? V : location);
 const push = (u) => { if (VIRT) V = { pathname: u.pathname, hash: u.hash }; else history.pushState({}, '', u); };
 
+const MQ = matchMedia('(max-width: 899px)');
+
 /* ---------- Sprachumschalter ---------- */
 function langSwitch(cls) {
   const cur = getLang();
-  return h('div', { class: `lang ${cls}`, role: 'group', 'aria-label': ui('language') },
-    ['de', 'en'].map((l, i) => [i ? h('span', { 'aria-hidden': 'true' }, '/') : null,
-      h('button', { type: 'button', class: 'lang__b', 'data-lang': l, 'aria-pressed': String(cur === l), lang: l, onclick: () => switchLang(l) }, l.toUpperCase())]).flat().filter(Boolean));
+  const box = h('div', { class: `lang ${cls}`, role: 'group', 'aria-label': ui('language'), 'data-l': cur }, h('i', { class: 'lang__t', 'aria-hidden': 'true' }));
+  ['de', 'en'].forEach((l, i) => {
+    if (i) box.append(h('span', { 'aria-hidden': 'true' }, '/'));
+    box.append(h('button', { type: 'button', class: 'lang__b', 'data-lang': l, 'aria-pressed': String(cur === l), lang: l, onclick: () => {
+      if (l === getLang()) return;
+      box.dataset.l = l;                                             // Schieber läuft sofort rüber
+      if (MQ.matches) setTimeout(() => switchLang(l), 280); else switchLang(l);
+    } }, l.toUpperCase()));
+  });
+  return box;
 }
 async function switchLang(l) {
   if (l === getLang()) return;
@@ -45,8 +54,8 @@ function buildShell() {
   const pillLinks = (site.nav || []).map((n) => h('a', { class: 'pill__a', href: n.href, 'data-link': '' }, n.label));
   const ICO = [
     '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3.5"/><path d="M10.2 9.4l4.6 2.6-4.6 2.6z" fill="currentColor" stroke="none"/></svg>',
-    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4.5 3.5V17H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg>',
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7.5L4 12l4.5 4.5M15.5 7.5L20 12l-4.5 4.5M13.5 5.5l-3 13"/></svg>',
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l1.9 5.4 5.6 2.1-5.6 2.1L12 18.5l-1.9-5.4L4.5 11l5.6-2.1z"/><path d="M18.5 3.5v3M17 5h3"/></svg>',
     '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M4 8l8 5.5L20 8"/></svg>'];
   const mnav = h('nav', { class: 'mnav', 'aria-label': ui('main') }, (site.nav || []).map((n, i) => { const a = h('a', { class: 'mnav__a', href: n.href, 'data-link': '' }, h('span', { class: 'mnav__i' }), h('span', { class: 'mnav__l' }, n.label)); a.querySelector('.mnav__i').innerHTML = ICO[i % ICO.length]; return a; }));
   const header = h('header', { class: 'site-header' },
@@ -65,6 +74,7 @@ function buildShell() {
     site.effects?.palette === false ? null : h('button', { class: 'kbd-hint', type: 'button', onclick: () => window.dispatchEvent(new CustomEvent('app:palette')) }, ui('pressKey') + ' ', h('kbd', {}, '⌘K'), ' ' + ui('jumpAnywhere')));
   app.replaceChildren(header, menu, main, footer);
   Object.assign(state.els, { header, menu, main, footer, burger, close });
+  measureNav(); document.fonts?.ready.then(measureNav);
 
   const setMenu = (open) => {
     menu.classList.toggle('is-open', open);
@@ -96,9 +106,43 @@ function spy() {
   }
   const ch = cur && cur.getAttribute('href'); links.forEach(a => a.classList.toggle('is-active', !!ch && a.getAttribute('href') === ch));
 }
+// Beschriftungen des unteren Menüs: genaue Breite messen, damit nichts aus der Pille rutscht
+function measureNav() { document.querySelectorAll('.mnav__l').forEach((l) => l.style.setProperty('--w', Math.ceil(l.scrollWidth) + 2 + 'px')); }
+addEventListener('resize', measureNav);
+
+// Handy: Sobald der NOTUA-Flug am Bildschirm "klebt", verwandelt sich die Menü-Pille in die NOTUA-Leiste – und danach wieder zurück.
+let flOn = false, morphTok = 0, morphAnim = [];
+const flPinned = () => { if (!MQ.matches) return false; const t = document.querySelector('.fl__track'), s = document.querySelector('.fl__stage'); if (!t || !s) return false; const a = t.getBoundingClientRect(), b = s.getBoundingClientRect(); return a.top <= 1 && a.bottom >= b.height - 1; };
+async function morph(on) {
+  const hd = document.querySelector('.site-header'), nav = document.querySelector('.mnav'), dk = document.querySelector('.fl__dock');
+  const tok = ++morphTok; morphAnim.forEach((a) => { try { a.cancel(); } catch { /* weg */ } }); morphAnim = [];
+  if (!hd || !nav || !dk || prefersReducedMotion() || !nav.animate) { hd?.classList.toggle('mnav-off', on); document.body.classList.toggle('fl-pinned', on); return; }
+  const cs = getComputedStyle(dk), D = 520, ease = 'cubic-bezier(.65,0,.25,1)';
+  const kids = [...nav.children];
+  if (on) {
+    const A = nav.getBoundingClientRect(), B = dk.getBoundingClientRect(), dy = (B.top + B.height / 2) - (A.top + A.height / 2);
+    const fromBg = getComputedStyle(nav).backgroundColor, fromR = getComputedStyle(nav).borderRadius;
+    morphAnim = [
+      nav.animate([{ width: A.width + 'px', height: A.height + 'px', transform: 'translateX(-50%)', borderRadius: fromR, backgroundColor: fromBg }, { width: B.width + 'px', height: B.height + 'px', transform: `translateX(-50%) translateY(${dy}px)`, borderRadius: cs.borderRadius, backgroundColor: cs.backgroundColor }], { duration: D, easing: ease, fill: 'forwards' }),
+      ...kids.map((k) => k.animate([{ opacity: 1 }, { opacity: 0 }], { duration: D * .4, easing: 'ease-out', fill: 'forwards' })),
+    ];
+    await morphAnim[0].finished.catch(() => {}); if (tok !== morphTok) return;
+    document.body.classList.add('fl-pinned'); hd.classList.add('mnav-off');
+    morphAnim.forEach((a) => a.cancel()); morphAnim = [];
+  } else {
+    const A = dk.getBoundingClientRect();
+    document.body.classList.remove('fl-pinned'); hd.classList.remove('mnav-off');
+    const B = nav.getBoundingClientRect(), dy = (A.top + A.height / 2) - (B.top + B.height / 2);
+    morphAnim = [
+      nav.animate([{ width: A.width + 'px', height: A.height + 'px', transform: `translateX(-50%) translateY(${dy}px)`, borderRadius: cs.borderRadius, backgroundColor: cs.backgroundColor }, { width: B.width + 'px', height: B.height + 'px', transform: 'translateX(-50%)', borderRadius: getComputedStyle(nav).borderRadius, backgroundColor: getComputedStyle(nav).backgroundColor }], { duration: D, easing: ease }),
+      ...kids.map((k) => k.animate([{ opacity: 0 }, { opacity: 0, offset: .55 }, { opacity: 1 }], { duration: D, easing: 'ease-in' })),
+    ];
+    await morphAnim[0].finished.catch(() => {}); morphAnim = [];
+  }
+}
 const dock = () => { const hd = document.querySelector('.site-header'); if (!hd) return; hd.classList.toggle('is-docked', scrollY > 70);
   const dark = [...document.querySelectorAll('.kn__stage')].some(e => { const r = e.getBoundingClientRect(); return r.top < 36 && r.bottom > 36; }); hd.classList.toggle('over-dark', dark);
-  const fl = [...document.querySelectorAll('.fl__stage')].some(e => { const r = e.getBoundingClientRect(); return r.top < innerHeight * .6 && r.bottom > innerHeight * .4; }); hd.classList.toggle('mnav-off', fl); };
+  const on = flPinned(); if (on !== flOn) { flOn = on; morph(on); } else if (on && !morphAnim.length) { hd.classList.add('mnav-off'); document.body.classList.add('fl-pinned'); } };
 addEventListener('scroll', () => requestAnimationFrame(() => { spy(); dock(); }), { passive: true });
 
 function markActiveLinks() {
