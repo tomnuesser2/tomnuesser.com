@@ -17,7 +17,9 @@
       }
     ],
     "anim": "expand",
-    "category": "video"
+    "category": "video",
+    "summary_de": "Die Live-Performance QRUE PLUS im Kühlhaus Flensburg mit bewusst minimalem Setup gefilmt.",
+    "roles_de": "Videografie, Live, Audio"
   },
   "blocks": [
     {
@@ -25,7 +27,10 @@
       "props": {
         "back": "← all projects",
         "title": "QRUE Collective x\nKulturwerkstatt Kühlhaus",
-        "meta": "Role: Videography & post-production\nPlace: Kühlhaus Flensburg\nClient: QRUE Collective\nYear: 2026"
+        "meta": "Role: Videography & post-production\nPlace: Kühlhaus Flensburg\nClient: QRUE Collective\nYear: 2026",
+        "back_de": "← alle Projekte",
+        "title_de": "QRUE Collective x\nKulturwerkstatt Kühlhaus",
+        "meta_de": "Rolle: Videografie & Postproduktion\nOrt: Kühlhaus Flensburg\nKunde: QRUE Collective\nJahr: 2026"
       }
     },
     {
@@ -43,7 +48,9 @@
       "type": "projectText",
       "props": {
         "heading": "capturing QRUE PLUS",
-        "text": "This project documents the QRUE PLUS event at Kühlhaus Flensburg, where I was responsible for filming the live performance in an indoor concert setting with a deliberately minimal equipment setup. The production environment came with initial technical challenges, particularly regarding audio capture and room acoustics.\n\nDespite these constraints, I focused on maximizing the available resources to deliver the highest possible audiovisual quality. Through adaptive on-site decision-making and careful post-production work, the final result preserves the raw energy of the event while maintaining a clean and usable sound and image representation of the performance."
+        "text": "This project documents the QRUE PLUS event at Kühlhaus Flensburg, where I was responsible for filming the live performance in an indoor concert setting with a deliberately minimal equipment setup. The production environment came with initial technical challenges, particularly regarding audio capture and room acoustics.\n\nDespite these constraints, I focused on maximizing the available resources to deliver the highest possible audiovisual quality. Through adaptive on-site decision-making and careful post-production work, the final result preserves the raw energy of the event while maintaining a clean and usable sound and image representation of the performance.",
+        "heading_de": "QRUE PLUS festgehalten",
+        "text_de": "Dieses Projekt dokumentiert das Event QRUE PLUS im Kühlhaus Flensburg. Ich war dafür zuständig, die Live-Performance in einem Indoor-Konzertsetting mit bewusst minimalem Equipment zu filmen. Die Produktionsumgebung brachte anfangs technische Herausforderungen mit sich, vor allem bei der Tonaufnahme und der Raumakustik.\n\nTrotz dieser Einschränkungen habe ich versucht, aus den vorhandenen Mitteln die bestmögliche Bild- und Tonqualität herauszuholen. Durch flexible Entscheidungen vor Ort und sorgfältige Postproduktion bewahrt das Ergebnis die rohe Energie des Events und bleibt zugleich ein sauberes, nutzbares Bild- und Tonabbild der Performance."
       }
     },
     {
@@ -64,7 +71,10 @@
     },
     {
       "type": "projectNext",
-      "props": {}
+      "props": {
+        "label_de": "nächstes Projekt"
+      }
     }
-  ]
+  ],
+  "title_de": "QRUE Collective x\nKulturwerkstatt Kühlhaus"
 }

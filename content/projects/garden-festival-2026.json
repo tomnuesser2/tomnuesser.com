@@ -17,7 +17,9 @@
       }
     ],
     "anim": "expand",
-    "category": "video"
+    "category": "video",
+    "summary_de": "Foto- und Videobegleitung für das Qrue Collective und Festival-Künstler beim Gården Festival in Tydal, Eggebek.",
+    "roles_de": "Videografie, Fotografie, Festival"
   },
   "blocks": [
     {
@@ -25,7 +27,10 @@
       "props": {
         "back": "← all projects",
         "title": "Gården Festival 2026",
-        "meta": "Role: Videography & photography\nPlace: Tydal, Eggebek\nClients: Qrue Collective, MALM, Leona, AFSKUM, Søn\nYear: 2026"
+        "meta": "Role: Videography & photography\nPlace: Tydal, Eggebek\nClients: Qrue Collective, MALM, Leona, AFSKUM, Søn\nYear: 2026",
+        "back_de": "← alle Projekte",
+        "title_de": "Gården Festival 2026",
+        "meta_de": "Rolle: Videografie & Fotografie\nOrt: Tydal, Eggebek\nKunden: Qrue Collective, MALM, Leona, AFSKUM, Søn\nJahr: 2026"
       }
     },
     {
@@ -43,7 +48,9 @@
       "type": "projectText",
       "props": {
         "heading": "Filming for Qrue Collective & Festival Artists",
-        "text": "As part of the media coverage for Gården Festival in Tydal, Eggebek, I produced photo and video content for multiple artists and performances throughout the festival. My main focus was creating dynamic festival content for Qrue Collective, while also filming live performances by MALM and Leona, alongside capturing photography and videography for the Danish artists AFSKUM and Søn.\n\nWorking in a fast-paced festival environment, I documented live performances, backstage moments, and the overall atmosphere of the event. The goal was to create authentic, cinematic content that reflected the energy of the festival and their artists."
+        "text": "As part of the media coverage for Gården Festival in Tydal, Eggebek, I produced photo and video content for multiple artists and performances throughout the festival. My main focus was creating dynamic festival content for Qrue Collective, while also filming live performances by MALM and Leona, alongside capturing photography and videography for the Danish artists AFSKUM and Søn.\n\nWorking in a fast-paced festival environment, I documented live performances, backstage moments, and the overall atmosphere of the event. The goal was to create authentic, cinematic content that reflected the energy of the festival and their artists.",
+        "heading_de": "Filmen für das Qrue Collective & Festival-Künstler",
+        "text_de": "Im Rahmen der Medienbegleitung des Gården Festivals in Tydal, Eggebek, habe ich Foto- und Videoinhalte für mehrere Künstler und Auftritte über das ganze Festival hinweg produziert. Mein Schwerpunkt lag auf dynamischem Festival-Content für das Qrue Collective. Außerdem habe ich Live-Auftritte von MALM und Leona gefilmt sowie Fotos und Videos für die dänischen Künstler AFSKUM und Søn gemacht.\n\nIn der schnellen Festivalumgebung habe ich Live-Auftritte, Backstage-Momente und die Stimmung des gesamten Events festgehalten. Ziel war authentischer, filmischer Content, der die Energie des Festivals und der Künstler widerspiegelt."
       }
     },
     {
@@ -64,7 +71,10 @@
     },
     {
       "type": "projectNext",
-      "props": {}
+      "props": {
+        "label_de": "nächstes Projekt"
+      }
     }
-  ]
+  ],
+  "title_de": "Gården Festival 2026"
 }

@@ -18,7 +18,8 @@
       }
     ],
     "category": "social",
-    "hidden": true
+    "hidden": true,
+    "summary_de": "3D-Tilt-Karte zum Testen – am Desktop folgt sie der Maus."
   },
   "blocks": [
     {
@@ -33,8 +34,10 @@
         "text": "Project 7 – tilt",
         "level": 1,
         "align": "center",
-        "bold": false
+        "bold": false,
+        "text_de": "Projekt 7 – Tilt"
       }
     }
-  ]
+  ],
+  "title_de": "Projekt 7 – Tilt"
 }

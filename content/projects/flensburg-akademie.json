@@ -10,7 +10,9 @@
     "summary": "Working student: social media management, photography, content creation and graphic design.",
     "stills": [],
     "anim": "expand",
-    "category": "social"
+    "category": "social",
+    "summary_de": "Werkstudent: Social-Media-Management, Fotografie, Content Creation und Grafikdesign.",
+    "roles_de": "Social Media, Fotografie, Grafikdesign"
   },
   "blocks": [
     {
@@ -18,7 +20,10 @@
       "props": {
         "back": "← all projects",
         "title": "working @\nFlensburg Akademie",
-        "meta": "Role: Social media, photography, design\nPlace: Flensburg Akademie\nType: Working student\nYear: 2025–2026"
+        "meta": "Role: Social media, photography, design\nPlace: Flensburg Akademie\nType: Working student\nYear: 2025–2026",
+        "back_de": "← alle Projekte",
+        "title_de": "arbeiten @\nFlensburg Akademie",
+        "meta_de": "Rolle: Social Media, Fotografie, Design\nOrt: Flensburg Akademie\nArt: Werkstudent\nJahr: 2025–2026"
       }
     },
     {
@@ -36,12 +41,17 @@
       "type": "projectText",
       "props": {
         "heading": "working @ Flensburg Akademie",
-        "text": "As a working student at Flensburg Akademie, I was responsible for Social Media Management while also working as a Photographer, Digital Creator, and Graphic Designer. Acting as a versatile all-rounder, I supported a wide range of creative and strategic tasks and contributed to building a strong, visually consistent digital presence."
+        "text": "As a working student at Flensburg Akademie, I was responsible for Social Media Management while also working as a Photographer, Digital Creator, and Graphic Designer. Acting as a versatile all-rounder, I supported a wide range of creative and strategic tasks and contributed to building a strong, visually consistent digital presence.",
+        "heading_de": "arbeiten @ Flensburg Akademie",
+        "text_de": "Als Werkstudent bei der Flensburg Akademie war ich für das Social-Media-Management verantwortlich und habe gleichzeitig als Fotograf, Digital Creator und Grafikdesigner gearbeitet. Als vielseitiger Allrounder habe ich viele kreative und strategische Aufgaben unterstützt und dazu beigetragen, einen starken, visuell einheitlichen digitalen Auftritt aufzubauen."
       }
     },
     {
       "type": "projectNext",
-      "props": {}
+      "props": {
+        "label_de": "nächstes Projekt"
+      }
     }
-  ]
+  ],
+  "title_de": "arbeiten @\nFlensburg Akademie"
 }

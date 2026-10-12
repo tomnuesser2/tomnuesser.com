@@ -1,5 +1,6 @@
 import { h, svg, prefersReducedMotion } from './core/dom.js';
 import { renderBlocks } from './core/registry.js';
+import { localize, getLang, setLang, ui } from './core/i18n.js';
 import { startEffects, pageReady, beforeNavigate, afterNavigate } from './effects/index.js';
 
 const ROOT = new URL('../../', import.meta.url);      // Projektwurzel (funktioniert auch unter /<repo>/)
@@ -12,19 +13,34 @@ async function getJSON(path) {
   return r.json();
 }
 
-const state = { site: null, index: null, els: {} };
+const state = { site: null, index: null, raw: null, fx: {}, els: {} };
+function applyLang() { state.site = localize(state.raw.site); state.index = localize(state.raw.index); state.fx.site = state.site; state.fx.index = state.index; }
 // Vorschau-Modus (z. B. als gehostete Probe-Seite): Seitenwechsel bleiben im Speicher, die Adresszeile wird nicht verändert.
 const VIRT = !!window.__VIRTUAL_ROUTER__;
 let V = { pathname: location.pathname, hash: '' };
 const loc = () => (VIRT ? V : location);
 const push = (u) => { if (VIRT) V = { pathname: u.pathname, hash: u.hash }; else history.pushState({}, '', u); };
 
+/* ---------- Sprachumschalter ---------- */
+function langSwitch(cls) {
+  const cur = getLang();
+  return h('div', { class: `lang ${cls}`, role: 'group', 'aria-label': ui('language') },
+    ['de', 'en'].map((l, i) => [i ? h('span', { 'aria-hidden': 'true' }, '/') : null,
+      h('button', { type: 'button', class: 'lang__b', 'data-lang': l, 'aria-pressed': String(cur === l), lang: l, onclick: () => switchLang(l) }, l.toUpperCase())]).flat().filter(Boolean));
+}
+async function switchLang(l) {
+  if (l === getLang()) return;
+  const y = scrollY;
+  setLang(l); applyLang(); buildShell(); await render();
+  window.scrollTo(0, y);
+}
+
 /* ---------- Shell ---------- */
 function buildShell() {
   const { site } = state;
   const app = document.getElementById('app');
 
-  const burger = h('button', { class: 'burger', type: 'button', 'aria-label': 'Open menu', 'aria-expanded': 'false', 'aria-controls': 'menu' },
+  const burger = h('button', { class: 'burger', type: 'button', 'aria-label': ui('openMenu'), 'aria-expanded': 'false', 'aria-controls': 'menu' },
     svg('<svg viewBox="0 0 38 24" aria-hidden="true"><line x1="0" y1="2" x2="38" y2="2"/><line x1="13" y1="12" x2="38" y2="12"/><line x1="0" y1="22" x2="38" y2="22"/></svg>'));
   const pillLinks = (site.nav || []).map((n) => h('a', { class: 'pill__a', href: n.href, 'data-link': '' }, n.label));
   const ICO = [
@@ -32,21 +48,21 @@ function buildShell() {
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-4.5 3.5V17H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg>',
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7.5L4 12l4.5 4.5M15.5 7.5L20 12l-4.5 4.5M13.5 5.5l-3 13"/></svg>',
     '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M4 8l8 5.5L20 8"/></svg>'];
-  const mnav = h('nav', { class: 'mnav', 'aria-label': 'Main' }, (site.nav || []).map((n, i) => { const a = h('a', { class: 'mnav__a', href: n.href, 'data-link': '' }, h('span', { class: 'mnav__i' }), h('span', { class: 'mnav__l' }, n.label)); a.querySelector('.mnav__i').innerHTML = ICO[i % ICO.length]; return a; }));
+  const mnav = h('nav', { class: 'mnav', 'aria-label': ui('main') }, (site.nav || []).map((n, i) => { const a = h('a', { class: 'mnav__a', href: n.href, 'data-link': '' }, h('span', { class: 'mnav__i' }), h('span', { class: 'mnav__l' }, n.label)); a.querySelector('.mnav__i').innerHTML = ICO[i % ICO.length]; return a; }));
   const header = h('header', { class: 'site-header' },
-    h('a', { class: 'site-header__logo', href: 'home', 'data-link': '', 'aria-label': `${site.title} – home` }, site.title),
-    h('nav', { class: 'pill', 'aria-label': 'Main' }, pillLinks), mnav);
+    h('a', { class: 'site-header__logo', href: 'home', 'data-link': '', 'aria-label': `${site.title} – ${ui('home')}` }, site.title),
+    h('nav', { class: 'pill', 'aria-label': ui('main') }, pillLinks), mnav, langSwitch('lang--head'));
 
   const links = (site.nav || []).map((n, i) => h('li', {}, h('a', { class: 'menu__link', href: n.href, 'data-link': '', 'data-scramble': '1', 'data-n': String(i + 1).padStart(2, '0'), style: { '--i': i } }, n.label)));
-  const close = h('button', { class: 'menu__close', type: 'button', 'aria-label': 'Close menu' },
+  const close = h('button', { class: 'menu__close', type: 'button', 'aria-label': ui('closeMenu') },
     svg('<svg viewBox="0 0 30 30" aria-hidden="true"><line x1="2" y1="2" x2="28" y2="28"/><line x1="28" y1="2" x2="2" y2="28"/></svg>'));
   const menu = h('div', { class: 'menu', id: 'menu', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Menu', 'aria-hidden': 'true', inert: '' },
-    h('span', { class: 'menu__ghost', 'aria-hidden': 'true' }, site.title), close, h('ul', { class: 'menu__list' }, links),
+    h('span', { class: 'menu__ghost', 'aria-hidden': 'true' }, site.title), close, langSwitch('lang--menu'), h('ul', { class: 'menu__list' }, links),
     h('p', { class: 'menu__meta' }, site.tagline ? h('span', {}, site.tagline) : null, site.location ? h('span', {}, `${site.location.label} · `, h('time', { class: 'menu__time' }, '--:--:--')) : null));
 
   const main = h('main', { id: 'main', tabindex: '-1' });
-  const footer = h('footer', { class: 'site-footer' }, h('p', {}, site.footer || ''),
-    site.effects?.palette === false ? null : h('button', { class: 'kbd-hint', type: 'button', onclick: () => window.dispatchEvent(new CustomEvent('app:palette')) }, 'press ', h('kbd', {}, '⌘K'), ' to jump anywhere'));
+  const footer = h('footer', { class: 'site-footer' }, h('p', {}, site.footer || ''), langSwitch('lang--foot'),
+    site.effects?.palette === false ? null : h('button', { class: 'kbd-hint', type: 'button', onclick: () => window.dispatchEvent(new CustomEvent('app:palette')) }, ui('pressKey') + ' ', h('kbd', {}, '⌘K'), ' ' + ui('jumpAnywhere')));
   app.replaceChildren(header, menu, main, footer);
   Object.assign(state.els, { header, menu, main, footer, burger, close });
 
@@ -62,12 +78,12 @@ function buildShell() {
   state.setMenu = setMenu;
   let clock;
   const timeEl = menu.querySelector('.menu__time');
-  const fmt = site.location ? new Intl.DateTimeFormat('de-DE', { timeZone: site.location.tz || 'Europe/Berlin', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) : null;
+  const fmt = site.location ? new Intl.DateTimeFormat(getLang() === 'de' ? 'de-DE' : 'en-GB', { timeZone: site.location.tz || 'Europe/Berlin', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) : null;
   const tickClock = () => { if (timeEl && fmt) timeEl.textContent = fmt.format(new Date()); };
   state.clock = (on) => { clearInterval(clock); if (on) { tickClock(); clock = setInterval(tickClock, 1000); } };
   burger.addEventListener('click', () => setMenu(true));
   close.addEventListener('click', () => setMenu(false));
-  addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) setMenu(false); });
+  if (!state.escBound) { state.escBound = true; addEventListener('keydown', (e) => { const m = state.els.menu; if (e.key === 'Escape' && m && m.classList.contains('is-open')) state.setMenu(false); }); }
 }
 
 function spy() {
@@ -116,7 +132,7 @@ function renderIntro() {
   const intro = h('section', { class: 'intro' },
     h('div', { class: 'intro__center' }, h('h1', { class: 'intro__name', 'data-scramble': 'load' }, site.title),
       site.tagline ? h('p', { class: 'intro__tag', 'data-scramble': 'load' }, site.tagline) : null, btn),
-    h('p', { class: 'intro__copy' }, site.footer || ''));
+    h('p', { class: 'intro__copy' }, site.footer || ''), langSwitch('lang--intro'));
   els.main.append(intro);
   setMeta(site.title);
   pageReady(els.main);
@@ -132,17 +148,17 @@ async function render() {
   let page = null;
   try { page = await loadPage(target); } catch (e) { console.error(e); }
   if (!page) {
-    page = { title: 'Not found', blocks: [
+    page = { title: ui('notFound'), blocks: [
       { type: 'spacer', props: { size: 60 } },
       { type: 'heading', props: { text: '404', level: 1, align: 'center', bold: true } },
-      { type: 'text', props: { text: 'This page does not exist.', align: 'center' } },
+      { type: 'text', props: { text: ui('notFoundText'), align: 'center' } },
     ] };
   }
   const ctx = { site, content: { index: state.index }, route: target };
   const frag = h('div', { class: 'page', 'data-page': target });
   frag.append(renderBlocks(page.blocks, ctx), h('div', { class: 'b-spacer', style: { '--h': '40px' } }));
   els.main.replaceChildren(frag);
-  setMeta(page.title);
+  setMeta((getLang() === 'de' && page.title_de) || page.title);
   window.scrollTo(0, 0);
   state.els.header.classList.remove('is-hidden');
   markActiveLinks();
@@ -229,15 +245,15 @@ addEventListener('app:navigate', (e) => navigate(e.detail.href));
 async function boot() {
   try {
     const [site, index] = await Promise.all([getJSON('content/site.json'), getJSON('content/index.json')]);
-    state.site = site; state.index = index;
+    state.raw = { site, index }; applyLang();
   } catch (e) {
-    document.getElementById('app').textContent = 'Could not load site content.';
+    document.getElementById('app').textContent = ui('loadFail');
     console.error(e); return;
   }
   const t = state.site.theme || {};
   for (const [k, v] of Object.entries(t)) document.documentElement.style.setProperty(`--${k}`, v);
   buildShell();
-  startEffects(state.site.effects, { site: state.site, index: state.index });
+  startEffects(state.site.effects, state.fx);
   console.log('%c tom nuesser %c videographer · designer · developer ', 'background:#000;color:#fff;padding:4px 6px;border-radius:4px 0 0 4px', 'background:#f33;color:#fff;padding:4px 6px;border-radius:0 4px 4px 0');
   console.log('psst: ⌘K / ctrl+K opens the command palette.');
   await render();

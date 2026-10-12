@@ -17,7 +17,8 @@
     ],
     "anim": "gallery",
     "category": "video",
-    "hidden": true
+    "hidden": true,
+    "summary_de": "Platzhalter – Titel, Text und Bilder im Admin ersetzen."
   },
   "blocks": [
     {
@@ -32,8 +33,10 @@
         "text": "Project 5 – gallery",
         "level": 1,
         "align": "center",
-        "bold": false
+        "bold": false,
+        "text_de": "Projekt 5 – Galerie"
       }
     }
-  ]
+  ],
+  "title_de": "Projekt 5 – Galerie"
 }

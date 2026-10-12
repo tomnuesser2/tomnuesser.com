@@ -10,7 +10,8 @@
       "props": {
         "kicker": "",
         "text": "Moving pictures. Brands that stick. Websites that feel like films – all from one desk in Flensburg.",
-        "size": "l"
+        "size": "l",
+        "text_de": "Bewegte Bilder. Marken, die hängen bleiben. Websites, die sich wie Filme anfühlen – alles von einem Schreibtisch in Flensburg."
       }
     },
     {
@@ -19,7 +20,9 @@
       "props": {
         "num": "01",
         "label": "videography",
-        "note": "films & stories"
+        "note": "films & stories",
+        "label_de": "Videografie",
+        "note_de": "Filme & Geschichten"
       },
       "hidden": true
     },
@@ -40,31 +43,41 @@
             "src": "media/reel-1.jpg",
             "title": "Live session teaser",
             "text": "15 s cut from a multicam concert shoot, graded for Reels",
-            "duration": 4
+            "duration": 4,
+            "title_de": "Live-Session-Teaser",
+            "text_de": "15-Sekunden-Schnitt aus einem Multicam-Konzertdreh, fürs Reel gegradet"
           },
           {
             "src": "media/reel-2.jpg",
             "title": "Festival recap",
             "text": "Fast stage moments in 9:16 with sound design",
-            "duration": 4
+            "duration": 4,
+            "title_de": "Festival-Recap",
+            "text_de": "Schnelle Bühnenmomente in 9:16 mit Sounddesign"
           },
           {
             "src": "media/reel-3.jpg",
             "title": "Portrait B/W",
             "text": "Black-and-white portrait loop for an artist profile",
-            "duration": 4
+            "duration": 4,
+            "title_de": "Porträt S/W",
+            "text_de": "Schwarz-Weiß-Porträt-Loop für ein Künstlerprofil"
           },
           {
             "src": "media/reel-4.jpg",
             "title": "Workshop behind the scenes",
             "text": "Documentary snippets for a non-profit workshop",
-            "duration": 4
+            "duration": 4,
+            "title_de": "Workshop hinter den Kulissen",
+            "text_de": "Dokumentarische Schnipsel für einen gemeinnützigen Workshop"
           },
           {
             "src": "media/reel-5.jpg",
             "title": "Color mood",
             "text": "Colour-led teasers for a release campaign",
-            "duration": 4
+            "duration": 4,
+            "title_de": "Farbstimmung",
+            "text_de": "Farbgeführte Teaser für eine Release-Kampagne"
           }
         ],
         "longItems": [
@@ -72,19 +85,25 @@
             "src": "media/leona-live.jpg",
             "title": "LEONA – festival live sessions",
             "text": "Multicam live session, mixed and graded – full length",
-            "duration": 4
+            "duration": 4,
+            "title_de": "LEONA – Festival-Live-Sessions",
+            "text_de": "Multicam-Live-Session, gemischt und gegradet – volle Länge"
           },
           {
             "src": "media/norder-xl.jpg",
             "title": "norder147 x canim3denim",
             "text": "Upcycling workshop highlight movie",
-            "duration": 4
+            "duration": 4,
+            "title_de": "norder147 x canim3denim",
+            "text_de": "Highlight-Film vom Upcycling-Workshop"
           },
           {
             "src": "media/stage-purple.jpg",
             "title": "Gården Festival 2026",
             "text": "Festival coverage for Qrue Collective and artists",
-            "duration": 4
+            "duration": 4,
+            "title_de": "Gården Festival 2026",
+            "text_de": "Festivalbegleitung für das Qrue Collective und Künstler"
           }
         ],
         "front": "phone"
@@ -97,7 +116,9 @@
       "props": {
         "num": "02",
         "label": "social media",
-        "note": "content & channels"
+        "note": "content & channels",
+        "label_de": "Social Media",
+        "note_de": "Content & Kanäle"
       },
       "hidden": true
     },
@@ -116,7 +137,9 @@
       "props": {
         "num": "03",
         "label": "programming",
-        "note": "web & ui"
+        "note": "web & ui",
+        "label_de": "Programmierung",
+        "note_de": "Web & UI"
       },
       "hidden": true
     },
@@ -157,7 +180,8 @@
         "video": "media/demo-loop.mp4",
         "poster": "media/stage-purple.jpg",
         "dim": 45,
-        "size": "l"
+        "size": "l",
+        "words_de": "Film\nDesign\nEntwicklung\nein roter Faden."
       },
       "id": "design"
     },
@@ -167,7 +191,9 @@
       "props": {
         "num": "04",
         "label": "about",
-        "note": "who"
+        "note": "who",
+        "label_de": "Über mich",
+        "note_de": "Wer"
       },
       "hidden": true
     },
@@ -176,7 +202,8 @@
       "props": {
         "kicker": "",
         "text": "Self-employed since day one. I plan, shoot, edit, design and code – one person, one thread, no hand-offs. Based in Flensburg, working wherever the story is.",
-        "size": "s"
+        "size": "s",
+        "text_de": "Selbstständig von Anfang an. Ich plane, drehe, schneide, gestalte und programmiere – eine Person, ein roter Faden, keine Übergaben. Zuhause in Flensburg, unterwegs, wo die Geschichte ist."
       },
       "hidden": true
     },
@@ -210,14 +237,17 @@
       "props": {
         "num": "05",
         "label": "contact",
-        "note": "let's talk"
+        "note": "let's talk",
+        "label_de": "Kontakt",
+        "note_de": "lass uns reden"
       }
     },
     {
       "type": "contactForm",
       "props": {
         "impressumLabel": "Impressum",
-        "impressumText": "Angaben gemäß § 5 TMG\n\nTom Nüßer\nBreedlandweg 27\n24944 Flensburg\nDeutschland\n\nUmsatzsteuer-Identifikationsnummer:\nNicht vorhanden.\n\nVerantwortlich für den Inhalt nach § 18 MStV:\nTom Nüßer\nBreedlandweg 27\n24944 Flensburg"
+        "impressumText": "Angaben gemäß § 5 TMG\n\nTom Nüßer\nBreedlandweg 27\n24944 Flensburg\nDeutschland\n\nUmsatzsteuer-Identifikationsnummer:\nNicht vorhanden.\n\nVerantwortlich für den Inhalt nach § 18 MStV:\nTom Nüßer\nBreedlandweg 27\n24944 Flensburg",
+        "impressumLabel_de": "Impressum"
       }
     }
   ]

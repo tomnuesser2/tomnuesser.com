@@ -3,9 +3,9 @@ import { h } from '../core/dom.js';
 export default {
   type: 'projectHead', label: 'Projekt-Kopf (Titel + Eckdaten)',
   fields: [
-    { name: 'back', label: 'Text „zurück“-Link', type: 'text', default: '← all projects' },
+    { name: 'back', label: 'Text „zurück“-Link', type: 'text', default: '← all projects', de: '← alle Projekte' },
     { name: 'title', label: 'Titel', type: 'textarea', default: '' },
-    { name: 'meta', label: 'Eckdaten (eine pro Zeile, Format „Rolle: Wert“)', type: 'textarea', default: 'Role: Videography\nPlace: Flensburg\nYear: 2026' },
+    { name: 'meta', label: 'Eckdaten (eine pro Zeile, Format „Rolle: Wert“)', type: 'textarea', default: 'Role: Videography\nPlace: Flensburg\nYear: 2026', de: 'Rolle: Videografie\nOrt: Flensburg\nJahr: 2026' },
   ],
   render(p) {
     const meta = String(p.meta || '').split('\n').map(l => l.trim()).filter(Boolean).map(l => { const i = l.indexOf(':'); return i > 0 ? [l.slice(0, i), l.slice(i + 1).trim()] : ['', l]; });

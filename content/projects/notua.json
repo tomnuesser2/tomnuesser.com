@@ -17,7 +17,9 @@
       }
     ],
     "anim": "expand",
-    "category": "code"
+    "category": "code",
+    "summary_de": "Meine eigene Planungs- und Mindmap-App für Kreative: endlose Boards für Notizen, Tabellen, Aufgaben, Widgets und Boards in Boards – mit einem Look, den du dir zu eigen machen kannst.",
+    "roles_de": "Design, Entwicklung, UI"
   },
   "blocks": [
     {
@@ -25,7 +27,10 @@
       "props": {
         "back": "← all projects",
         "title": "NOTUA",
-        "meta": "Role: Concept, design & development\nPlatforms: Web, desktop (Windows), Android\nLink: notua.site"
+        "meta": "Role: Concept, design & development\nPlatforms: Web, desktop (Windows), Android\nLink: notua.site",
+        "back_de": "← alle Projekte",
+        "title_de": "NOTUA",
+        "meta_de": "Rolle: Konzept, Design & Entwicklung\nPlattformen: Web, Desktop (Windows), Android\nLink: notua.site"
       }
     },
     {
@@ -42,7 +47,9 @@
       "type": "projectText",
       "props": {
         "heading": "The most powerful creative planning app",
-        "text": "NOTUA is a board app I designed and programmed myself. On one endless canvas you collect notes, tables, tasks and widgets, sort them, connect them and turn loose ideas into structured projects – from film scripts and shot lists to mind maps and whole campaigns.\n\nIt runs in the browser, as a desktop app and on Android."
+        "text": "NOTUA is a board app I designed and programmed myself. On one endless canvas you collect notes, tables, tasks and widgets, sort them, connect them and turn loose ideas into structured projects – from film scripts and shot lists to mind maps and whole campaigns.\n\nIt runs in the browser, as a desktop app and on Android.",
+        "heading_de": "Die mächtigste Planungs-App für Kreative",
+        "text_de": "NOTUA ist eine Board-App, die ich selbst gestaltet und programmiert habe. Auf einer endlosen Fläche sammelst du Notizen, Tabellen, Aufgaben und Widgets, sortierst und verbindest sie und machst aus losen Ideen strukturierte Projekte – von Filmskripten und Shotlists bis zu Mindmaps und ganzen Kampagnen.\n\nSie läuft im Browser, als Desktop-App und auf Android."
       }
     },
     {
@@ -59,7 +66,9 @@
       "type": "projectText",
       "props": {
         "heading": "Everything on one board",
-        "text": "Notes, tables and tasks sit next to images, YouTube videos and Spotify playlists as widgets. Boards can contain boards, so every project gets its own space without losing the big picture."
+        "text": "Notes, tables and tasks sit next to images, YouTube videos and Spotify playlists as widgets. Boards can contain boards, so every project gets its own space without losing the big picture.",
+        "heading_de": "Alles auf einem Board",
+        "text_de": "Notizen, Tabellen und Aufgaben liegen neben Bildern, YouTube-Videos und Spotify-Playlists als Widgets. Boards können Boards enthalten, sodass jedes Projekt seinen eigenen Raum bekommt, ohne dass der Überblick verloren geht."
       }
     },
     {
@@ -86,7 +95,9 @@
       "type": "projectText",
       "props": {
         "heading": "A look that is yours",
-        "text": "The Look Finder lets everyone restyle NOTUA: colour world, light or dark mode, corner radius from sharp to pill, font, shadow, border and board background. The interface is not a fixed product – it adapts to the person using it."
+        "text": "The Look Finder lets everyone restyle NOTUA: colour world, light or dark mode, corner radius from sharp to pill, font, shadow, border and board background. The interface is not a fixed product – it adapts to the person using it.",
+        "heading_de": "Ein Look, der dir gehört",
+        "text_de": "Mit dem Look Finder gestaltet jeder NOTUA um: Farbwelt, heller oder dunkler Modus, Eckenradius von eckig bis pillenrund, Schrift, Schatten, Rahmen und Board-Hintergrund. Die Oberfläche ist kein starres Produkt – sie passt sich dem Menschen an, der sie nutzt."
       }
     },
     {
@@ -97,7 +108,10 @@
     },
     {
       "type": "projectNext",
-      "props": {}
+      "props": {
+        "label_de": "nächstes Projekt"
+      }
     }
-  ]
+  ],
+  "title_de": "NOTUA"
 }

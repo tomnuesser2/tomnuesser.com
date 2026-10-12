@@ -17,7 +17,8 @@
         "src": "media/norder-2.jpg"
       }
     ],
-    "category": "code"
+    "category": "code",
+    "summary_de": "Das Bild entschlüsselt sich aus einem groben Mosaik in volle Auflösung."
   },
   "blocks": [
     {
@@ -32,8 +33,10 @@
         "text": "Project 9 – pixel",
         "level": 1,
         "align": "center",
-        "bold": false
+        "bold": false,
+        "text_de": "Projekt 9 – Pixel"
       }
     }
-  ]
+  ],
+  "title_de": "Projekt 9 – Pixel"
 }

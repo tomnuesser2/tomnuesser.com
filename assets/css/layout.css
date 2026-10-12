@@ -112,3 +112,41 @@ main { min-height: 100vh; padding-top: var(--header-h); }
 .jump { position: fixed; inset: 0; z-index: 90; background: #0b0b0c; color: #fff; display: grid; place-items: center; pointer-events: all; clip-path: inset(100% 0 0 0); }
 .jump__n { position: absolute; left: var(--gutter, 20px); top: 22px; font: 13px/1 ui-monospace, Menlo, Consolas, monospace; opacity: .5; }
 .jump__w { font-size: clamp(34px, 9vw, 120px); font-weight: 700; letter-spacing: -.04em; text-transform: lowercase; }
+
+/* Sehr schmale Handys: Menü nie abschneiden */
+@media (max-width: 899px) { .pill, .mnav { max-width: calc(100vw - 16px); } }
+@media (max-width: 359px) {
+  .pill a { font-size: 10px; padding: 10px 6px 11px; }
+  .mnav__a { min-width: 34px; padding: 0 6px; }
+  .mnav__a.is-active { padding: 0 9px 0 8px; }
+  .mnav__a.is-active .mnav__l { max-width: 64px; font-size: 12px; }
+}
+
+/* ---------- Sprachumschalter (DE / EN) ---------- */
+.lang { display: inline-flex; align-items: center; gap: 2px; font-size: 12px; line-height: 1; letter-spacing: .04em; }
+.lang span { opacity: .35; }
+.lang__b { background: none; border: 0; padding: 7px 5px; cursor: pointer; color: inherit; font: inherit; opacity: .5; border-radius: 6px; transition: opacity .25s; }
+.lang__b:hover { opacity: 1; }
+.lang__b[aria-pressed="true"] { opacity: 1; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.lang--head { pointer-events: auto; position: absolute; top: calc(18px + env(safe-area-inset-top)); right: calc(var(--gutter) - 5px); color: #000; transition: color .3s, opacity .35s; z-index: 2; }
+.site-header.over-dark .lang--head, .site-header.over-fl-dark .lang--head { color: #fff; }
+.lang--menu { position: absolute; left: var(--gutter); bottom: calc(26px + env(safe-area-inset-bottom)); color: var(--ink, #000); font-size: 14px; z-index: 3; }
+.lang--foot { margin: 10px 0 0; justify-content: center; color: inherit; }
+.site-footer { text-align: center; }
+@media (min-width: 900px) {
+  .lang--head { top: 28px; font-size: 13px; }
+  .pill { margin-left: -64px; }
+}
+.lang--intro { position: fixed; top: calc(18px + env(safe-area-inset-top)); right: calc(var(--gutter) - 5px); color: #000; z-index: 5; }
+
+/* ---------- Große Button-Pille ("my recent work") ---------- */
+.cta { display: inline-flex; align-items: center; justify-content: center; gap: 14px; max-width: 100%; background: #000; color: #fff; border-radius: 999px; padding: 19px 22px 19px 32px; font-size: clamp(16px, 4.4vw, 19px); font-weight: 600; line-height: 1.1; letter-spacing: -.01em; text-align: center; transition: transform .45s var(--ease), box-shadow .45s var(--ease), background .3s; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+.cta i { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #fff; color: #000; font-style: normal; font-size: 18px; flex: none; transition: transform .45s var(--ease); }
+@media (hover: hover) { .cta:hover { transform: translateY(-3px); box-shadow: 0 16px 38px rgba(0,0,0,.26); } .cta:hover i { transform: translateX(4px); } }
+.cta--light { background: #fff; color: #05070d; box-shadow: 0 10px 34px rgba(0,0,0,.4); } .cta--light i { background: #05070d; color: #fff; }
+.dd__cta { display: flex; width: fit-content; margin: 56px auto 0; }
+.kn__cta { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); z-index: 6; opacity: clamp(0, calc((var(--e) - .6) * 3), 1); pointer-events: auto; white-space: nowrap; }
+@media (hover: hover) { .kn__cta:hover { transform: translateX(-50%) translateY(-3px); } }
+@media (max-width: 899px) { .kn__cta { bottom: calc(92px + env(safe-area-inset-bottom)); font-size: 16px; padding: 16px 18px 16px 26px; max-width: calc(100vw - 32px); } .dd__cta { margin-top: 40px; } }
+@media (max-width: 899px) { .kn__cta { white-space: normal; width: max-content; max-width: calc(100vw - 32px); } }
+@media (max-width: 359px) { .mnav__a.is-active .mnav__l { max-width: 82px; font-size: 11.5px; } .kn__cta { font-size: 15px; padding: 14px 14px 14px 22px; gap: 10px; } .cta i { width: 30px; height: 30px; } }

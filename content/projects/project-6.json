@@ -18,7 +18,8 @@
       }
     ],
     "category": "social",
-    "hidden": true
+    "hidden": true,
+    "summary_de": "Test der Kreis-Enthüllung. Text, Bilder und Animation im Admin ersetzen."
   },
   "blocks": [
     {
@@ -33,8 +34,10 @@
         "text": "Project 6 – iris",
         "level": 1,
         "align": "center",
-        "bold": false
+        "bold": false,
+        "text_de": "Projekt 6 – Iris"
       }
     }
-  ]
+  ],
+  "title_de": "Projekt 6 – Iris"
 }

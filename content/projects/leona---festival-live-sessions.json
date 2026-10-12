@@ -20,7 +20,9 @@
       }
     ],
     "anim": "expand",
-    "category": "video"
+    "category": "video",
+    "summary_de": "Filmische Live-Session-Videos für LEONAs Festivalbewerbungen und Kampagne, gedreht im Deutschen Haus in Flensburg.",
+    "roles_de": "Videografie, Multicam, Postproduktion"
   },
   "blocks": [
     {
@@ -28,7 +30,10 @@
       "props": {
         "back": "← all projects",
         "title": "LEONA – festival live sessions",
-        "meta": "Role: Videography, editing, grading\nPlace: Deutsches Haus, Flensburg\nCameras: Sony FX3, Sony A7 IV\nYear: 2026"
+        "meta": "Role: Videography, editing, grading\nPlace: Deutsches Haus, Flensburg\nCameras: Sony FX3, Sony A7 IV\nYear: 2026",
+        "back_de": "← alle Projekte",
+        "title_de": "LEONA – Festival-Live-Sessions",
+        "meta_de": "Rolle: Videografie, Schnitt, Color Grading\nOrt: Deutsches Haus, Flensburg\nKameras: Sony FX3, Sony A7 IV\nJahr: 2026"
       }
     },
     {
@@ -46,7 +51,9 @@
       "type": "projectText",
       "props": {
         "heading": "Working with LEONA",
-        "text": "To support LEONA's festival applications and promotional campaign, I produced a series of cinematic live session videos that captured the atmosphere and emotion of her music. Filmed at the Deutsches Haus in Flensburg, the goal was to create an intimate performance setting that felt authentic while delivering high-end visual quality for festivals, promoters, and booking agencies.\n\nThe production was filmed using a multicam setup with the Sony FX3 and Sony A7 IV. Audio was recorded separately, professionally mixed and mastered, and then synchronized with the footage in post-production. I was responsible for the complete video production workflow - from camera setup and filming to editing, color grading, and the final delivery of the live session videos."
+        "text": "To support LEONA's festival applications and promotional campaign, I produced a series of cinematic live session videos that captured the atmosphere and emotion of her music. Filmed at the Deutsches Haus in Flensburg, the goal was to create an intimate performance setting that felt authentic while delivering high-end visual quality for festivals, promoters, and booking agencies.\n\nThe production was filmed using a multicam setup with the Sony FX3 and Sony A7 IV. Audio was recorded separately, professionally mixed and mastered, and then synchronized with the footage in post-production. I was responsible for the complete video production workflow - from camera setup and filming to editing, color grading, and the final delivery of the live session videos.",
+        "heading_de": "Zusammenarbeit mit LEONA",
+        "text_de": "Für LEONAs Festivalbewerbungen und ihre Werbekampagne habe ich eine Reihe filmischer Live-Session-Videos produziert, die die Atmosphäre und Emotion ihrer Musik einfangen. Gedreht wurde im Deutschen Haus in Flensburg. Ziel war ein intimes, authentisches Konzertsetting mit hochwertiger Bildqualität für Festivals, Veranstalter und Bookingagenturen.\n\nGedreht wurde mit einem Multicam-Setup aus Sony FX3 und Sony A7 IV. Der Ton wurde separat aufgenommen, professionell gemischt und gemastert und in der Postproduktion mit dem Bild synchronisiert. Ich war für den kompletten Videoworkflow verantwortlich – vom Kamera-Setup über den Dreh bis zu Schnitt, Color Grading und der finalen Lieferung der Live-Session-Videos."
       }
     },
     {
@@ -83,7 +90,10 @@
     },
     {
       "type": "projectNext",
-      "props": {}
+      "props": {
+        "label_de": "nächstes Projekt"
+      }
     }
-  ]
+  ],
+  "title_de": "LEONA – Festival-Live-Sessions"
 }

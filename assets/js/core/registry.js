@@ -2,6 +2,7 @@
 // Neuen Block hinzufügen = Datei in assets/js/blocks/ anlegen + hier eine Zeile ergänzen.
 // Jeder Block exportiert { type, label, fields, render(props, ctx) } – das Admin-Backend
 // liest `fields`, um automatisch das passende Formular zu bauen.
+import { localize, getLang } from './i18n.js';
 import spacer from '../blocks/spacer.js';
 import heading from '../blocks/heading.js';
 import text from '../blocks/text.js';
@@ -36,7 +37,9 @@ export function renderBlocks(list = [], ctx) {
     const def = byType.get(item.type);
     if (!def) { console.warn(`[blocks] unbekannter Block-Typ: ${item.type}`); continue; }
     try {
-      const el = def.render({ ...(item.props || {}), id: item.id }, ctx);
+      const props = localize(item.props || {});
+      if (getLang() === 'de') for (const f of def.fields || []) if (f.de !== undefined && props[f.name] === undefined) props[f.name] = f.de;
+      const el = def.render({ ...props, id: item.id }, ctx);
       if (el) { if (el.nodeType === 1) el.dataset.bi = String(bi); frag.append(el); }
     } catch (err) {
       console.error(`[blocks] Fehler in "${item.type}"`, err);

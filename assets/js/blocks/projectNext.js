@@ -2,7 +2,7 @@ import { h } from '../core/dom.js';
 // Projektseite: Link zum nächsten Projekt (aus der Projektliste).
 export default {
   type: 'projectNext', label: 'Nächstes Projekt (automatisch)',
-  fields: [{ name: 'label', label: 'Beschriftung', type: 'text', default: 'next project' }],
+  fields: [{ name: 'label', label: 'Beschriftung', type: 'text', default: 'next project', de: 'nächstes Projekt' }],
   render(p, ctx) {
     const idx = ctx.content.index, list = (idx.order || []).filter(s => idx.projects[s] && !idx.projects[s].hidden);
     const i = list.indexOf(ctx.route); const next = list[(i + 1) % list.length]; if (!next || next === ctx.route) return null;

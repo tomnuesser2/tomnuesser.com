@@ -435,8 +435,8 @@ function mount(root, OPT) {
     for (const pl of planes.slice().reverse()) {
       if (!pl.tex) continue; const z = -pl.i * SP, d = camZ - z; if (Math.abs(f - pl.i) < nd) { nd = Math.abs(f - pl.i); near = pl.i; }
       if (d < .5 || d > 16) continue;
-      const wN = narrow(); const [bx, by] = cardPos(pl.i); const ev = ENT[pl.i % ENT.length], ek = pl.i === 0 ? 0 : (t0k = clamp((d - 3.4) / 7), t0k * t0k * (3 - 2 * t0k)), sc2 = wN ? .38 : 1, x = bx + ev[0] * ek * sc2, y = by + ev[1] * ek * sc2;
-      const isL = pl.i === lookIdx; const wd = pl.logo ? (wN ? .95 : 1.3) : isL ? (wN ? 1.5 : 2.7) : (wN ? 1.12 : 2.2), ht = wd / pl.ratio;
+      const wN = narrow(); const [bx, by] = cardPos(pl.i); const ev = ENT[pl.i % ENT.length], ek = pl.i === 0 ? 0 : (t0k = clamp((d - 3.4) / 7), t0k * t0k * (3 - 2 * t0k)), sc2 = wN ? .3 : 1, x = bx + ev[0] * ek * sc2, y = by + ev[1] * ek * sc2;
+      const isL = pl.i === lookIdx; const wd = pl.logo ? (wN ? Math.min(.9, 1.5 * asp) : 1.3) : isL ? (wN ? Math.min(1.3, 2.6 * asp) : 2.7) : (wN ? Math.min(1.0, 2.1 * asp) : 2.2), ht = wd / pl.ratio;
       const ang = pl.logo || isL ? ev[0] * ek * -.12 : (wN ? .05 : .22) * -pl.side + Math.sin(t * .6 + pl.i) * .02;
       const m = M.mul(M.mul(M.tr(x, y, z), M.mul(M.ry(ang), pl.logo ? M.rz(Math.sin(t * .5) * .04) : M.rz(ev[1] * ek * .1))), M.sc(wd, ht, 1));
       const fade = clamp((d - .5) / 1.3) * clamp(1 - (d - 8) / 8);
@@ -464,31 +464,31 @@ const IMG = [{ name: 'src', label: 'Bild', type: 'image' }];
 export default {
   type: 'notuaFlight', label: 'NOTUA-Flug (meine eigene App, 3D)',
   fields: [
-    { name: 'title', label: 'Titel am Anfang', type: 'text', default: 'NOTUA – the most powerful creative planning & mind-map app.' },
-    { name: 'text', label: 'Text am Anfang (was kann NOTUA, wofür ist es?)', type: 'textarea', default: 'Plan projects, sort ideas and connect them on one endless board: notes, tables, tasks, widgets and boards inside boards. Made by me – free to use.' },
-    { name: 'endTitle', label: 'Titel am Ende', type: 'text', default: 'Built, shipped, free to use.' },
-    { name: 'endText', label: 'Text am Ende', type: 'textarea', default: 'Runs in the browser, as a desktop app and on Android.' },
-    { name: 'linkText', label: 'Button 1: Text (öffnet die App)', type: 'text', default: 'open NOTUA ↗' },
+    { name: 'title', label: 'Titel am Anfang', type: 'text', default: 'NOTUA – the most powerful creative planning & mind-map app.', de: 'NOTUA – die mächtigste Planungs- und Mindmap-App für Kreative.' },
+    { name: 'text', label: 'Text am Anfang (was kann NOTUA, wofür ist es?)', type: 'textarea', default: 'Plan projects, sort ideas and connect them on one endless board: notes, tables, tasks, widgets and boards inside boards. Made by me – free to use.', de: 'Plane Projekte, sortiere Ideen und verbinde sie auf einem endlosen Board: Notizen, Tabellen, Aufgaben, Widgets und Boards in Boards. Von mir gebaut – kostenlos nutzbar.' },
+    { name: 'endTitle', label: 'Titel am Ende', type: 'text', default: 'Built, shipped, free to use.', de: 'Gebaut, veröffentlicht, kostenlos.' },
+    { name: 'endText', label: 'Text am Ende', type: 'textarea', default: 'Runs in the browser, as a desktop app and on Android.', de: 'Läuft im Browser, als Desktop-App und auf Android.' },
+    { name: 'linkText', label: 'Button 1: Text (öffnet die App)', type: 'text', default: 'open NOTUA ↗', de: 'NOTUA öffnen ↗' },
     { name: 'linkUrl', label: 'Button 1: Link', type: 'text', default: 'https://notua.site/' },
-    { name: 'projectText', label: 'Button 2: Text (führt zur NOTUA-Projektseite)', type: 'text', default: 'view the project →' },
+    { name: 'projectText', label: 'Button 2: Text (führt zur NOTUA-Projektseite)', type: 'text', default: 'view the project →', de: 'zum Projekt →' },
     { name: 'projectUrl', label: 'Button 2: Projekt (Name der Projektseite, z. B. notua)', type: 'text', default: 'notua' },
-    { name: 'sub', label: 'Kleine Zeile unter den Buttons (am Ende)', type: 'text', default: 'web · desktop · android' },
-    { name: 'hint', label: 'Hinweis „scroll“', type: 'text', default: 'scroll to fly' },
+    { name: 'sub', label: 'Kleine Zeile unter den Buttons (am Ende)', type: 'text', default: 'web · desktop · android', de: 'Web · Desktop · Android' },
+    { name: 'hint', label: 'Hinweis „scroll“', type: 'text', default: 'scroll to fly', de: 'scrollen und fliegen' },
     { name: 'logo', label: 'NOTUA-Logo (Bild)', type: 'image', default: 'media/notua-logo.png' },
-    { name: 'featureText', label: 'Stationen: Titel | Beschreibung (eine Zeile je Station, Reihenfolge: Notes, Tables, Tasks, Widgets, Boards, Your look)', type: 'textarea', default: DEF.featureText },
-    { name: 'notes', label: 'Notes-Karte: Text (eine Zeile pro Zeile; wird getippt, 1. Zeile = Titel)', type: 'textarea', default: DEF.notes },
-    { name: 'tableTitle', label: 'Table-Karte: Titel', type: 'text', default: DEF.tableTitle },
-    { name: 'table', label: 'Table-Karte: Zeilen (Zellen mit Komma trennen, max. 4 Zeilen/4 Spalten)', type: 'textarea', default: DEF.table },
-    { name: 'tasksTitle', label: 'Tasks-Karte: Titel', type: 'text', default: DEF.tasksTitle },
-    { name: 'tasks', label: 'Tasks-Karte: Aufgaben (Zeile mit „x “ am Anfang = wird abgehakt)', type: 'textarea', default: DEF.tasks },
+    { name: 'featureText', label: 'Stationen: Titel | Beschreibung (eine Zeile je Station, Reihenfolge: Notes, Tables, Tasks, Widgets, Boards, Your look)', type: 'textarea', default: DEF.featureText, de: 'Notizen | Halte Ideen fest, sobald sie auftauchen – Skripte, Shot-Notizen, Gedanken. Alles liegt auf einer endlosen Fläche.\nTabellen | Szenenübersicht, Budget, Zeitplan – übersichtlich in Zellen.\nAufgaben | Hak ab, was erledigt ist, und behalte den Rest im Blick.\nWidgets | Pinne Bilder, YouTube-Videos und Spotify-Playlists direkt neben deine Ideen.\nBoards | Boards in Boards – jedes Projekt bekommt seinen eigenen Raum.\nDein Look | Mach es zu deinem: Farbwelt, hell oder dunkel, Ecken, Schatten, Rahmen und Schrift. Dann behalte den Look.' },
+    { name: 'notes', label: 'Notes-Karte: Text (eine Zeile pro Zeile; wird getippt, 1. Zeile = Titel)', type: 'textarea', default: DEF.notes, de: 'Skript-Intro\n– Hook in 3 Sek.\n– Szene 1: Werkstatt\n– Szene 2: Interview' },
+    { name: 'tableTitle', label: 'Table-Karte: Titel', type: 'text', default: DEF.tableTitle, de: 'Szenenübersicht' },
+    { name: 'table', label: 'Table-Karte: Zeilen (Zellen mit Komma trennen, max. 4 Zeilen/4 Spalten)', type: 'textarea', default: DEF.table, de: 'Intro, 0:12, Totale\nWerkstatt, 0:28, Nahaufnahme\nInterview, 0:45, Halbnah' },
+    { name: 'tasksTitle', label: 'Tasks-Karte: Titel', type: 'text', default: DEF.tasksTitle, de: 'Aufgaben' },
+    { name: 'tasks', label: 'Tasks-Karte: Aufgaben (Zeile mit „x “ am Anfang = wird abgehakt)', type: 'textarea', default: DEF.tasks, de: 'x Material sichten\nx Rohschnitt\nx Color Grading\nSounddesign\nExport in 4K' },
     { name: 'images', label: 'Widgets-Karte: 3 Bilder – 1 = Bild-Widget, 2 = YouTube-Vorschau, 3 = Spotify-Cover', type: 'list', itemFields: IMG },
     { name: 'wImgText', label: 'Widgets: Beschriftung Bild', type: 'text', default: DEF.wImgText },
-    { name: 'wYtText', label: 'Widgets: YouTube-Titel', type: 'text', default: DEF.wYtText },
-    { name: 'wSpText', label: 'Widgets: Spotify-Titel', type: 'text', default: DEF.wSpText },
+    { name: 'wYtText', label: 'Widgets: YouTube-Titel', type: 'text', default: DEF.wYtText, de: 'Hinter den Kulissen' },
+    { name: 'wSpText', label: 'Widgets: Spotify-Titel', type: 'text', default: DEF.wSpText, de: 'Late-Night-Mix' },
     { name: 'wSpSub', label: 'Widgets: Spotify-Untertitel', type: 'text', default: DEF.wSpSub },
     { name: 'boardsTitle', label: 'Boards-Karte: Titel', type: 'text', default: DEF.boardsTitle },
-    { name: 'boards', label: 'Boards-Karte: Namen der Boards (mit | trennen, max. 3)', type: 'text', default: DEF.boards },
-    { name: 'subBoards', label: 'Boards-Karte: Unter-Boards im ersten Board (mit | trennen)', type: 'text', default: DEF.subBoards },
+    { name: 'boards', label: 'Boards-Karte: Namen der Boards (mit | trennen, max. 3)', type: 'text', default: DEF.boards, de: 'Shoot 2026 | Kunden | Ideen' },
+    { name: 'subBoards', label: 'Boards-Karte: Unter-Boards im ersten Board (mit | trennen)', type: 'text', default: DEF.subBoards, de: 'Tag 1 | Tag 2 | B-Roll' },
     { name: 'cBg', label: 'Basis-Look: Hintergrund (Hex)', type: 'text', default: '#E7EAEE' },
     { name: 'cDot', label: 'Basis-Look: Punktraster (Hex)', type: 'text', default: '#C6CCD4' },
     { name: 'cSurface', label: 'Basis-Look: Karten (Hex)', type: 'text', default: '#FFFFFF' },

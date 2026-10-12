@@ -16,7 +16,7 @@ export async function buildIndex(root) {
     const p = JSON.parse(await fs.readFile(path.join(dir, `${s}.json`), 'utf8'));
     const c = p.card || {};
     projects[s] = {
-      title: p.title || s, image: c.image || '', vimeo: c.vimeo || '', ratio: c.ratio || '16/9', group: c.group ?? 1, hidden: !!c.hidden,
+      title: p.title || s, title_de: p.title_de || '', summary_de: c.summary_de || '', roles_de: c.roles_de || '', image: c.image || '', vimeo: c.vimeo || '', ratio: c.ratio || '16/9', group: c.group ?? 1, hidden: !!c.hidden,
       summary: c.summary || '', anim: c.anim || 'expand', roles: c.roles || '', category: c.category || 'video', cam: c.cam || '',
       stills: (c.stills || []).map(x => (typeof x === 'string' ? x : x?.src)).filter(Boolean),
     };

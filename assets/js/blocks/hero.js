@@ -5,13 +5,13 @@ import { isFinePointer } from '../core/dom.js';
 export default {
   type: 'hero', label: 'Hero (Karten + Titel)',
   fields: [
-    { name: 'title', label: 'Überschrift (eine Zeile pro Umbruch – die Zeilen leuchten nacheinander auf)', type: 'textarea', default: 'videographer,\ndesigner &\ndeveloper.' },
+    { name: 'title', label: 'Überschrift (eine Zeile pro Umbruch – die Zeilen leuchten nacheinander auf)', type: 'textarea', default: 'videographer,\ndesigner &\ndeveloper.', de: 'Videograf,\nDesigner &\nEntwickler.' },
     { name: 'titleSize', label: 'Größe der Überschrift', type: 'select', options: ['s', 'm', 'l', 'xl'], default: 'l' },
     { name: 'cycle', label: 'Zeilen nacheinander aufleuchten lassen', type: 'checkbox', default: true },
     { name: 'subtitle', label: 'Unterschrift (optional)', type: 'text', default: '' },
     { name: 'subSize', label: 'Größe der Unterschrift', type: 'select', options: ['s', 'm', 'l'], default: 'm' },
     { name: 'text', label: 'Textfeld (optional)', type: 'textarea', default: '' },
-    { name: 'cue', label: 'Hinweis unten', type: 'text', default: 'scroll' },
+    { name: 'cue', label: 'Hinweis unten', type: 'text', default: 'scroll', de: 'scrollen' },
     { name: 'cards', label: 'Anzahl Karten (aus den ersten Projekten)', type: 'number', default: 4 },
   ],
   render(p0, ctx) {

@@ -18,6 +18,8 @@ export default {
     { name: 'poster', label: 'Vorschaubild für das Video (optional)', type: 'image', default: '' },
     { name: 'dim', label: 'Abdunklung über dem Video in % (0–90)', type: 'number', default: 45 },
     { name: 'size', label: 'Schriftgröße', type: 'select', options: ['m', 'l', 'xl'], default: 'l' },
+    { name: 'ctaText', label: 'Button unten in der Mitte: Text (bleibt beim Scrollen im Bild; leer = kein Button)', type: 'text', default: 'my recent design work', de: 'meine aktuellen Design-Arbeiten' },
+    { name: 'ctaLink', label: 'Button unten: Ziel (Seite, z. B. projects)', type: 'text', default: 'projects' },
     { name: 'accent', label: 'Akzentfarbe (Hex)', type: 'text', default: '#ff2d2d' },
   ],
   render(p0) {
@@ -32,7 +34,8 @@ export default {
     if (vid) { vid.muted = true; vid.defaultMuted = true; }
     const cv = p.frames ? h('canvas', { class: 'kn__cv' }) : null;
     const clip = h('div', { class: `kn__clip is-${p.size}${vid || cv ? ' has-vid' : ''}`, style: { '--dim': String((Number(p.dim) || 0) / 100) } }, vid, cv, shapes, wEls);
-    const stage = h('div', { class: 'kn__stage', style: { '--accent': p.accent || '#ff2d2d' } }, clip);
+    const cta = p.ctaText ? h('a', { class: 'cta cta--light kn__cta', href: p.ctaLink || 'projects', 'data-link': '' }, h('span', {}, p.ctaText), h('i', { 'aria-hidden': 'true' }, '→')) : null;
+    const stage = h('div', { class: 'kn__stage', style: { '--accent': p.accent || '#ff2d2d' } }, clip, cta);
     const L = Math.max(2, Number(p.length) || 6);
     const el = h('section', { class: 'kn', id: p.id, style: { '--n': n, '--len': L } }, h('div', { class: 'kn__track' }, stage));
     if (still()) { el.classList.add('is-still'); wEls.forEach((w, i) => { if (i) w.style.display = 'none'; }); stage.style.setProperty('--e', 1); return el; }

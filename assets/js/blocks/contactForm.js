@@ -1,3 +1,4 @@
+import { ui } from '../core/i18n.js';
 import { h, svg, paragraphs } from '../core/dom.js';
 import { ICONS } from './socials.js';
 import { isFinePointer } from '../core/dom.js';
@@ -6,16 +7,16 @@ export default {
   type: 'contactForm',
   label: 'Kontakt (Formular + Impressum-Button)',
   fields: [
-    { name: 'title', label: 'Überschrift', type: 'textarea', default: 'Got a story?\nLet’s make it move.' },
-    { name: 'text', label: 'Text', type: 'textarea', default: 'Film, design or a website – tell me what you have in mind and I will get back to you.' },
-    { name: 'nameLabel', label: 'Feld „Name“', type: 'text', default: 'Your name' },
-    { name: 'emailLabel', label: 'Feld „E-Mail“', type: 'text', default: 'Your email' },
-    { name: 'messageLabel', label: 'Feld „Nachricht“', type: 'text', default: 'Your message' },
-    { name: 'sendLabel', label: 'Button-Text', type: 'text', default: 'Send ↗' },
-    { name: 'sendingLabel', label: 'Text beim Senden', type: 'text', default: 'Sending…' },
-    { name: 'okText', label: 'Meldung: gesendet', type: 'text', default: 'Thank you — your message has been sent.' },
-    { name: 'errText', label: 'Meldung: Fehler', type: 'text', default: 'Something went wrong. Please try again later.' },
-    { name: 'fillText', label: 'Meldung: Felder fehlen', type: 'text', default: 'Please fill in all fields.' },
+    { name: 'title', label: 'Überschrift', type: 'textarea', default: 'Got a story?\nLet’s make it move.', de: 'Du hast eine Story?\nLass uns Bewegung reinbringen.' },
+    { name: 'text', label: 'Text', type: 'textarea', default: 'Film, design or a website – tell me what you have in mind and I will get back to you.', de: 'Film, Design oder Website – erzähl mir, was du vorhast, und ich melde mich bei dir.' },
+    { name: 'nameLabel', label: 'Feld „Name“', type: 'text', default: 'Your name', de: 'Dein Name' },
+    { name: 'emailLabel', label: 'Feld „E-Mail“', type: 'text', default: 'Your email', de: 'Deine E-Mail' },
+    { name: 'messageLabel', label: 'Feld „Nachricht“', type: 'text', default: 'Your message', de: 'Deine Nachricht' },
+    { name: 'sendLabel', label: 'Button-Text', type: 'text', default: 'Send ↗', de: 'Senden ↗' },
+    { name: 'sendingLabel', label: 'Text beim Senden', type: 'text', default: 'Sending…', de: 'Wird gesendet…' },
+    { name: 'okText', label: 'Meldung: gesendet', type: 'text', default: 'Thank you — your message has been sent.', de: 'Danke – deine Nachricht ist angekommen.' },
+    { name: 'errText', label: 'Meldung: Fehler', type: 'text', default: 'Something went wrong. Please try again later.', de: 'Da ist etwas schiefgelaufen. Bitte versuch es später noch einmal.' },
+    { name: 'fillText', label: 'Meldung: Felder fehlen', type: 'text', default: 'Please fill in all fields.', de: 'Bitte fülle alle Felder aus.' },
     { name: 'endpoint', label: 'Formular-Endpunkt (z. B. Formspree-URL) – leer = Wert aus Einstellungen', type: 'text', default: '' },
     { name: 'impressumLabel', label: 'Überschrift Impressum', type: 'text', default: 'Impressum' },
     { name: 'impressumText', label: 'Impressum-Text (Leerzeile = neuer Absatz) – steht rechts neben dem Formular', type: 'textarea', default: '' },
@@ -53,10 +54,10 @@ export default {
       if (!endpoint) {
         if (mailto) {
           const body = encodeURIComponent(`${data.get('message')}\n\n— ${data.get('name')} (${data.get('email')})`);
-          location.href = `mailto:${mailto}?subject=${encodeURIComponent('Message from ' + data.get('name'))}&body=${body}`;
+          location.href = `mailto:${mailto}?subject=${encodeURIComponent(ui('mailSubject') + data.get('name'))}&body=${body}`;
           return;
         }
-        note.textContent = 'The contact form is not connected yet.'; note.classList.add('is-error'); return;
+        note.textContent = ui('formOff'); note.classList.add('is-error'); return;
       }
       btn.disabled = true; btn.textContent = p.sendingLabel;
       try {

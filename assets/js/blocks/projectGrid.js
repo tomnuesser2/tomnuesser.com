@@ -1,3 +1,4 @@
+import { ui } from '../core/i18n.js';
 import { h } from '../core/dom.js';
 import { mediaEl, parseVimeo, parseYouTube, vimeoThumb } from '../core/media.js';
 import { pick, names } from '../scenes/index.js';
@@ -59,7 +60,7 @@ function renderIndex(p, ctx) {
   const n = list.length;
   const imgs = list.map((pr, i) => { const m = mediaNode(pr, i, 'wi__img'); return m; });
   const rows = list.map((pr, i) => h('a', { class: 'wi__row', href: pr.slug, 'data-link': '' }, h('span', { class: 'wi__n' }, pad(i + 1)), h('span', { class: 'wi__t' }, pr.title || pr.slug)));
-  const pane = h('a', { class: 'wi__pane', href: list[0]?.slug || '#', 'data-link': '', 'data-cursor': 'view', 'aria-label': 'open project' }, imgs, h('span', { class: 'scene__shade' }));
+  const pane = h('a', { class: 'wi__pane', href: list[0]?.slug || '#', 'data-link': '', 'data-cursor': 'view', 'aria-label': ui('openProject') }, imgs, h('span', { class: 'scene__shade' }));
   const meta = h('div', { class: 'wi__meta' }, h('p', { class: 'wi__roles' }), h('p', { class: 'wi__sum' }), h('a', { class: 'wi__cta', href: list[0]?.slug || '#', 'data-link': '' }, 'open project ↗'));
   const listEl = h('div', { class: 'wi__list' }, h('div', { class: 'wi__rows' }, rows));
   const stage = h('div', { class: 'wi__stage' }, pane, h('div', { class: 'wi__side' }, listEl, meta));

@@ -3,24 +3,29 @@
   "footer": "© tomnuesser. All rights reserved.",
   "intro": {
     "enabled": true,
-    "button": "enter"
+    "button": "enter",
+    "button_de": "eintreten"
   },
   "nav": [
     {
       "label": "videography",
-      "href": "home#video"
+      "href": "home#video",
+      "label_de": "Videografie"
     },
     {
       "label": "programming",
-      "href": "home#notua"
+      "href": "home#notua",
+      "label_de": "Programmierung"
     },
     {
       "label": "creative",
-      "href": "home#design"
+      "href": "home#design",
+      "label_de": "Kreatives"
     },
     {
       "label": "contact",
-      "href": "home#contact"
+      "href": "home#contact",
+      "label_de": "Kontakt"
     }
   ],
   "socials": [
@@ -65,5 +70,7 @@
   "location": {
     "label": "flensburg, de",
     "tz": "Europe/Berlin"
-  }
+  },
+  "footer_de": "© tomnuesser. Alle Rechte vorbehalten.",
+  "tagline_de": "Videograf · Designer · Entwickler"
 }

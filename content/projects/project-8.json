@@ -18,7 +18,8 @@
       }
     ],
     "category": "social",
-    "hidden": true
+    "hidden": true,
+    "summary_de": "Dolly-Zoom nach hinten mit Letterbox-Balken."
   },
   "blocks": [
     {
@@ -33,8 +34,10 @@
         "text": "Project 8 – pullback",
         "level": 1,
         "align": "center",
-        "bold": false
+        "bold": false,
+        "text_de": "Projekt 8 – Pullback"
       }
     }
-  ]
+  ],
+  "title_de": "Projekt 8 – Pullback"
 }

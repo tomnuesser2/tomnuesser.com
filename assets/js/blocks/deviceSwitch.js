@@ -13,14 +13,16 @@ const LIST = [
 export default {
   type: 'deviceSwitch', label: 'Short-form + Long-form (Smartphone & Laptop zusammen)',
   fields: [
-    { name: 'kicker', label: 'Kleine Zeile', type: 'text', default: 'video formats' },
+    { name: 'kicker', label: 'Kleine Zeile', type: 'text', default: 'video formats', de: 'Videoformate' },
     { name: 'front', label: 'Wer startet vorne?', type: 'select', options: ['phone', 'laptop'], default: 'phone' },
-    { name: 'shortTitle', label: 'Name Smartphone', type: 'text', default: 'Short-form' },
-    { name: 'shortText', label: 'Kurztext Smartphone', type: 'text', default: 'Vertical stories for Reels, Shorts & ads.' },
+    { name: 'shortTitle', label: 'Name Smartphone', type: 'text', default: 'Short-form', de: 'Short-Form' },
+    { name: 'shortText', label: 'Kurztext Smartphone', type: 'text', default: 'Vertical stories for Reels, Shorts & ads.', de: 'Hochkant-Stories für Reels, Shorts & Ads.' },
     { name: 'shortItems', label: 'Smartphone-Einträge (Hochformat; Reihenfolge = Ablauf)', type: 'list', itemFields: LIST },
-    { name: 'longTitle', label: 'Name Laptop', type: 'text', default: 'Long-form' },
-    { name: 'longText', label: 'Kurztext Laptop', type: 'text', default: 'Live sessions & event films in full length.' },
+    { name: 'longTitle', label: 'Name Laptop', type: 'text', default: 'Long-form', de: 'Long-Form' },
+    { name: 'longText', label: 'Kurztext Laptop', type: 'text', default: 'Live sessions & event films in full length.', de: 'Live-Sessions & Eventfilme in voller Länge.' },
     { name: 'longItems', label: 'Laptop-Einträge (Querformat; Reihenfolge = Ablauf)', type: 'list', itemFields: LIST },
+    { name: 'ctaText', label: 'Großer Button unten: Text (leer = kein Button)', type: 'text', default: 'my recent work', de: 'meine aktuellen Arbeiten' },
+    { name: 'ctaLink', label: 'Großer Button unten: Ziel (Seite, z. B. projects)', type: 'text', default: 'projects' },
     { name: 'auto', label: 'Automatisch durchschalten', type: 'checkbox', default: true },
   ],
   render(p0) {
@@ -40,7 +42,8 @@ export default {
     const k = h('p', { class: 'dd__k' }, p.kicker), gT = h('h2', { class: 'dd__h' }), gX = h('p', { class: 'dd__p' });
     const iT = h('h3', { class: 'dd__it' }), iX = h('p', { class: 'dd__ix' }), item = h('div', { class: 'dd__item' }, iT, iX);
     const sw = ['phone', 'laptop'].map(m => h('button', { type: 'button', class: 'dd__sw', 'data-m': m, 'aria-label': m === 'phone' ? p.shortTitle : p.longTitle }, h('i', {})));
-    const el = h('section', { class: 'dd', id: p.id }, h('div', { class: 'dd__stage' }, dev, h('div', { class: 'dd__copy' }, k, h('div', { class: 'dd__dots' }, sw), gT, gX, item)));
+    const cta = p.ctaText ? h('a', { class: 'cta dd__cta', href: p.ctaLink || 'projects', 'data-link': '', 'data-magnetic': '1' }, h('span', {}, p.ctaText), h('i', { 'aria-hidden': 'true' }, '→')) : null;
+    const el = h('section', { class: 'dd', id: p.id }, h('div', { class: 'dd__stage' }, dev, h('div', { class: 'dd__copy' }, k, h('div', { class: 'dd__dots' }, sw), gT, gX, item)), cta);
 
     // Screens aufbauen
     for (const m of ['phone', 'laptop']) {

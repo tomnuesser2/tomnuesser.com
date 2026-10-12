@@ -17,7 +17,8 @@
     ],
     "anim": "stack",
     "category": "video",
-    "hidden": true
+    "hidden": true,
+    "summary_de": "Platzhalter – Titel, Text und Bilder im Admin ersetzen."
   },
   "blocks": [
     {
@@ -32,8 +33,10 @@
         "text": "Project 4 – stack",
         "level": 1,
         "align": "center",
-        "bold": false
+        "bold": false,
+        "text_de": "Projekt 4 – Stack"
       }
     }
-  ]
+  ],
+  "title_de": "Projekt 4 – Stack"
 }

@@ -18,6 +18,9 @@
   "projects": {
     "flensburg-akademie": {
       "title": "working @\nFlensburg Akademie",
+      "title_de": "arbeiten @\nFlensburg Akademie",
+      "summary_de": "Werkstudent: Social-Media-Management, Fotografie, Content Creation und Grafikdesign.",
+      "roles_de": "Social Media, Fotografie, Grafikdesign",
       "image": "https://dvqlxo2m2q99q.cloudfront.net/000_clients/4284868/page/6-87fd38.png",
       "vimeo": "",
       "ratio": "16/9",
@@ -32,6 +35,9 @@
     },
     "garden-festival-2026": {
       "title": "Gården Festival 2026",
+      "title_de": "Gården Festival 2026",
+      "summary_de": "Foto- und Videobegleitung für das Qrue Collective und Festival-Künstler beim Gården Festival in Tydal, Eggebek.",
+      "roles_de": "Videografie, Fotografie, Festival",
       "image": "media/stage-purple.jpg",
       "vimeo": "",
       "ratio": "16/9",
@@ -49,6 +55,9 @@
     },
     "leona---festival-live-sessions": {
       "title": "LEONA – festival live sessions",
+      "title_de": "LEONA – Festival-Live-Sessions",
+      "summary_de": "Filmische Live-Session-Videos für LEONAs Festivalbewerbungen und Kampagne, gedreht im Deutschen Haus in Flensburg.",
+      "roles_de": "Videografie, Multicam, Postproduktion",
       "image": "media/leona-live.jpg",
       "vimeo": "",
       "ratio": "16/9",
@@ -67,6 +76,9 @@
     },
     "norder147-x-canim3denim---upcycling-workshop": {
       "title": "norder147 x canim3denim –\nupcycling workshop",
+      "title_de": "norder147 x canim3denim –\nUpcycling-Workshop",
+      "summary_de": "Ein kurzer Highlight-Film über einen Upcycling-Workshop im NORDER147 in Flensburg – als ehrenamtliches Projekt entstanden.",
+      "roles_de": "Videografie, Schnitt, gemeinnützig",
       "image": "media/norder-xl.jpg",
       "vimeo": "",
       "ratio": "16/9",
@@ -85,6 +97,9 @@
     },
     "notua": {
       "title": "NOTUA",
+      "title_de": "NOTUA",
+      "summary_de": "Meine eigene Planungs- und Mindmap-App für Kreative: endlose Boards für Notizen, Tabellen, Aufgaben, Widgets und Boards in Boards – mit einem Look, den du dir zu eigen machen kannst.",
+      "roles_de": "Design, Entwicklung, UI",
       "image": "media/notua-look.jpg",
       "vimeo": "",
       "ratio": "16/9",
@@ -102,6 +117,9 @@
     },
     "project-10": {
       "title": "Project 10 – words",
+      "title_de": "Projekt 10 – Worte",
+      "summary_de": "Worte füllen sich beim Scrollen schwarz – ein Text-Teaser für Geschichten, die ein paar Sätze mehr brauchen als ein Bild.",
+      "roles_de": "",
       "image": "media/dj-bw.jpg",
       "vimeo": "",
       "ratio": "16/9",
@@ -119,6 +137,9 @@
     },
     "project-3": {
       "title": "Project 3 – marquee",
+      "title_de": "Projekt 3 – Marquee",
+      "summary_de": "Platzhalter – Titel, Text und Bilder im Admin ersetzen.",
+      "roles_de": "",
       "image": "media/stage-purple.jpg",
       "vimeo": "",
       "ratio": "3/2",
@@ -136,6 +157,9 @@
     },
     "project-4": {
       "title": "Project 4 – stack",
+      "title_de": "Projekt 4 – Stack",
+      "summary_de": "Platzhalter – Titel, Text und Bilder im Admin ersetzen.",
+      "roles_de": "",
       "image": "media/dj-bw.jpg",
       "vimeo": "",
       "ratio": "16/9",
@@ -153,6 +177,9 @@
     },
     "project-5": {
       "title": "Project 5 – gallery",
+      "title_de": "Projekt 5 – Galerie",
+      "summary_de": "Platzhalter – Titel, Text und Bilder im Admin ersetzen.",
+      "roles_de": "",
       "image": "media/board.jpg",
       "vimeo": "",
       "ratio": "3/2",
@@ -170,6 +197,9 @@
     },
     "project-6": {
       "title": "Project 6 – iris",
+      "title_de": "Projekt 6 – Iris",
+      "summary_de": "Test der Kreis-Enthüllung. Text, Bilder und Animation im Admin ersetzen.",
+      "roles_de": "",
       "image": "media/leona-red.jpg",
       "vimeo": "",
       "ratio": "16/9",
@@ -187,6 +217,9 @@
     },
     "project-7": {
       "title": "Project 7 – tilt",
+      "title_de": "Projekt 7 – Tilt",
+      "summary_de": "3D-Tilt-Karte zum Testen – am Desktop folgt sie der Maus.",
+      "roles_de": "",
       "image": "media/norder-xl.jpg",
       "vimeo": "",
       "ratio": "3/2",
@@ -204,6 +237,9 @@
     },
     "project-8": {
       "title": "Project 8 – pullback",
+      "title_de": "Projekt 8 – Pullback",
+      "summary_de": "Dolly-Zoom nach hinten mit Letterbox-Balken.",
+      "roles_de": "",
       "image": "media/stage-purple.jpg",
       "vimeo": "",
       "ratio": "16/9",
@@ -221,6 +257,9 @@
     },
     "project-9": {
       "title": "Project 9 – pixel",
+      "title_de": "Projekt 9 – Pixel",
+      "summary_de": "Das Bild entschlüsselt sich aus einem groben Mosaik in volle Auflösung.",
+      "roles_de": "",
       "image": "media/board.jpg",
       "vimeo": "",
       "ratio": "3/2",
@@ -238,6 +277,9 @@
     },
     "qrue-plus": {
       "title": "QRUE Collective x\nKulturwerkstatt Kühlhaus",
+      "title_de": "QRUE Collective x\nKulturwerkstatt Kühlhaus",
+      "summary_de": "Die Live-Performance QRUE PLUS im Kühlhaus Flensburg mit bewusst minimalem Setup gefilmt.",
+      "roles_de": "Videografie, Live, Audio",
       "image": "media/dj-bw.jpg",
       "vimeo": "",
       "ratio": "16/9",
