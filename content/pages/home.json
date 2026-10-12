@@ -1,0 +1,224 @@
+{
+  "title": "tom nuesser",
+  "blocks": [
+    {
+      "type": "hero",
+      "props": {}
+    },
+    {
+      "type": "statement",
+      "props": {
+        "kicker": "",
+        "text": "Moving pictures. Brands that stick. Websites that feel like films – all from one desk in Flensburg.",
+        "size": "l"
+      }
+    },
+    {
+      "type": "chapter",
+      "id": "video",
+      "props": {
+        "num": "01",
+        "label": "videography",
+        "note": "films & stories"
+      },
+      "hidden": true
+    },
+    {
+      "type": "projectGrid",
+      "props": {
+        "mode": "index",
+        "anim": "project",
+        "category": "video"
+      },
+      "hidden": true
+    },
+    {
+      "type": "deviceSwitch",
+      "props": {
+        "shortItems": [
+          {
+            "src": "media/reel-1.jpg",
+            "title": "Live session teaser",
+            "text": "15 s cut from a multicam concert shoot, graded for Reels",
+            "duration": 4
+          },
+          {
+            "src": "media/reel-2.jpg",
+            "title": "Festival recap",
+            "text": "Fast stage moments in 9:16 with sound design",
+            "duration": 4
+          },
+          {
+            "src": "media/reel-3.jpg",
+            "title": "Portrait B/W",
+            "text": "Black-and-white portrait loop for an artist profile",
+            "duration": 4
+          },
+          {
+            "src": "media/reel-4.jpg",
+            "title": "Workshop behind the scenes",
+            "text": "Documentary snippets for a non-profit workshop",
+            "duration": 4
+          },
+          {
+            "src": "media/reel-5.jpg",
+            "title": "Color mood",
+            "text": "Colour-led teasers for a release campaign",
+            "duration": 4
+          }
+        ],
+        "longItems": [
+          {
+            "src": "media/leona-live.jpg",
+            "title": "LEONA – festival live sessions",
+            "text": "Multicam live session, mixed and graded – full length",
+            "duration": 4
+          },
+          {
+            "src": "media/norder-xl.jpg",
+            "title": "norder147 x canim3denim",
+            "text": "Upcycling workshop highlight movie",
+            "duration": 4
+          },
+          {
+            "src": "media/stage-purple.jpg",
+            "title": "Gården Festival 2026",
+            "text": "Festival coverage for Qrue Collective and artists",
+            "duration": 4
+          }
+        ],
+        "front": "phone"
+      },
+      "id": "video"
+    },
+    {
+      "type": "chapter",
+      "id": "social",
+      "props": {
+        "num": "02",
+        "label": "social media",
+        "note": "content & channels"
+      },
+      "hidden": true
+    },
+    {
+      "type": "projectGrid",
+      "props": {
+        "mode": "index",
+        "anim": "project",
+        "category": "social"
+      },
+      "hidden": true
+    },
+    {
+      "type": "chapter",
+      "id": "code",
+      "props": {
+        "num": "03",
+        "label": "programming",
+        "note": "web & ui"
+      },
+      "hidden": true
+    },
+    {
+      "type": "projectGrid",
+      "props": {
+        "mode": "index",
+        "anim": "project",
+        "category": "code"
+      },
+      "hidden": true
+    },
+    {
+      "type": "notuaFlight",
+      "id": "notua",
+      "props": {
+        "images": [
+          {
+            "src": "media/leona-live.jpg"
+          },
+          {
+            "src": "media/stage-purple.jpg"
+          },
+          {
+            "src": "media/norder-xl.jpg"
+          },
+          {
+            "src": "media/reel-3.jpg"
+          }
+        ]
+      }
+    },
+    {
+      "type": "kinetic",
+      "props": {
+        "words": "film\ndesign\ndevelop\none thread.",
+        "accent": "#ff2d2d",
+        "video": "media/demo-loop.mp4",
+        "poster": "media/stage-purple.jpg",
+        "dim": 45,
+        "size": "l"
+      },
+      "id": "design"
+    },
+    {
+      "type": "chapter",
+      "id": "about",
+      "props": {
+        "num": "04",
+        "label": "about",
+        "note": "who"
+      },
+      "hidden": true
+    },
+    {
+      "type": "statement",
+      "props": {
+        "kicker": "",
+        "text": "Self-employed since day one. I plan, shoot, edit, design and code – one person, one thread, no hand-offs. Based in Flensburg, working wherever the story is.",
+        "size": "s"
+      },
+      "hidden": true
+    },
+    {
+      "type": "services",
+      "props": {
+        "numbers": false,
+        "items": [
+          {
+            "title": "Video",
+            "text": "Brand films, live sessions, events and short-form. Multicam, grading and sound included.",
+            "tags": "videography, editing, grading"
+          },
+          {
+            "title": "Social media & content",
+            "text": "Channels, formats and a steady rhythm – content that looks like you and keeps people watching.",
+            "tags": "strategy, reels, community"
+          },
+          {
+            "title": "Code & UI",
+            "text": "Websites, interfaces and small tools – fast, modular and easy to update.",
+            "tags": "web, UI design, apps"
+          }
+        ]
+      },
+      "hidden": true
+    },
+    {
+      "type": "chapter",
+      "id": "contact",
+      "props": {
+        "num": "05",
+        "label": "contact",
+        "note": "let's talk"
+      }
+    },
+    {
+      "type": "contactForm",
+      "props": {
+        "impressumLabel": "Impressum",
+        "impressumText": "Angaben gemäß § 5 TMG\n\nTom Nüßer\nBreedlandweg 27\n24944 Flensburg\nDeutschland\n\nUmsatzsteuer-Identifikationsnummer:\nNicht vorhanden.\n\nVerantwortlich für den Inhalt nach § 18 MStV:\nTom Nüßer\nBreedlandweg 27\n24944 Flensburg"
+      }
+    }
+  ]
+}

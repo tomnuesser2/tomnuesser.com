@@ -1,0 +1,64 @@
+/* ---------- Design-Tokens (alles Visuelle läuft über diese Variablen) ---------- */
+:root {
+  --bg: #ffffff;
+  --bg-soft: #fcfcfc;
+  --ink: #000000;
+  --ink-soft: #1c1c1c;
+  --ink-mute: #9a9a9a;
+  --line: #000000;
+  --btn-bg: #000000;
+  --btn-ink: #ffffff;
+
+  --font: "Andale Mono", "AndaleMono", "Ubuntu Mono", "DejaVu Sans Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --gutter: 20px;       /* Textseiten */
+  --gutter-media: 27px; /* Bildstapel */
+  --stack-gap: 4px;
+  --group-gap: 88px;
+  --radius-sm: 12px;
+  --radius-xl: min(22vw, 150px);
+  --radius-btn: 16px;
+
+  --header-h: 76px;
+  --max: 1180px;
+
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --ease-io: cubic-bezier(.76, 0, .24, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-behavior: auto; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+body.is-locked { overflow: hidden; }
+img, video, svg, iframe { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+h1, h2, h3, p { margin: 0; }
+::selection { background: #000; color: #fff; }
+
+.skip-link {
+  position: fixed; left: 12px; top: -60px; z-index: 1000;
+  background: #000; color: #fff; padding: 10px 14px; border-radius: 10px;
+}
+.skip-link:focus { top: 12px; }
+:focus-visible { outline: 2px solid #000; outline-offset: 3px; border-radius: 4px; }
+
+@media (min-width: 900px) {
+  :root { --gutter: 48px; --gutter-media: 48px; --stack-gap: 6px; --group-gap: 140px; --header-h: 84px; --radius-sm: 16px; }
+  body { font-size: 17px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}

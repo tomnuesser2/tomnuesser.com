@@ -1,0 +1,70 @@
+{
+  "title": "QRUE Collective x\nKulturwerkstatt Kühlhaus",
+  "card": {
+    "image": "media/dj-bw.jpg",
+    "vimeo": "",
+    "ratio": "16/9",
+    "group": 1,
+    "cam": "",
+    "roles": "videography, live, audio",
+    "summary": "Filming the QRUE PLUS live performance at Kühlhaus Flensburg with a deliberately minimal setup.",
+    "stills": [
+      {
+        "src": "media/dj-bw.jpg"
+      },
+      {
+        "src": "media/stage-purple.jpg"
+      }
+    ],
+    "anim": "expand",
+    "category": "video"
+  },
+  "blocks": [
+    {
+      "type": "projectHead",
+      "props": {
+        "back": "← all projects",
+        "title": "QRUE Collective x\nKulturwerkstatt Kühlhaus",
+        "meta": "Role: Videography & post-production\nPlace: Kühlhaus Flensburg\nClient: QRUE Collective\nYear: 2026"
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "vimeo": "",
+        "src": "https://dvqlxo2m2q99q.cloudfront.net/000_clients/4284868/page/cover-121-3b3b9c.png",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "QRUE Collective x\nKulturwerkstatt Kühlhaus",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "projectText",
+      "props": {
+        "heading": "capturing QRUE PLUS",
+        "text": "This project documents the QRUE PLUS event at Kühlhaus Flensburg, where I was responsible for filming the live performance in an indoor concert setting with a deliberately minimal equipment setup. The production environment came with initial technical challenges, particularly regarding audio capture and room acoustics.\n\nDespite these constraints, I focused on maximizing the available resources to deliver the highest possible audiovisual quality. Through adaptive on-site decision-making and careful post-production work, the final result preserves the raw energy of the event while maintaining a clean and usable sound and image representation of the performance."
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "src": "media/dj-bw.jpg",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "QRUE Collective x\nKulturwerkstatt Kühlhaus",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "spacer",
+      "props": {
+        "size": 14
+      }
+    },
+    {
+      "type": "projectNext",
+      "props": {}
+    }
+  ]
+}

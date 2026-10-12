@@ -1,0 +1,47 @@
+{
+  "title": "working @\nFlensburg Akademie",
+  "card": {
+    "image": "https://dvqlxo2m2q99q.cloudfront.net/000_clients/4284868/page/6-87fd38.png",
+    "vimeo": "",
+    "ratio": "16/9",
+    "group": 1,
+    "cam": "",
+    "roles": "social media, photography, graphic design",
+    "summary": "Working student: social media management, photography, content creation and graphic design.",
+    "stills": [],
+    "anim": "expand",
+    "category": "social"
+  },
+  "blocks": [
+    {
+      "type": "projectHead",
+      "props": {
+        "back": "← all projects",
+        "title": "working @\nFlensburg Akademie",
+        "meta": "Role: Social media, photography, design\nPlace: Flensburg Akademie\nType: Working student\nYear: 2025–2026"
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "vimeo": "",
+        "src": "https://dvqlxo2m2q99q.cloudfront.net/000_clients/4284868/page/6-87fd38.png",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "working @\nFlensburg Akademie",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "projectText",
+      "props": {
+        "heading": "working @ Flensburg Akademie",
+        "text": "As a working student at Flensburg Akademie, I was responsible for Social Media Management while also working as a Photographer, Digital Creator, and Graphic Designer. Acting as a versatile all-rounder, I supported a wide range of creative and strategic tasks and contributed to building a strong, visually consistent digital presence."
+      }
+    },
+    {
+      "type": "projectNext",
+      "props": {}
+    }
+  ]
+}

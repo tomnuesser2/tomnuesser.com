@@ -1,0 +1,141 @@
+/* Jeder Effekt schaltet sich über eine Klasse am <body> ein (fx-<name>).
+   Ist ein Effekt ausgeschaltet, ist die Seite einfach statisch sichtbar. */
+
+/* ---------- reveal ---------- */
+.fx-reveal [data-reveal] { opacity: 0; transition: opacity 1.1s var(--ease), transform 1.3s var(--ease), clip-path 1.3s var(--ease); }
+.fx-reveal [data-reveal="up"] { transform: translateY(34px); }
+.fx-reveal [data-reveal="media"] { transform: translateY(46px) scale(.985); clip-path: inset(10% 0 0 0 round var(--rr, 14px)); }
+.fx-reveal [data-reveal].is-in { opacity: 1; transform: none; clip-path: inset(0 0 0 0 round var(--rr, 14px)); }
+.fx-reveal [data-reveal="media"] .media-inner { transform: scale(1.18); transition: transform 1.8s var(--ease); }
+.fx-reveal [data-reveal="media"].is-in .media-inner { transform: scale(1.0); }
+.fx-reveal .media-frame.r-xl { --rr: var(--radius-xl); }
+.fx-reveal .media-frame.r-sm { --rr: var(--radius-sm); }
+.fx-reveal [data-reveal="media"].is-in { clip-path: none; }
+
+/* ---------- split text ---------- */
+.fx-split [data-split] .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .12em; margin-bottom: -.12em; }
+.fx-split [data-split] .w > span { display: inline-block; transform: translateY(112%); transition: transform 1.1s var(--ease); transition-delay: calc(var(--wi) * 55ms); }
+.fx-split [data-split].is-in .w > span { transform: none; }
+
+/* ---------- parallax: Transform setzt das JS ---------- */
+.fx-parallax .p-card .media-inner { transition: none; }
+
+/* ---------- grain (nur über Medien, filmisch) ---------- */
+.fx-grain .media-frame::after {
+  content: ""; position: absolute; inset: -50%; z-index: 1; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain 1.1s steps(6) infinite;
+}
+@keyframes grain { 0% { transform: translate(0,0); } 20% { transform: translate(-3%,2%); } 40% { transform: translate(2%,-3%); } 60% { transform: translate(-2%,3%); } 80% { transform: translate(3%,1%); } 100% { transform: translate(0,0); } }
+
+/* ---------- Scroll-Fortschritt ---------- */
+.scroll-progress { position: fixed; left: 0; top: 0; height: 2px; width: 100%; background: #000; transform-origin: left; transform: scaleX(0); z-index: 120; pointer-events: none; }
+
+/* ---------- Cursor (nur Desktop) ---------- */
+.cursor { position: fixed; left: 0; top: 0; z-index: 130; pointer-events: none; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%;
+  background: #000; mix-blend-mode: difference; background-color: #fff; transition: width .5s var(--ease), height .5s var(--ease), margin .5s var(--ease), opacity .3s; opacity: 0; }
+.cursor.is-on { opacity: 1; }
+.cursor.is-big { width: 84px; height: 84px; margin: -42px 0 0 -42px; }
+@media (hover: none), (pointer: coarse) { .cursor { display: none; } }
+
+/* ---------- Seitenübergang ---------- */
+.curtain { position: fixed; inset: 0; background: #000; z-index: 110; transform: translateY(101%); pointer-events: none; }
+
+/* ===================== Signature-Effekte ===================== */
+
+/* ---------- Focus Pull: Medien laufen aus der Unschärfe in den Fokus ---------- */
+.fx-reveal [data-reveal="media"] { filter: blur(16px) saturate(.55) brightness(.8); }
+.fx-reveal [data-reveal="media"].is-in { filter: none; transition: opacity 1.1s var(--ease), transform 1.3s var(--ease), filter 1.5s var(--ease); }
+
+/* ---------- Sucher-HUD ---------- */
+.hud { position: absolute; inset: 0; z-index: 3; pointer-events: none; color: #fff; font-size: 11px; letter-spacing: .08em; line-height: 1; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
+.hud__c { position: absolute; width: 18px; height: 18px; border: 0 solid rgba(255,255,255,.9); transition: transform 1.2s var(--ease) .3s, opacity 1s ease .3s; opacity: 0; }
+.hud__c--tl { left: 14px; top: 14px; border-width: 1.5px 0 0 1.5px; transform: translate(10px, 10px); }
+.hud__c--tr { right: 14px; top: 14px; border-width: 1.5px 1.5px 0 0; transform: translate(-10px, 10px); }
+.hud__c--bl { left: 14px; bottom: 14px; border-width: 0 0 1.5px 1.5px; transform: translate(10px, -10px); }
+.hud__c--br { right: 14px; bottom: 14px; border-width: 0 1.5px 1.5px 0; transform: translate(-10px, -10px); }
+.is-in .hud__c, .scene .hud__c { opacity: 1; transform: none; }
+.fx-reveal:not(.fx-x) .media-frame:not(.is-in) .hud__c { opacity: 0; }
+.hud__rec { position: absolute; left: 40px; top: 15px; display: flex; align-items: center; gap: 6px; }
+.hud__rec i { width: 8px; height: 8px; border-radius: 50%; background: #ff2d2d; animation: rec 1.4s steps(1) infinite; }
+@keyframes rec { 0%, 60% { opacity: 1; } 61%, 100% { opacity: .15; } }
+.hud__cam { position: absolute; right: 40px; top: 15px; }
+.hud__tc { position: absolute; left: 40px; bottom: 15px; font-variant-numeric: tabular-nums; }
+.media-frame:has(.media-play) .hud__tc { display: none; }
+.media-frame.is-playing .hud { display: none; }
+
+/* globale REC-Leiste */
+.hud-bar { position: fixed; z-index: 60; left: var(--gutter); right: var(--gutter); bottom: calc(12px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; pointer-events: none; font-size: 11px; letter-spacing: .08em; line-height: 1; transition: opacity .4s; }
+.hud-bar b, .hud-bar__r { font-weight: 400; color: #fff; mix-blend-mode: difference; font-variant-numeric: tabular-nums; }
+.hud-bar__l { display: inline-flex; align-items: center; gap: 6px; }
+.hud-bar__l i { width: 7px; height: 7px; border-radius: 50%; background: #ff2d2d; animation: rec 1.4s steps(1) infinite; }
+.is-intro .hud-bar, .is-locked .hud-bar { opacity: 0; }
+@media (min-width: 900px) { .hud { font-size: 12px; } .hud__c { width: 24px; height: 24px; } }
+
+/* ---------- Scenes (Startseite) ---------- */
+.scenes { }
+.scene { --side: max(var(--gutter-media), calc((100vw - var(--max) + 2 * var(--gutter-media)) / 2)); }
+/* ohne Scroll-Effekt: ruhige Kartenliste */
+.scene__frame { display: block; position: relative; overflow: hidden; margin: 0 var(--side) var(--stack-gap); border-radius: var(--radius-sm); aspect-ratio: var(--r); background: #0e0e10; isolation: isolate; }
+.scene__media, .scene__shade { position: absolute; inset: 0; }
+.scene__media img, .scene__media .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.scene__shade { z-index: 1; background: linear-gradient(to top, rgba(0,0,0,.7), rgba(0,0,0,0) 55%), rgba(0,0,0,var(--d, 0)); }
+.scene__idx { position: absolute; z-index: 4; left: 50%; transform: translateX(-50%); top: 15px; color: #fff; font-size: 11px; letter-spacing: .08em; font-variant-numeric: tabular-nums; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
+.scene__info, .scene__strip, .scene__cta { display: none; }
+.scene .hud__cam { display: none; }
+.scene .hud__tc { display: none; }
+
+.fx-scenes .scene__track { position: relative; height: calc(100svh + var(--len, 240svh)); }
+.fx-scenes .scene[data-anim=expand]:first-child .scene__track { margin-top: calc(var(--header-h) * -1); }
+.fx-scenes .scene__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; --e: 0; --i: 0; --d: .08; --z: 1; --c: 0;
+  --cardH: calc((100vw - 2 * var(--side)) / var(--r)); }
+.fx-scenes .scene__frame {
+  position: absolute; margin: 0; aspect-ratio: auto;
+  left: calc(var(--side) * (1 - var(--e))); right: calc(var(--side) * (1 - var(--e)));
+  top: calc(var(--header-h) * (1 - var(--e)));
+  bottom: calc(max(0px, 100svh - var(--header-h) - var(--cardH)) * (1 - var(--e)));
+  border-radius: calc(var(--radius-sm) * (1 - var(--e)));
+}
+.fx-scenes .scene__media { transform: scale(var(--z)); will-change: transform; }
+.fx-scenes .scene .hud__c, .fx-scenes .scene .hud__rec, .fx-scenes .scene .hud__cam { display: none; }
+
+.fx-scenes .scene__info, .fx-scenes .scene__cta { display: block; }
+.fx-scenes .scene__info { position: absolute; z-index: 5; left: var(--gutter); right: var(--gutter); bottom: calc(64px + env(safe-area-inset-bottom)); color: #fff; opacity: var(--i); transform: translate3d(0, calc((1 - var(--i)) * 44px), 0); pointer-events: none; max-width: 760px; }
+.scene__path { display: none; font-size: 12px; letter-spacing: .06em; opacity: .75; margin-bottom: 14px; word-break: break-all; }
+.scene__title { font-size: clamp(20px, 5.4vw, 40px); line-height: 1.08; font-weight: 400; letter-spacing: -.01em; }
+.scene__roles { display: flex; flex-wrap: wrap; gap: 0 10px; margin-top: 10px; font-size: 12px; letter-spacing: .04em; opacity: .8; }
+.scene__roles span + span::before { content: '·'; margin-right: 10px; }
+
+.scene__sum { margin-top: 14px; font-size: 13px; line-height: 1.7; max-width: 560px; opacity: .92; }
+
+.fx-scenes .scene__strip { display: flex; gap: 14px; position: absolute; z-index: 4; left: 0; top: 50%; padding-left: var(--gutter); opacity: 0; will-change: transform; pointer-events: none; }
+.scene__strip img { height: min(46svh, 380px); width: auto; border-radius: var(--radius-sm); object-fit: cover; flex: none; }
+.scene__strip img.is-b { margin-top: 34px; margin-bottom: -34px; }
+
+.fx-scenes .scene__cta { position: absolute; z-index: 6; left: 50%; bottom: calc(30px + env(safe-area-inset-bottom)); transform: translateX(-50%); opacity: var(--c); color: #000; background: #fff; border-radius: 999px; padding: 11px 18px 12px; font-size: 12px; letter-spacing: .04em; line-height: 1; white-space: nowrap; }
+.fx-scenes .scene__cta:hover { background: #000; color: #fff; }
+@media (min-width: 900px) { .scene__sum { font-size: 14px; } .fx-scenes .scene__info { left: max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter))); right: auto; } }
+
+/* ---------- Iris-Übergang ---------- */
+.iris { position: fixed; inset: 0; z-index: 110; background: #000; pointer-events: none; visibility: hidden; --x: 50%; --y: 50%; --r: 150vmax;
+  -webkit-mask-image: radial-gradient(circle at var(--x) var(--y), transparent var(--r), #000 calc(var(--r) + 1.5px));
+          mask-image: radial-gradient(circle at var(--x) var(--y), transparent var(--r), #000 calc(var(--r) + 1.5px)); }
+
+/* ---------- Command-Palette ---------- */
+.palette { position: fixed; inset: 0; z-index: 140; background: rgba(0,0,0,.35); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: grid; place-items: start center; padding: 14vh 16px 0; }
+.palette__in { width: min(560px, 100%); background: #fff; border-radius: 16px; box-shadow: 0 30px 80px rgba(0,0,0,.3); overflow: hidden; }
+.palette__row { display: flex; align-items: center; gap: 10px; padding: 16px 18px; border-bottom: 1px solid #eee; }
+.palette__row span { color: var(--ink-mute); }
+.palette__row input { flex: 1; border: 0; outline: 0; font: inherit; font-size: 16px; background: none; color: #000; }
+.palette ul { list-style: none; margin: 0; padding: 6px; max-height: 40vh; overflow: auto; }
+.palette li { display: flex; justify-content: space-between; gap: 12px; padding: 11px 12px; border-radius: 10px; cursor: pointer; font-size: 15px; }
+.palette li em { font-style: normal; color: var(--ink-mute); font-size: 12px; }
+.palette li.on { background: #000; color: #fff; } .palette li.on em { color: #aaa; }
+.palette li.none { color: var(--ink-mute); cursor: default; }
+.palette p { margin: 0; padding: 10px 18px 14px; font-size: 11px; color: var(--ink-mute); letter-spacing: .04em; }
+
+/* ---------- Ruhige Details ---------- */
+.menu__link { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .6s var(--ease), color .3s; }
+@media (hover: hover) { .menu__link:hover { background-size: 100% 1px; } }
+.fx-scenes .scene__stage::after { content: ''; position: absolute; z-index: 6; left: 0; top: 0; height: 2px; width: 100%; background: #fff; transform-origin: left; transform: scaleX(var(--p, 0)); opacity: calc(var(--e) * .6); mix-blend-mode: difference; pointer-events: none; }
+.menu__ghost { display: none; }

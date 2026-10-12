@@ -1,0 +1,105 @@
+{
+  "title": "norder147 x canim3denim –\nupcycling workshop",
+  "card": {
+    "image": "media/norder-xl.jpg",
+    "vimeo": "",
+    "ratio": "16/9",
+    "group": 1,
+    "cam": "",
+    "roles": "videography, editing, non-profit",
+    "summary": "A short highlight movie of an upcycling workshop at NORDER147 in Flensburg – made as a volunteer project.",
+    "stills": [
+      {
+        "src": "media/norder-1.jpg"
+      },
+      {
+        "src": "media/norder-2.jpg"
+      },
+      {
+        "src": "media/norder-3.jpg"
+      }
+    ],
+    "anim": "expand",
+    "category": "video"
+  },
+  "blocks": [
+    {
+      "type": "projectHead",
+      "props": {
+        "back": "← all projects",
+        "title": "norder147 x canim3denim –\nupcycling workshop",
+        "meta": "Role: Editing & post-production\nPlace: NORDER147, Flensburg\nType: Non-profit / volunteering\nYear: 2026"
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "vimeo": "",
+        "src": "media/norder-xl.jpg",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "norder147 x canim3denim –\nupcycling workshop",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "projectText",
+      "props": {
+        "heading": "volunteering for norder147 x canim3denim",
+        "text": "This non-profit project documented an upcycling workshop hosted at NORDER147, a creative project space and atelier in Flensburg. The goal was to capture the workshop's atmosphere while highlighting how simple and accessible it can be to transform old clothing into something new, encouraging a more sustainable approach to fashion.\n\nThe event was filmed in collaboration with my friend Larissa, while I was responsible for the editing and post-production. As the workshop was organized by a friend (canim3denim), we volunteered our work to support the project and help increase its visibility through a short highlight movie that reflects the creative and community-driven spirit of the event and captures the moment."
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "src": "media/norder-1.jpg",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "norder147 x canim3denim –\nupcycling workshop",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "spacer",
+      "props": {
+        "size": 14
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "src": "media/norder-2.jpg",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "norder147 x canim3denim –\nupcycling workshop",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "spacer",
+      "props": {
+        "size": 14
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "src": "media/workshop-table.jpg",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "norder147 x canim3denim –\nupcycling workshop",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "spacer",
+      "props": {
+        "size": 14
+      }
+    },
+    {
+      "type": "projectNext",
+      "props": {}
+    }
+  ]
+}

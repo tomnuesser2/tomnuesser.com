@@ -1,0 +1,19 @@
+<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Anleitung – Admin</title>
+<style>body{font:16px/1.6 system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 20px;color:#111}h1{letter-spacing:-.03em}h2{margin-top:2em;letter-spacing:-.02em}code,kbd{background:#f0f0f0;padding:2px 6px;border-radius:5px}.box{background:#f6f6f6;border-radius:10px;padding:14px 18px}ol li,ul li{margin:.4em 0}</style>
+<h1>Admin-Panel – so geht's</h1>
+<div class="box"><b>Kurz:</b> Doppelklick auf <code>Admin-starten.bat</code> (im Hauptordner). Der Browser öffnet sich automatisch mit dem Admin. Das schwarze Fenster dabei <b>offen lassen</b> – es ist der kleine Server.</div>
+<h2>Warum geht <code>index.html</code> nicht per Doppelklick?</h2>
+<p>Die Seite lädt ihre Inhalte (JSON-Dateien) nach. Das erlauben Browser nur über einen Server, nicht über eine Datei direkt. Deshalb immer über die .bat starten. Die normale Seite siehst du dann unter <code>http://127.0.0.1:8787/</code>, der Admin unter <code>/admin/</code>.</p>
+<h2>Erster Start</h2>
+<ol><li>Node.js wird einmalig gebraucht. Die .bat installiert es automatisch (winget) oder öffnet nodejs.org – danach die .bat nochmal starten.</li><li>Bleibt das Fenster nach dem Start offen und zeigt „Admin: http://127.0.0.1:8787/admin/“, läuft alles. Beenden: Fenster schließen.</li></ol>
+<h2>Etwas ändern</h2>
+<ul><li>Links in der Seitenleiste: <b>home</b> (Startseite), alle Projekte, Einstellungen.</li><li>Auf der Startseite besteht alles aus Blöcken. Block aufklappen, Felder ändern, <b>Speichern</b>. Die Änderung steht sofort in den Dateien (<code>content/…</code>) – Seite im Browser neu laden.</li><li><b>ausblenden / einblenden</b> im Block-Kopf: Block bleibt gespeichert, wird aber nicht angezeigt.</li><li>Reihenfolge und neue Projekte: über die Buttons im Admin.</li></ul>
+<h2>Videos einbetten (Vimeo oder YouTube)</h2>
+<p>In Projekten im Feld <b>Video-Link</b> (bei der Projekt-Karte und im Medien-Block) einfach die ganze Adresse einfügen, z. B. <code>https://vimeo.com/123456789</code> oder <code>https://youtu.be/XXXXXXXXXXX</code>. Die Vorschau holt sich die Seite automatisch, ein Klick spielt das Video ab.</p>
+<h2>Fotos und eigene Videos</h2>
+<ul><li><b>Von der Cloud / aus dem Netz:</b> im Bildfeld die Adresse (https://…) in das URL-Feld einfügen.</li><li><b>Vom PC:</b> „Wählen / hochladen“ klicken, Datei auswählen – sie landet im Ordner <code>media/</code> (jpg, png, webp, avif, gif, svg, mp4, webm bis 40 MB).</li></ul>
+<h2>Online stellen</h2>
+<p>Der Button <b>Veröffentlichen</b> macht per Git commit + push (nur wenn der Ordner ein Git-Repo ist). Alternativ den Ordner wie gewohnt hochladen.</p>
+<h2>Der NOTUA-Flug</h2>
+<p>Alle Texte, Bilder und Farben stehen im Block „NOTUA-Flug“ der Startseite. Der Look-Finder am Ende wählt bei jedem Laden zufällig Farben, Schrift, Hintergrund und Rundung (nie ganz rund).</p>
+</html>

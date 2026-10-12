@@ -1,0 +1,103 @@
+/* ---------- Block: spacer ---------- */
+.b-spacer { height: var(--h, 48px); }
+
+/* ---------- Block: heading ---------- */
+.b-heading { padding-block: 10px; }
+.b-heading h1, .b-heading h2, .b-heading h3 { font-weight: 400; color: var(--ink); line-height: 1.25; }
+.b-heading.is-bold h1, .b-heading.is-bold h2, .b-heading.is-bold h3 { font-weight: 700; }
+.b-heading h1 { font-size: clamp(22px, 5.6vw, 38px); }
+.b-heading h2 { font-size: clamp(20px, 5vw, 32px); }
+.b-heading h3 { font-size: clamp(17px, 4vw, 22px); }
+.b-heading.align-center { text-align: center; }
+.b-heading.align-left { text-align: left; }
+
+/* ---------- Block: text ---------- */
+.b-text { font-size: 16.5px; line-height: 2.1; color: var(--ink-soft); }
+.b-text p + p { margin-top: 1.9em; }
+.b-text.align-center { text-align: center; }
+.b-text.align-left { text-align: left; }
+.b-text-narrow { max-width: 760px; margin-inline: auto; }
+@media (min-width: 900px) { .b-text { font-size: 18px; } }
+
+/* ---------- Block: media ---------- */
+.media-frame { position: relative; margin: 0; overflow: hidden; background: #0e0e10; isolation: isolate; }
+.media-frame.r-sm { border-radius: var(--radius-sm); }
+.media-frame.r-xl { border-radius: var(--radius-xl); }
+.media-frame.r-none { border-radius: 0; }
+.media-inner { position: absolute; inset: 0; will-change: transform; }
+.media-frame { aspect-ratio: var(--ratio, 16 / 9); }
+.media-inner > img, .media-inner > iframe, .media-inner > .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }
+.ph {
+  background:
+    radial-gradient(120% 90% at 20% 10%, hsl(var(--h1) 46% 24% / .9), transparent 60%),
+    radial-gradient(90% 80% at 85% 90%, hsl(var(--h2) 55% 20% / .9), transparent 62%),
+    #0b0b0d;
+}
+.media-play {
+  position: absolute; inset: 0; display: grid; place-items: center; z-index: 2; width: 100%; height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,.28), transparent 45%);
+  cursor: pointer;
+}
+.media-play__dot {
+  width: 74px; height: 74px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.85);
+  display: grid; place-items: center; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  background: rgba(255,255,255,.08); transition: transform .6s var(--ease), background .3s;
+}
+.media-play__dot svg { width: 22px; height: 22px; margin-left: 3px; fill: #fff; }
+.media-frame:hover .media-play__dot { transform: scale(1.12); background: rgba(255,255,255,.18); }
+.media-frame.is-playing .media-play { display: none; }
+
+/* ---------- Block: mediaStack ---------- */
+.b-stack { display: grid; gap: var(--stack-gap); }
+.b-stack-wrap { padding-inline: var(--gutter-media); max-width: var(--max); margin-inline: auto; }
+
+/* ---------- Block: projectGrid ---------- */
+.b-projects { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter-media); }
+.p-group { display: grid; gap: var(--stack-gap); }
+.p-group + .p-group { margin-top: var(--group-gap); }
+.p-card { display: block; position: relative; overflow: hidden; border-radius: var(--radius-sm); }
+.p-card .media-frame { transition: transform 1s var(--ease); }
+.p-card__label {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; padding: 28px 22px 18px;
+  color: #fff; font-size: 15px; line-height: 1.4; background: linear-gradient(to top, rgba(0,0,0,.55), transparent);
+  transform: translateY(100%); transition: transform .7s var(--ease); display: none;
+}
+@media (hover: hover) { .p-card__label { display: block; } .p-card:hover .p-card__label { transform: none; } }
+
+/* ---------- Block: contactForm ---------- */
+.b-contact { max-width: 720px; margin-inline: auto; padding-inline: var(--gutter); padding-top: 80px; }
+.field { position: relative; margin-bottom: 40px; }
+.field input, .field textarea {
+  width: 100%; border: 0; border-bottom: 2px solid #000; border-radius: 0; background: transparent;
+  font: inherit; font-size: 16px; color: #000; padding: 18px 0 14px; outline: none; resize: none; display: block;
+  transition: border-color .3s, padding .3s var(--ease);
+}
+.field textarea { min-height: 60px; overflow: hidden; }
+.field label { position: absolute; left: 0; top: 18px; font-size: 16px; color: #000; pointer-events: none; transition: transform .5s var(--ease), opacity .3s; transform-origin: left top; }
+.field input:focus + label, .field textarea:focus + label,
+.field input:not(:placeholder-shown) + label, .field textarea:not(:placeholder-shown) + label { transform: translateY(-22px) scale(.78); opacity: .6; }
+.field::after { content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: #000; transform: scaleX(0); transform-origin: left; transition: transform .7s var(--ease); }
+.field:focus-within::after { transform: scaleX(1); }
+.btn {
+  display: block; width: 100%; background: var(--btn-bg); color: var(--btn-ink); border-radius: var(--radius-btn);
+  font-size: 18px; font-weight: 700; padding: 22px 24px; text-align: center; position: relative; overflow: hidden;
+  transition: transform .5s var(--ease), opacity .3s;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn[disabled] { opacity: .6; cursor: progress; }
+.form-note { margin-top: 20px; font-size: 14px; min-height: 1.4em; text-align: center; }
+.form-note.is-error { color: #b00020; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+/* ---------- Block: socials ---------- */
+.b-socials { max-width: 720px; margin-inline: auto; padding: 36px var(--gutter) 0; display: flex; justify-content: flex-end; gap: clamp(30px, 8vw, 44px); padding-right: calc(var(--gutter) + 22px); }
+.b-socials a { width: 42px; height: 42px; display: grid; place-items: center; transition: transform .5s var(--ease); }
+.b-socials a:hover { transform: translateY(-4px) scale(1.08); }
+.b-socials svg { width: 100%; height: 100%; fill: #000; }
+
+/* ---------- Block: impressum ---------- */
+.b-imp { max-width: 720px; margin-inline: auto; padding: 120px var(--gutter) 40px; }
+.b-imp h2 { font-size: clamp(24px, 6.4vw, 40px); font-weight: 700; color: #000; line-height: 1.15; margin-bottom: 40px; }
+.b-imp p { font-size: 16.5px; line-height: 2.3; white-space: pre-line; }
+.b-imp p + p { margin-top: 2.3em; }
+.b-socials path { fill-rule: evenodd; }

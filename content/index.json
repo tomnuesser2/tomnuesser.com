@@ -1,0 +1,257 @@
+{
+  "order": [
+    "leona---festival-live-sessions",
+    "norder147-x-canim3denim---upcycling-workshop",
+    "garden-festival-2026",
+    "qrue-plus",
+    "flensburg-akademie",
+    "project-3",
+    "project-4",
+    "project-5",
+    "project-6",
+    "project-7",
+    "project-8",
+    "project-9",
+    "project-10",
+    "notua"
+  ],
+  "projects": {
+    "flensburg-akademie": {
+      "title": "working @\nFlensburg Akademie",
+      "image": "https://dvqlxo2m2q99q.cloudfront.net/000_clients/4284868/page/6-87fd38.png",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 1,
+      "hidden": false,
+      "summary": "Working student: social media management, photography, content creation and graphic design.",
+      "anim": "expand",
+      "roles": "social media, photography, graphic design",
+      "category": "social",
+      "cam": "",
+      "stills": []
+    },
+    "garden-festival-2026": {
+      "title": "Gården Festival 2026",
+      "image": "media/stage-purple.jpg",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 1,
+      "hidden": false,
+      "summary": "Photo and video coverage for Qrue Collective and festival artists at Gården Festival in Tydal, Eggebek.",
+      "anim": "expand",
+      "roles": "videography, photography, festival",
+      "category": "video",
+      "cam": "",
+      "stills": [
+        "media/stage-purple.jpg",
+        "media/dj-bw.jpg"
+      ]
+    },
+    "leona---festival-live-sessions": {
+      "title": "LEONA – festival live sessions",
+      "image": "media/leona-live.jpg",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 1,
+      "hidden": false,
+      "summary": "Cinematic live session videos for LEONA's festival applications and campaign, filmed at the Deutsches Haus in Flensburg.",
+      "anim": "expand",
+      "roles": "videography, multicam, post-production",
+      "category": "video",
+      "cam": "FX3",
+      "stills": [
+        "media/leona-red.jpg",
+        "media/leona-bw.jpg",
+        "media/leona-live.jpg"
+      ]
+    },
+    "norder147-x-canim3denim---upcycling-workshop": {
+      "title": "norder147 x canim3denim –\nupcycling workshop",
+      "image": "media/norder-xl.jpg",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 1,
+      "hidden": false,
+      "summary": "A short highlight movie of an upcycling workshop at NORDER147 in Flensburg – made as a volunteer project.",
+      "anim": "expand",
+      "roles": "videography, editing, non-profit",
+      "category": "video",
+      "cam": "",
+      "stills": [
+        "media/norder-1.jpg",
+        "media/norder-2.jpg",
+        "media/norder-3.jpg"
+      ]
+    },
+    "notua": {
+      "title": "NOTUA",
+      "image": "media/notua-look.jpg",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 1,
+      "hidden": false,
+      "summary": "My own creative planning and mind-map app: endless boards for notes, tables, tasks, widgets and boards inside boards – and a look you can make your own.",
+      "anim": "expand",
+      "roles": "design, development, UI",
+      "category": "code",
+      "cam": "",
+      "stills": [
+        "media/notua-notes.jpg",
+        "media/notua-widgets.jpg"
+      ]
+    },
+    "project-10": {
+      "title": "Project 10 – words",
+      "image": "media/dj-bw.jpg",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 2,
+      "hidden": false,
+      "summary": "Words fill in black while you scroll – a text-first project teaser for stories that need a few sentences more than a picture can give.",
+      "anim": "words",
+      "roles": "brand film, editing, sound",
+      "category": "code",
+      "cam": "",
+      "stills": [
+        "media/leona-bw.jpg",
+        "media/stage-purple.jpg"
+      ]
+    },
+    "project-3": {
+      "title": "Project 3 – marquee",
+      "image": "media/stage-purple.jpg",
+      "vimeo": "",
+      "ratio": "3/2",
+      "group": 2,
+      "hidden": true,
+      "summary": "Placeholder – replace title, text and images in the admin.",
+      "anim": "marquee",
+      "roles": "videography, festival",
+      "category": "video",
+      "cam": "",
+      "stills": [
+        "media/stage-purple.jpg",
+        "media/dj-bw.jpg"
+      ]
+    },
+    "project-4": {
+      "title": "Project 4 – stack",
+      "image": "media/dj-bw.jpg",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 2,
+      "hidden": true,
+      "summary": "Placeholder – replace title, text and images in the admin.",
+      "anim": "stack",
+      "roles": "videography, live",
+      "category": "video",
+      "cam": "",
+      "stills": [
+        "media/dj-bw.jpg",
+        "media/stage-purple.jpg"
+      ]
+    },
+    "project-5": {
+      "title": "Project 5 – gallery",
+      "image": "media/board.jpg",
+      "vimeo": "",
+      "ratio": "3/2",
+      "group": 2,
+      "hidden": true,
+      "summary": "Placeholder – replace title, text and images in the admin.",
+      "anim": "gallery",
+      "roles": "photography, sports",
+      "category": "video",
+      "cam": "",
+      "stills": [
+        "media/board.jpg",
+        "media/workshop-table.jpg"
+      ]
+    },
+    "project-6": {
+      "title": "Project 6 – iris",
+      "image": "media/leona-red.jpg",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 2,
+      "hidden": true,
+      "summary": "Circle reveal test. Replace text, images and animation in the admin.",
+      "anim": "iris",
+      "roles": "multicam, color grade",
+      "category": "social",
+      "cam": "",
+      "stills": [
+        "media/leona-bw.jpg",
+        "media/leona-live.jpg"
+      ]
+    },
+    "project-7": {
+      "title": "Project 7 – tilt",
+      "image": "media/norder-xl.jpg",
+      "vimeo": "",
+      "ratio": "3/2",
+      "group": 2,
+      "hidden": true,
+      "summary": "3D tilt card test – on desktop it follows the mouse.",
+      "anim": "tilt",
+      "roles": "photography, design",
+      "category": "social",
+      "cam": "",
+      "stills": [
+        "media/norder-3.jpg",
+        "media/norder-detail.jpg"
+      ]
+    },
+    "project-8": {
+      "title": "Project 8 – pullback",
+      "image": "media/stage-purple.jpg",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 2,
+      "hidden": true,
+      "summary": "Dolly zoom out with letterbox bars.",
+      "anim": "pullback",
+      "roles": "videography, grading",
+      "category": "social",
+      "cam": "",
+      "stills": [
+        "media/dj-bw.jpg",
+        "media/board.jpg"
+      ]
+    },
+    "project-9": {
+      "title": "Project 9 – pixel",
+      "image": "media/board.jpg",
+      "vimeo": "",
+      "ratio": "3/2",
+      "group": 2,
+      "hidden": false,
+      "summary": "The picture decodes from a coarse mosaic into full resolution.",
+      "anim": "pixel",
+      "roles": "web design, development",
+      "category": "code",
+      "cam": "",
+      "stills": [
+        "media/norder-1.jpg",
+        "media/norder-2.jpg"
+      ]
+    },
+    "qrue-plus": {
+      "title": "QRUE Collective x\nKulturwerkstatt Kühlhaus",
+      "image": "media/dj-bw.jpg",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 1,
+      "hidden": false,
+      "summary": "Filming the QRUE PLUS live performance at Kühlhaus Flensburg with a deliberately minimal setup.",
+      "anim": "expand",
+      "roles": "videography, live, audio",
+      "category": "video",
+      "cam": "",
+      "stills": [
+        "media/dj-bw.jpg",
+        "media/stage-purple.jpg"
+      ]
+    }
+  }
+}

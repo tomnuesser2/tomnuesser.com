@@ -1,0 +1,69 @@
+{
+  "title": "tomnuesser",
+  "footer": "© tomnuesser. All rights reserved.",
+  "intro": {
+    "enabled": true,
+    "button": "enter"
+  },
+  "nav": [
+    {
+      "label": "videography",
+      "href": "home#video"
+    },
+    {
+      "label": "programming",
+      "href": "home#notua"
+    },
+    {
+      "label": "creative",
+      "href": "home#design"
+    },
+    {
+      "label": "contact",
+      "href": "home#contact"
+    }
+  ],
+  "socials": [
+    {
+      "label": "YouTube",
+      "icon": "youtube",
+      "url": "https://www.youtube.com/"
+    },
+    {
+      "label": "Instagram",
+      "icon": "instagram",
+      "url": "https://www.instagram.com/"
+    },
+    {
+      "label": "LinkedIn",
+      "icon": "linkedin",
+      "url": "https://www.linkedin.com/"
+    }
+  ],
+  "contact": {
+    "endpoint": "",
+    "email": ""
+  },
+  "effects": {
+    "reveal": true,
+    "splitText": true,
+    "parallax": true,
+    "magnetic": true,
+    "smoothScroll": true,
+    "grain": true,
+    "progress": true,
+    "cursor": true,
+    "headerHide": false,
+    "pageTransition": true,
+    "scenes": true,
+    "hud": false,
+    "scramble": true,
+    "palette": true
+  },
+  "theme": {},
+  "tagline": "videographer · designer · developer",
+  "location": {
+    "label": "flensburg, de",
+    "tz": "Europe/Berlin"
+  }
+}

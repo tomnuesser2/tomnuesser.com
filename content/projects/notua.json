@@ -1,0 +1,103 @@
+{
+  "title": "NOTUA",
+  "card": {
+    "image": "media/notua-look.jpg",
+    "vimeo": "",
+    "ratio": "16/9",
+    "group": 1,
+    "cam": "",
+    "roles": "design, development, UI",
+    "summary": "My own creative planning and mind-map app: endless boards for notes, tables, tasks, widgets and boards inside boards – and a look you can make your own.",
+    "stills": [
+      {
+        "src": "media/notua-notes.jpg"
+      },
+      {
+        "src": "media/notua-widgets.jpg"
+      }
+    ],
+    "anim": "expand",
+    "category": "code"
+  },
+  "blocks": [
+    {
+      "type": "projectHead",
+      "props": {
+        "back": "← all projects",
+        "title": "NOTUA",
+        "meta": "Role: Concept, design & development\nPlatforms: Web, desktop (Windows), Android\nLink: notua.site"
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "src": "media/notua-look.jpg",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "NOTUA Look Finder",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "projectText",
+      "props": {
+        "heading": "The most powerful creative planning app",
+        "text": "NOTUA is a board app I designed and programmed myself. On one endless canvas you collect notes, tables, tasks and widgets, sort them, connect them and turn loose ideas into structured projects – from film scripts and shot lists to mind maps and whole campaigns.\n\nIt runs in the browser, as a desktop app and on Android."
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "src": "media/notua-notes.jpg",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "NOTUA notes",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "projectText",
+      "props": {
+        "heading": "Everything on one board",
+        "text": "Notes, tables and tasks sit next to images, YouTube videos and Spotify playlists as widgets. Boards can contain boards, so every project gets its own space without losing the big picture."
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "src": "media/notua-widgets.jpg",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "NOTUA widgets",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "src": "media/notua-boards.jpg",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "NOTUA boards",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "projectText",
+      "props": {
+        "heading": "A look that is yours",
+        "text": "The Look Finder lets everyone restyle NOTUA: colour world, light or dark mode, corner radius from sharp to pill, font, shadow, border and board background. The interface is not a fixed product – it adapts to the person using it."
+      }
+    },
+    {
+      "type": "spacer",
+      "props": {
+        "size": 14
+      }
+    },
+    {
+      "type": "projectNext",
+      "props": {}
+    }
+  ]
+}

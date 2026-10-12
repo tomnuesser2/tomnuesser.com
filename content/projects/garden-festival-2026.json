@@ -1,0 +1,70 @@
+{
+  "title": "Gården Festival 2026",
+  "card": {
+    "image": "media/stage-purple.jpg",
+    "vimeo": "",
+    "ratio": "16/9",
+    "group": 1,
+    "cam": "",
+    "roles": "videography, photography, festival",
+    "summary": "Photo and video coverage for Qrue Collective and festival artists at Gården Festival in Tydal, Eggebek.",
+    "stills": [
+      {
+        "src": "media/stage-purple.jpg"
+      },
+      {
+        "src": "media/dj-bw.jpg"
+      }
+    ],
+    "anim": "expand",
+    "category": "video"
+  },
+  "blocks": [
+    {
+      "type": "projectHead",
+      "props": {
+        "back": "← all projects",
+        "title": "Gården Festival 2026",
+        "meta": "Role: Videography & photography\nPlace: Tydal, Eggebek\nClients: Qrue Collective, MALM, Leona, AFSKUM, Søn\nYear: 2026"
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "vimeo": "",
+        "src": "media/stage-purple.jpg",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "Gården Festival 2026",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "projectText",
+      "props": {
+        "heading": "Filming for Qrue Collective & Festival Artists",
+        "text": "As part of the media coverage for Gården Festival in Tydal, Eggebek, I produced photo and video content for multiple artists and performances throughout the festival. My main focus was creating dynamic festival content for Qrue Collective, while also filming live performances by MALM and Leona, alongside capturing photography and videography for the Danish artists AFSKUM and Søn.\n\nWorking in a fast-paced festival environment, I documented live performances, backstage moments, and the overall atmosphere of the event. The goal was to create authentic, cinematic content that reflected the energy of the festival and their artists."
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "src": "media/dj-bw.jpg",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "Gården Festival 2026",
+        "hud": "false"
+      }
+    },
+    {
+      "type": "spacer",
+      "props": {
+        "size": 14
+      }
+    },
+    {
+      "type": "projectNext",
+      "props": {}
+    }
+  ]
+}

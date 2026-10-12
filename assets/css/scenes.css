@@ -1,0 +1,93 @@
+/* ===== Szenen-Varianten (assets/js/scenes/*). Gemeinsames steht in effects.css ===== */
+.fx-scenes .scene__stage { background: var(--bg); }
+.fx-scenes .scene__media { position: absolute; inset: 0; }
+.scene__idx--g { position: absolute; z-index: 8; left: 50%; top: 15px; transform: translateX(-50%); color: #fff; mix-blend-mode: difference; }
+.fx-scenes .scene__info--dark { color: #000; }
+.fx-scenes .scene__info--dark .scene__roles { opacity: .6; }
+.fx-scenes [data-light] .scene__cta { background: #000; color: #fff; }
+.fx-scenes [data-light] .scene__cta:hover { background: #fff; color: #000; box-shadow: inset 0 0 0 1px #000; }
+.fx-scenes .scene__cta { text-decoration: none; }
+
+/* --- curtain --- */
+.vc__media { position: absolute; inset: 0; will-change: transform; }
+.vc__p { position: absolute; top: 0; bottom: 0; width: 50%; background: var(--bg); overflow: hidden; z-index: 4; will-change: transform; }
+.vc__p--l { left: 0; } .vc__p--r { right: 0; }
+.vc__t { position: absolute; top: 50%; width: 200vw; max-width: 200%; text-align: center; transform: translateY(-50%); font-size: clamp(18px, 4.6vw, 34px); color: #000; padding: 0 var(--gutter); line-height: 1.2; }
+.vc__p--l .vc__t { left: 0; } .vc__p--r .vc__t { left: -100%; }
+.vc__p--r .vc__t { width: 200%; }
+.vc__p--l .vc__t { width: 200%; }
+
+/* --- marquee --- */
+.vm__row { position: absolute; left: 0; width: 100%; overflow: hidden; white-space: nowrap; pointer-events: none; }
+.vm__row--a { top: 13svh; } .vm__row--b { bottom: 12svh; }
+.vm__track { display: inline-block; font-size: clamp(54px, 15vw, 150px); line-height: 1.1; color: transparent; -webkit-text-stroke: 1px rgba(0,0,0,.28); will-change: transform; }
+.vm__row--b .vm__track { transform: translate3d(-50%,0,0); }
+.vm__card { position: absolute; z-index: 2; left: 50%; top: 50%; width: calc(100vw - 2 * var(--gutter-media)); height: 48svh; margin: -24svh 0 0 calc((100vw - 2 * var(--gutter-media)) / -2); border-radius: var(--radius-sm); overflow: hidden; will-change: transform; background: #0e0e10; }
+.vm__card .scene__media, .vm__card > div { position: absolute; inset: 0; }
+.vm__card img, .vm__card .ph { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.vm__info { bottom: calc(40px + env(safe-area-inset-bottom)); }
+.vm__info .scene__sum { display: none; }
+
+/* --- stack --- */
+.fx-scenes [data-anim=stack] .scene__stage { background: #efefef; }
+.vs__card { position: absolute; left: var(--gutter-media); right: var(--gutter-media); top: 78px; bottom: 26px; border-radius: 18px; overflow: hidden; background: #0e0e10; will-change: transform; transform-origin: 50% 100%; }
+.vs__card .scene__media { position: absolute; inset: 0; }
+.vs__card img, .vs__card .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vs__card .scene__info { bottom: 70px; left: 20px; right: 20px; }
+.vs__card .scene__cta { bottom: 20px; }
+
+/* --- gallery --- */
+.vg__row { position: absolute; left: 0; top: 50%; margin-top: -29svh; display: flex; gap: 14px; will-change: transform; }
+.vg__row img { height: 52svh; width: auto; max-width: none; border-radius: var(--radius-sm); flex: none; object-fit: cover; }
+.vg__info { bottom: calc(34px + env(safe-area-inset-bottom)); }
+.fx-scenes [data-anim=gallery] .scene__cta { left: auto; right: var(--gutter); transform: none; bottom: calc(34px + env(safe-area-inset-bottom)); }
+
+/* --- iris --- */
+.vi__ring { position: absolute; left: 50%; top: 50%; z-index: 2; border: 1px solid #000; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; width: 0; height: 0; opacity: 0; }
+.vi__media { position: absolute; inset: 0; clip-path: circle(0 at 50% 50%); }
+.vi__media .scene__media { position: absolute; inset: 0; will-change: transform; }
+.vi__media img, .vi__media .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vi__title { position: absolute; z-index: 5; left: var(--gutter); right: var(--gutter); top: 50%; transform: translateY(-50%); text-align: center; font-size: clamp(18px, 4.8vw, 34px); font-weight: 400; color: #fff; mix-blend-mode: difference; pointer-events: none; line-height: 1.2; }
+
+/* --- tilt --- */
+.fx-scenes [data-anim=tilt] .scene__stage { perspective: 1100px; --px: 0; --py: 0; }
+.vt__card { position: absolute; left: 50%; top: 11svh; width: min(calc(100vw - 2 * var(--gutter-media)), 900px); height: 52svh; transform-origin: 50% 60%; will-change: transform; margin-left: calc(min(calc(100vw - 2 * var(--gutter-media)), 900px) / -2); }
+.vt__tilt { position: absolute; inset: 0; border-radius: var(--radius-sm); overflow: hidden; background: #0e0e10; transform-style: preserve-3d; transform: rotateY(calc(var(--px) * 7deg)) rotateX(calc(var(--py) * -5deg)); transition: transform .35s var(--ease); box-shadow: 0 30px 70px rgba(0,0,0,.18); }
+.vt__tilt .scene__media { position: absolute; inset: 0; }
+.vt__tilt img, .vt__tilt .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vt__glare { position: absolute; inset: 0; background: radial-gradient(circle at calc(50% + var(--px) * 50%) calc(50% + var(--py) * 50%), rgba(255,255,255,.22), transparent 55%); pointer-events: none; }
+.vt__info { bottom: calc(40px + env(safe-area-inset-bottom)); }
+.vt__info .scene__sum { display: none; }
+
+/* --- pullback --- */
+.vz__media { position: absolute; inset: 0; will-change: transform; }
+.vz__media .scene__media { position: absolute; inset: 0; }
+.vz__media img, .vz__media .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vz__bar { position: absolute; left: 0; right: 0; height: var(--bar, 24svh); background: #000; z-index: 4; pointer-events: none; }
+.vz__bar--t { top: 0; } .vz__bar--b { bottom: 0; }
+
+/* --- pixel --- */
+.fx-scenes [data-anim=pixel] .scene__media { will-change: transform; }
+.fx-scenes [data-anim=pixel] .scene__media img, .fx-scenes [data-anim=pixel] .scene__media .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vp__cv { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; image-rendering: pixelated; }
+[data-anim=pixel] .scene__shade { z-index: 2; }
+
+/* --- words --- */
+.vw__wrap { position: absolute; left: var(--gutter-media); right: var(--gutter-media); top: 96px; bottom: 90px; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; justify-content: center; }
+.vw__img { position: relative; height: 32svh; flex: none; border-radius: 12px; overflow: hidden; background: #0e0e10; will-change: clip-path, transform; }
+.vw__img .scene__media { position: absolute; inset: 0; }
+.vw__img img, .vw__img .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vw__label { font-size: 12px; letter-spacing: .06em; color: var(--ink-mute); }
+.vw__text { font-size: clamp(19px, 5vw, 30px); line-height: 1.38; color: #000; letter-spacing: -.005em; }
+.vw__text span { opacity: .14; }
+.vw__roles { margin-top: 0; color: #000; }
+@media (min-width: 900px) {
+  .vm__card { width: min(78vw, 1000px); height: 54svh; margin: -27svh 0 0 calc(min(78vw, 1000px) / -2); }
+  .vg__row img { height: 58svh; } .vg__row { margin-top: -32svh; }
+  .vt__card { height: 56svh; }
+  .vs__card { top: 92px; left: max(var(--gutter-media), calc((100vw - var(--max)) / 2)); right: max(var(--gutter-media), calc((100vw - var(--max)) / 2)); }
+  .vs__card .scene__info { left: 34px; }
+  .vw__img { height: 38svh; }
+  .vw__text { font-size: clamp(24px, 2.6vw, 38px); }
+  .vg__info, .vm__info, .vt__info { left: max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter))); }
+}

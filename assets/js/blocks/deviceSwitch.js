@@ -1,0 +1,98 @@
+import { h } from '../core/dom.js';
+import { still } from '../core/scrollhub.js';
+// Short-form & Long-form: Smartphone (klein) und Laptop (groß) stehen gleichzeitig im Bild. Was angeklickt wird, kommt animiert nach vorn
+// und läuft dort durch seine Einträge (Bilder nach "Dauer", Videos in ihrer eigenen Länge). Rechts steht nur kurz, was man sieht.
+const isVideo = (s) => /\.(mp4|webm|mov)(\?|$)/i.test(s || '');
+const LIST = [
+  { name: 'src', label: 'Video (.mp4/.webm, wird in voller Länge abgespielt) oder Bild', type: 'image' },
+  { name: 'title', label: 'Titel (kurz)', type: 'text' },
+  { name: 'text', label: 'Kurztext (eine Zeile)', type: 'text' },
+  { name: 'duration', label: 'Dauer in Sekunden (nur bei Bildern; Videos nutzen ihre eigene Länge)', type: 'number', default: 4 },
+];
+
+export default {
+  type: 'deviceSwitch', label: 'Short-form + Long-form (Smartphone & Laptop zusammen)',
+  fields: [
+    { name: 'kicker', label: 'Kleine Zeile', type: 'text', default: 'video formats' },
+    { name: 'front', label: 'Wer startet vorne?', type: 'select', options: ['phone', 'laptop'], default: 'phone' },
+    { name: 'shortTitle', label: 'Name Smartphone', type: 'text', default: 'Short-form' },
+    { name: 'shortText', label: 'Kurztext Smartphone', type: 'text', default: 'Vertical stories for Reels, Shorts & ads.' },
+    { name: 'shortItems', label: 'Smartphone-Einträge (Hochformat; Reihenfolge = Ablauf)', type: 'list', itemFields: LIST },
+    { name: 'longTitle', label: 'Name Laptop', type: 'text', default: 'Long-form' },
+    { name: 'longText', label: 'Kurztext Laptop', type: 'text', default: 'Live sessions & event films in full length.' },
+    { name: 'longItems', label: 'Laptop-Einträge (Querformat; Reihenfolge = Ablauf)', type: 'list', itemFields: LIST },
+    { name: 'auto', label: 'Automatisch durchschalten', type: 'checkbox', default: true },
+  ],
+  render(p0) {
+    const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
+    const items = { phone: (p.shortItems || []).filter(i => i.src), laptop: (p.longItems || []).filter(i => i.src) };
+    const S = { phone: { cur: 0, shots: [], el: null }, laptop: { cur: 0, shots: [], el: null } };
+    let front = items[p.front] && items[p.front].length ? p.front : (items.phone.length ? 'phone' : 'laptop'), timer, raf, visible = false;
+
+    const bars = h('div', { class: 'dd__bars' });
+    const pScr = h('div', { class: 'dd__scr' });
+    const phone = h('button', { type: 'button', class: 'dd__phone', 'aria-label': p.shortTitle }, h('div', { class: 'dd__pscreen' }, pScr, bars), h('span', { class: 'dd__island' }));
+    const lScr = h('div', { class: 'dd__scr' }), lBar = h('i', { class: 'dd__pb' }), lTitle = h('span', { class: 'dd__lt' });
+    const laptop = h('button', { type: 'button', class: 'dd__laptop', 'aria-label': p.longTitle },
+      h('div', { class: 'dd__lid' }, h('div', { class: 'dd__lscreen' }, lScr, h('div', { class: 'dd__player' }, h('b', {}, '▶'), lTitle, h('span', { class: 'dd__tl' }, lBar)))), h('div', { class: 'dd__base' }));
+    S.phone.el = pScr; S.laptop.el = lScr;
+    const dev = h('div', { class: 'dd__dev' }, laptop, phone);
+    const k = h('p', { class: 'dd__k' }, p.kicker), gT = h('h2', { class: 'dd__h' }), gX = h('p', { class: 'dd__p' });
+    const iT = h('h3', { class: 'dd__it' }), iX = h('p', { class: 'dd__ix' }), item = h('div', { class: 'dd__item' }, iT, iX);
+    const sw = ['phone', 'laptop'].map(m => h('button', { type: 'button', class: 'dd__sw', 'data-m': m, 'aria-label': m === 'phone' ? p.shortTitle : p.longTitle }, h('i', {})));
+    const el = h('section', { class: 'dd', id: p.id }, h('div', { class: 'dd__stage' }, dev, h('div', { class: 'dd__copy' }, k, h('div', { class: 'dd__dots' }, sw), gT, gX, item)));
+
+    // Screens aufbauen
+    for (const m of ['phone', 'laptop']) {
+      S[m].shots = items[m].map(it => {
+        const v = isVideo(it.src);
+        const node = v ? h('video', { src: it.src, muted: '', playsinline: '', preload: 'metadata', 'aria-hidden': 'true' }) : h('img', { src: it.src, alt: '', decoding: 'async', loading: 'lazy' });
+        if (v) { node.muted = true; node.defaultMuted = true; }
+        const s = h('div', { class: 'dd__shot' }, node); S[m].el.append(s); return s;
+      });
+    }
+    bars.replaceChildren(...items.phone.map(() => h('i', {}, h('b', {}))));
+
+    const clearT = () => { clearTimeout(timer); cancelAnimationFrame(raf); };
+    const fill = (m, f) => { if (m === 'laptop') lBar.style.transform = `scaleX(${f})`; else { const b = bars.children[S.phone.cur]; if (b) b.firstChild.style.transform = `scaleX(${f})`; } };
+    const show = (m, i, play = true) => {
+      const list = items[m]; if (!list.length) return; const st = S[m];
+      st.cur = (i + list.length) % list.length;
+      st.shots.forEach((s, n) => { s.classList.toggle('is-on', n === st.cur); const v = s.querySelector('video'); if (v && n !== st.cur) { v.pause(); } });
+      if (m === 'phone') [...bars.children].forEach((b, n) => { b.firstChild.style.transform = `scaleX(${n < st.cur ? 1 : 0})`; });
+      else lBar.style.transform = 'scaleX(0)';
+      lTitle.textContent = items.laptop[S.laptop.cur] ? items.laptop[S.laptop.cur].title || '' : '';
+      if (m === front) { const it = list[st.cur]; iT.textContent = it.title || ''; iX.textContent = it.text || ''; item.classList.remove('is-in'); void item.offsetWidth; item.classList.add('is-in'); if (play) run(); }
+    };
+    // Fortschritt: Video = eigene Länge, Bild = Dauer
+    const run = () => {
+      clearT(); const m = front, st = S[m], list = items[m]; if (!list.length) return;
+      const it = list[st.cur], shot = st.shots[st.cur], v = shot && shot.querySelector('video');
+      const next = () => { if (!visible || front !== m) return; if (list.length > 1 || v) show(m, st.cur + 1); };
+      if (v) {
+        v.currentTime = 0; v.play().catch(() => {});
+        const tick = () => { if (front !== m) return; const d = v.duration || 0; if (d) fill(m, Math.min(1, v.currentTime / d)); if (v.ended || (d && v.currentTime >= d - .05)) { if (list.length > 1) next(); else { v.currentTime = 0; v.play().catch(() => {}); } } raf = requestAnimationFrame(tick); };
+        raf = requestAnimationFrame(tick);
+      } else if (p.auto && !still() && list.length > 1) {
+        const dur = Math.max(1.5, Number(it.duration) || 4) * 1000, t0 = performance.now();
+        const tick = (t) => { if (front !== m) return; const f = Math.min(1, (t - t0) / dur); fill(m, f); if (f >= 1) next(); else raf = requestAnimationFrame(tick); };
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    const setFront = (m) => {
+      if (!items[m].length && items[m === 'phone' ? 'laptop' : 'phone'].length) return;
+      front = m; el.dataset.front = m; sw.forEach(s => s.classList.toggle('is-on', s.dataset.m === m));
+      gT.textContent = m === 'phone' ? p.shortTitle : p.longTitle; gX.textContent = m === 'phone' ? p.shortText : p.longText;
+      ['phone', 'laptop'].forEach(x => { if (x !== m) { S[x].shots.forEach(s => s.querySelector('video')?.pause()); } });
+      show(m, S[m].cur);
+    };
+    // Bedienung: nicht vorne → nach vorn holen; vorne → Handy: links/rechts tippen, Laptop: nächster Eintrag
+    phone.addEventListener('click', (e) => { if (front !== 'phone') return setFront('phone'); const r = phone.getBoundingClientRect(); show('phone', S.phone.cur + (e.clientX < r.left + r.width * .35 ? -1 : 1)); });
+    laptop.addEventListener('click', () => { if (front !== 'laptop') return setFront('laptop'); show('laptop', S.laptop.cur + 1); });
+    sw.forEach(s => s.addEventListener('click', () => setFront(s.dataset.m)));
+    el.dataset.front = front; setFront(front); show(front === 'phone' ? 'laptop' : 'phone', 0, false);
+    if ('IntersectionObserver' in window) new IntersectionObserver((es) => { es.forEach(e => { visible = e.isIntersecting; if (visible) run(); else { clearT(); ['phone', 'laptop'].forEach(x => S[x].shots.forEach(s => s.querySelector('video')?.pause())); } }); }, { threshold: .3 }).observe(el);
+    else visible = true;
+    return el;
+  },
+};
