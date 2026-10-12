@@ -210,6 +210,10 @@ async function render() {
       { type: 'text', props: { text: ui('notFoundText'), align: 'center' } },
     ] };
   }
+  // Projektseite: Hat das Projekt einen Video-Link (Vimeo/YouTube) auf der Karte, aber das erste Bild/Video-Element hat keinen eigenen, wird der Karten-Link dort abgespielt
+  { const pv = state.index && state.index.projects && state.index.projects[target] && state.index.projects[target].vimeo;
+    const m1 = pv && (page.blocks || []).find(b => b.type === 'media');
+    if (m1 && m1.props && !m1.props.vimeo) page = { ...page, blocks: page.blocks.map(b => b === m1 ? { ...b, props: { ...b.props, vimeo: pv } } : b) }; }
   const ctx = { site, content: { index: state.index }, route: target };
   const frag = h('div', { class: 'page', 'data-page': target });
   frag.append(renderBlocks(page.blocks, ctx), h('div', { class: 'b-spacer', style: { '--h': '40px' } }));

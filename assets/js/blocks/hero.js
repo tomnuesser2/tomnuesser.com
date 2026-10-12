@@ -38,6 +38,12 @@ export default {
       p.subtitle ? h('p', { class: `hero__sub is-${p.subSize}` }, p.subtitle) : null,
       p.text ? h('p', { class: 'hero__text' }, p.text) : null,
       h('a', { class: 'hero__cue', href: 'home#work', 'data-link': '' }, p.cue || 'scroll', h('i', { 'aria-hidden': 'true' }, '↓')));
+    // PC: statt des Kartenfächers das 3D-Karussell (querformatige Karten, groß, ziehbar, dreht langsam von selbst)
+    if (matchMedia('(min-width: 900px)').matches && !still() && n >= 2) {
+      const box = el.querySelector('.hero__cards'); el.classList.add('hero--car'); box.replaceChildren();
+      const all = (idx.order || []).map(sl => ({ slug: sl, ...idx.projects[sl] })).filter(x => x.image && !x.hidden);
+      requestAnimationFrame(() => carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { size: (r) => ({ w: Math.min(r.width * .4, r.height * 1.0 * 1.6), aspect: 1.6 }), fitAngle: 100 }));
+    }
     if (still() || !p.cycle) { lineEls.forEach(r => r.classList.add('is-on')); if (still()) return el; }
     if (p.cycle) { let a = 0; const cycle = () => { lineEls.forEach((r, i) => r.classList.toggle('is-on', i === a)); a = (a + 1) % lineEls.length; };
       cycle(); const t = setInterval(() => { if (!el.isConnected) return clearInterval(t); cycle(); }, 1700); }
