@@ -96,15 +96,17 @@ function buildShell() {
   if (!state.escBound) { state.escBound = true; addEventListener('keydown', (e) => { const m = state.els.menu; if (e.key === 'Escape' && m && m.classList.contains('is-open')) state.setMenu(false); }); }
 }
 
+let spyMap = null, spyKey = '';
 function spy() {
-  const links = [...document.querySelectorAll('.pill__a, .mnav__a')];
-  let cur = null;
-  for (const a of links) {
-    const u = new URL(a.getAttribute('href'), location.href);
-    const el = u.hash && u.pathname === loc().pathname ? document.getElementById(decodeURIComponent(u.hash.slice(1))) : null;
-    if (el && el.getBoundingClientRect().top < innerHeight * .45) cur = a;
+  // Ziele der Menülinks nur einmal ermitteln (nicht bei jedem Scroll neu parsen/suchen)
+  const links = [...document.querySelectorAll('.pill__a, .mnav__a')], key = links.length + loc().pathname;
+  if (!spyMap || spyKey !== key || spyMap.some(([, el]) => el && !el.isConnected)) {
+    spyKey = key;
+    spyMap = links.map((a) => { const u = new URL(a.getAttribute('href'), location.href); return [a, u.hash && u.pathname === loc().pathname ? document.getElementById(decodeURIComponent(u.hash.slice(1))) : null]; });
   }
-  const ch = cur && cur.getAttribute('href'); links.forEach(a => a.classList.toggle('is-active', !!ch && a.getAttribute('href') === ch));
+  let cur = null; const lim = innerHeight * .45;
+  for (const [a, el] of spyMap) if (el && el.getBoundingClientRect().top < lim) cur = a;
+  const ch = cur && cur.getAttribute('href'); for (const a of links) a.classList.toggle('is-active', !!ch && a.getAttribute('href') === ch);
 }
 // Beschriftungen des unteren Menüs: genaue Breite messen, damit nichts aus der Pille rutscht
 function measureNav() {
@@ -152,7 +154,8 @@ const dock = () => { const hd = document.querySelector('.site-header'); if (!hd)
   const dark = [...document.querySelectorAll('.kn__stage, .hm__stage.is-dark')].some(e => { const r = e.getBoundingClientRect(); return r.top < 36 && r.bottom > 36; }); hd.classList.toggle('over-dark', dark);
   const on = flPinned(); if (on !== flOn) { flOn = on; morph(on); } else if (on && !morphAnim.length) { hd.classList.add('mnav-off'); document.body.classList.add('fl-pinned'); } };
 addEventListener('tn-dark', () => dock());
-addEventListener('scroll', () => requestAnimationFrame(() => { spy(); dock(); }), { passive: true });
+let spyQ = false;
+addEventListener('scroll', () => { if (spyQ) return; spyQ = true; requestAnimationFrame(() => { spyQ = false; spy(); dock(); }); }, { passive: true });
 
 function markActiveLinks() {
   spy(); dock();

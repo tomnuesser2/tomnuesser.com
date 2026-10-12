@@ -118,8 +118,11 @@
         "front": "phone",
         "kicker_de": "",
         "kicker": "",
-        "shortTitle": "16:9",
-        "shortTitle_de": "16:9"
+        "shortTitle": "9:16",
+        "shortTitle_de": "9:16",
+        "longTitle_de": "16:9",
+        "longTitle": "16:9",
+        "shortText_de": ""
       },
       "id": "video"
     },
