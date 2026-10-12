@@ -141,7 +141,7 @@ async function morph(on) {
   }
 }
 const dock = () => { const hd = document.querySelector('.site-header'); if (!hd) return; hd.classList.toggle('is-docked', scrollY > 70);
-  const dark = [...document.querySelectorAll('.kn__stage')].some(e => { const r = e.getBoundingClientRect(); return r.top < 36 && r.bottom > 36; }); hd.classList.toggle('over-dark', dark);
+  const dark = [...document.querySelectorAll('.kn__stage, .hm__stage')].some(e => { const r = e.getBoundingClientRect(); return r.top < 36 && r.bottom > 36; }); hd.classList.toggle('over-dark', dark);
   const on = flPinned(); if (on !== flOn) { flOn = on; morph(on); } else if (on && !morphAnim.length) { hd.classList.add('mnav-off'); document.body.classList.add('fl-pinned'); } };
 addEventListener('scroll', () => requestAnimationFrame(() => { spy(); dock(); }), { passive: true });
 

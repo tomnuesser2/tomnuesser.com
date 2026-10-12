@@ -22,7 +22,8 @@
     "anim": "expand",
     "category": "video",
     "summary_de": "Filmische Live-Session-Videos für LEONAs Festivalbewerbungen und Kampagne, gedreht im Deutschen Haus in Flensburg.",
-    "roles_de": "Videografie, Multicam, Postproduktion"
+    "roles_de": "Videografie, Multicam, Postproduktion",
+    "featured": true
   },
   "blocks": [
     {

@@ -22,7 +22,8 @@
     "anim": "expand",
     "category": "video",
     "summary_de": "Ein kurzer Highlight-Film über einen Upcycling-Workshop im NORDER147 in Flensburg – als ehrenamtliches Projekt entstanden.",
-    "roles_de": "Videografie, Schnitt, gemeinnützig"
+    "roles_de": "Videografie, Schnitt, gemeinnützig",
+    "featured": true
   },
   "blocks": [
     {

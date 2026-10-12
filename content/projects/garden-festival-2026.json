@@ -19,7 +19,8 @@
     "anim": "expand",
     "category": "video",
     "summary_de": "Foto- und Videobegleitung für das Qrue Collective und Festival-Künstler beim Gården Festival in Tydal, Eggebek.",
-    "roles_de": "Videografie, Fotografie, Festival"
+    "roles_de": "Videografie, Fotografie, Festival",
+    "featured": true
   },
   "blocks": [
     {

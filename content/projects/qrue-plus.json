@@ -19,7 +19,8 @@
     "anim": "expand",
     "category": "video",
     "summary_de": "Die Live-Performance QRUE PLUS im Kühlhaus Flensburg mit bewusst minimalem Setup gefilmt.",
-    "roles_de": "Videografie, Live, Audio"
+    "roles_de": "Videografie, Live, Audio",
+    "featured": true
   },
   "blocks": [
     {
