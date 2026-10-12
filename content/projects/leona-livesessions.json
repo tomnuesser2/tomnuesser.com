@@ -1,0 +1,30 @@
+{
+  "title": "leona - festival live sessions",
+  "card": {
+    "image": "media/still-2026-07-02-232833_4.3.1.png",
+    "vimeo": "https://vimeo.com/manage/videos/1207034763",
+    "ratio": "16/9",
+    "group": 1,
+    "category": "video",
+    "stills": [],
+    "featured": true
+  },
+  "blocks": [
+    {
+      "type": "spacer",
+      "props": {
+        "size": 40
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "leona - festival live sessions",
+        "level": 1,
+        "align": "center",
+        "bold": false
+      }
+    }
+  ],
+  "title_de": "leona - festival live sessions"
+}

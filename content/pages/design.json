@@ -1,0 +1,30 @@
+{
+  "title": "Design",
+  "title_de": "Design",
+  "blocks": [
+    {
+      "type": "spacer",
+      "props": {
+        "size": 60
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "My design work",
+        "text_de": "Meine Design-Arbeiten",
+        "level": 1,
+        "align": "center",
+        "bold": true
+      }
+    },
+    {
+      "type": "projectGrid",
+      "props": {
+        "mode": "index",
+        "anim": "project",
+        "category": "design"
+      }
+    }
+  ]
+}

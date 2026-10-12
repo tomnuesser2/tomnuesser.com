@@ -1,0 +1,43 @@
+{
+  "title": "Project 9 – pixel",
+  "card": {
+    "image": "media/board.jpg",
+    "vimeo": "",
+    "ratio": "3/2",
+    "group": 2,
+    "roles": "web design, development",
+    "summary": "The picture decodes from a coarse mosaic into full resolution.",
+    "anim": "pixel",
+    "cam": "",
+    "stills": [
+      {
+        "src": "media/norder-1.jpg"
+      },
+      {
+        "src": "media/norder-2.jpg"
+      }
+    ],
+    "category": "code",
+    "summary_de": "Das Bild entschlüsselt sich aus einem groben Mosaik in volle Auflösung.",
+    "hidden": true
+  },
+  "blocks": [
+    {
+      "type": "spacer",
+      "props": {
+        "size": 40
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "Project 9 – pixel",
+        "level": 1,
+        "align": "center",
+        "bold": false,
+        "text_de": "Projekt 9 – Pixel"
+      }
+    }
+  ],
+  "title_de": "Projekt 9 – Pixel"
+}

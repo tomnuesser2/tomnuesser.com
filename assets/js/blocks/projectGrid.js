@@ -99,7 +99,7 @@ export default {
   type: 'projectGrid',
   label: 'Projektliste (Work)',
   fields: [
-    { name: 'category', label: 'Bereich (video / social / code / all)', type: 'select', options: ['all', 'video', 'social', 'code'], default: 'all' },
+    { name: 'category', label: 'Bereich (video / social / code / design / all)', type: 'select', options: ['all', 'video', 'social', 'code', 'design'], default: 'all' },
     { name: 'mode', label: 'Darstellung', type: 'select', options: ['index', 'scenes', 'stack'], default: 'index' },
     { name: 'anim', label: 'Animation', type: 'select', options: ['project', ...names], default: 'project' },
     { name: 'note', label: 'Animation „project“ = jedes Projekt nutzt seine eigene (unter „Projekte“ einstellbar). Wählst du hier eine, nutzen alle Projekte diese.', type: 'info' },

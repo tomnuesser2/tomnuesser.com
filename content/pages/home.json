@@ -3,15 +3,7 @@
   "blocks": [
     {
       "type": "hero",
-      "props": {
-        "title_de": "digitale und\nvisuelle kunst",
-        "titleSize": "m",
-        "title": "digital and\nvisual artist\n\n",
-        "cycle": true,
-        "subtitle_de": "",
-        "cards": 4,
-        "mobileCount": 4
-      }
+      "props": {}
     },
     {
       "type": "statement",
@@ -20,8 +12,7 @@
         "text": "Moving pictures. Brands that stick. Websites that feel like films – all from one desk in Flensburg.",
         "size": "l",
         "text_de": "Bewegte Bilder. Marken, die hängen bleiben. Websites, die sich wie Filme anfühlen – alles von einem Schreibtisch in Flensburg."
-      },
-      "hidden": true
+      }
     },
     {
       "type": "chapter",
@@ -38,7 +29,7 @@
     {
       "type": "projectGrid",
       "props": {
-        "mode": "scenes",
+        "mode": "index",
         "anim": "project",
         "category": "video"
       },
@@ -116,13 +107,7 @@
           }
         ],
         "front": "phone",
-        "kicker_de": "",
-        "kicker": "",
-        "shortTitle": "9:16",
-        "shortTitle_de": "9:16",
-        "longTitle_de": "16:9",
-        "longTitle": "16:9",
-        "shortText_de": ""
+        "ctaLink": "videography"
       },
       "id": "video"
     },
@@ -197,7 +182,8 @@
         "poster": "media/stage-purple.jpg",
         "dim": 45,
         "size": "l",
-        "words_de": "Film\nDesign\nEntwicklung\nein roter Faden."
+        "words_de": "Film\nDesign\nEntwicklung\nein roter Faden.",
+        "ctaLink": "design"
       },
       "id": "design"
     },

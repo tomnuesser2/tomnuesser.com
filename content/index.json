@@ -1,4 +1,69 @@
 {
-  "order": [],
-  "projects": {}
+  "order": [
+    "project-9",
+    "project-10",
+    "leona-livesessions"
+  ],
+  "projects": {
+    "leona-livesessions": {
+      "title": "leona - festival live sessions",
+      "title_de": "leona - festival live sessions",
+      "summary_de": "",
+      "roles_de": "",
+      "image": "media/still-2026-07-02-232833_4.3.1.png",
+      "vimeo": "https://vimeo.com/manage/videos/1207034763",
+      "ratio": "16/9",
+      "group": 1,
+      "hidden": false,
+      "featured": true,
+      "summary": "",
+      "anim": "expand",
+      "roles": "",
+      "category": "video",
+      "cam": "",
+      "stills": []
+    },
+    "project-10": {
+      "title": "Project 10 – words",
+      "title_de": "Projekt 10 – Worte",
+      "summary_de": "Worte füllen sich beim Scrollen schwarz – ein Text-Teaser für Geschichten, die ein paar Sätze mehr brauchen als ein Bild.",
+      "roles_de": "",
+      "image": "media/dj-bw.jpg",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 2,
+      "hidden": true,
+      "featured": false,
+      "summary": "Words fill in black while you scroll – a text-first project teaser for stories that need a few sentences more than a picture can give.",
+      "anim": "words",
+      "roles": "brand film, editing, sound",
+      "category": "code",
+      "cam": "",
+      "stills": [
+        "media/leona-bw.jpg",
+        "media/stage-purple.jpg"
+      ]
+    },
+    "project-9": {
+      "title": "Project 9 – pixel",
+      "title_de": "Projekt 9 – Pixel",
+      "summary_de": "Das Bild entschlüsselt sich aus einem groben Mosaik in volle Auflösung.",
+      "roles_de": "",
+      "image": "media/board.jpg",
+      "vimeo": "",
+      "ratio": "3/2",
+      "group": 2,
+      "hidden": true,
+      "featured": false,
+      "summary": "The picture decodes from a coarse mosaic into full resolution.",
+      "anim": "pixel",
+      "roles": "web design, development",
+      "category": "code",
+      "cam": "",
+      "stills": [
+        "media/norder-1.jpg",
+        "media/norder-2.jpg"
+      ]
+    }
+  }
 }

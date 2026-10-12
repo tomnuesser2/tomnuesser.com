@@ -1,0 +1,43 @@
+{
+  "title": "Project 10 – words",
+  "card": {
+    "image": "media/dj-bw.jpg",
+    "vimeo": "",
+    "ratio": "16/9",
+    "group": 2,
+    "roles": "brand film, editing, sound",
+    "summary": "Words fill in black while you scroll – a text-first project teaser for stories that need a few sentences more than a picture can give.",
+    "anim": "words",
+    "cam": "",
+    "stills": [
+      {
+        "src": "media/leona-bw.jpg"
+      },
+      {
+        "src": "media/stage-purple.jpg"
+      }
+    ],
+    "category": "code",
+    "summary_de": "Worte füllen sich beim Scrollen schwarz – ein Text-Teaser für Geschichten, die ein paar Sätze mehr brauchen als ein Bild.",
+    "hidden": true
+  },
+  "blocks": [
+    {
+      "type": "spacer",
+      "props": {
+        "size": 40
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "Project 10 – words",
+        "level": 1,
+        "align": "center",
+        "bold": false,
+        "text_de": "Projekt 10 – Worte"
+      }
+    }
+  ],
+  "title_de": "Projekt 10 – Worte"
+}
