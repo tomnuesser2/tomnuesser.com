@@ -5,7 +5,9 @@
       "type": "hero",
       "props": {
         "cards": 6,
-        "mobileCount": 6
+        "mobileCount": 6,
+        "title_de": "digitale und\nvisuelle kunst",
+        "title": "digital and\nvisual artist"
       }
     },
     {
