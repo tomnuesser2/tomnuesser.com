@@ -1,3 +1,6 @@
+import { getLang } from '../core/i18n.js';
+const DE = { Notes: 'Notizen', Image: 'Bild', Columns: 'Spalten', Tasks: 'Aufgaben', Table: 'Tabelle', Connect: 'Verbinden', Idea: 'Idee', Doing: 'In Arbeit', Shoot: 'Dreh', Cut: 'Schnitt', Grade: 'Grading', 'Color world': 'Farbwelt', Mode: 'Modus', Light: 'Hell', Dark: 'Dunkel', Corners: 'Ecken', Shadow: 'Schatten', Border: 'Rahmen', Font: 'Schrift', Background: 'Hintergrund', grid: 'Raster', lines: 'Linien', paper: 'Papier', default: 'Standard', serif: 'Serif', mono: 'Mono', 'Keep look': 'Look behalten', '✓ Look kept': '✓ Look behalten', 'sub-board': 'Unter-Board', '+ New': '+ Neu' };
+const trN = (t) => (getLang() === 'de' && DE[t]) || t;
 // NOTUA-Flug: 3D-Flug durch Boards der eigenen App (reines WebGL). Die Karten werden live im NOTUA-Look mit Canvas 2D gezeichnet
 // und spielen, sobald man bei ihnen ankommt, eine kleine Animation (Text tippen, Bilder einsetzen, Aufgaben abhaken, Boards öffnen …).
 // Alle Texte, Bilder und Farben sind im Admin änderbar.
@@ -41,7 +44,7 @@ const ICO = {
   table: (c, x, y) => { c.strokeStyle = TH.faint; c.lineWidth = 2.4; c.strokeRect(x, y, 26, 24); c.beginPath(); c.moveTo(x, y + 8); c.lineTo(x + 26, y + 8); c.moveTo(x, y + 16); c.lineTo(x + 26, y + 16); c.moveTo(x + 9, y); c.lineTo(x + 9, y + 24); c.moveTo(x + 18, y); c.lineTo(x + 18, y + 24); c.stroke(); },
   folder: (c, x, y) => { c.strokeStyle = TH.faint; c.lineWidth = 2.4; c.beginPath(); c.moveTo(x, y + 4); c.lineTo(x + 9, y + 4); c.lineTo(x + 12, y + 8); c.lineTo(x + 28, y + 8); c.lineTo(x + 28, y + 26); c.lineTo(x, y + 26); c.closePath(); c.stroke(); },
 };
-const txt = (c, t, x, y, size = 42, color = TH.ink, weight = 400) => { c.fillStyle = color; c.font = `${weight} ${size}px ${FONT}`; c.fillText(t, x, y); };
+const txt = (c, t, x, y, size = 42, color = TH.ink, weight = 400) => { c.fillStyle = color; c.font = `${weight} ${size}px ${FONT}`; c.fillText(trN(t), x, y); };
 // Text, der Zeichen für Zeichen getippt wird; gibt die Position des Cursors zurück
 function typed(c, s, x, y, size, color, weight, n, maxW) {
   let sz = size; c.font = `${weight} ${sz}px ${FONT}`; while (maxW && sz > 18 && c.measureText(s).width > maxW) { sz -= 2; c.font = `${weight} ${sz}px ${FONT}`; }
@@ -218,9 +221,9 @@ function dLook(c, T) {
   lab('Mode', 196); { const x = 566, y = 214, w = 56, h = 26; c.fillStyle = S.dark ? TH.accent : TH.surface2; rr(c, x, y, w, h, 13); c.fill(); c.strokeStyle = LK.bc || TH.border; c.lineWidth = 1.5; rr(c, x, y, w, h, 13); c.stroke(); c.fillStyle = '#fff'; c.beginPath(); c.arc(S.dark ? x + w - 14 : x + 14, y + 13, 9, 0, 7); c.fill(); txt(c, S.dark ? 'Dark' : 'Light', x + 68, y + 14, 17, TH.ink); }
   const slider = (label, y, v) => { lab(label, y - 24); c.fillStyle = TH.surface2; rr(c, LC.sx, y - 3, LC.sw, 6, 3); c.fill(); c.fillStyle = TH.accent; rr(c, LC.sx, y - 3, LC.sw * v, 6, 3); c.fill(); c.fillStyle = '#fff'; c.strokeStyle = TH.accent; c.lineWidth = 3; c.beginPath(); c.arc(LC.sx + LC.sw * v, y, 11, 0, 7); c.fill(); c.stroke(); };
   slider('Corners', LC.sy[0], S.r / 64); slider('Shadow', LC.sy[1], S.shV); slider('Border', LC.sy[2], S.bdV);
-  const btns = (label, y, arr, sel, fontOf) => { lab(label, y - 16); arr.forEach((nm, k) => { const x = 566 + k * 80, on = sel === nm; c.fillStyle = on ? TH.accentSoft : TH.surface2; rr(c, x, y, 72, 32, 8); c.fill(); c.strokeStyle = on ? TH.accent : (LK.bc || TH.border); c.lineWidth = on ? 2.5 : 1.5; rr(c, x, y, 72, 32, 8); c.stroke(); c.textAlign = 'center'; c.fillStyle = TH.ink; c.font = `500 ${fontOf ? 20 : 16}px ${fontOf ? FONTS[nm] : FONT}`; c.fillText(fontOf ? 'Aa' : nm, x + 36, y + 17); c.textAlign = 'left'; }); };
+  const btns = (label, y, arr, sel, fontOf) => { lab(label, y - 16); arr.forEach((nm, k) => { const x = 566 + k * 80, on = sel === nm; c.fillStyle = on ? TH.accentSoft : TH.surface2; rr(c, x, y, 72, 32, 8); c.fill(); c.strokeStyle = on ? TH.accent : (LK.bc || TH.border); c.lineWidth = on ? 2.5 : 1.5; rr(c, x, y, 72, 32, 8); c.stroke(); c.textAlign = 'center'; c.fillStyle = TH.ink; c.font = `500 ${fontOf ? 20 : 16}px ${fontOf ? FONTS[nm] : FONT}`; c.fillText(fontOf ? 'Aa' : trN(nm), x + 36, y + 17); c.textAlign = 'left'; }); };
   btns('Font', 428, ['default', 'serif', 'mono'], S.font, true); btns('Background', 484, ['grid', 'lines', 'paper'], S.bg, false);
-  { const [kx, ky] = LC.keep, press = S.T > 9.15 && S.T < 9.4 ? .96 : 1; c.save(); c.translate(kx, ky); c.scale(press, press); c.fillStyle = TH.accent; rr(c, -117, -17, 234, 34, 10); c.fill(); c.textAlign = 'center'; c.fillStyle = '#fff'; c.font = `700 18px ${FONT}`; c.fillText(S.kept ? '✓ Look kept' : 'Keep look', 0, 1); c.restore(); }
+  { const [kx, ky] = LC.keep, press = S.T > 9.15 && S.T < 9.4 ? .96 : 1; c.save(); c.translate(kx, ky); c.scale(press, press); c.fillStyle = TH.accent; rr(c, -117, -17, 234, 34, 10); c.fill(); c.textAlign = 'center'; c.fillStyle = '#fff'; c.font = `700 18px ${FONT}`; c.fillText(trN(S.kept ? '✓ Look kept' : 'Keep look'), 0, 1); c.restore(); }
   // Klick-Wellen + Mauszeiger
   const [mx, my] = cursorAt(T); CLICKS.forEach(ct => { const d = T - ct; if (d > 0 && d < .55) { c.strokeStyle = TH.accent; c.globalAlpha = 1 - d / .55; c.lineWidth = 4; c.beginPath(); c.arc(mx, my, 6 + d * 60, 0, 7); c.stroke(); c.globalAlpha = 1; } });
   const fade = clamp(T / .5) * clamp((10 - T) / .5); if (fade > 0.02) cursor(c, mx - 4, my - 3, fade);
@@ -362,7 +365,7 @@ function mount(root, OPT) {
   const bar = el('i', 'fl__bar');
   const dock = el('div', 'fl__dock'); dock.setAttribute('role', 'toolbar');
   const dockKeys = [...new Set(STATIONS.map(x => x.dock).filter(Boolean))];
-  const dockBtns = dockKeys.map(k => DOCK.find(d => d[0] === k)).filter(Boolean).map(([key, label, svgH]) => { const b = el('button', 'fl__tool'); b.type = 'button'; b.dataset.k = key; b.innerHTML = svgH + `<span>${label}</span>`; b.setAttribute('aria-label', label); dock.append(b); return b; });
+  const dockBtns = dockKeys.map(k => DOCK.find(d => d[0] === k)).filter(Boolean).map(([key, label, svgH]) => { const b = el('button', 'fl__tool'); b.type = 'button'; b.dataset.k = key; b.innerHTML = svgH + `<span>${trN(label)}</span>`; b.setAttribute('aria-label', trN(label)); dock.append(b); return b; });
   const stage = el('div', 'fl__stage');
     stage.append(canvas, el('div', 'fl__vig'), hud, hint, dock, bar);
   const track = el('div', 'fl__track'); track.append(stage); track.style.setProperty('--n', N + 1 + PL); root.append(track);
