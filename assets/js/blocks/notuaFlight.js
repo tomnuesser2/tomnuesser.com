@@ -396,8 +396,8 @@ function mount(root, OPT) {
   const upload = (i) => { const pl = planes[i]; if (!pl.tex) return; gl.bindTexture(gl.TEXTURE_2D, pl.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cvs[i]); };
   const logo = new Image(); logo.onload = () => { const t = makeTex(logo); planes.forEach(pl => { if (pl.logo) { pl.tex = t; pl.ratio = 1; } }); }; logo.src = o.logo || 'media/notua-logo.png';
 
-  let W = 1, Hh = 1, prog0 = 0, prevP = 0, vel = 0, gv = 0, px = 0, py = 0, tpx = 0, tpy = 0, active = -1, running = false, aT0 = 0; const t0 = performance.now();
-  const resize = () => { const dpr = Math.min(devicePixelRatio || 1, 2); W = canvas.clientWidth; Hh = canvas.clientHeight; canvas.width = Math.max(1, Math.round(W * dpr)); canvas.height = Math.max(1, Math.round(Hh * dpr)); };
+  const SMALL = matchMedia('(max-width: 899px)').matches; let lastPaint = 0; let W = 1, Hh = 1, prog0 = 0, prevP = 0, vel = 0, gv = 0, px = 0, py = 0, tpx = 0, tpy = 0, active = -1, running = false, aT0 = 0; const t0 = performance.now();
+  const resize = () => { const dpr = Math.min(devicePixelRatio || 1, SMALL ? 1.5 : 2); W = canvas.clientWidth; Hh = canvas.clientHeight; canvas.width = Math.max(1, Math.round(W * dpr)); canvas.height = Math.max(1, Math.round(Hh * dpr)); };
   addEventListener('resize', resize);
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) { stage.addEventListener('pointermove', (e) => { tpx = e.clientX / innerWidth * 2 - 1; tpy = e.clientY / innerHeight * 2 - 1; }); }
   const setActive = (i, now) => {
@@ -451,7 +451,7 @@ function mount(root, OPT) {
     setActive(near, now);
     // Look-Skript: Zustand aus der Scroll-Position (nur im Look-Abschnitt), sonst Standard-Look
     const lookT = Math.abs(f - lookIdx) < .01 ? (active === lookIdx ? lu * 10 : -1) : (f > lookIdx ? 99 : -1); applyState(lookState(lookT));
-    if (cvs[active] && active === near && Math.abs(f - active) < .6) { const pl = planes[active]; paint(active, active === lookIdx ? lookT : (now - aT0) / 1000); pver[active] = ver; upload(active); }
+    if (cvs[active] && active === near && Math.abs(f - active) < .6 && now - lastPaint > (SMALL ? 66 : 33)) { lastPaint = now; paint(active, active === lookIdx ? lookT : (now - aT0) / 1000); pver[active] = ver; upload(active); }
     if (D.dirtyImg) { D.dirtyImg = false; ver++; }
     for (let i = 0; i < STATIONS.length; i++) if (cvs[i] && i !== active && pver[i] !== ver && Math.abs(f - i) < 2.6) { paint(i, 99); upload(i); pver[i] = ver; }
     hud.style.setProperty('--gl', '0'); bar.style.transform = `scaleX(${prog0.toFixed(4)})`; hint.style.opacity = prog0 < .03 ? '1' : '0';

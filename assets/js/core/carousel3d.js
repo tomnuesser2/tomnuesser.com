@@ -6,7 +6,7 @@
 //   opts.onChange(index), opts.onFront(item, index) wird beim Tippen auf die vordere Karte gerufen (sonst: Navigation per Link)
 import { h } from './dom.js';
 
-const TILES = 8, OVERLAP = 2.5, DRAG = 5, SPRING = 118, SETTLE = 9, RAD = Math.PI / 180;
+const TILES_MAX = 8, OVERLAP = 2.5, DRAG = 5, SPRING = 118, SETTLE = 9, RAD = Math.PI / 180;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const wrap = (d) => ((((d + 180) % 360) + 360) % 360) - 180;
 const easeOut = (t) => 1 - Math.pow(1 - t, 4);
@@ -17,6 +17,7 @@ const rotY = (p, d) => { const r = d * RAD, c = Math.cos(r), s = Math.sin(r); re
 export function carousel3d(root, items, o = {}) {
   const O = { gap: 36, tilt: 3, curve: .46, perspective: 1040, speed: 14, momentum: .6, parallax: .3, stretch: .5, depthFade: .55, innerShade: .6, radius: 12, intro: true, reduced: false, ...o };
   const count = items.length, step = 360 / count;
+  const TILES = O.light ? 5 : TILES_MAX;
   root.classList.add('cc');
   root.style.setProperty('--cc-radius', O.radius + 'px');
   root.style.setProperty('--cc-inner', (1 - clamp(O.innerShade, 0, 1)).toFixed(3));
@@ -45,7 +46,7 @@ export function carousel3d(root, items, o = {}) {
     items.forEach((it, idx) => {
       const el = h('a', { class: 'cc__card', href: it.href || '#', 'data-cc': idx, draggable: 'false', 'aria-label': it.title || '' });
       if (it.href) el.setAttribute('data-link', '');
-      for (const back of [false, true]) for (const t of tiles) {
+      for (const back of (O.light ? [false] : [false, true])) for (const t of tiles) {
         const strip = back ? TILES - 1 - t.i : t.i, first = strip === 0, last = strip === TILES - 1, r = 'var(--cc-radius)';
         const off = back ? cardW - t.end : t.start;
         const tile = h('div', { class: 'cc__tile', style: { left: -t.size / 2 + 'px', top: -cardH / 2 + 'px', width: t.size + 'px', height: cardH + 'px', transform: t.move + (back ? ' rotateY(180deg)' : '') } },

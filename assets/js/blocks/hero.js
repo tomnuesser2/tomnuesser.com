@@ -64,7 +64,7 @@ function mobileHero(p, ctx) {
   const ring = [feat[0], ...rest];                              // vorne beginnt das erste ausgewählte Projekt
   const name = (x) => String(x.title || x.slug).replace(/\n/g, ' ');
   const carEl = h('div', { class: 'hm__car' });
-  const cardSize = (r) => ({ w: Math.min(r.width * .56, r.height * .8 * .5625), aspect: .5625 });
+  const cardSize = (r) => ({ w: Math.min(r.width * .56, r.height * .74 * .5625), aspect: .5625 });
   let car = null;
   const lines = String(p.title || '').split('\n').map(s => s.trim()).filter(Boolean);
   const title = h('h1', { class: 'hm__title' }, lines.map(l => h('span', {}, l)));
@@ -87,13 +87,14 @@ function mobileHero(p, ctx) {
     const l = cx - cw / 2, t = cy - ch / 2; R = { t, r: W - l - cw, b: H - t - ch, l };
   };
   const open = (it) => { const a = document.createElement('a'); a.href = it.href; a.setAttribute('data-link', ''); a.hidden = true; document.body.append(a); a.click(); a.remove(); };
-  requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100 }); });
+  requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true }); });
   const apply = (u) => {
     if (!R) measure();
     const z = ease(clamp((u - .8) / 1)), intro = clamp(u / 1.6);
+    const dk = z > .12; if (dk !== stage.classList.contains('is-dark')) { stage.classList.toggle('is-dark', dk); dispatchEvent(new Event('tn-dark')); }
     if (car && (u > .02) !== frozen) { frozen = u > .02; if (frozen) car.focus(0); else car.pause(false); }
     carEl.style.opacity = (1 - clamp((u - .5) / .9)).toFixed(3); carEl.style.transform = `scale(${(1 + .22 * intro).toFixed(4)})`;
-    carEl.style.visibility = z >= 1 ? 'hidden' : 'visible'; carEl.style.pointerEvents = u > .02 ? 'none' : '';
+    carEl.style.display = z >= 1 ? 'none' : ''; carEl.style.pointerEvents = u > .02 ? 'none' : '';
     const tOp = 1 - clamp((u - .15) / .55); title.style.opacity = tOp.toFixed(3); title.style.transform = `translateY(${(-(1 - tOp) * 26).toFixed(1)}px)`; cue.style.opacity = (1 - clamp(u / .25)).toFixed(3);
     title.style.visibility = cue.style.visibility = tOp <= 0 ? 'hidden' : 'visible';
     shots.forEach((s, i) => {

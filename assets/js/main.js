@@ -107,7 +107,15 @@ function spy() {
   const ch = cur && cur.getAttribute('href'); links.forEach(a => a.classList.toggle('is-active', !!ch && a.getAttribute('href') === ch));
 }
 // Beschriftungen des unteren Menüs: genaue Breite messen, damit nichts aus der Pille rutscht
-function measureNav() { document.querySelectorAll('.mnav__l').forEach((l) => l.style.setProperty('--w', Math.ceil(l.scrollWidth) + 2 + 'px')); }
+function measureNav() {
+  const nav = document.querySelector('.mnav'); if (!nav) return;
+  // Schriftgröße der Leiste so wählen, dass alle Wörter in die Bildschirmbreite passen (möglichst groß, nie abgeschnitten)
+  nav.style.setProperty('--nfs', '14px');
+  const ls = [...nav.querySelectorAll('.mnav__l')], words = ls.reduce((a, l) => a + l.scrollWidth, 0), n = ls.length || 1;
+  const need = words + n * 14 * 1.1 + 12, avail = Math.min(innerWidth, 640) - 20;
+  nav.style.setProperty('--nfs', Math.max(8.4, Math.min(15, 14 * avail / need)).toFixed(2) + 'px');
+  ls.forEach((l) => l.style.setProperty('--w', Math.ceil(l.scrollWidth) + 3 + 'px'));
+}
 addEventListener('resize', measureNav);
 
 // Handy: Sobald der NOTUA-Flug am Bildschirm "klebt", verwandelt sich die Menü-Pille in die NOTUA-Leiste – und danach wieder zurück.
@@ -141,8 +149,9 @@ async function morph(on) {
   }
 }
 const dock = () => { const hd = document.querySelector('.site-header'); if (!hd) return; hd.classList.toggle('is-docked', scrollY > 70);
-  const dark = [...document.querySelectorAll('.kn__stage, .hm__stage')].some(e => { const r = e.getBoundingClientRect(); return r.top < 36 && r.bottom > 36; }); hd.classList.toggle('over-dark', dark);
+  const dark = [...document.querySelectorAll('.kn__stage, .hm__stage.is-dark')].some(e => { const r = e.getBoundingClientRect(); return r.top < 36 && r.bottom > 36; }); hd.classList.toggle('over-dark', dark);
   const on = flPinned(); if (on !== flOn) { flOn = on; morph(on); } else if (on && !morphAnim.length) { hd.classList.add('mnav-off'); document.body.classList.add('fl-pinned'); } };
+addEventListener('tn-dark', () => dock());
 addEventListener('scroll', () => requestAnimationFrame(() => { spy(); dock(); }), { passive: true });
 
 function markActiveLinks() {

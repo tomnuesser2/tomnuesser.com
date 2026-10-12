@@ -42,18 +42,18 @@ export default {
     const ring = shapes.querySelector('.kn__ring'), ring2 = shapes.querySelector('.kn__ring2'), sq = shapes.querySelector('.kn__sq');
     const la = shapes.querySelector('.kn__ln--a'), lb = shapes.querySelector('.kn__ln--b'), lc = shapes.querySelector('.kn__ln--c');
     if (vid && !scrub && 'IntersectionObserver' in window) new IntersectionObserver((es) => { es.forEach(e => { if (e.isIntersecting) vid.play().catch(() => {}); else vid.pause(); }); }, { rootMargin: '20%' }).observe(el);
-    let beat = -1, target = 0, curP = 0, vis = false, raf = 0;
+    const SMALL = matchMedia('(max-width: 899px)').matches; let svgAt = 0, seekAt = 0, pend = false; let beat = -1, target = 0, curP = 0, vis = false, raf = 0;
     // Bildsequenz vorladen
     const imgs = []; let ctx2 = null, lastF = -1;
     if (cv) { const N = Math.max(1, Number(p.frameCount) || 1), pad = (i) => String(i).padStart((p.frames.match(/#+/) || ['####'])[0].length, '0'); ctx2 = cv.getContext('2d');
       for (let i = 0; i < N; i++) { const im = new Image(); im.decoding = 'async'; im.src = p.frames.replace(/#+/, pad(i + 1)); imgs.push(im); } }
     const drawFrame = (q) => { if (!cv) return; const i = Math.min(imgs.length - 1, Math.floor(q * imgs.length)); if (i === lastF) return; const im = imgs[i]; if (!im.complete || !im.naturalWidth) return; lastF = i; if (cv.width !== im.naturalWidth) { cv.width = im.naturalWidth; cv.height = im.naturalHeight; } ctx2.drawImage(im, 0, 0); };
-    const tick = () => { raf = 0; const k = Math.max(0, Math.min(1, Number(p.smooth)));
+    const tick = () => { raf = 0; pend = false; const k = Math.max(0, Math.min(1, Number(p.smooth)));
       curP += (target - curP) * (k ? 1 - Math.pow(1 - k, 1) : 1); if (Math.abs(target - curP) < .0004) curP = target;
       const q = clamp((curP - .1) / .9);
-      if (vid && scrub && vid.duration) { const t = q * vid.duration; if (Math.abs(vid.currentTime - t) > .03) vid.currentTime = t; }
+      if (vid && scrub && vid.duration) { const t = q * vid.duration, nw = performance.now(); if (!vid.seeking && Math.abs(vid.currentTime - t) > (SMALL ? .1 : .03) && nw - seekAt > (SMALL ? 110 : 0)) { seekAt = nw; vid.currentTime = t; } else if (Math.abs(vid.currentTime - t) > (SMALL ? .1 : .03)) pend = true; }
       drawFrame(q); apply(curP);
-      if (vis && curP !== target) raf = requestAnimationFrame(tick); };
+      if (vis && (curP !== target || pend)) raf = requestAnimationFrame(tick); };
     const apply = (raw) => {
       const e = ease(clamp(raw / .14));
       stage.style.setProperty('--e', e.toFixed(4));
@@ -67,9 +67,10 @@ export default {
         else { const k = (t - .68) / .32; sc = 1.04 + 5 * k * k; op = 1 - k; bl = 12 * k; }
         if (i === 0 && f < .001) { sc = .45; op = 0; }
         if (i === n - 1 && t >= .68) { sc = 1.04; op = 1; bl = 0; }                       // letztes Wort bleibt stehen
-        w.style.opacity = (vis && p.wordsOn !== false) ? op.toFixed(3) : '0'; w.style.transform = `scale(${sc.toFixed(3)})`; w.style.filter = bl > .3 ? `blur(${bl.toFixed(1)}px)` : 'none';
+        w.style.opacity = (vis && p.wordsOn !== false) ? op.toFixed(3) : '0'; w.style.transform = `scale(${sc.toFixed(3)})`; w.style.filter = !SMALL && bl > .3 ? `blur(${bl.toFixed(1)}px)` : 'none';
       });
       const g = f / n;
+      const nowT = performance.now(); if (SMALL && nowT - svgAt < 34 && raw < 1) { tc.textContent = `00:${String(Math.floor(raw * 24)).padStart(2, '0')}`; return; } svgAt = nowT;
       ring.setAttribute('r', (10 + ((f % 1) * 70)).toFixed(2)); ring.style.opacity = String(1 - (f % 1));
       ring2.setAttribute('r', (10 + (((f + .5) % 1) * 70)).toFixed(2)); ring2.style.opacity = String(1 - ((f + .5) % 1));
       sq.setAttribute('transform', `rotate(${(f * 90).toFixed(1)}) scale(${(.7 + Math.sin(f * 3) * .25).toFixed(3)})`);

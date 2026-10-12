@@ -167,6 +167,7 @@
   clip-path: inset(calc(78px * (1 - var(--e))) calc(var(--gutter-media) * (1 - var(--e))) calc(22px * (1 - var(--e))) calc(var(--gutter-media) * (1 - var(--e))) round calc(14px * (1 - var(--e)))); will-change: clip-path; }
 .kn__svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; }
 .kn__w { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 0 var(--gutter); opacity: 0; will-change: transform, opacity, filter; }
+@media (max-width: 899px) { .kn__w { will-change: transform, opacity; } }
 .kn__w span { font-size: clamp(44px, 15vw, 190px); font-weight: 700; letter-spacing: -.05em; line-height: .95; }
 .kn__k, .kn__tc, .kn__idx { position: absolute; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; opacity: calc((var(--e) - .7) * 3); }
 .kn__k { top: calc(100svh * .0 + 94px); left: 50%; transform: translateX(-50%); }
@@ -422,15 +423,15 @@
   .hero-wrap > .hero { display: none; }
   .hero-wrap > .hm { display: block; margin-top: calc(var(--header-h) * -1); }
 }
-.hm { position: relative; background: #000; color: #fff; }
+.hm { position: relative; background: var(--bg, #fff); color: var(--ink, #000); }
 .hm__track { position: relative; height: calc(100svh + var(--len, 4) * 100svh); }
-.hm__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #08090b; }
+.hm__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: var(--bg, #fff); }
 /* 3D-Karussell (Handy-Intro, Desktop-Hero) */
-.hm .hm__car { position: absolute; height: auto; left: 0; right: 0; top: calc(var(--header-h, 56px) + 6px); bottom: calc(235px + env(safe-area-inset-bottom)); will-change: transform, opacity; transform-origin: 50% 50%; }
-.hm__title { position: absolute; left: var(--gutter, 20px); right: var(--gutter, 20px); bottom: calc(150px + env(safe-area-inset-bottom)); margin: 0; display: flex; flex-direction: column; gap: 0; font-size: clamp(38px, 11.4vw, 60px); line-height: .98; letter-spacing: -.04em; font-weight: 700; will-change: transform, opacity; }
+.hm .hm__car { position: absolute; height: auto; left: 0; right: 0; top: calc(var(--header-h, 56px) + 6px); bottom: calc(262px + env(safe-area-inset-bottom)); will-change: transform, opacity; transform-origin: 50% 50%; --cc-fade: #fff; }
+.hm__title { position: absolute; left: var(--gutter, 20px); right: var(--gutter, 20px); bottom: calc(186px + env(safe-area-inset-bottom)); margin: 0; display: flex; flex-direction: column; gap: 0; font-size: clamp(38px, 11.4vw, 60px); line-height: .98; letter-spacing: -.04em; font-weight: 700; will-change: transform, opacity; }
 .hm__title span { display: block; }
-.hm__title span:nth-child(2) { color: transparent; -webkit-text-stroke: 1.3px #fff; }
-.hm__cue { position: absolute; left: 0; right: 0; bottom: calc(104px + env(safe-area-inset-bottom)); margin: 0; text-align: center; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+.hm__title span:nth-child(2) { color: transparent; -webkit-text-stroke: 1.3px var(--ink, #000); }
+.hm__cue { position: absolute; left: 0; right: 0; bottom: calc(100px + env(safe-area-inset-bottom)); margin: 0; text-align: center; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
 .hm__cue i { display: block; font-style: normal; margin-top: 4px; animation: hmCue 1.6s ease-in-out infinite; }
 @keyframes hmCue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
 .hm__shot { position: absolute; inset: 0; display: block; color: #fff; background: #000; will-change: clip-path; }
@@ -454,8 +455,8 @@
 .cc__frame { position: absolute; left: 0; top: 0; width: 100%; overflow: hidden; }
 .cc__photo { position: absolute; top: 0; display: block; max-width: none; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
 .cc__shade, .cc__inner { position: absolute; inset: 0; pointer-events: none; }
-.cc__shade { background: #000; opacity: var(--cc-depth, 0); }
-.cc__inner { background: #000; opacity: var(--cc-inner, .4); }
+.cc__shade { background: var(--cc-fade, #000); opacity: var(--cc-depth, 0); }
+.cc__inner { background: var(--cc-fade, #000); opacity: var(--cc-inner, .4); }
 
 /* ---------- Galerie-Elemente (3D-Karussell, Flex-Karussell, Accordion, Vorher/Nachher) ---------- */
 .b-gal { position: relative; width: min(100% - 2 * var(--gutter, 20px), 1400px); margin: clamp(24px, 6vw, 72px) auto; height: min(var(--gh, 560px), 78svh); border-radius: 18px; background: #0b0c10; color: #fff; overflow: hidden; }

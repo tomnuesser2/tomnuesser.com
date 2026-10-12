@@ -42,7 +42,7 @@ export const carousel3dBlock = {
     const items = getItems(p, ctx); const el = wrapEl('b-gal--3d', p);
     if (items.length < 3) { el.append(h('p', { class: 'b-gal__empty' }, 'Mindestens 3 Bilder hinzufügen.')); return el; }
     const tall = (r) => p.format === 'hochkant' || (p.format !== 'quer' && r.width < 700);
-    whenSized(el, () => carousel3d(el, items, { speed: still() ? 0 : Number(p.speed) || 0, reduced: still(), onFront: goto, fitAngle: 100,
+    whenSized(el, () => carousel3d(el, items, { speed: still() ? 0 : Number(p.speed) || 0, reduced: still(), onFront: goto, fitAngle: 100, light: matchMedia('(max-width: 899px)').matches,
       size: (r) => tall(r) ? { w: Math.min(r.width * .6, r.height * .8 * .5625), aspect: .5625 } : { w: Math.min(r.width * .6, r.height * .8 * 16 / 9), aspect: 16 / 9 } }));
     return el;
   },

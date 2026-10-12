@@ -161,7 +161,7 @@ html { scrollbar-width: none; } html::-webkit-scrollbar { display: none; width: 
   .site-header .mnav { display: flex !important; transform: translateX(-50%) !important; opacity: 1 !important; pointer-events: auto !important; bottom: calc(14px + env(safe-area-inset-bottom)); max-width: calc(100vw - 16px); overflow: hidden; align-items: center; gap: 0; padding: 5px; z-index: 60;
     transition: background-color .5s var(--ease), box-shadow .5s var(--ease), color .4s; }
   .site-header.mnav-off .mnav { opacity: 0 !important; pointer-events: none !important; visibility: hidden; }
-  .site-header .mnav__a { flex: 0 1 auto; min-width: 0; height: 44px; padding: 0 clamp(6px, 2vw, 10px); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-weight: 500; font-size: clamp(10px, 3vw, 12.5px); letter-spacing: 0; gap: 0; overflow: hidden;
+  .site-header .mnav__a { flex: 0 1 auto; min-width: 0; height: 48px; padding: 0 calc(var(--nfs, 12px) * .55); font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-weight: 500; font-size: var(--nfs, 12px); letter-spacing: 0; gap: 0; overflow: hidden;
     transition: background-color .45s var(--ease), color .35s, padding .45s var(--ease), gap .45s var(--ease); }
   .site-header .mnav__i { display: grid; place-items: center; width: 22px; overflow: hidden; transition: width .45s var(--ease), opacity .3s; }
   .site-header .mnav__l { display: block; max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .5s var(--ease), opacity .35s; }
@@ -171,7 +171,7 @@ html { scrollbar-width: none; } html::-webkit-scrollbar { display: none; width: 
   .site-header:not(.is-docked) .mnav__a { color: #111; }
   .site-header:not(.is-docked) .mnav__i { width: 0; opacity: 0; }
   .site-header:not(.is-docked) .mnav__l { max-width: var(--w, 120px); opacity: 1; }
-  .site-header:not(.is-docked) .mnav__a.is-active { background: #111; color: #fff; padding: 0 clamp(6px, 2vw, 10px); gap: 0; }
+  .site-header:not(.is-docked) .mnav__a.is-active { background: #111; color: #fff; padding: 0 calc(var(--nfs, 12px) * .55); gap: 0; }
 
   /* Gescrollt: dunkle Button-Pille, nur der aktuelle Abschnitt fährt mit Namen aus */
   .site-header.is-docked .mnav { background: rgba(12,12,13,.86); box-shadow: 0 12px 34px rgba(0,0,0,.32), inset 0 0 0 1px rgba(255,255,255,.08); }
@@ -200,4 +200,6 @@ html { scrollbar-width: none; } html::-webkit-scrollbar { display: none; width: 
   .lang--intro { right: 14px; }
 }
 @media (max-width: 359px) { .site-header .mnav__a.is-active .mnav__l { font-size: 11.5px; } .lang__b { padding: 6px 9px; } }
-@media (max-width: 339px) { .site-header:not(.is-docked) .mnav__a { font-size: 9.4px; padding: 0 4.5px; } }
+
+
+@media (max-width: 899px) { .site-header.is-docked .mnav__a { height: 46px; min-width: 46px; font-size: var(--nfs, 12px); } .site-header.is-docked .mnav__i { width: 24px; } .site-header.is-docked .mnav__i svg { width: 23px; height: 23px; } .site-header .mnav { padding: 6px; } }
