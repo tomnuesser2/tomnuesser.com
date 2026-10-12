@@ -3,7 +3,10 @@
   "blocks": [
     {
       "type": "hero",
-      "props": {}
+      "props": {
+        "cards": 6,
+        "mobileCount": 6
+      }
     },
     {
       "type": "statement",
@@ -12,7 +15,8 @@
         "text": "Moving pictures. Brands that stick. Websites that feel like films – all from one desk in Flensburg.",
         "size": "l",
         "text_de": "Bewegte Bilder. Marken, die hängen bleiben. Websites, die sich wie Filme anfühlen – alles von einem Schreibtisch in Flensburg."
-      }
+      },
+      "hidden": true
     },
     {
       "type": "chapter",

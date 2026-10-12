@@ -2,12 +2,14 @@
   "title": "leona - festival live sessions",
   "card": {
     "image": "media/still-2026-07-02-232833_4.3.1.png",
-    "vimeo": "https://vimeo.com/manage/videos/1207034763",
+    "vimeo": "https://vimeo.com/1207034763",
     "ratio": "16/9",
     "group": 1,
     "category": "video",
     "stills": [],
-    "featured": true
+    "featured": true,
+    "hidden": false,
+    "anim": "gallery"
   },
   "blocks": [
     {

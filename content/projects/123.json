@@ -1,0 +1,28 @@
+{
+  "title": "test",
+  "card": {
+    "image": "media/stage-purple.jpg",
+    "vimeo": "",
+    "ratio": "16/9",
+    "group": 1,
+    "category": "video",
+    "stills": []
+  },
+  "blocks": [
+    {
+      "type": "spacer",
+      "props": {
+        "size": 40
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "test",
+        "level": 1,
+        "align": "center",
+        "bold": false
+      }
+    }
+  ]
+}

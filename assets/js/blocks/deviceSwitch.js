@@ -1,13 +1,15 @@
 import { h } from '../core/dom.js';
 import { still } from '../core/scrollhub.js';
+import { parseVimeo, vimeoThumb } from '../core/media.js';
 // Short-form & Long-form: Smartphone (klein) und Laptop (groß) stehen gleichzeitig im Bild. Was angeklickt wird, kommt animiert nach vorn
 // und läuft dort durch seine Einträge (Bilder nach "Dauer", Videos in ihrer eigenen Länge). Rechts steht nur kurz, was man sieht.
 const isVideo = (s) => /\.(mp4|webm|mov)(\?|$)/i.test(s || '');
 const LIST = [
-  { name: 'src', label: 'Video (.mp4/.webm, wird in voller Länge abgespielt) oder Bild', type: 'image' },
+  { name: 'vimeo', label: 'Vimeo-Link (z. B. https://vimeo.com/123456789) – läuft automatisch, stumm, bis zum Ende', type: 'text' },
+  { name: 'src', label: 'oder Datei: Video (.mp4/.webm, volle Länge) oder Bild', type: 'image' },
   { name: 'title', label: 'Titel (kurz)', type: 'text' },
   { name: 'text', label: 'Kurztext (eine Zeile)', type: 'text' },
-  { name: 'duration', label: 'Dauer in Sekunden (nur bei Bildern; Videos nutzen ihre eigene Länge)', type: 'number', default: 4 },
+  { name: 'duration', label: 'Dauer in Sekunden (nur bei Bildern; bei Vimeo nur Notlösung, falls das Video nicht meldet, dass es zu Ende ist)', type: 'number', default: 4 },
 ];
 
 export default {
@@ -27,7 +29,8 @@ export default {
   ],
   render(p0) {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
-    const items = { phone: (p.shortItems || []).filter(i => i.src), laptop: (p.longItems || []).filter(i => i.src) };
+    const ok = (i) => i.src || parseVimeo(i.vimeo);
+    const items = { phone: (p.shortItems || []).filter(ok), laptop: (p.longItems || []).filter(ok) };
     const S = { phone: { cur: 0, shots: [], el: null }, laptop: { cur: 0, shots: [], el: null } };
     let front = items[p.front] && items[p.front].length ? p.front : (items.phone.length ? 'phone' : 'laptop'), timer, raf, visible = false;
 
@@ -48,20 +51,22 @@ export default {
     // Screens aufbauen
     for (const m of ['phone', 'laptop']) {
       S[m].shots = items[m].map(it => {
-        const v = isVideo(it.src);
-        const node = v ? h('video', { src: it.src, muted: '', playsinline: '', preload: 'metadata', 'aria-hidden': 'true' }) : h('img', { src: it.src, alt: '', decoding: 'async', loading: 'lazy' });
+        const vm = parseVimeo(it.vimeo), v = !vm && isVideo(it.src);
+        const node = vm ? h('div', { class: 'dd__vm' }) : v ? h('video', { src: it.src, muted: '', playsinline: '', preload: 'metadata', 'aria-hidden': 'true' }) : h('img', { src: it.src, alt: '', decoding: 'async', loading: 'lazy' });
         if (v) { node.muted = true; node.defaultMuted = true; }
+        if (vm) vimeoThumb(vm).then(t => { if (t) node.style.background = `#000 url("${t}") center / cover no-repeat`; }).catch(() => {});
         const s = h('div', { class: 'dd__shot' }, node); S[m].el.append(s); return s;
       });
     }
     bars.replaceChildren(...items.phone.map(() => h('i', {}, h('b', {}))));
 
-    const clearT = () => { clearTimeout(timer); cancelAnimationFrame(raf); };
+    const clearT = () => { clearTimeout(timer); cancelAnimationFrame(raf); if (vmH) { removeEventListener('message', vmH); vmH = null; } };
+    let vmH = null;
     const fill = (m, f) => { if (m === 'laptop') lBar.style.transform = `scaleX(${f})`; else { const b = bars.children[S.phone.cur]; if (b) b.firstChild.style.transform = `scaleX(${f})`; } };
     const show = (m, i, play = true) => {
       const list = items[m]; if (!list.length) return; const st = S[m];
       st.cur = (i + list.length) % list.length;
-      st.shots.forEach((s, n) => { s.classList.toggle('is-on', n === st.cur); const v = s.querySelector('video'); if (v && n !== st.cur) { v.pause(); } });
+      st.shots.forEach((s, n) => { s.classList.toggle('is-on', n === st.cur); const v = s.querySelector('video'); if (v && n !== st.cur) { v.pause(); } const vf = s.querySelector('.dd__vm'); if (vf && n !== st.cur) vf.replaceChildren(); });
       if (m === 'phone') [...bars.children].forEach((b, n) => { b.firstChild.style.transform = `scaleX(${n < st.cur ? 1 : 0})`; });
       else lBar.style.transform = 'scaleX(0)';
       lTitle.textContent = items.laptop[S.laptop.cur] ? items.laptop[S.laptop.cur].title || '' : '';
@@ -70,9 +75,25 @@ export default {
     // Fortschritt: Video = eigene Länge, Bild = Dauer
     const run = () => {
       clearT(); const m = front, st = S[m], list = items[m]; if (!list.length) return;
-      const it = list[st.cur], shot = st.shots[st.cur], v = shot && shot.querySelector('video');
+      const it = list[st.cur], shot = st.shots[st.cur], v = shot && shot.querySelector('video'), vm = parseVimeo(it.vimeo);
       const next = () => { if (!visible || front !== m) return; if (list.length > 1 || v) show(m, st.cur + 1); };
-      if (v) {
+      if (vm) {
+        // Vimeo: stumm, automatisch, ohne Bedienelemente; weiter zum nächsten Eintrag, sobald das Video zu Ende ist
+        const host = shot.querySelector('.dd__vm'); host.replaceChildren();
+        const q = new URLSearchParams({ autoplay: '1', muted: '1', controls: '0', api: '1', playsinline: '1', dnt: '1', autopause: '0', title: '0', byline: '0', portrait: '0', loop: list.length === 1 ? '1' : '0' }); if (vm.hash) q.set('h', vm.hash);
+        const ifr = h('iframe', { src: `https://player.vimeo.com/video/${vm.id}?${q}`, allow: 'autoplay; fullscreen', tabindex: '-1', 'aria-hidden': 'true', title: it.title || 'Video', class: 'dd__vf' });
+        host.append(ifr); fill(m, 0);
+        const post = (o) => { try { ifr.contentWindow.postMessage(JSON.stringify(o), 'https://player.vimeo.com'); } catch { /* weg */ } };
+        let got = false;
+        vmH = (e) => {
+          if (e.source !== ifr.contentWindow) return; let d = e.data; try { if (typeof d === 'string') d = JSON.parse(d); } catch { return; }
+          if (d.event === 'ready') { got = true; clearTimeout(timer); post({ method: 'addEventListener', value: 'finish' }); post({ method: 'addEventListener', value: 'playProgress' }); post({ method: 'setMuted', value: true }); }
+          else if (d.event === 'playProgress') { got = true; fill(m, Math.min(1, (d.data && d.data.percent) || 0)); }
+          else if (d.event === 'finish') { if (list.length > 1) next(); }
+        };
+        addEventListener('message', vmH);
+        timer = setTimeout(() => { if (!got && list.length > 1) next(); }, Math.max(4, Number(it.duration) || 20) * 1000);
+      } else if (v) {
         v.currentTime = 0; v.play().catch(() => {});
         const tick = () => { if (front !== m) return; const d = v.duration || 0; if (d) fill(m, Math.min(1, v.currentTime / d)); if (v.ended || (d && v.currentTime >= d - .05)) { if (list.length > 1) next(); else { v.currentTime = 0; v.play().catch(() => {}); } } raf = requestAnimationFrame(tick); };
         raf = requestAnimationFrame(tick);

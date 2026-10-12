@@ -522,3 +522,5 @@
 .b-gal.fc:not(.b-gal--dark), .fc:not(.b-gal--dark) { background: #fff; }
 .b-gal--dark.fc { background: #08090b; }
 .b-gal__empty { color: #8b8f99; }
+
+.dd__vm, .dd__vm iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #000; pointer-events: none; }

@@ -233,7 +233,10 @@ function scrollToHash(hash, smooth = true) {
   const el = hash && document.getElementById(decodeURIComponent(hash.slice(1)));
   if (!el) return;
   // Der NOTUA-Flug klebt am Bildschirm: Menüsprung landet genau auf seinem Start (Logo), nicht davor
-  const y = el.getBoundingClientRect().top + scrollY - (el.querySelector('.fl__track') ? -2 : 70);
+  let y = el.getBoundingClientRect().top + scrollY - (el.querySelector('.fl__track') ? -2 : 70);
+  // Kreatives (Kinetic-Abschnitt): direkt dorthin springen, wo der Button „meine aktuellen Design-Arbeiten“ schon voll zu sehen ist
+  const kt = el.querySelector('.kn__track') || (el.classList.contains('kn__track') ? el : null);
+  if (kt) y = kt.getBoundingClientRect().top + scrollY + .17 * Math.max(0, kt.offsetHeight - innerHeight);
   window.scrollTo({ top: y, behavior: smooth && !prefersReducedMotion() ? 'smooth' : 'auto' });
 }
 
