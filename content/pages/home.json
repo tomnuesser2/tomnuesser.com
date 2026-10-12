@@ -5,7 +5,7 @@
       "type": "hero",
       "props": {
         "title_de": "digitale und\nvisuelle kunst",
-        "titleSize": "l",
+        "titleSize": "m",
         "title": "digital and\nvisual artist\n\n",
         "cycle": true,
         "subtitle_de": "",
@@ -115,7 +115,7 @@
             "text_de": "Festivalbegleitung für das Qrue Collective und Künstler"
           }
         ],
-        "front": "laptop",
+        "front": "phone",
         "kicker_de": "",
         "kicker": "",
         "shortTitle": "16:9",
