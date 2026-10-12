@@ -1,8 +1,8 @@
 {
   "title": "LEONA – festival live sessions",
   "card": {
-    "image": "media/leona-live.jpg",
-    "vimeo": "",
+    "image": "",
+    "vimeo": "https://vimeo.com/1207034763",
     "ratio": "16/9",
     "group": 1,
     "cam": "FX3",

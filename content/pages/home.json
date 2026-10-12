@@ -38,7 +38,7 @@
     {
       "type": "projectGrid",
       "props": {
-        "mode": "index",
+        "mode": "scenes",
         "anim": "project",
         "category": "video"
       },

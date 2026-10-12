@@ -33,9 +33,14 @@ const seg = (t, a, d) => ez((t - a) / d);
 
 /* ============ Karten zeichnen (Canvas 2D, wie die Karten im NOTUA-Board) ============ */
 const CW = 880, CH = 620;
+// Handy: Look-Finder hochkant (passt auf ein 9:16-Smartphone) – Vorschau oben, Regler darunter in zwei Spalten
+const PORT = typeof matchMedia === 'function' && matchMedia('(max-width: 899px)').matches, LW = PORT ? 600 : CW, LH = PORT ? 960 : CH;
+const PZ = (x, y) => { // Quell-Koordinate (Querformat) → Hochformat
+  if (!PORT) return [x, y]; if (x < 530) return [77 + (x - 54) * .95, 30 + (y - 54) * .95];
+  if (y < 250) return [x - 538, y + 469]; if (y < 410) return [x - 250, y + 294]; if (y >= 530) return [x - 250, y + 234]; return [x - 538, y + 323]; };
 function rr(c, x, y, w, h, r) { r = Math.min(r * LK.rk, w / 2, h / 2); c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
 function base(c, x, y, w, h) {
-  c.clearRect(0, 0, CW, CH); c.save();
+  c.clearRect(0, 0, c.canvas.width, c.canvas.height); c.save();
   if (LK.shA > 0) { c.shadowColor = `rgba(24,28,35,${LK.shA})`; c.shadowBlur = LK.shB; c.shadowOffsetY = LK.shY; } c.fillStyle = TH.surface; rr(c, x, y, w, h, 10); c.fill(); c.restore();
   if (LK.bw > 0) { c.strokeStyle = LK.bc || TH.border; c.lineWidth = LK.bw; rr(c, x, y, w, h, 10); c.stroke(); } c.textBaseline = 'middle'; c.textAlign = 'left';
 }
@@ -183,29 +188,29 @@ const PLAN = (() => {
   const ids = ['mono', 'matcha', 'cherry', 'blue', 'green', 'orange', 'lilac', 'mocha'];
   const pick = (ex) => rnd(ids.filter(i => !ex.includes(i)));
   const p1 = pick([]), p2 = pick([p1]), pf = pick([p1, p2]);
-  return { p1, p2, pf, dark: Math.random() < .4, rf: rnd([0, 8, 12, 16, 20, 26]), rp: rf(38, 48), shf: rf(.15, .6), bdf: rf(.15, .6), font: rnd(['default', 'serif', 'mono']), bg: rnd(['grid', 'lines', 'paper']) };
+  return { p1, p2, pf, dark: false, rf: rnd([0, 8, 12, 16, 20, 26]), rp: rf(38, 48), shf: rf(.15, .6), bdf: rf(.15, .6), font: rnd(['default', 'serif', 'mono']), bg: rnd(['grid', 'lines', 'paper']) };
 })();
 const WP = (() => {
   const P = PLAN, ix = (id) => ['mono', 'matcha', 'cherry', 'blue', 'green', 'orange', 'lilac', 'mocha'].indexOf(id), sx = (v) => LC.sx + LC.sw * v;
-  const w = [[0, 840, 610], [.6, LC.cx(ix(P.p1)), 160], [1.0, LC.cx(ix(P.p1)) + 2, 162], [1.2, LC.cx(ix(P.p2)), 160], [1.5, LC.cx(ix(P.p2)) + 2, 162], [1.7, LC.cx(ix(P.pf)), 160], [2.0, LC.cx(ix(P.pf)) + 2, 162], [2.3, 594, 227], [2.5, 596, 229]];
-  if (!P.dark) w.push([2.8, 596, 229]);
+  const w = [[0, 840, 610], [.6, LC.cx(ix(P.p1)), 160], [1.0, LC.cx(ix(P.p1)) + 2, 162], [1.7, LC.cx(ix(P.pf)), 160], [2.0, LC.cx(ix(P.pf)) + 2, 162], [2.6, 596, 229]];
   w.push([3.2, sx(10 / 64), 290], [3.9, sx(P.rp / 64), 290], [4.2, sx(P.rp / 64), 290], [4.7, sx(P.rf / 64), 290], [4.9, sx(.35), 340], [5.3, sx(.9), 340], [5.5, sx(.9), 340], [5.8, sx(P.shf), 340], [6.2, sx(.4), 390], [6.5, sx(.85), 390], [6.6, sx(.85), 390], [6.95, sx(P.bdf), 390], [7.3, LC.fx(['default', 'serif', 'mono'].indexOf(P.font)), 443], [7.5, LC.fx(['default', 'serif', 'mono'].indexOf(P.font)) + 2, 445], [8.2, LC.fx(['grid', 'lines', 'paper'].indexOf(P.bg)), 498], [8.4, LC.fx(['grid', 'lines', 'paper'].indexOf(P.bg)) + 2, 500], [8.9, 683, 546], [9.6, 685, 548], [10, 780, 640]);
-  return w;
+  return PORT ? w.map(([t, x, y]) => [t, ...PZ(x, y)]) : w;
 })();
-const CLICKS = [.95, 1.45, 1.95, 2.35, ...(PLAN.dark ? [] : [2.8]), 7.4, 8.3, 9.2];
+const CLICKS = [.95, 1.95, 7.4, 8.3, 9.2];
 const LOOK_BASE = { pal: 'default', dark: false, r: 10, font: 'default', bg: 'grid', shV: .35, bdV: .4 };
 function lookState(T) {
   if (T < 0) return { ...LOOK_BASE, kept: false, T };
   const P = PLAN, kf = (arr) => { if (T <= arr[0][0]) return arr[0][1]; for (let i = 1; i < arr.length; i++) if (T <= arr[i][0]) { const a = arr[i - 1], b = arr[i]; return lerp(a[1], b[1], eio((T - a[0]) / (b[0] - a[0]))); } return arr[arr.length - 1][1]; };
-  const pal = T >= 1.95 ? P.pf : T >= 1.45 ? P.p2 : T >= .95 ? P.p1 : 'default';
-  const dark = T >= 2.35 && (P.dark || T < 2.8);
+  const pal = T >= 1.95 ? P.pf : T >= .95 ? P.p1 : 'default';
+  const dark = false;
   return { pal, dark, r: kf([[3.2, 10], [3.9, P.rp], [4.2, P.rp], [4.7, P.rf]]), font: T >= 7.4 ? P.font : 'default', bg: T >= 8.3 ? P.bg : 'grid', shV: kf([[4.9, .35], [5.3, .9], [5.5, .9], [5.8, P.shf]]), bdV: kf([[6.2, .4], [6.5, .85], [6.6, .85], [6.95, P.bdf]]), kept: T >= 9.2, T };
 }
 function cursorAt(T) { for (let i = 1; i < WP.length; i++) if (T <= WP[i][0]) { const a = WP[i - 1], b = WP[i], k = eio((T - a[0]) / (b[0] - a[0])); return [lerp(a[1], b[1], k), lerp(a[2], b[2], k)]; } return [WP[WP.length - 1][1], WP[WP.length - 1][2]]; }
 function dLook(c, T) {
   const S = lookState(T);
-  base(c, 40, 40, 800, 540);
+  if (PORT) base(c, 12, 12, 576, 936); else base(c, 40, 40, 800, 540);
   // Vorschau-Board links
+  if (PORT) { c.save(); c.translate(77 - 54 * .95, 30 - 54 * .95); c.scale(.95, .95); }
   c.save(); rr(c, 54, 54, 470, 512, 8); c.clip(); c.fillStyle = TH.bg; c.fillRect(50, 50, 480, 520); pattern(c, 54, 54, 470, 512);
   const mini = (x, y, w, h) => { c.save(); if (LK.shA > 0) { c.shadowColor = `rgba(24,28,35,${Math.min(.55, LK.shA * 1.1)})`; c.shadowBlur = LK.shB * .7; c.shadowOffsetY = LK.shY * .6; } c.fillStyle = TH.surface; rr(c, x, y, w, h, 10); c.fill(); c.restore(); if (LK.bw > 0) { c.strokeStyle = LK.bc || TH.border; c.lineWidth = LK.bw; rr(c, x, y, w, h, 10); c.stroke(); } };
   mini(84, 96, 200, 160); txt(c, 'Moodboard', 104, 130, 26, TH.ink, 700); txt(c, 'Aa Bb 123', 104, 166, 20, TH.muted); c.fillStyle = TH.surface2; rr(c, 104, 192, 150, 11, 6); c.fill(); rr(c, 104, 214, 110, 11, 6); c.fill();
@@ -214,16 +219,21 @@ function dLook(c, T) {
   mini(84, 280, 200, 106); c.fillStyle = TH.accentSoft; rr(c, 98, 294, 80, 32, 8); c.fill(); txt(c, 'Idea', 112, 311, 18, TH.ink, 700); c.fillStyle = TH.surface2; rr(c, 188, 294, 82, 32, 8); c.fill(); txt(c, 'Doing', 200, 311, 18, TH.muted, 700); c.fillStyle = TH.accent; rr(c, 98, 340, 90, 30, 15); c.fill(); txt(c, '+ New', 112, 355, 17, '#fff', 700);
   mini(120, 490, 300, 48); for (let i = 0; i < 6; i++) { const x = 150 + i * 46; if (i === 2) { c.fillStyle = TH.accentSoft; rr(c, x - 17, 496, 34, 36, 8); c.fill(); } c.strokeStyle = i === 2 ? TH.accent : TH.faint; c.lineWidth = 2.6; rr(c, x - 8, 506, 16, 16, 4); c.stroke(); }
   c.restore();
-  // Steuerung rechts
-  c.fillStyle = TH.border; c.fillRect(534, 60, 2, 500); txt(c, 'Look Finder', 566, 90, 28, TH.ink, 700);
+  if (PORT) c.restore();
+  // Steuerung rechts (Handy: zwei Spalten unter der Vorschau)
+  const Z = (dx, dy, f) => { if (!PORT) return f(); c.save(); c.translate(dx, dy); f(); c.restore(); };
+  if (!PORT) c.fillStyle = TH.border, c.fillRect(534, 60, 2, 500);
+  Z(-538, 469, () => txt(c, 'Look Finder', 566, 90, 28, TH.ink, 700));
   const lab = (s2, y) => txt(c, s2, 566, y, 16, TH.muted, 600);
+  Z(-538, 469, () => {
   lab('Color world', 128); PALS.forEach((P, i) => { const x = LC.cx(i) + 10, y = LC.cy; c.fillStyle = P.bg; c.beginPath(); c.arc(x, y, 12, 0, 7); c.fill(); c.fillStyle = P.accent; c.beginPath(); c.arc(x, y, 12, -.8, 2.35); c.closePath(); c.fill(); c.strokeStyle = 'rgba(0,0,0,.18)'; c.lineWidth = 1.5; c.beginPath(); c.arc(x, y, 12, 0, 7); c.stroke(); if (S.pal === P.id) { c.strokeStyle = TH.accent; c.lineWidth = 3; c.beginPath(); c.arc(x, y, 17, 0, 7); c.stroke(); } });
   lab('Mode', 196); { const x = 566, y = 214, w = 56, h = 26; c.fillStyle = S.dark ? TH.accent : TH.surface2; rr(c, x, y, w, h, 13); c.fill(); c.strokeStyle = LK.bc || TH.border; c.lineWidth = 1.5; rr(c, x, y, w, h, 13); c.stroke(); c.fillStyle = '#fff'; c.beginPath(); c.arc(S.dark ? x + w - 14 : x + 14, y + 13, 9, 0, 7); c.fill(); txt(c, S.dark ? 'Dark' : 'Light', x + 68, y + 14, 17, TH.ink); }
+  });
   const slider = (label, y, v) => { lab(label, y - 24); c.fillStyle = TH.surface2; rr(c, LC.sx, y - 3, LC.sw, 6, 3); c.fill(); c.fillStyle = TH.accent; rr(c, LC.sx, y - 3, LC.sw * v, 6, 3); c.fill(); c.fillStyle = '#fff'; c.strokeStyle = TH.accent; c.lineWidth = 3; c.beginPath(); c.arc(LC.sx + LC.sw * v, y, 11, 0, 7); c.fill(); c.stroke(); };
-  slider('Corners', LC.sy[0], S.r / 64); slider('Shadow', LC.sy[1], S.shV); slider('Border', LC.sy[2], S.bdV);
+  Z(-250, 294, () => { slider('Corners', LC.sy[0], S.r / 64); slider('Shadow', LC.sy[1], S.shV); slider('Border', LC.sy[2], S.bdV); });
   const btns = (label, y, arr, sel, fontOf) => { lab(label, y - 16); arr.forEach((nm, k) => { const x = 566 + k * 80, on = sel === nm; c.fillStyle = on ? TH.accentSoft : TH.surface2; rr(c, x, y, 72, 32, 8); c.fill(); c.strokeStyle = on ? TH.accent : (LK.bc || TH.border); c.lineWidth = on ? 2.5 : 1.5; rr(c, x, y, 72, 32, 8); c.stroke(); c.textAlign = 'center'; c.fillStyle = TH.ink; c.font = `500 ${fontOf ? 20 : 16}px ${fontOf ? FONTS[nm] : FONT}`; c.fillText(fontOf ? 'Aa' : trN(nm), x + 36, y + 17); c.textAlign = 'left'; }); };
-  btns('Font', 428, ['default', 'serif', 'mono'], S.font, true); btns('Background', 484, ['grid', 'lines', 'paper'], S.bg, false);
-  { const [kx, ky] = LC.keep, press = S.T > 9.15 && S.T < 9.4 ? .96 : 1; c.save(); c.translate(kx, ky); c.scale(press, press); c.fillStyle = TH.accent; rr(c, -117, -17, 234, 34, 10); c.fill(); c.textAlign = 'center'; c.fillStyle = '#fff'; c.font = `700 18px ${FONT}`; c.fillText(trN(S.kept ? '✓ Look kept' : 'Keep look'), 0, 1); c.restore(); }
+  Z(-538, 323, () => { btns('Font', 428, ['default', 'serif', 'mono'], S.font, true); btns('Background', 484, ['grid', 'lines', 'paper'], S.bg, false); });
+  Z(-250, 234, () => { { const [kx, ky] = LC.keep, press = S.T > 9.15 && S.T < 9.4 ? .96 : 1; c.save(); c.translate(kx, ky); c.scale(press, press); c.fillStyle = TH.accent; rr(c, -117, -17, 234, 34, 10); c.fill(); c.textAlign = 'center'; c.fillStyle = '#fff'; c.font = `700 18px ${FONT}`; c.fillText(trN(S.kept ? '✓ Look kept' : 'Keep look'), 0, 1); c.restore(); } });
   // Klick-Wellen + Mauszeiger
   const [mx, my] = cursorAt(T); CLICKS.forEach(ct => { const d = T - ct; if (d > 0 && d < .55) { c.strokeStyle = TH.accent; c.globalAlpha = 1 - d / .55; c.lineWidth = 4; c.beginPath(); c.arc(mx, my, 6 + d * 60, 0, 7); c.stroke(); c.globalAlpha = 1; } });
   const fade = clamp(T / .5) * clamp((10 - T) / .5); if (fade > 0.02) cursor(c, mx - 4, my - 3, fade);
@@ -345,8 +355,8 @@ function mount(root, OPT) {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canvas = document.createElement('canvas'); canvas.className = 'fl__cv'; canvas.setAttribute('aria-hidden', 'true');
   let gl = null; if (!reduce) { try { gl = canvas.getContext('webgl', { antialias: true, premultipliedAlpha: true, alpha: true }); } catch { gl = null; } }
-  const STATIONS = stations, N = STATIONS.length - 1, SP = 4.4, PL = 3.4, TOT = N + PL;
-  const cvs = STATIONS.map(s => { if (!s.card) return null; const cv = document.createElement('canvas'); cv.width = CW; cv.height = CH; return cv; });
+  const STATIONS = stations, N = STATIONS.length - 1, SP = 4.4, PL = 5.2, TOT = N + PL;
+  const cvs = STATIONS.map(s => { if (!s.card) return null; const cv = document.createElement('canvas'); const lk = s.card === 'look'; cv.width = lk ? LW : CW; cv.height = lk ? LH : CH; return cv; });
   const paint = (i, t) => { const s = STATIONS[i]; if (!cvs[i]) return; DRAW[s.card](cvs[i].getContext('2d'), t, D); };
 
   function staticFallback() {
@@ -391,10 +401,13 @@ function mount(root, OPT) {
   const makeTex = (src) => { const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); return t; };
-  const planes = STATIONS.map((s, i) => ({ i, tex: null, ratio: CW / CH, logo: !s.card, side: i % 2 ? 1 : -1, mvp: null }));
+  const planes = STATIONS.map((s, i) => ({ i, tex: null, ratio: s.card === 'look' ? LW / LH : CW / CH, logo: !s.card, side: i % 2 ? 1 : -1, mvp: null }));
   planes.forEach((pl) => { if (cvs[pl.i]) pl.tex = makeTex(cvs[pl.i]); });
   const upload = (i) => { const pl = planes[i]; if (!pl.tex) return; gl.bindTexture(gl.TEXTURE_2D, pl.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cvs[i]); };
-  const logo = new Image(); logo.onload = () => { const t = makeTex(logo); planes.forEach(pl => { if (pl.logo) { pl.tex = t; pl.ratio = 1; } }); }; logo.src = o.logo || 'media/notua-logo.png';
+  const logo = new Image(); logo.crossOrigin = 'anonymous';
+  // Logo schwarz-weiß statt orange: helle Pixel (das N) bleiben weiß, der Rest wird schwarz
+  const bw = (im) => { try { const n = im.naturalWidth || 512, k = document.createElement('canvas'); k.width = k.height = n; const x = k.getContext('2d'); x.drawImage(im, 0, 0, n, n); const d = x.getImageData(0, 0, n, n), a = d.data; for (let i = 0; i < a.length; i += 4) { const l = .3 * a[i] + .59 * a[i + 1] + .11 * a[i + 2], t = Math.min(1, Math.max(0, (l - 150) / 70)) * 255; a[i] = a[i + 1] = a[i + 2] = t; } x.putImageData(d, 0, 0); return k; } catch { return im; } };
+  logo.onload = () => { const t = makeTex(bw(logo)); planes.forEach(pl => { if (pl.logo) { pl.tex = t; pl.ratio = 1; } }); }; logo.src = o.logo || 'media/notua-logo.png';
 
   const SMALL = matchMedia('(max-width: 899px)').matches; let lastPaint = 0; let W = 1, Hh = 1, prog0 = 0, prevP = 0, vel = 0, gv = 0, px = 0, py = 0, tpx = 0, tpy = 0, active = -1, running = false, aT0 = 0; const t0 = performance.now();
   const resize = () => { const dpr = Math.min(devicePixelRatio || 1, SMALL ? 1.5 : 2); W = canvas.clientWidth; Hh = canvas.clientHeight; canvas.width = Math.max(1, Math.round(W * dpr)); canvas.height = Math.max(1, Math.round(Hh * dpr)); };
@@ -415,9 +428,11 @@ function mount(root, OPT) {
   dock.addEventListener('click', (e) => { const b = e.target.closest('.fl__tool'); if (!b) return; const i = STATIONS.findIndex(x => x.dock === b.dataset.k); if (i < 0) return;
     const r = track.getBoundingClientRect(); const total = r.height - stage.offsetHeight; const q = (i <= lookIdx ? i : i + PL) / TOT; scrollTo({ top: scrollY + r.top + q * total + 2, behavior: 'smooth' }); });
 
-  const fromProg = (pp) => { const q = pp * TOT; if (q < lookIdx) return [q, 0]; if (q < lookIdx + PL) return [lookIdx, (q - lookIdx) / PL]; return [q - PL, 1]; };
+  // Verweilen: um jede Karte herum bleibt die Kamera ein Stück stehen (Plateau), erst danach fliegt sie weiter
+  const hold = (q) => { const i = Math.floor(q), fr = q - i, k = clamp((fr - .26) / .48); return i + k * k * (3 - 2 * k); };
+  const fromProg = (pp) => { const q = pp * TOT; if (q < lookIdx) return [hold(q), 0]; if (q < lookIdx + PL) return [lookIdx, (q - lookIdx) / PL]; return [hold(q - PL), 1]; };
   const narrow = () => W / Hh < .8;
-  function cardPos(i) { const wN = narrow(); if (i === 0) return wN ? [0, .62] : [0, 0]; if (i === N) return wN ? [0, .62] : [.9, 0]; if (i === lookIdx) return wN ? [0, .62] : [.62, 0]; return [wN ? (i % 2 ? .1 : -.1) : (.85 + (i % 2 ? .12 : -.05)), wN ? .08 : Math.sin(i * 2) * .12]; }
+  function cardPos(i) { const wN = narrow(); if (i === 0) return wN ? [0, .34] : [.62, 0]; if (i === N) return wN ? [0, .34] : [.62, 0]; if (i === lookIdx) return wN ? [0, .62] : [.62, 0]; return [wN ? (i % 2 ? .1 : -.1) : (.85 + (i % 2 ? .12 : -.05)), wN ? .08 : Math.sin(i * 2) * .12]; }
   const draw = (now) => {
     if (!running) return; requestAnimationFrame(draw);
     const t = (now - t0) / 1000; px += (tpx - px) * .06; py += (tpy - py) * .06;
@@ -439,7 +454,7 @@ function mount(root, OPT) {
       if (!pl.tex) continue; const z = -pl.i * SP, d = camZ - z; if (Math.abs(f - pl.i) < nd) { nd = Math.abs(f - pl.i); near = pl.i; }
       if (d < .5 || d > 16) continue;
       const wN = narrow(); const [bx, by] = cardPos(pl.i); const ev = ENT[pl.i % ENT.length], ek = pl.i === 0 ? 0 : (t0k = clamp((d - 3.4) / 7), t0k * t0k * (3 - 2 * t0k)), sc2 = wN ? .3 : 1, x = bx + ev[0] * ek * sc2, y = by + ev[1] * ek * sc2;
-      const isL = pl.i === lookIdx; const wd = pl.logo ? (wN ? Math.min(.9, 1.5 * asp) : 1.3) : isL ? (wN ? Math.min(1.3, 2.6 * asp) : 2.7) : (wN ? Math.min(1.0, 2.1 * asp) : 2.2), ht = wd / pl.ratio;
+      const isL = pl.i === lookIdx; const wd = pl.logo ? (wN ? Math.min(1.05, 1.8 * asp) : 1.7) : isL ? (wN ? Math.min(1.0, 1.9 * asp) : 2.7) : (wN ? Math.min(1.0, 2.1 * asp) : 2.2), ht = wd / pl.ratio;
       const ang = pl.logo || isL ? ev[0] * ek * -.12 : (wN ? .05 : .22) * -pl.side + Math.sin(t * .6 + pl.i) * .02;
       const m = M.mul(M.mul(M.tr(x, y, z), M.mul(M.ry(ang), pl.logo ? M.rz(Math.sin(t * .5) * .04) : M.rz(ev[1] * ek * .1))), M.sc(wd, ht, 1));
       const fade = clamp((d - .5) / 1.3) * clamp(1 - (d - 8) / 8);
@@ -451,7 +466,7 @@ function mount(root, OPT) {
     setActive(near, now);
     // Look-Skript: Zustand aus der Scroll-Position (nur im Look-Abschnitt), sonst Standard-Look
     const lookT = Math.abs(f - lookIdx) < .01 ? (active === lookIdx ? lu * 10 : -1) : (f > lookIdx ? 99 : -1); applyState(lookState(lookT));
-    if (cvs[active] && active === near && Math.abs(f - active) < .6 && now - lastPaint > (SMALL ? 66 : 33)) { lastPaint = now; paint(active, active === lookIdx ? lookT : (now - aT0) / 1000); pver[active] = ver; upload(active); }
+    if (cvs[active] && active === near && Math.abs(f - active) < .6 && now - lastPaint > (SMALL ? 90 : 33)) { lastPaint = now; paint(active, active === lookIdx ? lookT : (now - aT0) / 1000); pver[active] = ver; upload(active); }
     if (D.dirtyImg) { D.dirtyImg = false; ver++; }
     for (let i = 0; i < STATIONS.length; i++) if (cvs[i] && i !== active && pver[i] !== ver && Math.abs(f - i) < 2.6) { paint(i, 99); upload(i); pver[i] = ver; }
     hud.style.setProperty('--gl', '0'); bar.style.transform = `scaleX(${prog0.toFixed(4)})`; hint.style.opacity = prog0 < .03 ? '1' : '0';
