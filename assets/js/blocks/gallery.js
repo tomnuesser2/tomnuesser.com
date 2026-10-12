@@ -121,35 +121,47 @@ export const accordionBlock = {
 export const compareBlock = {
   type: 'compare', label: 'Vorher / Nachher (z. B. Color Grading)',
   fields: [
-    { name: 'before', label: 'Vorher-Bild', type: 'image', default: '' },
-    { name: 'after', label: 'Nachher-Bild', type: 'image', default: '' },
+    { name: 'before', label: '💻 Computer: Vorher-Bild', type: 'image', default: '' },
+    { name: 'after', label: '💻 Computer: Nachher-Bild', type: 'image', default: '' },
+    { name: 'ratio', label: '💻 Computer: Seitenverhältnis (z. B. 16/9)', type: 'text', default: '16/9' },
+    { name: 'orientation', label: '💻 Computer: Trennlinie', type: 'select', options: ['senkrecht', 'waagerecht'], default: 'senkrecht' },
+    { name: 'beforeMobile', label: '📱 Handy: Vorher-Bild (leer = wie Computer)', type: 'image', default: '' },
+    { name: 'afterMobile', label: '📱 Handy: Nachher-Bild (leer = wie Computer)', type: 'image', default: '' },
+    { name: 'ratioMobile', label: '📱 Handy: Seitenverhältnis (z. B. 9/16 oder 4/5; leer = wie Computer)', type: 'text', default: '' },
+    { name: 'orientationMobile', label: '📱 Handy: Trennlinie', type: 'select', options: ['wie Computer', 'senkrecht', 'waagerecht'], default: 'wie Computer' },
     { name: 'labelBefore', label: 'Beschriftung links', type: 'text', default: 'before', de: 'Vorher' },
     { name: 'labelAfter', label: 'Beschriftung rechts', type: 'text', default: 'after', de: 'Nachher' },
-    { name: 'ratio', label: 'Seitenverhältnis (z. B. 16/9)', type: 'text', default: '16/9' },
     { name: 'start', label: 'Startposition in % (0–100)', type: 'number', default: 50 },
-    { name: 'orientation', label: 'Trennlinie', type: 'select', options: ['senkrecht', 'waagerecht'], default: 'senkrecht' },
     { name: 'radius', label: 'Rundung', type: 'select', options: ['sm', 'xl', 'none'], default: 'sm' },
     { name: 'caption', label: 'Bildunterschrift (optional)', type: 'text', default: '' },
   ],
   render(p0) {
     const p = { labelBefore: 'before', labelAfter: 'after', ratio: '16/9', start: 50, orientation: 'senkrecht', radius: 'sm', ...p0 };
-    const vertical = p.orientation === 'waagerecht';
-    const el = h('figure', { class: `cmp cmp--${p.radius} ${vertical ? 'cmp--h' : ''}`, style: { aspectRatio: p.ratio || '16/9' } });
-    if (!p.before || !p.after) { el.append(h('p', { class: 'b-gal__empty' }, 'Vorher- und Nachher-Bild auswählen.')); return el; }
-    const handle = h('button', { class: 'cmp__handle', type: 'button', role: 'slider', 'aria-label': `${p.labelBefore} / ${p.labelAfter}`, 'aria-valuemin': '0', 'aria-valuemax': '100' }, h('i', {}));
-    el.append(h('img', { class: 'cmp__img', src: p.after, alt: p.labelAfter, draggable: 'false' }),
-      h('div', { class: 'cmp__before' }, h('img', { class: 'cmp__img', src: p.before, alt: p.labelBefore, draggable: 'false' })),
-      h('span', { class: 'cmp__tag cmp__tag--a' }, p.labelBefore), h('span', { class: 'cmp__tag cmp__tag--b' }, p.labelAfter), handle,
-      p.caption ? h('figcaption', { class: 'cmp__cap' }, p.caption) : null);
-    let v = clamp(Number(p.start) / 100 || .5), drag = false;
-    const apply = () => { el.style.setProperty('--v', (v * 100).toFixed(2) + '%'); handle.setAttribute('aria-valuenow', String(Math.round(v * 100))); };
-    const at = (e) => { const r = el.getBoundingClientRect(); v = clamp(vertical ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width, .0, 1); apply(); };
-    el.addEventListener('pointerdown', (e) => { if (e.button) return; drag = true; el.classList.add('is-drag'); try { el.setPointerCapture(e.pointerId); } catch { /* egal */ } at(e); });
-    el.addEventListener('pointermove', (e) => { if (drag) at(e); });
-    const end = () => { drag = false; el.classList.remove('is-drag'); }; el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
-    el.addEventListener('keydown', (e) => { const d = { ArrowLeft: -.04, ArrowDown: -.04, ArrowRight: .04, ArrowUp: .04 }[e.key]; if (d) { e.preventDefault(); v = clamp(v + d); apply(); } });
-    apply();
-    return el;
+    const build = (bef, aft, ratio, vertical, cls) => {
+      const el = h('figure', { class: `cmp cmp--${p.radius} ${vertical ? 'cmp--h' : ''} ${cls}`, style: { aspectRatio: String(ratio || '16/9').replace(/\s+/g, '') } });
+      if (!bef || !aft) { el.append(h('p', { class: 'b-gal__empty' }, 'Vorher- und Nachher-Bild auswählen.')); return el; }
+      const handle = h('button', { class: 'cmp__handle', type: 'button', role: 'slider', 'aria-label': `${p.labelBefore} / ${p.labelAfter}`, 'aria-valuemin': '0', 'aria-valuemax': '100' }, h('i', {}));
+      el.append(h('img', { class: 'cmp__img', src: aft, alt: p.labelAfter, draggable: 'false', decoding: 'async' }),
+        h('div', { class: 'cmp__before' }, h('img', { class: 'cmp__img', src: bef, alt: p.labelBefore, draggable: 'false', decoding: 'async' })),
+        h('span', { class: 'cmp__tag cmp__tag--a' }, p.labelBefore), h('span', { class: 'cmp__tag cmp__tag--b' }, p.labelAfter), handle,
+        p.caption ? h('figcaption', { class: 'cmp__cap' }, p.caption) : null);
+      let v = clamp(Number(p.start) / 100 || .5), drag = false;
+      const apply = () => { el.style.setProperty('--v', (v * 100).toFixed(2) + '%'); handle.setAttribute('aria-valuenow', String(Math.round(v * 100))); };
+      const at = (e) => { const r = el.getBoundingClientRect(); v = clamp(vertical ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width, .0, 1); apply(); };
+      el.addEventListener('pointerdown', (e) => { if (e.button) return; drag = true; el.classList.add('is-drag'); try { el.setPointerCapture(e.pointerId); } catch { /* egal */ } at(e); });
+      el.addEventListener('pointermove', (e) => { if (drag) at(e); });
+      const end = () => { drag = false; el.classList.remove('is-drag'); }; el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+      el.addEventListener('keydown', (e) => { const d = { ArrowLeft: -.04, ArrowDown: -.04, ArrowRight: .04, ArrowUp: .04 }[e.key]; if (d) { e.preventDefault(); v = clamp(v + d); apply(); } });
+      apply();
+      return el;
+    };
+    const vPc = p.orientation === 'waagerecht';
+    const pc = build(p.before, p.after, p.ratio, vPc, 'cmp-pc');
+    const hasMob = !!(p.beforeMobile || p.afterMobile || String(p.ratioMobile || '').trim() || (p.orientationMobile && p.orientationMobile !== 'wie Computer'));
+    if (!hasMob) return pc;
+    const vMob = !p.orientationMobile || p.orientationMobile === 'wie Computer' ? vPc : p.orientationMobile === 'waagerecht';
+    const mob = build(p.beforeMobile || p.before, p.afterMobile || p.after, String(p.ratioMobile || '').trim() || p.ratio, vMob, 'cmp-mob');
+    return h('div', { class: 'cmp-pair' }, pc, mob);
   },
 };
 // Hintergrund: weiß (Standard) oder dunkel

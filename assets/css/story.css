@@ -546,3 +546,12 @@ body.is-entering .site-header { opacity: 0; }
 .site-header { transition: opacity .7s ease .55s; }
 body.is-entering .hero__cue, body.is-entering .hm__cue, body.is-entering .hero__sub { opacity: 0; }
 body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s ease both 1.2s; }
+
+/* Vimeo/YouTube im Geräte-Bildschirm: füllt die ganze Fläche */
+.dv__scr .media-frame { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; margin: 0; border-radius: 0; }
+.dv__scr .media-frame .media-snd { display: none; }
+.dv__scr iframe.media-embed { transform: scale(1.02); }
+
+/* Compare: eigene Handy-Version (Bilder/Seitenverhältnis) */
+.cmp-pair .cmp-mob { display: none; }
+@media (max-width: 760px) { .cmp-pair .cmp-pc { display: none; } .cmp-pair .cmp-mob { display: block; } }

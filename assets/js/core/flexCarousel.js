@@ -10,7 +10,9 @@ const PRESETS = {
   arch: { lensWidth: .8, lensHeight: .8, tilt: 0, roundness: 1, bend: .3, reach: .36, curl: 'rise', dispersion: .4 },
 };
 const FIT = { portrait: .75, square: 1, landscape: 4 / 3 };
-const TAPS = 12, BUDGET = 4.5e6, INTRO = { rise: 2.1, bloom: 1.6, spin: 2.2, deal: 1.5, fade: .35 };
+const LOW = (typeof matchMedia === 'function') && (matchMedia('(pointer: coarse)').matches || Math.min(innerWidth, innerHeight) < 700);
+// Handy/Touch: weniger Filter-Samples, kleinere Render-Fläche, kleinere Texturen → flüssig
+const TAPS = LOW ? 5 : 12, BUDGET = LOW ? 1.3e6 : 3.2e6, TEXMAX = LOW ? 1024 : 1800, INTRO = { rise: 2.1, bloom: 1.6, spin: 2.2, deal: 1.5, fade: .35 };
 const wrap = (v, s) => ((((v + s / 2) % s) + s) % s) - s / 2;
 const c01 = (v) => Math.min(Math.max(v, 0), 1);
 const easeOut = (v) => 1 - Math.pow(1 - c01(v), 3);
@@ -106,6 +108,7 @@ export function flexCarousel(root, items, o = {}) {
   const S0 = { preset: 'liquid', intro: 'rise', fit: 'natural', cardHeight: .5, gap: 12, radius: 0, squeeze: .2, autoplay: false, interval: 4, focusOnClick: false, captions: true, captureWheel: false, ...o };
   const base = PRESETS[S0.preset] || PRESETS.liquid;
   const s = { ...S0, ...base };
+  if (LOW) { s.bend = (s.bend || 0) * .5; s.dispersion = 0; if (s.squeeze) s.squeeze *= .6; }
   root.classList.add('fc');
   const canvas = h('canvas', { class: 'fc__canvas', 'aria-hidden': 'true' });
   const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false });
@@ -154,10 +157,12 @@ export function flexCarousel(root, items, o = {}) {
     img.onload = () => {
       if (!alive || !slots.includes(slot)) return;
       gl.bindTexture(gl.TEXTURE_2D, tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); gl.generateMipmap(gl.TEXTURE_2D); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      let src = img; const big = Math.max(img.naturalWidth, img.naturalHeight);
+      if (big > TEXMAX) { const k = TEXMAX / big, cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round(img.naturalWidth * k)); cv.height = Math.max(1, Math.round(img.naturalHeight * k)); cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); src = cv; }
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src); gl.generateMipmap(gl.TEXTURE_2D); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      if (aniso) gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, 8);
+      if (aniso) gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, LOW ? 2 : 8);
       slot.image = [img.naturalWidth || 1, img.naturalHeight || 1]; slot.aspect = slot.image[0] / slot.image[1];
       try { const c = document.createElement('canvas'); c.width = c.height = 8; const cx = c.getContext('2d', { willReadFrequently: true }); cx.drawImage(img, 0, 0, 8, 8); const d = cx.getImageData(0, 0, 8, 8).data; const a = [0, 0, 0]; for (let i = 0; i < d.length; i += 4) { a[0] += d[i]; a[1] += d[i + 1]; a[2] += d[i + 2]; } slot.color = a.map(v => v / 64 / 255); } catch { slot.color = [.5, .5, .5]; }
       slot.loaded = true; dirty = true; start();
@@ -209,7 +214,7 @@ export function flexCarousel(root, items, o = {}) {
 
   const resize = () => {
     width = Math.max(1, root.clientWidth); height = Math.max(1, root.clientHeight);
-    dpr = Math.min(devicePixelRatio || 1, 2, Math.sqrt(BUDGET / (width * height)));
+    dpr = Math.min(devicePixelRatio || 1, LOW ? 1.5 : 2, Math.sqrt(BUDGET / (width * height)));
     canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr); canvas.style.width = '100%'; canvas.style.height = '100%';
     target.w = Math.max(2, Math.round(width * dpr)); target.h = Math.max(2, Math.round(height * dpr)); setTarget(); dirty = true; start();
   };

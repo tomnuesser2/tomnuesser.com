@@ -1,9 +1,12 @@
 import { h } from '../core/dom.js';
+import { mediaEl, isEmbedUrl } from '../core/media.js';
 import { track, still, clamp, trackProgress } from '../core/scrollhub.js';
 // Device: Smartphone (Hochformat-Videos/Reels, wie Stories) oder Laptop (Websites, scrollen im Bildschirm) neben Text.
 // Beim Scrollen klebt die Bühne fest: Das Gerät schaltet durch die Einträge, der Text daneben wechselt mit.
 const isVideo = (s) => /\.(mp4|webm|mov)(\?|$)/i.test(s || '');
-const media = (src) => isVideo(src)
+const media = (src) => isEmbedUrl(src)
+  ? mediaEl({ vimeo: src, ratio: '1/1', radius: 'none', reveal: false, parallax: false, sound: false, hud: false })
+  : isVideo(src)
   ? h('video', { src, muted: true, loop: true, playsinline: true, preload: 'metadata', 'aria-hidden': 'true' })
   : h('img', { src, alt: '', decoding: 'async', loading: 'lazy' });
 
@@ -15,7 +18,7 @@ export default {
     { name: 'kicker', label: 'Kleine Zeile (z. B. short-form / web)', type: 'text', default: '' },
     { name: 'title', label: 'Überschrift', type: 'text', default: '' },
     { name: 'text', label: 'Text unter der Überschrift', type: 'textarea', default: '' },
-    { name: 'items', label: 'Einträge (Bild oder .mp4; beim Laptop hohe Website-Screenshots)', type: 'list', itemFields: [
+    { name: 'items', label: 'Einträge (Bild, .mp4 oder Vimeo/YouTube-Link; beim Laptop hohe Website-Screenshots)', type: 'list', itemFields: [
       { name: 'src', label: 'Bild oder Video', type: 'image' }, { name: 'title', label: 'Titel (beim Laptop = Adresszeile)', type: 'text' }, { name: 'text', label: 'Kurztext', type: 'textarea' }] },
     { name: 'linkText', label: 'Link-Text (optional)', type: 'text', default: '' },
     { name: 'linkUrl', label: 'Link-Ziel (optional)', type: 'text', default: '' },

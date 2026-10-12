@@ -133,7 +133,7 @@ export function carousel3d(root, items, o = {}) {
   const onVis = () => { if (document.hidden) { cancelAnimationFrame(raf); raf = 0; S.last = 0; } else wake(); };
 
   // ---- Bedienung: Ziehen, Tippen, Trackpad seitwärts, Tastatur ----
-  const perPx = () => 180 / (Math.PI * radius * S.fit);
+  const perPx = () => (root.clientWidth > 700 ? 2.3 : 1.6) * 180 / (Math.PI * radius * S.fit);
   const down = (e) => { S.suppress = false; if (e.button !== 0) return; S.press = { id: e.pointerId, x: e.clientX, y: e.clientY, angle: S.angle, moved: false, origin: 0, samples: [{ t: performance.now(), a: S.angle }] }; };
   const move = (e) => {
     if (e.pointerType === 'mouse') { S.pointer.in = true; const r = root.getBoundingClientRect(); S.pointer.x = clamp((e.clientX - r.left) / r.width * 2 - 1, -1, 1); S.pointer.y = clamp((e.clientY - r.top) / r.height * 2 - 1, -1, 1); }
@@ -154,7 +154,9 @@ export function carousel3d(root, items, o = {}) {
     S.drag = false; root.classList.remove('is-dragging'); S.suppress = true;
     const f = p.samples[0], l = p.samples[p.samples.length - 1], span = (l.t - f.t) / 1000, v = span > .008 ? clamp((l.a - f.a) / span, -1400, 1400) : 0;
     S.vel = v; if (Math.abs(v) > 60) S.dir = Math.sign(v);
-    S.hold = performance.now() + 1500; wake();
+    // Wischen: Schwung mitnehmen und auf die nächste Karte einrasten (kleine Drags springen nicht mehr zurück)
+    S.target = nearest(S.angle + clamp(v * .2, -step * 1.5, step * 1.5));
+    S.hold = performance.now() + 2200; wake();
   };
   const focus = (i) => { let t = -i * step; t += 360 * Math.round((S.angle - t) / 360); S.target = t; S.hold = performance.now() + 2800; wake(); };
   const click = (e) => {

@@ -361,6 +361,7 @@ function entry(site) {
       const lift = veil.animate([{ clipPath: 'inset(0 0 0 0)' }, { clipPath: 'inset(0 0 100% 0)' }], { duration: 800, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
       veil.firstChild.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-14vh)', opacity: 0 }], { duration: 450, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
       setTimeout(() => { body.classList.remove('is-entering'); body.classList.add('is-entered'); document.documentElement.style.overflow = ''; resolve(); }, 230);
+      veil.style.pointerEvents = 'none'; setTimeout(() => veil.remove(), 1400);
       lift.finished.then(() => veil.remove()).catch(() => veil.remove());
     });
   });

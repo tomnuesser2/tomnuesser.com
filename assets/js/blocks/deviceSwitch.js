@@ -1,6 +1,6 @@
 import { h } from '../core/dom.js';
 import { still } from '../core/scrollhub.js';
-import { parseVimeo, vimeoThumb } from '../core/media.js';
+import { parseVimeo, vimeoThumb, isEmbedUrl } from '../core/media.js';
 // Short-form & Long-form: Smartphone (klein) und Laptop (groß) stehen gleichzeitig im Bild. Was angeklickt wird, kommt animiert nach vorn
 // und läuft dort durch seine Einträge (Bilder nach "Dauer", Videos in ihrer eigenen Länge). Rechts steht nur kurz, was man sieht.
 const isVideo = (s) => /\.(mp4|webm|mov)(\?|$)/i.test(s || '');
@@ -29,8 +29,9 @@ export default {
   ],
   render(p0) {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
+    const norm = (i) => (isEmbedUrl(i.src) && !i.vimeo ? { ...i, vimeo: i.src, src: '' } : i);
     const ok = (i) => i.src || parseVimeo(i.vimeo);
-    const items = { phone: (p.shortItems || []).filter(ok), laptop: (p.longItems || []).filter(ok) };
+    const items = { phone: (p.shortItems || []).map(norm).filter(ok), laptop: (p.longItems || []).map(norm).filter(ok) };
     const S = { phone: { cur: 0, shots: [], el: null }, laptop: { cur: 0, shots: [], el: null } };
     let front = items[p.front] && items[p.front].length ? p.front : (items.phone.length ? 'phone' : 'laptop'), timer, raf, visible = false;
 

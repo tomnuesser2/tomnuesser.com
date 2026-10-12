@@ -13,6 +13,7 @@ export function parseYouTube(input) {
   const m = String(input).match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/i);
   return m ? { id: m[1] } : null;
 }
+export const isEmbedUrl = (s) => /(?:vimeo\.com|youtu\.be|youtube\.com)\//i.test(s || '');
 export function parseVimeo(input) {
   if (!input || parseYouTube(input)) return null;
   const m = String(input).match(/(?:vimeo\.com\/(?:video\/)?)?(\d{6,})(?:\/([a-z0-9]+))?/i);
@@ -47,6 +48,7 @@ const PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-
  * props: { src, alt, vimeo, poster ("auto" | Pfad), ratio, radius: sm|xl|none, parallax, reveal }
  */
 export function mediaEl(p = {}) {
+  if (!p.vimeo && isEmbedUrl(p.src)) p = { ...p, vimeo: p.src, src: '' };
   const radius = p.radius || 'sm';
   const frame = h('figure', {
     class: `media-frame r-${radius}`,
