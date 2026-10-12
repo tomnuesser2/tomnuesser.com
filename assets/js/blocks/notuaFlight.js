@@ -405,9 +405,17 @@ function mount(root, OPT) {
   planes.forEach((pl) => { if (cvs[pl.i]) pl.tex = makeTex(cvs[pl.i]); });
   const upload = (i) => { const pl = planes[i]; if (!pl.tex) return; gl.bindTexture(gl.TEXTURE_2D, pl.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cvs[i]); };
   const logo = new Image(); logo.crossOrigin = 'anonymous';
-  // Logo schwarz-weiß statt orange: helle Pixel (das N) bleiben weiß, der Rest wird schwarz
-  const bw = (im) => { try { const n = im.naturalWidth || 512, k = document.createElement('canvas'); k.width = k.height = n; const x = k.getContext('2d'); x.drawImage(im, 0, 0, n, n); const d = x.getImageData(0, 0, n, n), a = d.data; for (let i = 0; i < a.length; i += 4) { const l = .3 * a[i] + .59 * a[i + 1] + .11 * a[i + 2], t = Math.min(1, Math.max(0, (l - 150) / 70)) * 255; a[i] = a[i + 1] = a[i + 2] = t; } x.putImageData(d, 0, 0); return k; } catch { return im; } };
-  logo.onload = () => { const t = makeTex(bw(logo)); planes.forEach(pl => { if (pl.logo) { pl.tex = t; pl.ratio = 1; } }); }; logo.src = o.logo || 'media/notua-logo.png';
+  // Logo passt sich der Akzentfarbe der Oberfläche an: am Anfang Lachs, am Ende die Farbe des „NOTUA öffnen“-Buttons. Das N bleibt weiß.
+  let LG = null;
+  const tintLogo = () => {
+    if (!LG) return; const A = hexRgb(TH.accent).map(v => v * 255), d = LG.ctx.createImageData(LG.n, LG.n), o2 = d.data, b = LG.base;
+    for (let k = 0; k < b.length; k += 4) { const t = b[k + 1] / 255; o2[k] = A[0] + (255 - A[0]) * t; o2[k + 1] = A[1] + (255 - A[1]) * t; o2[k + 2] = A[2] + (255 - A[2]) * t; o2[k + 3] = b[k]; }
+    LG.ctx.putImageData(d, 0, 0); LG.acc = TH.accent; const pl = planes.find(x => x.logo); if (pl && pl.tex) { gl.bindTexture(gl.TEXTURE_2D, pl.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, LG.cv); }
+  };
+  const prepLogo = (im) => { try { const n = im.naturalWidth || 512, cv = document.createElement('canvas'); cv.width = cv.height = n; const x = cv.getContext('2d'); x.drawImage(im, 0, 0, n, n); const a = x.getImageData(0, 0, n, n).data, base = new Uint8ClampedArray(a.length);
+    for (let k = 0; k < a.length; k += 4) { const l = .3 * a[k] + .59 * a[k + 1] + .11 * a[k + 2]; base[k] = a[k + 3]; base[k + 1] = Math.min(1, Math.max(0, (l - 150) / 70)) * 255; }
+    LG = { n, cv, ctx: x, base, acc: null }; tintLogo(); return cv; } catch { return im; } };
+  logo.onload = () => { const t = makeTex(prepLogo(logo)); planes.forEach(pl => { if (pl.logo) { pl.tex = t; pl.ratio = 1; } }); if (LG) tintLogo(); }; logo.src = o.logo || 'media/notua-logo.png';
 
   const SMALL = matchMedia('(max-width: 899px)').matches; let lastPaint = 0; let W = 1, Hh = 1, prog0 = 0, prevP = 0, vel = 0, gv = 0, px = 0, py = 0, tpx = 0, tpy = 0, active = -1, running = false, aT0 = 0; const t0 = performance.now();
   const resize = () => { const dpr = Math.min(devicePixelRatio || 1, SMALL ? 1.5 : 2); W = canvas.clientWidth; Hh = canvas.clientHeight; canvas.width = Math.max(1, Math.round(W * dpr)); canvas.height = Math.max(1, Math.round(Hh * dpr)); };
@@ -465,7 +473,7 @@ function mount(root, OPT) {
     }
     setActive(near, now);
     // Look-Skript: Zustand aus der Scroll-Position (nur im Look-Abschnitt), sonst Standard-Look
-    const lookT = Math.abs(f - lookIdx) < .01 ? (active === lookIdx ? lu * 10 : -1) : (f > lookIdx ? 99 : -1); applyState(lookState(lookT));
+    const lookT = Math.abs(f - lookIdx) < .01 ? (active === lookIdx ? lu * 10 : -1) : (f > lookIdx ? 99 : -1); applyState(lookState(lookT)); if (LG && LG.acc !== TH.accent) tintLogo();
     if (cvs[active] && active === near && Math.abs(f - active) < .6 && now - lastPaint > (SMALL ? 90 : 33)) { lastPaint = now; paint(active, active === lookIdx ? lookT : (now - aT0) / 1000); pver[active] = ver; upload(active); }
     if (D.dirtyImg) { D.dirtyImg = false; ver++; }
     for (let i = 0; i < STATIONS.length; i++) if (cvs[i] && i !== active && pver[i] !== ver && Math.abs(f - i) < 2.6) { paint(i, 99); upload(i); pver[i] = ver; }

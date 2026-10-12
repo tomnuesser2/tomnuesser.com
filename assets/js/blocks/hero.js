@@ -32,6 +32,7 @@ export default {
       h('img', { src: pr.image, alt: '', decoding: 'async' })));
     const lines = String(p.title || '').split('\n').map(s => s.trim()).filter(Boolean);
     const lineEls = lines.map((r) => h('span', { class: 'hero__role' }, r));
+    { let k = 0; lineEls.forEach((r) => { splitChars(r, k); k += r.textContent.length; }); }
     const el = h('section', { class: 'hero', id: p.id },
       h('div', { class: 'hero__cards' }, cards),
       h('h1', { class: `hero__roles is-${p.titleSize}` }, lineEls),
@@ -42,7 +43,7 @@ export default {
     if (matchMedia('(min-width: 900px)').matches && !still() && n >= 2) {
       const box = el.querySelector('.hero__cards'); el.classList.add('hero--car'); box.replaceChildren();
       const all = (idx.order || []).map(sl => ({ slug: sl, ...idx.projects[sl] })).filter(x => x.image && !x.hidden);
-      requestAnimationFrame(() => carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { size: (r) => ({ w: Math.min(r.width * .4, r.height * 1.0 * 1.6), aspect: 1.6 }), fitAngle: 100 }));
+      (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => el.isConnected && (carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { size: (r) => ({ w: Math.min(r.width * .4, r.height * 1.0 * 1.6), aspect: 1.6 }), fitAngle: 100 }))));
     }
     if (still() || !p.cycle) { lineEls.forEach(r => r.classList.add('is-on')); if (still()) return el; }
     if (p.cycle) { let a = 0; const cycle = () => { lineEls.forEach((r, i) => r.classList.toggle('is-on', i === a)); a = (a + 1) % lineEls.length; };
@@ -57,6 +58,21 @@ export default {
 // ---------- Handy-Intro: Vollbild ----------
 // 1) Mosaik aller Projekte mit dem Titel davor. 2) Das erste ausgewählte Projekt wächst aus dem Mosaik auf Vollbild.
 // 3) Die weiteren ausgewählten Projekte schieben sich nacheinander als Vollbild darüber – alles gesteuert durch das Scrollen.
+// Einflug des Karussells: kommt aus einer zufälligen Richtung hereingeschwungen, dreht dabei und landet in der Mitte
+const dirIn = Math.random() < .5 ? 1 : -1;
+function swerveIn(el) {
+  if (!el || !el.animate || still()) return; const a = Math.random() * Math.PI * 2, x = Math.cos(a) * 52, y = Math.sin(a) * 26 + 6;
+  el.animate([{ transform: `translate(${x}vw, ${y}vh) rotate(${dirIn * 14}deg) scale(.55)`, opacity: 0, filter: 'blur(14px)' }, { opacity: 1, filter: 'blur(0)', offset: .35 }, { transform: 'none', opacity: 1, filter: 'blur(0)' }], { duration: 1150, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
+}
+// Text in Wörter und Buchstaben zerlegen (für den Einflug-Effekt beim Seitenstart)
+function splitChars(el, base = 0) {
+  if (!el || el.dataset.split) return; el.dataset.split = '1'; let n = base;
+  const txt = el.textContent; el.setAttribute('aria-label', txt); el.textContent = '';
+  txt.split(/(\s+)/).forEach((w) => { if (!w) return; if (/^\s+$/.test(w)) { el.append(' '); return; }
+    const word = document.createElement('span'); word.className = 'wd'; word.setAttribute('aria-hidden', 'true');
+    for (const c of w) { const i = document.createElement('i'); i.className = 'ch'; i.style.setProperty('--d', (n++ * 22) + 'ms'); i.textContent = c; word.append(i); }
+    el.append(word); });
+}
 const ease = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 const lerp = (a, b, t) => a + (b - a) * t;
 function mobileHero(p, ctx) {
@@ -74,6 +90,7 @@ function mobileHero(p, ctx) {
   let car = null;
   const lines = String(p.title || '').split('\n').map(s => s.trim()).filter(Boolean);
   const title = h('h1', { class: `hm__title is-${p.titleSize || 'l'}` }, lines.map(l => h('span', {}, l)));
+  { let k = 0; [...title.children].forEach((r) => { splitChars(r, k); k += r.textContent.length; }); }
   const cue = h('p', { class: 'hm__cue' }, p.cue || 'scroll', h('i', { 'aria-hidden': 'true' }, '↓'));
   const shots = feat.map((f, i) => {
     const img = h('img', { src: f.image, alt: '', decoding: 'async' });
@@ -97,7 +114,7 @@ function mobileHero(p, ctx) {
     if (need > avail && need > 0) title.style.fontSize = (parseFloat(getComputedStyle(title).fontSize) * avail / need * .98).toFixed(1) + 'px'; };
   requestAnimationFrame(fitTitle); [250, 900, 2200].forEach(t => setTimeout(fitTitle, t)); document.fonts && document.fonts.ready.then(fitTitle); addEventListener('resize', fitTitle, { passive: true });
   const open = (it) => { const a = document.createElement('a'); a.href = it.href; a.setAttribute('data-link', ''); a.hidden = true; document.body.append(a); a.click(); a.remove(); };
-  requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true }); });
+  (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true }); }));
   const apply = (u) => {
     if (!R) measure();
     const z = ease(clamp((u - 1) / 1)), rot = clamp((u - .04) / .96);

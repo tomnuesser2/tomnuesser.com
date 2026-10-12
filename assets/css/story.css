@@ -524,3 +524,25 @@
 .b-gal__empty { color: #8b8f99; }
 
 .dd__vm, .dd__vm iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #000; pointer-events: none; }
+
+/* ---------- Einstiegs-Animation ---------- */
+.entry { position: fixed; inset: 0; z-index: 300; background: #fff; display: grid; place-items: center; color: #000; clip-path: inset(0 0 0 0); }
+.entry__in { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 0 20px; text-align: center; }
+.entry__name { margin: 0; font-weight: 400; font-size: clamp(30px, 7.4vw, 84px); letter-spacing: -.02em; line-height: 1.1; display: flex; overflow: hidden; padding: 0 .04em .12em; }
+.entry__c { display: inline-block; font-style: normal; transform: translateY(115%) rotate(7deg); opacity: 0; animation: entryC .65s cubic-bezier(.16,1,.3,1) forwards; animation-delay: calc(60ms + var(--d, 0ms)); }
+@keyframes entryC { to { transform: none; opacity: 1; } }
+.entry__tag { margin: 0; font-size: clamp(11px, 1.5vw, 14px); letter-spacing: .12em; text-transform: uppercase; color: #8a8f98; opacity: 0; animation: entryT .6s ease forwards .4s; }
+@keyframes entryT { to { opacity: 1; } }
+.entry__line { width: min(260px, 52vw); height: 2px; background: #e6e8ec; overflow: hidden; border-radius: 2px; }
+.entry__bar { display: block; width: 100%; height: 100%; background: #000; transform-origin: left; transform: scaleX(0); }
+
+/* Titel: Buchstaben fliegen nacheinander ein */
+.ch { display: inline-block; }
+.wd { display: inline-block; white-space: nowrap; }
+body.is-entering .ch { opacity: 0; transform: translateY(70%) rotate(5deg); filter: blur(10px); }
+body.is-entered .ch { animation: chIn .75s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(.2s + var(--d, 0ms)); }
+@keyframes chIn { from { opacity: 0; transform: translateY(70%) rotate(5deg); filter: blur(10px); } to { opacity: 1; transform: none; filter: blur(0); } }
+body.is-entering .site-header { opacity: 0; }
+.site-header { transition: opacity .7s ease .55s; }
+body.is-entering .hero__cue, body.is-entering .hm__cue, body.is-entering .hero__sub { opacity: 0; }
+body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s ease both 1.2s; }

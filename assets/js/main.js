@@ -199,7 +199,6 @@ function renderIntro() {
 async function render() {
   const { els, site } = state;
   const slug = routeSlug();
-  if (slug === '' && site.intro?.enabled !== false) { renderIntro(); window.scrollTo(0, 0); return; }
   document.body.classList.remove('is-intro');
 
   const target = slug === '' ? 'home' : slug;
@@ -217,6 +216,7 @@ async function render() {
     const m1 = pv && (page.blocks || []).find(b => b.type === 'media');
     if (m1 && m1.props && !m1.props.vimeo) page = { ...page, blocks: page.blocks.map(b => b === m1 ? { ...b, props: { ...b.props, vimeo: pv } } : b) }; }
   document.body.classList.toggle('is-sub', target !== 'home'); document.querySelector('.mnav')?.classList.remove('is-open');
+  if (target === 'home' && !state.entered) { state.entered = true; window.tnEnterP = entry(site); } else if (!window.tnEnterP) window.tnEnterP = Promise.resolve();
   const ctx = { site, content: { index: state.index }, route: target };
   const frag = h('div', { class: 'page', 'data-page': target });
   frag.append(renderBlocks(page.blocks, ctx), h('div', { class: 'b-spacer', style: { '--h': '40px' } }));
@@ -339,4 +339,29 @@ boot();
     } else nav.classList.remove('is-open');
   }, true);
   addEventListener('scroll', () => { const n = mn(); if (n && n.classList.contains('is-open')) n.classList.remove('is-open'); }, { passive: true });
+}
+
+// ---------- Einstieg: kein „enter“-Bildschirm mehr, sondern eine Eröffnungs-Animation ----------
+// Weißer Vorhang mit dem Namen (Buchstaben steigen auf, Ladebalken) → Vorhang fährt hoch → Karussell fliegt herein, Titel erscheint Buchstabe für Buchstabe, Menü blendet ein.
+function entry(site) {
+  const body = document.body;
+  if (prefersReducedMotion() || !document.body.animate) { body.classList.add('is-entered'); return Promise.resolve(); }
+  body.classList.add('is-entering'); document.documentElement.style.overflow = 'hidden';
+  const name = String((site.entry && site.entry.title) || site.title || 'tomnuesser'), tag = site.entry && site.entry.tagline !== undefined ? site.entry.tagline : site.tagline;
+  const letters = [...name].map((c, i) => h('i', { class: 'entry__c', style: { '--d': (i * 28) + 'ms' } }, c === ' ' ? '\u00a0' : c));
+  const bar = h('i', { class: 'entry__bar' });
+  const veil = h('div', { class: 'entry' }, h('div', { class: 'entry__in' }, h('h1', { class: 'entry__name' }, letters), tag ? h('p', { class: 'entry__tag' }, tag) : null, h('div', { class: 'entry__line' }, bar)));
+  document.body.append(veil);
+  // Erste Projektbilder vorladen, damit das Karussell nicht leer hereinfliegt (höchstens 2,6 s warten)
+  const idx = state.index || {}, imgs = (idx.order || []).map(sl => idx.projects[sl]).filter(x => x && x.image && !x.hidden).slice(0, 6).map(x => new Promise((res) => { const im = new Image(); im.onload = im.onerror = () => res(); im.src = x.image; if (im.decode) im.decode().then(res, res); }));
+  const minShow = new Promise(r => setTimeout(r, 950));
+  bar.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 950, easing: 'cubic-bezier(.65,0,.25,1)', fill: 'forwards' });
+  return new Promise((resolve) => {
+    Promise.all([minShow, Promise.race([Promise.all(imgs), new Promise(r => setTimeout(r, 2600))])]).then(() => {
+      const lift = veil.animate([{ clipPath: 'inset(0 0 0 0)' }, { clipPath: 'inset(0 0 100% 0)' }], { duration: 800, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
+      veil.firstChild.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-14vh)', opacity: 0 }], { duration: 450, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+      setTimeout(() => { body.classList.remove('is-entering'); body.classList.add('is-entered'); document.documentElement.style.overflow = ''; resolve(); }, 230);
+      lift.finished.then(() => veil.remove()).catch(() => veil.remove());
+    });
+  });
 }

@@ -88,6 +88,7 @@ export function carousel3d(root, items, o = {}) {
     const cruise = !O.reduced && !paused && !S.intro ? O.speed * S.dir : 0;
     let busy = !!S.intro || S.drag;
     if (S.drag || S.intro) S.vel = S.drag ? S.vel : 0;
+    if (S.intro && O.swerve) { const k = clamp((now - S.intro.start) / 1250, 0, 1); S.angle = O.swerve * 330 * Math.pow(1 - k, 3); } // Einflug: dreht aus einer Richtung herein und bremst sanft ab
     else if (S.target !== null) {
       let rem = dt; const damp = 2 * Math.sqrt(SPRING);
       while (rem > 0) { const k = Math.min(rem, 1 / 240); S.vel += (SPRING * (S.target - S.angle) - damp * S.vel) * k; S.angle += S.vel * k; rem -= k; }

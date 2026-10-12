@@ -2,7 +2,7 @@
   "title": "tomnuesser",
   "footer": "© tomnuesser. All rights reserved.",
   "intro": {
-    "enabled": true,
+    "enabled": false,
     "button": "enter",
     "button_de": "eintreten"
   },
@@ -10,28 +10,28 @@
     {
       "label": "videography",
       "href": "home#video",
-      "label_de": "Videografie"
+      "label_de": "videography"
     },
     {
-      "label": "programming",
+      "label": "notua",
       "href": "home#notua",
-      "label_de": "Programmierung"
+      "label_de": "notua"
     },
     {
       "label": "creative",
       "href": "home#design",
-      "label_de": "Kreatives"
+      "label_de": "creative"
     },
     {
       "label": "contact",
       "href": "home#contact",
-      "label_de": "Kontakt"
+      "label_de": "contact"
     }
   ],
   "socials": [
     {
       "label": "YouTube",
-      "icon": "youtube",
+      "icon": "instagram",
       "url": "https://www.youtube.com/"
     },
     {
@@ -66,11 +66,15 @@
     "palette": true
   },
   "theme": {},
-  "tagline": "videographer · designer · developer",
+  "tagline": "digital & visual artist",
   "location": {
     "label": "flensburg, de",
     "tz": "Europe/Berlin"
   },
   "footer_de": "© tomnuesser. Alle Rechte vorbehalten.",
-  "tagline_de": "Videograf · Designer · Entwickler"
+  "tagline_de": "digital & visual artist",
+  "entry": {
+    "tagline_de": "digital & visual artist",
+    "tagline": "digital & visual artist"
+  }
 }

@@ -6,7 +6,7 @@
       "props": {
         "cards": 6,
         "mobileCount": 6,
-        "title_de": "digitale und\nvisuelle kunst",
+        "title_de": "digitaler &\nvisueller künstler",
         "title": "digital and\nvisual artist"
       }
     },
@@ -182,13 +182,13 @@
     {
       "type": "kinetic",
       "props": {
-        "words": "film\ndesign\ndevelop\none thread.",
+        "words": "",
         "accent": "#ff2d2d",
         "video": "media/demo-loop.mp4",
         "poster": "media/stage-purple.jpg",
         "dim": 45,
         "size": "l",
-        "words_de": "Film\nDesign\nEntwicklung\nein roter Faden.",
+        "words_de": "",
         "ctaLink": "design"
       },
       "id": "design"

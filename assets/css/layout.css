@@ -227,3 +227,11 @@ html { scrollbar-width: none; } html::-webkit-scrollbar { display: none; width: 
   .site-header__logo, .lang--head { transition: opacity .35s var(--ease), visibility .35s; }
   .site-header.at-contact .site-header__logo, .site-header.at-contact .lang--head { opacity: 0; visibility: hidden; pointer-events: none; }
 }
+
+/* PC: DE/EN steht unter dem Logo und blendet beim ersten Scrollen aus; das Menü startet ganz rechts und fährt in die exakte Mitte */
+@media (min-width: 900px) {
+  .lang--head { left: calc(var(--gutter) - 5px); right: auto; top: 60px; font-size: 13px; transition: color .3s, opacity .4s var(--ease), visibility .4s; }
+  .is-docked .lang--head { opacity: 0; visibility: hidden; pointer-events: none; }
+  .pill { margin-left: 0; }
+  .is-docked .pill { margin-left: 0; }
+}
