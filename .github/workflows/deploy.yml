@@ -21,10 +21,6 @@ jobs:
       - name: Repository auschecken
         uses: actions/checkout@v4
 
-      - name: GitHub Pages konfigurieren
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Statische Seite zusammenstellen (kein Build nötig)
         run: |
