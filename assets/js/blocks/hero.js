@@ -67,7 +67,7 @@ function mobileHero(p, ctx) {
   const cardSize = (r) => ({ w: Math.min(r.width * .56, r.height * .74 * .5625), aspect: .5625 });
   let car = null;
   const lines = String(p.title || '').split('\n').map(s => s.trim()).filter(Boolean);
-  const title = h('h1', { class: 'hm__title' }, lines.map(l => h('span', {}, l)));
+  const title = h('h1', { class: `hm__title is-${p.titleSize || 'l'}` }, lines.map(l => h('span', {}, l)));
   const cue = h('p', { class: 'hm__cue' }, p.cue || 'scroll', h('i', { 'aria-hidden': 'true' }, '↓'));
   const shots = feat.map((f, i) => {
     const img = h('img', { src: f.image, alt: '', decoding: 'async' });
@@ -86,6 +86,10 @@ function mobileHero(p, ctx) {
     const cs = cardSize(cr), cw = cs.w * 1.08, ch = cw / cs.aspect, cx = cr.left - sr.left + cr.width / 2, cy = cr.top - sr.top + cr.height / 2;
     const l = cx - cw / 2, t = cy - ch / 2; R = { t, r: W - l - cw, b: H - t - ch, l };
   };
+  // Überschrift so verkleinern, dass die längste Zeile nie über den Rand ragt (egal ob Deutsch/Englisch oder wie groß eingestellt)
+  const fitTitle = () => { title.style.fontSize = ''; const avail = stage.clientWidth - 2 * parseFloat(getComputedStyle(title).left || 20), need = Math.max(...[...title.children].map(s => s.scrollWidth));
+    if (need > avail && need > 0) title.style.fontSize = (parseFloat(getComputedStyle(title).fontSize) * avail / need * .98).toFixed(1) + 'px'; };
+  requestAnimationFrame(fitTitle); [250, 900, 2200].forEach(t => setTimeout(fitTitle, t)); document.fonts && document.fonts.ready.then(fitTitle); addEventListener('resize', fitTitle, { passive: true });
   const open = (it) => { const a = document.createElement('a'); a.href = it.href; a.setAttribute('data-link', ''); a.hidden = true; document.body.append(a); a.click(); a.remove(); };
   requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true }); });
   const apply = (u) => {

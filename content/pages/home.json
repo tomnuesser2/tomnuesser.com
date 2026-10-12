@@ -3,7 +3,11 @@
   "blocks": [
     {
       "type": "hero",
-      "props": {}
+      "props": {
+        "title_de": "digitale & visuelle\nkunst",
+        "titleSize": "s",
+        "title": "digital & visual\nartist\n\n"
+      }
     },
     {
       "type": "statement",

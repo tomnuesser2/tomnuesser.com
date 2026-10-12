@@ -203,3 +203,5 @@ html { scrollbar-width: none; } html::-webkit-scrollbar { display: none; width: 
 
 
 @media (max-width: 899px) { .site-header.is-docked .mnav__a { height: 46px; min-width: 46px; font-size: var(--nfs, 12px); } .site-header.is-docked .mnav__i { width: 24px; } .site-header.is-docked .mnav__i svg { width: 23px; height: 23px; } .site-header .mnav { padding: 6px; } }
+/* Unterlängen (g, p, y) nicht abschneiden */
+@media (max-width: 899px) { .site-header .mnav__a { line-height: 1.5; } .site-header .mnav__l { line-height: 1.5; padding: 1px 0 2px; } }

@@ -27,6 +27,9 @@ jobs:
           mkdir _site
           rsync -a --exclude '.git' --exclude '.github' --exclude '_site' --exclude 'admin' --exclude 'tools' --exclude 'Admin-starten.bat' ./ _site/
 
+      - name: Versionsnummer anhängen (damit Handys immer die neue Version laden)
+        run: node tools/stamp.mjs _site "${{ github.sha }}"
+
       - name: Seite hochladen
         uses: actions/upload-pages-artifact@v3
         with:
