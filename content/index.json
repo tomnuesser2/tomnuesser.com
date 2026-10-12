@@ -3,7 +3,8 @@
     "leona-livesessions",
     "project-10",
     "project-9",
-    "123"
+    "123",
+    "test2"
   ],
   "projects": {
     "123": {
@@ -11,7 +12,7 @@
       "title_de": "",
       "summary_de": "",
       "roles_de": "",
-      "image": "",
+      "image": "media/workshop-table.jpg",
       "vimeo": "",
       "ratio": "16/9",
       "group": 1,
@@ -83,6 +84,24 @@
         "media/norder-1.jpg",
         "media/norder-2.jpg"
       ]
+    },
+    "test2": {
+      "title": "test2",
+      "title_de": "",
+      "summary_de": "",
+      "roles_de": "",
+      "image": "",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 1,
+      "hidden": false,
+      "featured": false,
+      "summary": "",
+      "anim": "expand",
+      "roles": "",
+      "category": "video",
+      "cam": "",
+      "stills": []
     }
   }
 }

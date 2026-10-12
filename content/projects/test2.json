@@ -1,0 +1,27 @@
+{
+  "title": "test2",
+  "card": {
+    "image": "",
+    "vimeo": "",
+    "ratio": "16/9",
+    "group": 1,
+    "category": "video"
+  },
+  "blocks": [
+    {
+      "type": "spacer",
+      "props": {
+        "size": 40
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "test2",
+        "level": 1,
+        "align": "center",
+        "bold": false
+      }
+    }
+  ]
+}

@@ -113,11 +113,12 @@
             "title_de": "Live-Session für LEONA"
           }
         ],
-        "linkText": "https://www.youtube.com/festival-livesession-leona",
+        "linkText": "",
         "linkUrl": "",
         "chrome": false,
         "volumeUi": true,
-        "linkText_de": "https://www.youtube.com/festival-livesession-leona"
+        "linkText_de": "",
+        "chromeMobile": false
       }
     }
   ],

@@ -550,7 +550,7 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 /* Vimeo/YouTube im Geräte-Bildschirm: füllt die ganze Fläche */
 .dv__scr .media-frame { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; margin: 0; border-radius: 0; }
 .dv__scr .media-frame .media-snd { display: none; }
-.dv__scr iframe.media-embed { transform: scale(1.02); }
+
 
 /* Compare: eigene Handy-Version (Bilder/Seitenverhältnis) */
 .cmp-pair .cmp-mob { display: none; }
@@ -572,3 +572,11 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 @media (max-width: 700px) {
   .b-gal--flex { width: 100%; margin-left: 0; margin-right: 0; border-radius: 0; box-shadow: none; }
 }
+
+/* Laptop ohne Adresszeile: Bildschirm füllt alles (kein weißer Streifen oben) */
+.dv--nochrome .dv__page { top: 0; }
+@media (max-width: 760px) { .dv--nochrome-m .dv__page { top: 0; } }
+/* Online-Videos (16:9) füllen jeden Bildschirm komplett und ragen 2 % über den Rand (kein Randflimmern) */
+.dv__scr { container-type: size; }
+.dv__scr .media-inner > iframe.media-embed { inset: auto; left: 50%; top: 50%; right: auto; bottom: auto; width: max(102cqw, 102cqh * 16 / 9); height: max(102cqh, 102cqw * 9 / 16); max-width: none; max-height: none; transform: translate(-50%, -50%); }
+.dv__scr .media-frame, .dv__scr .media-inner { background: #000; }

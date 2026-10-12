@@ -60,10 +60,12 @@ export default {
       const base = new URLSearchParams({ controls: '0', api: '1', muted: '1', autopause: '0', title: '0', byline: '0', portrait: '0', dnt: '1', playsinline: '1', ...(scrub ? {} : { autoplay: '1', loop: '1', background: '1' }) }); if (vm.hash) base.set('h', vm.hash);
       const load = () => { if (vSrcSet) return; vSrcSet = true; vmf.src = `https://player.vimeo.com/video/${vm.id}?${base}`; };
       if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); load(); } }, { rootMargin: '60%' }); io.observe(el); } else load();
+      // Falls der Player kein „ready“ meldet: nach dem Laden mehrfach nach der Länge fragen
+      vmf.addEventListener('load', () => { let n = 0; const ask = () => { if (vDur || n++ > 12) return; vpost({ method: 'addEventListener', value: 'ready' }); vpost({ method: 'getDuration' }); vpost({ method: 'setMuted', value: true }); if (scrub) vpost({ method: 'pause' }); setTimeout(ask, 500); }; ask(); });
       addEventListener('message', (e) => {
         if (e.source !== vmf.contentWindow) return; let d = e.data; try { if (typeof d === 'string') d = JSON.parse(d); } catch { return; }
         if (d.event === 'ready') { vReady = true; vpost({ method: 'getDuration' }); vpost({ method: 'setMuted', value: true }); if (scrub) vpost({ method: 'pause' }); }
-        else if (d.method === 'getDuration' && d.value) { vDur = Number(d.value) || 0; if (!raf) raf = requestAnimationFrame(tick); }
+        else if (d.method === 'getDuration' && d.value) { vReady = true; vDur = Number(d.value) || 0; if (!raf) raf = requestAnimationFrame(tick); }
       });
       // Video füllt die Fläche (Cover, 16:9)
       const fit = () => { const w = clip.clientWidth, hh = clip.clientHeight; if (!w || !hh) return; const W = Math.max(w, hh * 16 / 9), H = Math.max(hh, w * 9 / 16); vmf.style.width = W + 'px'; vmf.style.height = H + 'px'; vmf.style.left = (w - W) / 2 + 'px'; vmf.style.top = (hh - H) / 2 + 'px'; };
