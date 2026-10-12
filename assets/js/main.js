@@ -123,7 +123,7 @@ addEventListener('resize', measureNav);
 
 // Handy: Sobald der NOTUA-Flug am Bildschirm "klebt", verwandelt sich die Menü-Pille in die NOTUA-Leiste – und danach wieder zurück.
 let flOn = false, morphTok = 0, morphAnim = [];
-const flPinned = () => { if (!MQ.matches) return false; const t = document.querySelector('.fl__track'), s = document.querySelector('.fl__stage'); if (!t || !s) return false; const a = t.getBoundingClientRect(), b = s.getBoundingClientRect(); return a.top <= 1 && a.bottom >= b.height - 1; };
+const flPinned = () => { if (!MQ.matches) return false; const t = document.querySelector('.fl__track'), s = document.querySelector('.fl__stage'); if (!t || !s) return false; const a = t.getBoundingClientRect(), b = s.getBoundingClientRect(); return a.top <= 1 && a.bottom >= b.height - 1 && Number(s.dataset.st || 0) >= 1; }; // NOTUA-Leiste erst ab „Notizen 1“ (nicht schon beim Logo)
 async function morph(on) {
   const hd = document.querySelector('.site-header'), nav = document.querySelector('.mnav'), dk = document.querySelector('.fl__dock');
   const tok = ++morphTok; morphAnim.forEach((a) => { try { a.cancel(); } catch { /* weg */ } }); morphAnim = [];
@@ -153,6 +153,7 @@ async function morph(on) {
 }
 const dock = () => { const hd = document.querySelector('.site-header'); if (!hd) return; hd.classList.toggle('is-docked', scrollY > 70);
   const dark = [...document.querySelectorAll('.kn__stage, .hm__stage.is-dark')].some(e => { const r = e.getBoundingClientRect(); return r.top < 36 && r.bottom > 36; }); hd.classList.toggle('over-dark', dark);
+  { const c = document.getElementById('contact'); const r = c && c.getBoundingClientRect(); hd.classList.toggle('at-contact', !!r && r.top < innerHeight * .55 && r.bottom > 0); } // Kontakt: Logo und Sprachumschalter ausblenden
   const on = flPinned(); if (on !== flOn) { flOn = on; morph(on); } else if (on && !morphAnim.length) { hd.classList.add('mnav-off'); document.body.classList.add('fl-pinned'); } };
 addEventListener('tn-dark', () => dock());
 let spyQ = false;
@@ -215,6 +216,7 @@ async function render() {
   { const pv = state.index && state.index.projects && state.index.projects[target] && state.index.projects[target].vimeo;
     const m1 = pv && (page.blocks || []).find(b => b.type === 'media');
     if (m1 && m1.props && !m1.props.vimeo) page = { ...page, blocks: page.blocks.map(b => b === m1 ? { ...b, props: { ...b.props, vimeo: pv } } : b) }; }
+  document.body.classList.toggle('is-sub', target !== 'home'); document.querySelector('.mnav')?.classList.remove('is-open');
   const ctx = { site, content: { index: state.index }, route: target };
   const frag = h('div', { class: 'page', 'data-page': target });
   frag.append(renderBlocks(page.blocks, ctx), h('div', { class: 'b-spacer', style: { '--h': '40px' } }));
@@ -230,7 +232,8 @@ async function render() {
 function scrollToHash(hash, smooth = true) {
   const el = hash && document.getElementById(decodeURIComponent(hash.slice(1)));
   if (!el) return;
-  const y = el.getBoundingClientRect().top + scrollY - 70;
+  // Der NOTUA-Flug klebt am Bildschirm: Menüsprung landet genau auf seinem Start (Logo), nicht davor
+  const y = el.getBoundingClientRect().top + scrollY - (el.querySelector('.fl__track') ? -2 : 70);
   window.scrollTo({ top: y, behavior: smooth && !prefersReducedMotion() ? 'smooth' : 'auto' });
 }
 
@@ -320,3 +323,17 @@ async function boot() {
   await render();
 }
 boot();
+
+// Handy, Unterseiten: Menü ist eine feste dunkle Pille mit Icons. Tippen fährt sie nach links und rechts aus (mit Text), der nächste Tipp auf einen Punkt geht dorthin und fährt sie wieder ein.
+{
+  const mn = () => document.querySelector('.mnav');
+  const sub = () => document.body.classList.contains('is-sub') && matchMedia('(max-width: 899px)').matches;
+  document.addEventListener('click', (e) => {
+    const nav = mn(); if (!nav || !sub()) return;
+    if (nav.contains(e.target)) {
+      if (!nav.classList.contains('is-open')) { e.preventDefault(); e.stopPropagation(); nav.classList.add('is-open'); }
+      else nav.classList.remove('is-open');
+    } else nav.classList.remove('is-open');
+  }, true);
+  addEventListener('scroll', () => { const n = mn(); if (n && n.classList.contains('is-open')) n.classList.remove('is-open'); }, { passive: true });
+}

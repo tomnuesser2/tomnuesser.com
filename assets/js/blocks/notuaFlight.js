@@ -414,7 +414,7 @@ function mount(root, OPT) {
   addEventListener('resize', resize);
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) { stage.addEventListener('pointermove', (e) => { tpx = e.clientX / innerWidth * 2 - 1; tpy = e.clientY / innerHeight * 2 - 1; }); }
   const setActive = (i, now) => {
-    if (i === active) return; const prev = active; active = i; aT0 = now; const s = STATIONS[i];
+    if (i === active) return; const prev = active; active = i; aT0 = now; stage.dataset.st = String(i); const s = STATIONS[i];
     if (prev >= 0 && cvs[prev]) { paint(prev, 99); upload(prev); }
     hud.classList.toggle('is-look', i === lookIdx);
     hudTitle.textContent = s.t; hudTitle.dataset.text = s.t; hudText.textContent = s.d;
@@ -432,7 +432,7 @@ function mount(root, OPT) {
   const hold = (q) => { const i = Math.floor(q), fr = q - i, k = clamp((fr - .26) / .48); return i + k * k * (3 - 2 * k); };
   const fromProg = (pp) => { const q = pp * TOT; if (q < lookIdx) return [hold(q), 0]; if (q < lookIdx + PL) return [lookIdx, (q - lookIdx) / PL]; return [hold(q - PL), 1]; };
   const narrow = () => W / Hh < .8;
-  function cardPos(i) { const wN = narrow(); if (i === 0) return wN ? [0, .34] : [.62, 0]; if (i === N) return wN ? [0, .34] : [.62, 0]; if (i === lookIdx) return wN ? [0, .62] : [.62, 0]; return [wN ? (i % 2 ? .1 : -.1) : (.85 + (i % 2 ? .12 : -.05)), wN ? .08 : Math.sin(i * 2) * .12]; }
+  function cardPos(i) { const wN = narrow(); if (i === 0) return wN ? [0, .34] : [.62, 0]; if (i === N) return wN ? [0, .34] : [.62, 0]; if (i === lookIdx) return wN ? [0, .02] : [.62, 0]; return [wN ? (i % 2 ? .1 : -.1) : (.85 + (i % 2 ? .12 : -.05)), wN ? .08 : Math.sin(i * 2) * .12]; }
   const draw = (now) => {
     if (!running) return; requestAnimationFrame(draw);
     const t = (now - t0) / 1000; px += (tpx - px) * .06; py += (tpy - py) * .06;
@@ -454,7 +454,7 @@ function mount(root, OPT) {
       if (!pl.tex) continue; const z = -pl.i * SP, d = camZ - z; if (Math.abs(f - pl.i) < nd) { nd = Math.abs(f - pl.i); near = pl.i; }
       if (d < .5 || d > 16) continue;
       const wN = narrow(); const [bx, by] = cardPos(pl.i); const ev = ENT[pl.i % ENT.length], ek = pl.i === 0 ? 0 : (t0k = clamp((d - 3.4) / 7), t0k * t0k * (3 - 2 * t0k)), sc2 = wN ? .3 : 1, x = bx + ev[0] * ek * sc2, y = by + ev[1] * ek * sc2;
-      const isL = pl.i === lookIdx; const wd = pl.logo ? (wN ? Math.min(1.05, 1.8 * asp) : 1.7) : isL ? (wN ? Math.min(1.0, 1.9 * asp) : 2.7) : (wN ? Math.min(1.0, 2.1 * asp) : 2.2), ht = wd / pl.ratio;
+      const isL = pl.i === lookIdx; const wd = pl.logo ? (wN ? Math.min(1.05, 1.8 * asp) : 1.7) : isL ? (wN ? Math.min(1.5, 2.85 * asp) : 2.7) : (wN ? Math.min(1.0, 2.1 * asp) : 2.2), ht = wd / pl.ratio;
       const ang = pl.logo || isL ? ev[0] * ek * -.12 : (wN ? .05 : .22) * -pl.side + Math.sin(t * .6 + pl.i) * .02;
       const m = M.mul(M.mul(M.tr(x, y, z), M.mul(M.ry(ang), pl.logo ? M.rz(Math.sin(t * .5) * .04) : M.rz(ev[1] * ek * .1))), M.sc(wd, ht, 1));
       const fade = clamp((d - .5) / 1.3) * clamp(1 - (d - 8) / 8);

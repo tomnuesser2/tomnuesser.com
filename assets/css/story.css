@@ -514,3 +514,11 @@
 /* Projekt-Kopf: Ausrichtung links / mitte / rechts */
 .ph--center { text-align: center; } .ph--center .ph__t { margin-left: auto; margin-right: auto; } .ph--center .ph__meta { justify-items: center; }
 .ph--right { text-align: right; } .ph--right .ph__t { margin-left: auto; } .ph--right .ph__meta { justify-items: end; }
+
+/* Galerie-Elemente: Standard weißer Hintergrund mit dunklem Text; „dunkel“ wie vorher */
+.b-gal { background: #fff; color: #0b0c10; box-shadow: inset 0 0 0 1px rgba(0,0,0,.07); --cc-fade: #fff; }
+.b-gal.cc { background: #fff; }
+.b-gal--dark, .b-gal.cc.b-gal--dark { background: #0b0c10; color: #fff; box-shadow: none; --cc-fade: #000; }
+.b-gal.fc:not(.b-gal--dark), .fc:not(.b-gal--dark) { background: #fff; }
+.b-gal--dark.fc { background: #08090b; }
+.b-gal__empty { color: #8b8f99; }

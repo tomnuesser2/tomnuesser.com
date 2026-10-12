@@ -23,7 +23,7 @@ function getItems(p, ctx) {
   return (p.items || []).filter(i => i.image).map(i => ({ src: i.image, title: i.title || '', subtitle: i.subtitle || '', href: i.link || '' }));
 }
 const wrapEl = (cls, p, extra = {}) => {
-  const el = h('div', { class: `b-gal ${cls}`, style: { '--gh': `${Number(p.height) || 560}px`, ...extra } });
+  const el = h('div', { class: `b-gal ${cls}${p.bg === 'dunkel' ? ' b-gal--dark' : ''}`, style: { '--gh': `${Number(p.height) || 560}px`, ...extra } });
   return el;
 };
 const goto = (it) => { if (!it.href) return; const a = document.createElement('a'); a.href = it.href; a.setAttribute('data-link', ''); a.hidden = true; document.body.append(a); a.click(); a.remove(); };
@@ -152,4 +152,7 @@ export const compareBlock = {
     return el;
   },
 };
+// Hintergrund: weiß (Standard) oder dunkel
+const BG = { name: 'bg', label: 'Hintergrund', type: 'select', options: ['weiß', 'dunkel'], default: 'weiß' };
+for (const b of [carousel3dBlock, flexBlock, accordionBlock, compareBlock]) if (!b.fields.some(f => f.name === 'bg')) b.fields.push(BG);
 export default [carousel3dBlock, flexBlock, accordionBlock, compareBlock];

@@ -147,7 +147,7 @@ main { min-height: 100vh; padding-top: var(--header-h); }
 .dd__cta { display: flex; width: fit-content; margin: 56px auto 0; }
 .kn__cta { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); z-index: 6; opacity: clamp(0, calc((var(--e) - .6) * 3), 1); pointer-events: auto; white-space: nowrap; }
 @media (hover: hover) { .kn__cta:hover { transform: translateX(-50%) translateY(-3px); } }
-@media (max-width: 899px) { .kn__cta { bottom: calc(92px + env(safe-area-inset-bottom)); font-size: 16px; padding: 16px 18px 16px 26px; max-width: calc(100vw - 32px); } .dd__cta { margin-top: 40px; } }
+@media (max-width: 899px) { .kn__cta { bottom: calc(168px + env(safe-area-inset-bottom)); font-size: 16px; padding: 16px 18px 16px 26px; max-width: calc(100vw - 32px); } .dd__cta { margin-top: 40px; } }
 @media (max-width: 899px) { .kn__cta { white-space: normal; width: max-content; max-width: calc(100vw - 32px); } }
 @media (max-width: 359px) { .mnav__a.is-active .mnav__l { max-width: 82px; font-size: 11.5px; } .kn__cta { font-size: 15px; padding: 14px 14px 14px 22px; gap: 10px; } .cta i { width: 30px; height: 30px; } }
 
@@ -208,3 +208,22 @@ html { scrollbar-width: none; } html::-webkit-scrollbar { display: none; width: 
 
 /* Handy: unteres Menü ohne Live-Unschärfe (jedes Scroll-Frame neu weichzeichnen kostet viel); Optik bleibt durch dichteren Hintergrund gleich */
 @media (max-width: 899px) { .mnav { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(12,12,13,.92); } }
+
+/* Handy, Unterseiten (Projekte …): solide dunkle Pille, zugeklappt nur Icons; Tippen = nach links/rechts ausfahren mit Text */
+@media (max-width: 899px) {
+  body.is-sub .site-header .mnav { background: #0c0c0d; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 0 12px 34px rgba(0,0,0,.34), inset 0 0 0 1px rgba(255,255,255,.1); transition: transform .55s var(--ease), opacity .4s; }
+  body.is-sub .site-header .mnav__a { color: rgba(255,255,255,.78); height: 46px; min-width: 46px; padding: 0 11px; gap: 0; }
+  body.is-sub .site-header .mnav__i { width: 24px; opacity: 1; } body.is-sub .site-header .mnav__i svg { width: 23px; height: 23px; }
+  body.is-sub .site-header .mnav__l { max-width: 0; opacity: 0; }
+  body.is-sub .site-header .mnav__a.is-active { background: #fff; color: #000; padding: 0 11px; gap: 0; }
+  body.is-sub .site-header .mnav.is-open .mnav__a { height: 48px; min-width: 0; padding: 0 calc(var(--nfs, 12px) * .55); color: #fff; }
+  body.is-sub .site-header .mnav.is-open .mnav__i { width: 0; opacity: 0; }
+  body.is-sub .site-header .mnav.is-open .mnav__l { max-width: var(--w, 120px); opacity: 1; }
+  body.is-sub .site-header .mnav.is-open .mnav__a.is-active { background: #fff; color: #000; }
+}
+
+/* Handy: im Kontakt-Bereich verschwinden Logo und DE/EN */
+@media (max-width: 899px) {
+  .site-header__logo, .lang--head { transition: opacity .35s var(--ease), visibility .35s; }
+  .site-header.at-contact .site-header__logo, .site-header.at-contact .lang--head { opacity: 0; visibility: hidden; pointer-events: none; }
+}
