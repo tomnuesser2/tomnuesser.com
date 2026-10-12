@@ -184,12 +184,15 @@
       "props": {
         "words": "",
         "accent": "#ff2d2d",
-        "video": "media/demo-loop.mp4",
+        "video": "",
         "poster": "media/stage-purple.jpg",
         "dim": 45,
         "size": "l",
         "words_de": "",
-        "ctaLink": "design"
+        "ctaLink": "design",
+        "frames": "media/frif/f_####.jpg",
+        "frameCount": 89,
+        "length": 7
       },
       "id": "design"
     },

@@ -63,7 +63,10 @@ export const flexBlock = {
     if (items.length < 2) { el.append(h('p', { class: 'b-gal__empty' }, 'Mindestens 2 Bilder hinzufügen.')); return el; }
     whenSized(el, () => {
       const narrow = el.clientWidth < 700;
-      const c = flexCarousel(el, items, { preset: p.preset, fit: narrow && p.fit === 'landscape' ? 'portrait' : p.fit, cardHeight: narrow ? .62 : .66, gap: narrow ? 10 : 14, radius: 10, captions: !!p.captions, autoplay: !!p.autoplay, onSelect: goto });
+      const ch = p.captions ? .8 : (narrow ? .92 : .9);
+      // Handy: Karte ca. 3/4 der Breite → links und rechts schauen die Nachbarbilder heraus
+      const fitV = narrow && p.fit !== 'natural' ? Math.max(.6, Math.min(1.7, (el.clientWidth * .76) / (ch * el.clientHeight))) : p.fit;
+      const c = flexCarousel(el, items, { preset: p.preset, fit: fitV, cardHeight: ch, gap: narrow ? 8 : 14, radius: 10, captions: !!p.captions, autoplay: !!p.autoplay, onSelect: goto });
       if (!c) { el.classList.add('is-nogl'); items.forEach(i => el.append(h('img', { src: i.src, alt: i.title || '', loading: 'lazy' }))); }
     });
     return el;

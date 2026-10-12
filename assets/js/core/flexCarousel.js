@@ -108,7 +108,7 @@ export function flexCarousel(root, items, o = {}) {
   const S0 = { preset: 'liquid', intro: 'rise', fit: 'natural', cardHeight: .5, gap: 12, radius: 0, squeeze: .2, autoplay: false, interval: 4, focusOnClick: false, captions: true, captureWheel: false, ...o };
   const base = PRESETS[S0.preset] || PRESETS.liquid;
   const s = { ...S0, ...base };
-  if (LOW) { s.bend = (s.bend || 0) * .5; s.dispersion = 0; if (s.squeeze) s.squeeze *= .6; }
+  if (LOW) { s.bend = (s.bend || 0) * .3; s.dispersion = 0; if (s.squeeze) s.squeeze *= .6; }
   root.classList.add('fc');
   const canvas = h('canvas', { class: 'fc__canvas', 'aria-hidden': 'true' });
   const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false });
@@ -149,6 +149,7 @@ export function flexCarousel(root, items, o = {}) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, target.fbo); gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, target.tex, 0); gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   };
 
+  let near = false; const gate = [];
   const loadSlot = (item, index) => {
     const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([128, 128, 128, 255]));
@@ -168,7 +169,7 @@ export function flexCarousel(root, items, o = {}) {
       slot.loaded = true; dirty = true; start();
     };
     img.onerror = () => { if (!alive) return; slot.failed = true; dirty = true; start(); };
-    img.src = item.src;
+    if (near) img.src = item.src; else gate.push(() => { img.src = item.src; });
     slot.dispose = () => { img.onload = img.onerror = null; gl.deleteTexture(tex); };
     return slot;
   };
@@ -176,7 +177,7 @@ export function flexCarousel(root, items, o = {}) {
   let resnap = false;
 
   const metrics = () => {
-    const cardH = Math.max(24, s.cardHeight * height), fixed = FIT[s.fit], widths = slots.map(x => (fixed || x.aspect) * cardH), centers = []; let cur = 0;
+    const cardH = Math.max(24, s.cardHeight * height), fixed = typeof s.fit === 'number' ? s.fit : FIT[s.fit], widths = slots.map(x => (fixed || x.aspect) * cardH), centers = []; let cur = 0;
     for (let i = 0; i < widths.length; i++) { centers.push(cur + widths[i] / 2); cur += widths[i] + s.gap; }
     return { cardH, widths, centers, gap: s.gap, loop: Math.max(cur, 1) };
   };
@@ -353,6 +354,7 @@ export function flexCarousel(root, items, o = {}) {
   root.addEventListener('wheel', wheel, { passive: false }); root.addEventListener('keydown', key); root.addEventListener('focus', onFocus); root.addEventListener('blur', onBlur); document.addEventListener('visibilitychange', onVis);
   const ro = new ResizeObserver(resize); ro.observe(root);
   const io = new IntersectionObserver(([en]) => { visible = en.isIntersecting; start(); }); io.observe(root);
+  const io2 = new IntersectionObserver(([en]) => { if (en.isIntersecting && !near) { near = true; io2.disconnect(); gate.splice(0).forEach(f => f()); } }, { rootMargin: '700px 0px' }); io2.observe(root);
   resize(); setItems(items);
   return { destroy() { alive = false; visible = false; cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); slots.forEach(x => x.dispose()); gl.getExtension('WEBGL_lose_context')?.loseContext(); canvas.remove(); } };
 }

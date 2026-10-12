@@ -237,6 +237,8 @@ function scrollToHash(hash, smooth = true) {
   // Kreatives (Kinetic-Abschnitt): direkt dorthin springen, wo der Button „meine aktuellen Design-Arbeiten“ schon voll zu sehen ist
   const kt = el.querySelector('.kn__track') || (el.classList.contains('kn__track') ? el : null);
   if (kt) y = kt.getBoundingClientRect().top + scrollY + .17 * Math.max(0, kt.offsetHeight - innerHeight);
+  // Videografie (Short-/Long-Form): so weit oben landen, dass der Abschnitt unten endet und NOTUA noch nicht zu sehen ist
+  if (el.classList.contains('dd') || el.querySelector('.dd')) { const r = el.getBoundingClientRect(); y = Math.max(0, Math.min(y, r.bottom + scrollY - innerHeight)); }
   window.scrollTo({ top: y, behavior: smooth && !prefersReducedMotion() ? 'smooth' : 'auto' });
 }
 

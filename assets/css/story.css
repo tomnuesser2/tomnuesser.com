@@ -555,3 +555,20 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 /* Compare: eigene Handy-Version (Bilder/Seitenverhältnis) */
 .cmp-pair .cmp-mob { display: none; }
 @media (max-width: 760px) { .cmp-pair .cmp-pc { display: none; } .cmp-pair .cmp-mob { display: block; } }
+
+/* Laptop/Handy-Block: Adresszeile ausblendbar + Lautstärke-Regler */
+.dv--nochrome .dv__chrome { display: none; }
+@media (max-width: 760px) { .dv--nochrome-m .dv__chrome { display: none; } }
+.dv__vol { position: absolute; z-index: 5; right: 10px; bottom: 10px; display: flex; align-items: center; gap: 6px; padding: 5px 9px 5px 6px; border-radius: 999px; background: rgba(12,12,14,.62); color: #fff; backdrop-filter: blur(6px); }
+.dv__mute { width: 22px; height: 22px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; display: grid; place-items: center; }
+.dv__mute svg { width: 18px; height: 18px; fill: currentColor; } .dv__mute .on { display: none; } .dv__mute .off { display: block; }
+.dv__vol.is-on .on { display: block; } .dv__vol.is-on .off { display: none; }
+.dv__rng { width: 74px; height: 3px; accent-color: #fff; cursor: pointer; }
+.dv--laptop:not(.dv--nochrome) .dv__vol { top: 3px; bottom: auto; right: 8px; padding: 0 8px 0 4px; height: 18px; background: transparent; color: #444; backdrop-filter: none; }
+.dv--laptop:not(.dv--nochrome) .dv__rng { accent-color: #444; width: 60px; }
+@media (max-width: 760px) { .dv--laptop.dv--nochrome-m .dv__vol { top: auto; bottom: 8px; height: auto; padding: 5px 9px 5px 6px; background: rgba(12,12,14,.62); color: #fff; } .dv--laptop.dv--nochrome-m .dv__rng { accent-color: #fff; } }
+
+/* FlexCarousel: Rahmen liegt eng um die Bilder; auf dem Handy randlos bis an den Bildschirmrand */
+@media (max-width: 700px) {
+  .b-gal--flex { width: 100%; margin-left: 0; margin-right: 0; border-radius: 0; box-shadow: none; }
+}

@@ -1,4 +1,5 @@
 import { h, svg } from '../core/dom.js';
+import { parseVimeo, isEmbedUrl, vimeoThumb } from '../core/media.js';
 import { track, still, clamp, trackProgress } from '../core/scrollhub.js';
 // Kinetic: Ein Vollbild-Motion-Intermezzo mitten auf der Seite. Die Karte klappt zum Vollbild auf, danach läuft
 // beim Scrollen eine Typo-Animation (Wörter zoomen durch, Formen kreisen, Farbwechsel) – man "scrubbt" durch die Animation.
@@ -8,7 +9,7 @@ export default {
   type: 'kinetic', label: 'Motion-Intermezzo (Vollbild-Typo-Animation)',
   fields: [
     { name: 'words', label: 'Wörter (eins pro Zeile)', type: 'textarea', default: 'film\ndesign\ndevelop\none thread.' },
-    { name: 'video', label: 'Hintergrund-Video (mp4/webm, z. B. media/clip.mp4 – läuft automatisch, stumm, in Dauerschleife). Leer = nur Typo-Animation.', type: 'image', default: '' },
+    { name: 'video', label: 'Hintergrund-Video: Datei (mp4/webm) oder Vimeo-Link. Bei „scrub“ läuft das Video durchs Scrollen vor und zurück (mp4 = ruckelfrei, Vimeo = etwas gröber). Leer = nur Typo-Animation.', type: 'image', default: '' },
     { name: 'videoMode', label: 'Video-Verhalten', type: 'select', options: ['scrub', 'loop'], default: 'scrub' },
     { name: 'frames', label: 'ODER Bildsequenz (z. B. media/seq/f_####.jpg – #### wird durch 0001, 0002 … ersetzt, ideal für 3D-Renderings)', type: 'text', default: '' },
     { name: 'frameCount', label: 'Anzahl Bilder der Sequenz', type: 'number', default: 120 },
@@ -30,10 +31,14 @@ export default {
     const shapes = svg('<svg class="kn__svg" viewBox="-100 -100 200 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><circle class="kn__ring" r="30" fill="none" stroke="currentColor" stroke-width=".35"/><circle class="kn__ring2" r="30" fill="none" stroke="currentColor" stroke-width=".2"/><rect class="kn__sq" x="-26" y="-26" width="52" height="52" fill="none" stroke="currentColor" stroke-width=".35"/><line class="kn__ln kn__ln--a" x1="-140" x2="140" y1="0" y2="0" stroke="currentColor" stroke-width=".25"/><line class="kn__ln kn__ln--b" x1="-140" x2="140" y1="0" y2="0" stroke="currentColor" stroke-width=".25"/><line class="kn__ln kn__ln--c" y1="-140" y2="140" x1="0" x2="0" stroke="currentColor" stroke-width=".25"/></svg>');
     const tc = { textContent: '' }, idx = { textContent: '' };
     const scrub = p.videoMode !== 'loop';
-    const vid = p.video ? h('video', { class: 'kn__vid', src: p.video, poster: p.poster || null, muted: '', loop: scrub ? null : '', playsinline: '', preload: 'metadata', 'aria-hidden': 'true' }) : null;
+    // Vimeo-Link: Video-Frame per Scroll steuern (Vimeo-Player-API: setCurrentTime)
+    const vm = isEmbedUrl(p.video) ? parseVimeo(p.video) : null;
+    const vmf = vm ? h('iframe', { class: 'kn__vid kn__vimeo', tabindex: '-1', 'aria-hidden': 'true', title: 'Video', allow: 'autoplay; fullscreen', referrerpolicy: 'strict-origin-when-cross-origin' }) : null;
+    const vid = p.video && !vm ? h('video', { class: 'kn__vid', src: p.video, poster: p.poster || null, muted: '', loop: scrub ? null : '', playsinline: '', preload: 'metadata', 'aria-hidden': 'true' }) : null;
     if (vid) { vid.muted = true; vid.defaultMuted = true; }
+    if (vmf && p.poster) { vmf.style.background = `#000 url("${p.poster}") center / cover`; } else if (vmf) vimeoThumb(vm).then(t => { if (t) vmf.style.background = `#000 url("${t}") center / cover`; });
     const cv = p.frames ? h('canvas', { class: 'kn__cv' }) : null;
-    const clip = h('div', { class: `kn__clip is-${p.size}${vid || cv ? ' has-vid' : ''}`, style: { '--dim': String((Number(p.dim) || 0) / 100) } }, vid, cv, shapes, wEls);
+    const clip = h('div', { class: `kn__clip is-${p.size}${vid || vmf || cv ? ' has-vid' : ''}`, style: { '--dim': String((Number(p.dim) || 0) / 100) } }, vid, vmf, cv, shapes, wEls);
     const cta = p.ctaText ? h('a', { class: 'cta cta--light kn__cta', href: p.ctaLink || 'projects', 'data-link': '' }, h('span', {}, p.ctaText), h('i', { 'aria-hidden': 'true' }, '→')) : null;
     const stage = h('div', { class: 'kn__stage', style: { '--accent': p.accent || '#ff2d2d' } }, clip, cta);
     const L = Math.max(2, Number(p.length) || 6);
@@ -48,10 +53,27 @@ export default {
     if (cv) { const N = Math.max(1, Number(p.frameCount) || 1), pad = (i) => String(i).padStart((p.frames.match(/#+/) || ['####'])[0].length, '0'); ctx2 = cv.getContext('2d');
       for (let i = 0; i < N; i++) { const im = new Image(); im.decoding = 'async'; im.src = p.frames.replace(/#+/, pad(i + 1)); imgs.push(im); } }
     const drawFrame = (q) => { if (!cv) return; const i = Math.min(imgs.length - 1, Math.floor(q * imgs.length)); if (i === lastF) return; const im = imgs[i]; if (!im.complete || !im.naturalWidth) return; lastF = i; if (cv.width !== im.naturalWidth) { cv.width = im.naturalWidth; cv.height = im.naturalHeight; } ctx2.drawImage(im, 0, 0); };
+    // Vimeo-Scrub
+    let vDur = 0, vReady = false, vLast = -1, vAt = 0, vSrcSet = false;
+    const vpost = (o) => { try { vmf.contentWindow.postMessage(JSON.stringify(o), 'https://player.vimeo.com'); } catch { /* weg */ } };
+    if (vmf) {
+      const base = new URLSearchParams({ controls: '0', api: '1', muted: '1', autopause: '0', title: '0', byline: '0', portrait: '0', dnt: '1', playsinline: '1', ...(scrub ? {} : { autoplay: '1', loop: '1', background: '1' }) }); if (vm.hash) base.set('h', vm.hash);
+      const load = () => { if (vSrcSet) return; vSrcSet = true; vmf.src = `https://player.vimeo.com/video/${vm.id}?${base}`; };
+      if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); load(); } }, { rootMargin: '60%' }); io.observe(el); } else load();
+      addEventListener('message', (e) => {
+        if (e.source !== vmf.contentWindow) return; let d = e.data; try { if (typeof d === 'string') d = JSON.parse(d); } catch { return; }
+        if (d.event === 'ready') { vReady = true; vpost({ method: 'getDuration' }); vpost({ method: 'setMuted', value: true }); if (scrub) vpost({ method: 'pause' }); }
+        else if (d.method === 'getDuration' && d.value) { vDur = Number(d.value) || 0; if (!raf) raf = requestAnimationFrame(tick); }
+      });
+      // Video füllt die Fläche (Cover, 16:9)
+      const fit = () => { const w = clip.clientWidth, hh = clip.clientHeight; if (!w || !hh) return; const W = Math.max(w, hh * 16 / 9), H = Math.max(hh, w * 9 / 16); vmf.style.width = W + 'px'; vmf.style.height = H + 'px'; vmf.style.left = (w - W) / 2 + 'px'; vmf.style.top = (hh - H) / 2 + 'px'; };
+      if ('ResizeObserver' in window) new ResizeObserver(fit).observe(clip); fit();
+    }
     const tick = () => { raf = 0; pend = false; const k = Math.max(0, Math.min(1, Number(p.smooth)));
       curP += (target - curP) * (k ? 1 - Math.pow(1 - k, 1) : 1); if (Math.abs(target - curP) < .0004) curP = target;
       const q = clamp((curP - .1) / .9);
       if (vid && scrub && vid.duration) { const t = q * vid.duration, nw = performance.now(); if (!vid.seeking && Math.abs(vid.currentTime - t) > (SMALL ? .1 : .03) && nw - seekAt > (SMALL ? 110 : 0)) { seekAt = nw; vid.currentTime = t; } else if (Math.abs(vid.currentTime - t) > (SMALL ? .1 : .03)) pend = true; }
+      if (vmf && scrub && vReady && vDur) { const t = Math.min(vDur - .05, q * vDur), nw = performance.now(); if (Math.abs(t - vLast) > .04 && nw - vAt > (SMALL ? 160 : 90)) { vAt = nw; vLast = t; vpost({ method: 'setCurrentTime', value: t }); } else if (Math.abs(t - vLast) > .04) pend = true; }
       drawFrame(q); apply(curP);
       if (vis && (curP !== target || pend)) raf = requestAnimationFrame(tick); };
     const apply = (raw) => {

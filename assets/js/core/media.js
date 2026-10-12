@@ -78,7 +78,7 @@ export function mediaEl(p = {}) {
     // Besucher können den Ton per Knopf an/aus schalten – die Lautstärke ist fest (Admin → Einstellungen → Video-Ton).
     const canSnd = p.sound !== false && videoCfg.button !== false && Number(videoCfg.volume) > 0;
     const q = new URLSearchParams(v.yt ? { autoplay: '1', mute: '1', loop: '1', playlist: v.id, controls: '0', rel: '0', playsinline: '1', modestbranding: '1', disablekb: '1', iv_load_policy: '3', enablejsapi: '1' }
-      : { ...(canSnd ? { controls: '0', api: '1' } : { background: '1' }), autoplay: '1', loop: '1', muted: '1', autopause: '0', title: '0', byline: '0', portrait: '0', dnt: '1', playsinline: '1' });
+      : { ...(canSnd || p.ext ? { controls: '0', api: '1' } : { background: '1' }), autoplay: '1', loop: '1', muted: '1', autopause: '0', title: '0', byline: '0', portrait: '0', dnt: '1', playsinline: '1' });
     if (v.hash) q.set('h', v.hash);
     let started = false, ifr = null, on = false;
     const send = (o) => { try { ifr.contentWindow.postMessage(v.yt ? JSON.stringify(o) : JSON.stringify(o), v.yt ? 'https://www.youtube-nocookie.com' : 'https://player.vimeo.com'); } catch { /* weg */ } };
@@ -90,12 +90,19 @@ export function mediaEl(p = {}) {
     };
     const snd = canSnd ? h('button', { class: 'media-snd', type: 'button', 'aria-label': 'Ton an/aus', 'aria-pressed': 'false' }) : null;
     if (snd) { snd.innerHTML = SND; snd.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); setSound(!on); }); frame.append(snd); }
+    // Von außen steuerbar (z. B. Lautstärke-Regler im Laptop-Block): frame.tnVol(0–100)
+    let wantVol = null;
+    const applyVol = () => { if (wantVol == null || !ifr) return; const vol = wantVol;
+      if (v.yt) { send({ event: 'command', func: 'setVolume', args: [vol] }); send({ event: 'command', func: vol > 0 ? 'unMute' : 'mute', args: [] }); }
+      else { send({ method: 'setVolume', value: vol / 100 }); send({ method: 'setMuted', value: vol <= 0 }); } };
+    frame.tnVol = (vol) => { wantVol = Math.max(0, Math.min(100, Number(vol) || 0)); applyVol(); };
     const start = () => {
       if (started) return; started = true;
       ifr = h('iframe', {
         src: v.yt ? `https://www.youtube-nocookie.com/embed/${v.id}?${q}` : `https://player.vimeo.com/video/${v.id}?${q}`, allow: 'autoplay; fullscreen; picture-in-picture', tabindex: '-1', 'aria-hidden': 'true',
         title: p.alt || 'Video', loading: 'lazy', referrerpolicy: 'strict-origin-when-cross-origin', class: 'media-embed',
       });
+      ifr.addEventListener('load', () => { setTimeout(applyVol, 400); setTimeout(applyVol, 1500); });
       inner.append(ifr);
     };
     if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); start(); } }, { rootMargin: '200px' }); io.observe(frame); } else start();

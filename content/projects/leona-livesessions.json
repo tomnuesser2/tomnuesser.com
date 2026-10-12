@@ -1,7 +1,7 @@
 {
   "title": "leona - festival live sessions",
   "card": {
-    "image": "media/still-2026-07-02-232833_4.3.1.png",
+    "image": "media/still-2026-07-02-232833_4.3.1.jpg",
     "vimeo": "https://vimeo.com/1207034763",
     "ratio": "16/9",
     "group": 1,
@@ -81,7 +81,7 @@
       "type": "compare",
       "props": {
         "before": "media/leona_raw.jpg",
-        "after": "media/still-2026-07-02-232833_4.3.1-4.png",
+        "after": "media/still-2026-07-02-232833_4.3.1-4.jpg",
         "labelBefore": "before",
         "labelAfter": "after",
         "ratio": "18/9",
@@ -89,7 +89,11 @@
         "orientation": "senkrecht",
         "radius": "sm",
         "caption": "",
-        "bg": "weiß"
+        "bg": "weiß",
+        "beforeMobile": "media/leona_raw2.webp",
+        "afterMobile": "media/1.webp",
+        "ratioMobile_de": "4/5",
+        "ratioMobile": "4/5"
       }
     },
     {
@@ -109,8 +113,11 @@
             "title_de": "Live-Session für LEONA"
           }
         ],
-        "linkText": "",
-        "linkUrl": ""
+        "linkText": "https://www.youtube.com/festival-livesession-leona",
+        "linkUrl": "",
+        "chrome": false,
+        "volumeUi": true,
+        "linkText_de": "https://www.youtube.com/festival-livesession-leona"
       }
     }
   ],
