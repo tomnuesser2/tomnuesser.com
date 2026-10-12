@@ -27,6 +27,12 @@
         "source": "eigene Bilder",
         "items": [
           {
+            "image": "media/dsc03395.jpg",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
             "image": "media/dsc03275.jpg",
             "title": "",
             "subtitle": "",
@@ -45,25 +51,7 @@
             "link": ""
           },
           {
-            "image": "media/still-2026-07-02-232833_4.3.1-3.png",
-            "title": "",
-            "subtitle": "",
-            "link": ""
-          },
-          {
-            "image": "media/dsc03395.jpg",
-            "title": "",
-            "subtitle": "",
-            "link": ""
-          },
-          {
             "image": "media/dsc03415.jpg",
-            "title": "",
-            "subtitle": "",
-            "link": ""
-          },
-          {
-            "image": "media/dsc03461-2.jpg",
             "title": "",
             "subtitle": "",
             "link": ""
@@ -76,12 +64,6 @@
           },
           {
             "image": "media/still-2026-07-02-233344_6.5.1.jpg",
-            "title": "",
-            "subtitle": "",
-            "link": ""
-          },
-          {
-            "image": "media/still-2026-07-02-233344_9.14.1-2.jpg",
             "title": "",
             "subtitle": "",
             "link": ""
@@ -98,12 +80,12 @@
     {
       "type": "compare",
       "props": {
-        "before": "",
-        "after": "",
+        "before": "media/leona_raw.jpg",
+        "after": "media/still-2026-07-02-232833_4.3.1-4.png",
         "labelBefore": "before",
         "labelAfter": "after",
-        "ratio": "16/9",
-        "start": 50,
+        "ratio": "18/9",
+        "start": 60,
         "orientation": "senkrecht",
         "radius": "sm",
         "caption": "",
@@ -111,14 +93,24 @@
       }
     },
     {
-      "type": "carousel3d",
+      "type": "device",
       "props": {
-        "source": "eigene Bilder",
-        "items": [],
-        "height": 560,
-        "format": "automatisch",
-        "speed": 14,
-        "bg": "weiß"
+        "kind": "laptop",
+        "side": "left",
+        "kicker": "",
+        "title": "",
+        "text": "",
+        "items": [
+          {
+            "src": "https://vimeo.com/1207034763",
+            "title": "working for leona",
+            "text": "Produced a cinematic live session at Deutsches Haus Flensburg to support LEONA’s festival applications with high-end visuals for booking agencies.\n\nShot on a multicam Sony FX3 & A7 IV setup with separately mastered audio. I handled the complete workflow – from filming and editing to color grading and final delivery.",
+            "text_de": "Für LEONAs Festival-Bewerbungen habe ich eine cinematische Live-Session im Deutschen Haus in Flensburg produziert. Ziel war ein intimes, hochwertiges Performance-Video für Veranstalter und Booking-Agenturen.\n\nGefilmt im Multicam-Setup (Sony FX3 & A7 IV) mit extern gemastertem Ton. Ich habe den gesamten Workflow übernommen – von Dreh und Schnitt über Color Grading bis zur Fertigstellung.",
+            "title_de": "Live-Session für LEONA"
+          }
+        ],
+        "linkText": "",
+        "linkUrl": ""
       }
     }
   ],

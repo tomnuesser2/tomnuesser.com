@@ -1,5 +1,5 @@
 {
-  "title": "Project 10 – words",
+  "title": "QRUE Collective x Kulturwerkstatt Kühlhaus",
   "card": {
     "image": "media/dj-bw.jpg",
     "vimeo": "",
@@ -17,26 +17,80 @@
         "src": "media/stage-purple.jpg"
       }
     ],
-    "category": "code",
+    "category": "video",
     "summary_de": "Worte füllen sich beim Scrollen schwarz – ein Text-Teaser für Geschichten, die ein paar Sätze mehr brauchen als ein Bild."
   },
   "blocks": [
     {
-      "type": "spacer",
+      "type": "accordion",
       "props": {
-        "size": 40
+        "source": "eigene Bilder",
+        "items": [
+          {
+            "image": "media/1_2_0000_still-2026-01-26-182945_1.3.1.png",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/1_2_0001_still-2026-01-26-182945_1.23.1.png",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/1_2_0002_still-2026-01-26-182945_1.38.1.png",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/1_2_0004_1_1.19.1.png",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/cover_1.2.1.png",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/still-2026-01-26-182945_1.38.1.png",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          }
+        ],
+        "height": 460,
+        "open": 3,
+        "trigger": "hover",
+        "grayscale": true,
+        "tilt": 8,
+        "bg": "weiß"
       }
     },
     {
-      "type": "heading",
+      "type": "kinetic",
       "props": {
-        "text": "Project 10 – words",
-        "level": 1,
-        "align": "center",
-        "bold": false,
-        "text_de": "Projekt 10 – Worte"
+        "words": "",
+        "video": "https://vimeo.com/1158480022",
+        "videoMode": "scrub",
+        "frames": "",
+        "frameCount": 120,
+        "length": 6,
+        "smooth": 0.12,
+        "wordsOn": false,
+        "poster": "https://vimeo.com/1158480022",
+        "dim": 45,
+        "size": "l",
+        "ctaText": "",
+        "ctaLink": "",
+        "accent": "#ff2d2d",
+        "ctaText_de": ""
       }
     }
   ],
-  "title_de": ""
+  "title_de": "QRUE Collective x Kulturwerkstatt Kühlhaus"
 }
