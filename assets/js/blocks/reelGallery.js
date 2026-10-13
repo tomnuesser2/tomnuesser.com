@@ -29,7 +29,7 @@ export default {
     { name: 'gap', label: 'Abstand zwischen Bildern in px', type: 'number', default: 14 },
     { name: 'radius', label: 'Rundung der Bilder in px', type: 'number', default: 14 },
     { name: 'width', label: 'Breite', type: 'select', options: ['volle Breite', 'Rahmen'], default: 'volle Breite' },
-    { name: 'fade', label: 'Ränder weich ausblenden', type: 'checkbox', default: false },
+    { name: 'fade', label: 'Oben und unten weich ausblenden', type: 'checkbox', default: false },
     { name: 'hover', label: 'Bild beim Darüberfahren hervorheben', type: 'checkbox', default: true },
     { name: 'bg', label: 'Hintergrund', type: 'select', options: ['transparent', 'dunkel', 'hell'], default: 'transparent' },
   ],
