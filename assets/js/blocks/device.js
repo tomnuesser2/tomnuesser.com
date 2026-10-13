@@ -76,6 +76,19 @@ export default {
       const u = el.querySelector('.dv__url'); if (u && items[i]) u.textContent = items[i].url || items[i].title || ''; applyVol();
     };
     setCur(0);
+    // Handy: Lange Texte erst etwas kleiner setzen (bis 75 %), dann erst das Gerät schrumpfen lassen – nichts wird abgeschnitten.
+    const mq = matchMedia('(max-width: 899px)');
+    const fit = () => {
+      copy.style.zoom = ''; stage.classList.remove('dv--fix');
+      if (!mq.matches || !stage.isConnected || !stage.clientHeight) return;
+      stage.classList.add('dv--fix'); const keep = cur; let worst = 1;
+      const over = () => copy.getBoundingClientRect().bottom > stage.getBoundingClientRect().bottom - 10;
+      items.forEach((it, k) => { copyItem.querySelector('.dv__it').textContent = it.title || ''; copyItem.querySelector('.dv__ix').textContent = it.text || ''; let z = 1; copy.style.zoom = ''; while (z > .75 && over()) { z -= .04; copy.style.zoom = z.toFixed(2); } worst = Math.min(worst, z); });
+      copy.style.zoom = ''; copyItem.querySelector('.dv__it').textContent = items[keep]?.title || ''; copyItem.querySelector('.dv__ix').textContent = items[keep]?.text || '';
+      if (worst < 1) copy.style.zoom = worst.toFixed(2);
+      if (over()) stage.classList.remove('dv--fix');
+    };
+    requestAnimationFrame(() => requestAnimationFrame(fit)); addEventListener('resize', fit); setTimeout(fit, 600); document.fonts?.ready?.then(fit);
     const go = (i) => { const r = el.querySelector('.dv__track').getBoundingClientRect(); const total = r.height - stage.offsetHeight; const y = scrollY + r.top + ((clamp(i, 0, n - 1) + .5) / n) * total; scrollTo({ top: y, behavior: 'smooth' }); };
     el.addEventListener('click', (e) => { if (e.target.closest('.dv__tap--l')) go(cur - 1); else if (e.target.closest('.dv__tap--r')) go(cur + 1); });
     if (still()) { el.classList.add('is-still'); return el; }

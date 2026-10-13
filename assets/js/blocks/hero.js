@@ -14,6 +14,8 @@ export default {
     { name: 'subSize', label: 'Größe der Unterschrift', type: 'select', options: ['s', 'm', 'l'], default: 'm' },
     { name: 'text', label: 'Textfeld (optional)', type: 'textarea', default: '' },
     { name: 'cue', label: 'Hinweis unten', type: 'text', default: 'scroll', de: 'scrollen' },
+    { name: 'showName', label: 'Projektname oben im Karussell zeigen (ganz dezent, mit Knopf; darunter optional der kleine Text, den du pro Projekt eingibst)', type: 'checkbox', default: true },
+    { name: 'nameBtn', label: 'Text auf dem Knopf', type: 'text', default: 'view project', de: 'Projekt ansehen' },
     { name: 'cards', label: 'Anzahl Karten (aus den ersten Projekten)', type: 'number', default: 4 },
     { name: 'mobileCount', label: 'Handy: Anzahl Vollbild-Projekte, falls keine Projekte markiert sind (Markierung: im Projekt „Im Handy-Intro zeigen“)', type: 'number', default: 4 },
   ],
@@ -43,7 +45,8 @@ export default {
     if (matchMedia('(min-width: 900px)').matches && !still() && n >= 2) {
       const box = el.querySelector('.hero__cards'); el.classList.add('hero--car'); box.replaceChildren();
       const all = (idx.order || []).map(sl => ({ slug: sl, ...idx.projects[sl] })).filter(x => x.image && !x.hidden);
-      (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => el.isConnected && (carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { size: (r) => ({ w: Math.min(r.width * .46, r.height * 1.1 * 1.6), aspect: 1.6 }), fitAngle: 108 }))));
+      const labD = nameLabel(p, all); if (labD) { labD.el.classList.add('hn--d'); box.before(labD.el); }
+      (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => el.isConnected && (carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { size: (r) => ({ w: Math.min(r.width * .46, r.height * 1.1 * 1.6), aspect: 1.6 }), fitAngle: 108, onChange: (i) => labD && labD.set(i) }))));
     }
     if (still() || !p.cycle) { lineEls.forEach(r => r.classList.add('is-on')); if (still()) return el; }
     if (p.cycle) { let a = 0; const cycle = () => { lineEls.forEach((r, i) => r.classList.toggle('is-on', i === a)); a = (a + 1) % lineEls.length; };
@@ -54,6 +57,21 @@ export default {
   },
 };
 
+
+// Projektname (dezent) + optionaler Kurztext + Knopf oben im Karussell; wechselt mit der vorderen Karte
+function nameLabel(p, items) {
+  if (p.showName === false || !items.length) return null;
+  const k = h('span', { class: 'hn__k' }), t = h('strong', { class: 'hn__t' }), x = h('span', { class: 'hn__x' });
+  const b = h('a', { class: 'hn__b', href: '#', 'data-link': '' }, p.nameBtn || 'view project', h('i', { 'aria-hidden': 'true' }, '→'));
+  const inner = h('div', { class: 'hn__in' }, k, t, x, b), el = h('div', { class: 'hn' }, inner);
+  let cur = -1;
+  const set = (i) => {
+    i = ((i % items.length) + items.length) % items.length; if (i === cur) return; const first = cur < 0; cur = i; const it = items[i];
+    const apply = () => { k.textContent = `${String(i + 1).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`; t.textContent = String(it.title || it.slug).replace(/\n/g, ' '); x.textContent = it.heroText || ''; x.hidden = !it.heroText; b.href = it.slug; el.classList.remove('is-out'); };
+    if (first) apply(); else { el.classList.add('is-out'); setTimeout(apply, 170); }
+  };
+  set(0); return { el, set };
+}
 
 // ---------- Handy-Intro: Vollbild ----------
 // 1) Mosaik aller Projekte mit dem Titel davor. 2) Das erste ausgewählte Projekt wächst aus dem Mosaik auf Vollbild.
@@ -88,6 +106,7 @@ function mobileHero(p, ctx) {
   const carEl = h('div', { class: 'hm__car' });
   const cardSize = (r) => ({ w: Math.min(r.width * .56, r.height * .74 * .5625), aspect: .5625 });
   let car = null;
+  const labM = nameLabel(p, ring); if (labM) labM.el.classList.add('hn--m');
   const lines = String(p.title || '').split('\n').map(s => s.trim()).filter(Boolean);
   const title = h('h1', { class: `hm__title is-${p.titleSize || 'l'}` }, lines.map(l => h('span', {}, l)));
   { let k = 0; [...title.children].forEach((r) => { splitChars(r, k); k += r.textContent.length; }); }
@@ -98,9 +117,9 @@ function mobileHero(p, ctx) {
     const a = h('a', { class: 'hm__shot', href: f.slug, 'data-link': '', 'aria-label': name(f) }, h('div', { class: 'hm__img' }, img), h('i', { class: 'hm__shade' }), cap);
     return { a, img: a.firstChild, cap };
   });
-  const stage = h('div', { class: 'hm__stage' }, carEl, title, cue, shots.map(s => s.a));
+  const stage = h('div', { class: 'hm__stage' }, carEl, labM ? labM.el : null, title, cue, shots.map(s => s.a));
   const OFF = .2, T = 0.8 + OFF + 1 + .6 + (N - 1) * 1.6 + .25;                 // Länge der Animation in "Einheiten"
-  const el = h('section', { class: 'hm', 'aria-label': p.title || '', style: { '--len': (T * .5).toFixed(2) } }, h('div', { class: 'hm__track' }, stage));
+  const el = h('section', { class: 'hm' + (labM ? ' hm--lab' : ''), 'aria-label': p.title || '', style: { '--len': (T * .5).toFixed(2) } }, h('div', { class: 'hm__track' }, stage));
   if (still()) { el.classList.add('is-still'); return el; }
 
   let W = 0, H = 0, R = null, frozen = false;
@@ -114,14 +133,14 @@ function mobileHero(p, ctx) {
     if (need > avail && need > 0) title.style.fontSize = (parseFloat(getComputedStyle(title).fontSize) * avail / need * .98).toFixed(1) + 'px'; };
   requestAnimationFrame(fitTitle); [250, 900, 2200].forEach(t => setTimeout(fitTitle, t)); document.fonts && document.fonts.ready.then(fitTitle); addEventListener('resize', fitTitle, { passive: true });
   const open = (it) => { const a = document.createElement('a'); a.href = it.href; a.setAttribute('data-link', ''); a.hidden = true; document.body.append(a); a.click(); a.remove(); };
-  (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.imageMobile || x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true }); }));
+  (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.imageMobile || x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true, onChange: (i) => labM && labM.set(i) }); }));
   const apply = (u) => {
     if (!R) measure();
     const z = ease(clamp((u - 1) / 1)), rot = clamp((u - .04) / .96);
     // Phase 1: Das Karussell dreht per Scroll auf die erste Karte und zoomt dabei heran. Phase 2: diese Karte wächst auf Vollbild.
     if (car) { if (u > .02) car.scrub(rot); else car.release(); }
     carEl.style.transform = `scale(${(1 + .2 * ease(clamp(u / 1))).toFixed(4)})`; carEl.style.opacity = (1 - clamp((u - 1) / .75)).toFixed(3);
-    carEl.style.display = z >= 1 ? 'none' : ''; carEl.style.pointerEvents = u > .02 ? 'none' : '';
+    carEl.style.display = z >= 1 ? 'none' : ''; if (labM) { labM.el.style.opacity = carEl.style.opacity; labM.el.style.visibility = z >= 1 ? 'hidden' : ''; labM.el.style.pointerEvents = u > .02 ? 'none' : ''; } carEl.style.pointerEvents = u > .02 ? 'none' : '';
     const dk = z > .12; if (dk !== stage.classList.contains('is-dark')) { stage.classList.toggle('is-dark', dk); dispatchEvent(new Event('tn-dark')); }
     const tOp = 1 - clamp((u - .15) / .55); title.style.opacity = tOp.toFixed(3); title.style.transform = `translateY(${(-(1 - tOp) * 26).toFixed(1)}px)`; cue.style.opacity = (1 - clamp(u / .25)).toFixed(3);
     title.style.visibility = cue.style.visibility = tOp <= 0 ? 'hidden' : 'visible';

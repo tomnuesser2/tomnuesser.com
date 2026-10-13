@@ -46,51 +46,6 @@
         "cAccent": "#FF6B57"
       },
       "hidden": true
-    },
-    {
-      "type": "phone3d",
-      "props": {
-        "items": [
-          {
-            "image": "",
-            "imageMobile": "",
-            "title": "",
-            "subtitle": "",
-            "link": ""
-          }
-        ],
-        "height": 620,
-        "heightMobile": 560,
-        "bg": "transparent",
-        "scrollSpin": true,
-        "startItem": 1,
-        "spinFrom": 360,
-        "spinDuration": 1.6,
-        "showLeft": true,
-        "showRight": false,
-        "leftTitle": "12312312312312",
-        "leftText": "12312321321312\n",
-        "rightTitle": "",
-        "rightText": "",
-        "orientation": "hochkant",
-        "finish": "blue",
-        "frameColor": "",
-        "scale": 0.86,
-        "rotateX": -4,
-        "rotateY": -14,
-        "rotateZ": 0,
-        "tilt": 12,
-        "float": 1,
-        "lift": 1,
-        "drag": true,
-        "reflection": 1,
-        "shadow": 1,
-        "intro": true,
-        "interval": 0,
-        "textScale": 1,
-        "leftText_de": "12321312",
-        "leftTitle_de": "12312312321"
-      }
     }
   ],
   "title_de": "notua"
