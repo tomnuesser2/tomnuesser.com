@@ -48,8 +48,8 @@
         "rightTitle": "",
         "rightText": "",
         "orientation": "hochkant",
-        "finish": "titanium",
-        "frameColor": "",
+        "finish": "blue",
+        "frameColor": "#FF1E00",
         "scale": 0.86,
         "rotateX": -4,
         "rotateY": -14,
@@ -65,7 +65,8 @@
         "textScale": 1,
         "leftTitle_de": "QRUE Collective x Kulturwerkstatt Kühlhaus",
         "leftText_de": "",
-        "rightTitle_de": ""
+        "rightTitle_de": "",
+        "frameColor_de": "#FF1E00"
       }
     },
     {
