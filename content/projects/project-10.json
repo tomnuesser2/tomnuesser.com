@@ -22,6 +22,53 @@
   },
   "blocks": [
     {
+      "type": "phone3d",
+      "props": {
+        "items": [
+          {
+            "image": "media/frif_-qrue_plus___qrue_collective_x_k-hlhaus_flensburg-2160p--2.mp4",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": "",
+            "title_de": ""
+          }
+        ],
+        "height": 620,
+        "heightMobile": 560,
+        "bg": "transparent",
+        "scrollSpin": false,
+        "startItem": 1,
+        "spinFrom": 360,
+        "spinDuration": 1.6,
+        "showLeft": true,
+        "showRight": true,
+        "leftTitle": "reinventing experiences",
+        "leftText": "",
+        "rightTitle": "",
+        "rightText": "",
+        "orientation": "hochkant",
+        "finish": "titanium",
+        "frameColor": "",
+        "scale": 0.86,
+        "rotateX": -4,
+        "rotateY": -14,
+        "rotateZ": 0,
+        "tilt": 12,
+        "float": 1,
+        "lift": 1,
+        "drag": true,
+        "reflection": 1,
+        "shadow": 1,
+        "intro": true,
+        "interval": 0,
+        "textScale": 1,
+        "leftTitle_de": "reinventing ",
+        "leftText_de": "",
+        "rightTitle_de": "experiences"
+      }
+    },
+    {
       "type": "accordion",
       "props": {
         "source": "eigene Bilder",
@@ -64,33 +111,11 @@
           }
         ],
         "height": 460,
-        "open": 3,
+        "open": 2,
         "trigger": "hover",
         "grayscale": true,
-        "tilt": 8,
+        "tilt": 6,
         "bg": "weiß"
-      }
-    },
-    {
-      "type": "kinetic",
-      "props": {
-        "words": "",
-        "video": "",
-        "videoMode": "scrub",
-        "frames": "media/frif/f_####.jpg",
-        "frameCount": 89,
-        "length": 6,
-        "smooth": 0.12,
-        "wordsOn": false,
-        "poster": "",
-        "dim": 45,
-        "size": "l",
-        "ctaText": "",
-        "ctaLink": "",
-        "accent": "#ff2d2d",
-        "ctaText_de": "",
-        "frameStart": 1,
-        "duration": 8
       }
     }
   ],

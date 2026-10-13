@@ -20,6 +20,7 @@ import device from '../blocks/device.js';
 import flythrough from '../blocks/flythrough.js';
 import kinetic from '../blocks/kinetic.js';
 import notuaFlight from '../blocks/notuaFlight.js';
+import notuaBoard from '../blocks/notuaBoard.js';
 import deviceSwitch from '../blocks/deviceSwitch.js';
 import projectHead from '../blocks/projectHead.js';
 import projectText from '../blocks/projectText.js';
@@ -34,7 +35,7 @@ import frameScrub from '../blocks/frameScrub.js';
 import timelinePlayer from '../blocks/timelinePlayer.js';
 import galleryBlocks from '../blocks/gallery.js';
 
-export const blocks = [hero, chapter, statement, services, device, flythrough, notuaFlight, deviceSwitch, projectHead, projectText, projectNext, kinetic, spacer, heading, text, media, mediaStack, projectGrid, contactForm, socials, impressum, reelGallery, albumRail, phone3d, elasticReel, parallaxCarousel, spinShutter, frameScrub, timelinePlayer, ...galleryBlocks];
+export const blocks = [hero, chapter, statement, services, device, flythrough, notuaFlight, notuaBoard, deviceSwitch, projectHead, projectText, projectNext, kinetic, spacer, heading, text, media, mediaStack, projectGrid, contactForm, socials, impressum, reelGallery, albumRail, phone3d, elasticReel, parallaxCarousel, spinShutter, frameScrub, timelinePlayer, ...galleryBlocks];
 
 // Globaler Textgrößen-Regler: jeder Block mit Text bekommt einen Schieber „Textgröße“ (zoomt nur die Textelemente).
 const NO_TEXT = new Set(['spacer', 'media', 'mediaStack', 'reelGallery', 'frameScrub']);

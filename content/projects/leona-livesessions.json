@@ -119,7 +119,15 @@
         "chrome": false,
         "volumeUi": true,
         "linkText_de": "",
-        "chromeMobile": false
+        "chromeMobile": false,
+        "textScale": 1.7
+      }
+    },
+    {
+      "type": "projectNext",
+      "props": {
+        "label": "next project",
+        "textScale": 1
       }
     }
   ],
