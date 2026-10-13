@@ -53,7 +53,7 @@
         "items": [
           {
             "image": "https://vimeo.com/1235599551",
-            "imageMobile": "",
+            "imageMobile": "https://vimeo.com/1235599551",
             "title": "",
             "subtitle": "",
             "link": ""
@@ -61,7 +61,7 @@
         ],
         "height": 620,
         "heightMobile": 560,
-        "bg": "transparent",
+        "bg": "dunkel",
         "scrollSpin": true,
         "startItem": 1,
         "spinFrom": 360,

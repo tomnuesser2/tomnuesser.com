@@ -66,7 +66,7 @@ export default {
     gp.setSlot(0, media[cur]);
     const show = (i) => { if (i === cur || to >= 0) return; to = i; gp.setSlot(1, media[i]); mix = 0; };
     const next = () => { if (media.length > 1) show((cur + 1) % media.length); };
-    let W = 0, H = 0, dpr = 1;
+    let W = 0, H = 0, dpr = 1, cvOff = 0;
     const set = { rx: 0, ry: 0, spin: 0, spinV: 0, drag: false, hover: false, px: 0, py: 0, lift: 0, intro: p.intro !== false && !still() && !scroll ? 0 : 1 };
     let sp = still() ? 1 : 0, playing = still();
     if (scroll && !still() && 'IntersectionObserver' in window) new IntersectionObserver(([e]) => { if (e.isIntersecting && e.intersectionRatio > .18) playing = true; else if (!e.isIntersecting) { playing = false; sp = 0; } }, { threshold: [0, .18, .4] }).observe(el); else if (scroll) { playing = true; }
@@ -94,7 +94,9 @@ export default {
       if (scroll) { if (playing) sp = Math.min(1, sp + dt / Math.max(.4, num(p.spinDuration, 1.6))); const e = ease(clamp(sp / .8)); spinAdd = num(p.spinFrom, 360) * (1 - e); rxAdd = -8 * (1 - e); sk = Math.max(.001, e); upY = -Math.pow(1 - e, 1.5) * 1.5; const tf = clamp((sp - .7) / .3); [tl, tr].forEach(c => { if (c) { c.style.opacity = tf.toFixed(3); c.style.transform = `translateY(${((1 - tf) * 24).toFixed(1)}px)`; } }); }
       gp.draw({ rx: num(p.rotateX, -4) + set.rx + rxAdd, ry: num(p.rotateY, -14) + set.ry + set.spin + spinAdd + (1 - iv) * -50, rz: num(p.rotateZ, 0) + (land ? 90 : 0), y: set.lift * .035 * num(p.lift, 1) - (1 - iv) * .25 + Math.sin(t * .9) * .012 * fl + upY, fit: S * (.9 + .1 * iv) * sk, mix: to >= 0 ? ease(clamp(mix)) : 0, intro: .1 + .9 * clamp((iv - .3) / .7), light: clamp(num(p.reflection, 1), 0, 2), time: t });
       const sh = clamp(num(p.shadow, 1), 0, 2);
-      shadow.style.opacity = String((.5 * sh * iv * clamp(sk * 1.4)).toFixed(3)); shadow.style.width = (Math.min(H * S * (land ? 1.0 : .38), W * .8)) + 'px'; shadow.style.transform = `translate(-50%,0) scale(${(1 - set.lift * .1).toFixed(3)})`;
+      // Steht die Bühne tiefer als die Fenstermitte (z. B. als erstes Element unter dem Menü), wird das Gerät um den Unterschied nach oben geschoben
+      { const r = stage.getBoundingClientRect(), off = clamp(r.top + r.height / 2 - innerHeight / 2, 0, H * .3); cvOff += (off - cvOff) * Math.min(1, dt * 4); const tr0 = `translateY(${(-cvOff).toFixed(1)}px)`; canvas.style.transform = tr0; shadow.dataset.o = (-cvOff).toFixed(1); }
+      shadow.style.opacity = String((.5 * sh * iv * clamp(sk * 1.4)).toFixed(3)); shadow.style.width = (Math.min(H * S * (land ? 1.0 : .38), W * .8)) + 'px'; shadow.style.transform = `translate(-50%,${shadow.dataset.o || 0}px) scale(${(1 - set.lift * .1).toFixed(3)})`;
     });
     return el;
   },
