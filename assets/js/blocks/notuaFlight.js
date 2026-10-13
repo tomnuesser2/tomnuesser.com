@@ -368,7 +368,7 @@ function mount(root, OPT) {
   if (!gl) { staticFallback(); return; }
   STATIONS.forEach((s, i) => paint(i, 99));
   const hudCount = el('p', 'fl__count'), hudTitle = el('h2', 'fl__title'), hudText = el('p', 'fl__text'), hudCta = Object.assign(el('a', 'fl__cta'), { href: o.linkUrl || 'https://notua.site/', textContent: o.linkText || 'open NOTUA ↗', target: '_blank', rel: 'noopener' }), hudSub = el('p', 'fl__sub');
-  const hudCta2 = Object.assign(el('a', 'fl__cta fl__cta2'), { href: o.projectUrl || 'notua', textContent: o.projectText || 'view the project →' }); hudCta2.setAttribute('data-link', '');
+  const hudCta2 = Object.assign(el('a', 'fl__cta fl__cta2'), { href: o.projectUrl || 'notua', textContent: o.projectText || 'view the project →' }); hudCta2.setAttribute('data-link', ''); if (!/^https?:/i.test(String(o.linkUrl || 'https://'))) hudCta.setAttribute('data-link', ''); else { hudCta.target = '_blank'; hudCta.rel = 'noopener'; }
   const ctas = el('div', 'fl__ctas'); ctas.append(hudCta, hudCta2);
   const hud = el('div', 'fl__hud'); hud.append(hudCount, hudTitle, hudText, ctas, hudSub);
   const hint = el('p', 'fl__hint'); hint.textContent = o.hint || 'scroll to fly';

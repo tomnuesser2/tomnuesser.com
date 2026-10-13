@@ -26,6 +26,10 @@ export default {
     { name: 'leftText', label: 'Text links', type: 'textarea', default: '' },
     { name: 'rightTitle', label: 'Text rechts: Überschrift (leer = kein Text rechts)', type: 'text', default: '' },
     { name: 'rightText', label: 'Text rechts', type: 'textarea', default: '' },
+    { name: 'leftTitleM', label: '📱 Handy: Text oben – Überschrift (leer = wie PC-Text links)', type: 'text', default: '' },
+    { name: 'leftTextM', label: '📱 Handy: Text oben (leer = wie PC-Text links)', type: 'textarea', default: '' },
+    { name: 'rightTitleM', label: '📱 Handy: Text unten – Überschrift (leer = wie PC-Text rechts)', type: 'text', default: '' },
+    { name: 'rightTextM', label: '📱 Handy: Text unten (leer = wie PC-Text rechts)', type: 'textarea', default: '' },
     { name: 'mobTextSize', label: '📱 Handy: Textgröße oben/unten (1 = normal, 0.7 klein, 1.4 groß)', type: 'number', default: 1 },
     { name: 'mobTextGap', label: '📱 Handy: Abstand der Texte zum Telefon in px (negativ = näher ans Telefon heran)', type: 'number', default: -30 },
     { name: 'orientation', label: 'Ausrichtung', type: 'select', options: ['hochkant', 'quer'], default: 'hochkant' },
@@ -54,10 +58,12 @@ export default {
     const media = items.map(it => { if (isVideo(it.src)) { const v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = true; v.crossOrigin = 'anonymous'; v.preload = 'auto'; v.dataset.vid = '1'; v.setAttribute('playsinline', ''); v.style.cssText = 'position:absolute;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none'; v.src = it.src; v.play().catch(() => { }); return v; } const im = new Image(); im.crossOrigin = 'anonymous'; im.decoding = 'async'; if (isEmbedUrl(it.src)) { const yt = parseYouTube(it.src), v = yt ? { id: yt.id, yt: true } : parseVimeo(it.src); if (v) vimeoThumb(v).then((u) => { if (u) im.src = u; }); } else im.src = it.src; return im; });
     const canvas = h('canvas', { class: 'ph3__cv' }), shadow = h('div', { class: 'ph3__shadow' });
     const stage = h('div', { class: 'ph3__stage', style: { '--h-d': num(p.height, 620) + 'px', '--h-m': num(p.heightMobile, 560) + 'px' } }, shadow, canvas);
-    const col = (title, text, side) => { if (!title && !text) return null; const c = h('div', { class: `ph3__t ph3__t--${side}` }); if (title) c.append(h('h3', {}, title)); for (const para of String(text || '').split(/\n\s*\n/).filter(Boolean)) c.append(h('p', {}, para)); return c; };
-    const tl = p.showLeft === false ? null : col(p.leftTitle, p.leftText, 'l'), tr = p.showRight === false ? null : col(p.rightTitle, p.rightText, 'r');
+    const col = (title, text, side, cls) => { if (!title && !text) return null; const c = h('div', { class: `ph3__t ph3__t--${side}${cls ? ' ' + cls : ''}` }); if (title) c.append(h('h3', {}, title)); for (const para of String(text || '').split(/\n\s*\n/).filter(Boolean)) c.append(h('p', {}, para)); return c; };
+    const mk = (side, show, t, x, tm, xm) => { if (show === false) return []; const hasM = !!(tm || xm); if (!hasM) { const c = col(t, x, side); return c ? [c] : []; } return [col(t, x, side, 'ph3__v-d'), col(tm, xm, side, 'ph3__v-m')].filter(Boolean); };
+    const tlA = mk('l', p.showLeft, p.leftTitle, p.leftText, p.leftTitleM, p.leftTextM), trA = mk('r', p.showRight, p.rightTitle, p.rightText, p.rightTitleM, p.rightTextM);
+    const tl = tlA.length ? tlA : null, tr = trA.length ? trA : null;
     const row = h('div', { class: 'ph3__row', style: { '--tm-s': String(num(p.mobTextSize, 1) || 1), '--tm-g': num(p.mobTextGap, -30) + 'px' } }); const scroll = !!p.scrollSpin;
-    if (tl || tr) { row.classList.add('ph3--txt'); row.append(tl || h('div', { class: 'ph3__t ph3__t--l is-empty' }), stage, tr || h('div', { class: 'ph3__t ph3__t--r is-empty' })); } else row.append(stage);
+    if (tl || tr) { row.classList.add('ph3--txt'); row.append(...(tl || [h('div', { class: 'ph3__t ph3__t--l is-empty' })]), stage, ...(tr || [h('div', { class: 'ph3__t ph3__t--r is-empty' })])); } else row.append(stage);
     el.append(row); if (scroll) el.classList.add('ph3--scroll');
     media.forEach(m => { if (m.tagName === 'VIDEO') el.append(m); }); // im Dokument, damit der Browser das Video durchgehend weiterspielt
     const fin = FINISH[p.finish] || FINISH.titanium, fc = hex(p.frameColor);
@@ -99,7 +105,7 @@ export default {
       gp.draw({ rx: num(p.rotateX, -4) + set.rx + rxAdd, ry: num(p.rotateY, -14) + set.ry + set.spin + spinAdd + (1 - iv) * -50, rz: num(p.rotateZ, 0) + (land ? 90 : 0), y: set.lift * .035 * num(p.lift, 1) - (1 - iv) * .25 + Math.sin(t * .9) * .012 * fl + upY, fit: S * (.9 + .1 * iv) * sk, mix: to >= 0 ? ease(clamp(mix)) : 0, intro: .1 + .9 * clamp((iv - .3) / .7), light: clamp(num(p.reflection, 1), 0, 2), time: t });
       const sh = clamp(num(p.shadow, 1), 0, 2);
       // Steht die Bühne am Seitenanfang (z. B. als erstes Element unter dem Menü) tiefer als die Fenstermitte, wird das Gerät fest um den Unterschied nach oben geschoben (unabhängig vom Scrollen)
-      { const r = stage.getBoundingClientRect(), dt0 = r.top + scrollY, off = dt0 < innerHeight * .5 ? clamp(dt0 + r.height / 2 - innerHeight / 2, 0, H * .3) : 0; cvOff += (off - cvOff) * Math.min(1, dt * 4); canvas.style.transform = `translateY(${(-cvOff).toFixed(1)}px)`; shadow.dataset.o = (-cvOff).toFixed(1); }
+      { const r = stage.getBoundingClientRect(), dt0 = r.top + scrollY, off = dt0 < innerHeight * .5 ? clamp(dt0 + r.height / 2 - innerHeight / 2, 0, H * .3) : 0; cvOff += (off - cvOff) * Math.min(1, dt * 4); canvas.style.transform = `translateY(${(-cvOff).toFixed(1)}px)`; shadow.dataset.o = (-cvOff).toFixed(1); row.style.setProperty('--tdy', (-cvOff).toFixed(1) + 'px'); }
       shadow.style.opacity = String((.5 * sh * iv * clamp(sk * 1.4)).toFixed(3)); shadow.style.width = (Math.min(H * S * (land ? 1.0 : .38), W * .8)) + 'px'; shadow.style.transform = `translate(-50%,${shadow.dataset.o || 0}px) scale(${(1 - set.lift * .1).toFixed(3)})`;
     });
     return el;
