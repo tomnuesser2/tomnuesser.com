@@ -61,13 +61,13 @@ export default {
 // Projektname (dezent) + optionaler Kurztext + Knopf oben im Karussell; wechselt mit der vorderen Karte
 function nameLabel(p, items) {
   if (p.showName === false || !items.length) return null;
-  const k = h('span', { class: 'hn__k' }), t = h('strong', { class: 'hn__t' }), x = h('span', { class: 'hn__x' });
+  const t = h('strong', { class: 'hn__t' }), x = h('span', { class: 'hn__x' });
   const b = h('a', { class: 'hn__b', href: '#', 'data-link': '' }, p.nameBtn || 'view project', h('i', { 'aria-hidden': 'true' }, '→'));
-  const inner = h('div', { class: 'hn__in' }, k, t, x, b), el = h('div', { class: 'hn' }, inner);
+  const inner = h('div', { class: 'hn__in' }, t, x, b), el = h('div', { class: 'hn' }, inner);
   let cur = -1;
   const set = (i) => {
     i = ((i % items.length) + items.length) % items.length; if (i === cur) return; const first = cur < 0; cur = i; const it = items[i];
-    const apply = () => { k.textContent = `${String(i + 1).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`; t.textContent = String(it.title || it.slug).replace(/\n/g, ' '); x.textContent = it.heroText || ''; x.hidden = !it.heroText; b.href = it.slug; el.classList.remove('is-out'); };
+    const apply = () => { t.textContent = String(it.title || it.slug).replace(/\n/g, ' '); x.textContent = it.heroText || ''; x.hidden = !it.heroText; b.href = it.slug; el.classList.remove('is-out'); };
     if (first) apply(); else { el.classList.add('is-out'); setTimeout(apply, 170); }
   };
   set(0); return { el, set };
