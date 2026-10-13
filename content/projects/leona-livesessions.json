@@ -88,13 +88,14 @@
         "ratio": "18/9",
         "start": 60,
         "orientation": "senkrecht",
-        "radius": "sm",
-        "caption": "",
+        "radius": "xl",
+        "caption": "High-End Look Development",
         "bg": "weiß",
         "beforeMobile": "media/leona_raw2.webp",
         "afterMobile": "media/1.webp",
         "ratioMobile_de": "4/5",
-        "ratioMobile": "4/5"
+        "ratioMobile": "4/5",
+        "caption_de": "High-End Look Development"
       }
     },
     {

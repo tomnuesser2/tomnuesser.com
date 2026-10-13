@@ -684,7 +684,7 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 .ph3__row { display: flex; align-items: center; width: 100%; }
 .ph3__stage { position: relative; flex: 1 1 0; min-width: 0; height: min(var(--h-d, 620px), calc(100svh - 120px)); touch-action: pan-y; cursor: grab; }
 .ph3__t { flex: 0 0 27%; padding: 0 var(--gutter, 24px); } .ph3__t.is-empty { visibility: hidden; }
-.ph3__t--l { text-align: right; } .ph3__t--r { text-align: left; }
+.ph3__t--l, .ph3__t--r { text-align: center; } .ph3__t p { margin-inline: auto; max-width: 30em; }
 .ph3__t h3 { font-size: clamp(22px, 2.6vw, 38px); line-height: 1.12; font-weight: 700; letter-spacing: -.02em; margin: 0 0 12px; }
 .ph3__t p { font-size: 15px; line-height: 1.7; opacity: .75; margin: 0 0 10px; }
 @media (max-width: 899px) { .ph3__row.ph3--txt { flex-direction: column; align-items: stretch; } .ph3--txt .ph3__stage { order: 1; flex: none; } .ph3__stage { height: var(--h-m, 560px); } .ph3__t { flex: none; text-align: center !important; padding: 0 var(--gutter, 20px); } .ph3__t--l { order: 0; margin-bottom: var(--tm-g, -30px); position: relative; z-index: 2; } .ph3__t--r { order: 2; margin-top: var(--tm-g, -30px); position: relative; z-index: 2; } .ph3__t.is-empty { display: none; } .ph3__t h3 { font-size: calc(clamp(20px, 6vw, 30px) * var(--tm-s, 1)); margin-bottom: 8px; } .ph3__t p { font-size: calc(15px * var(--tm-s, 1)); line-height: 1.6; margin-inline: auto; max-width: 34em; } }
