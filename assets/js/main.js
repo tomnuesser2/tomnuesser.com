@@ -244,8 +244,19 @@ function scrollToHash(hash, smooth = true) {
 
 /* ---------- Navigation ---------- */
 let navigating = false;
+// Links robust machen: Projektname/Slug (egal ob groß/klein, mit „/“, „.html“ oder als volle Adresse der eigenen Seite) wird immer relativ zur Seitenwurzel aufgelöst – nie relativ zur aktuellen Seite (das gab 404).
+function fixHref(href) {
+  href = String(href || '').trim();
+  if (!href || href[0] === '#') return href;
+  if (/^(https?:)?\/\//i.test(href) || /^(mailto|tel):/i.test(href)) { try { const u = new URL(href, location.href); if (u.origin !== location.origin) return u.href; href = u.pathname.slice(BASE.length) + u.hash; } catch (e) { return href; } }
+  let [path, hash = ''] = href.split('#'); path = decodeURIComponent(path).replace(/^\.?\/+/, '').replace(/\/+$/, '').replace(/\.html?$/i, '');
+  const idx = state.index || {}, slugs = idx.order || [], low = path.toLowerCase();
+  const hit = slugs.find(sl => sl.toLowerCase() === low) || slugs.find(sl => String(idx.projects?.[sl]?.title || '').replace(/\n/g, ' ').trim().toLowerCase() === low);
+  if (hit) path = hit;
+  return BASE + (path || 'home') + (hash ? '#' + hash : '');
+}
 async function navigate(href, { intro = false, label = '' } = {}) {
-  const u = new URL(href, location.href);
+  const u = new URL(fixHref(href), location.href);
   if (u.origin !== location.origin) { location.href = u.href; return; }
   if (navigating) return;
   state.setMenu(false);
