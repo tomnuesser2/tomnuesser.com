@@ -598,3 +598,6 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 
 .b-reel--clear { background: transparent; box-shadow: none; color: inherit; }
 .b-reel--clear .b-reel__card { background: rgba(127,127,127,.15); }
+/* Reel-Galerie in voller Breite schließt direkt an den nächsten Abschnitt an (keine weiße Lücke) */
+.b-reel--full { margin-bottom: 0; }
+.b-reel--full + * { margin-top: 0 !important; }

@@ -9,12 +9,6 @@ const ITEM = [
   { name: 'title', label: 'Titel (optional, erscheint beim Darüberfahren)', type: 'text' },
   { name: 'link', label: 'Link beim Anklicken (optional, z. B. ein Projekt-Name)', type: 'text' },
 ];
-const ASPECTS = {
-  gemischt: [1.5, .8, 1.78, .75, 1.33, 1, 1.6, .8],
-  quer: [1.5, 1.78, 1.33, 1.6],
-  hochkant: [.75, .8, .67, .8],
-  quadrat: [1],
-};
 const goto = (href) => { if (!href) return; const a = document.createElement('a'); a.href = href; a.setAttribute('data-link', ''); a.hidden = true; document.body.append(a); a.click(); a.remove(); };
 const num = (v, d) => (v === '' || v == null || isNaN(Number(v)) ? d : Number(v));
 
@@ -34,14 +28,13 @@ export default {
     { name: 'drift', label: 'Dauerhaftes Eigentempo in px pro Sekunde (0 = nur beim Scrollen)', type: 'number', default: 0 },
     { name: 'gap', label: 'Abstand zwischen Bildern in px', type: 'number', default: 14 },
     { name: 'radius', label: 'Rundung der Bilder in px', type: 'number', default: 14 },
-    { name: 'format', label: 'Bildformate', type: 'select', options: ['gemischt', 'quer', 'hochkant', 'quadrat'], default: 'gemischt' },
     { name: 'width', label: 'Breite', type: 'select', options: ['volle Breite', 'Rahmen'], default: 'volle Breite' },
     { name: 'fade', label: 'Ränder weich ausblenden', type: 'checkbox', default: false },
     { name: 'hover', label: 'Bild beim Darüberfahren hervorheben', type: 'checkbox', default: true },
     { name: 'bg', label: 'Hintergrund', type: 'select', options: ['transparent', 'dunkel', 'hell'], default: 'transparent' },
   ],
   render(p0, ctx) {
-    const p = { source: 'eigene Bilder', height: 860, heightMobile: 560, rows: 5, rowsMobile: 4, tilt: 8, tilt3d: 0, speed: 1, drift: 0, gap: 14, radius: 14, format: 'gemischt', width: 'volle Breite', fade: false, hover: true, bg: 'transparent', ...p0 };
+    const p = { source: 'eigene Bilder', height: 860, heightMobile: 560, rows: 5, rowsMobile: 4, tilt: 8, tilt3d: 0, speed: 1, drift: 0, gap: 14, radius: 14, width: 'volle Breite', fade: false, hover: true, bg: 'transparent', ...p0 };
     let items;
     if (p.source === 'alle Projekte') {
       const idx = ctx.content.index;
@@ -55,6 +48,7 @@ export default {
     const rowsEls = []; let built = '';
 
     const build = () => {
+      if (!ready) return;
       const mob = innerWidth < 760;
       const W = el.clientWidth, H = num(mob ? p.heightMobile : p.height, mob ? 560 : 860);
       el.style.height = H + 'px';
@@ -68,15 +62,14 @@ export default {
       const cardH = Math.max(40, (SH - gap * (rows - 1)) / rows);
       stage.style.cssText = `width:${SW}px;height:${SH}px;margin:${-SH / 2}px 0 0 ${-SW / 2}px;--r:${num(p.radius, 14)}px;transform:${t3 ? `perspective(1400px) rotateX(${t3}deg) ` : ''}rotate(${-tilt}deg)`;
       stage.textContent = ''; rowsEls.length = 0;
-      const asp = ASPECTS[p.format] || ASPECTS.gemischt;
+      // Jedes Bild kommt nur in EINER Reihe vor (kein Doppeltes nebeneinander/übereinander); die Reihen werden nach Breite ausgeglichen
+      const sets = Array.from({ length: rows }, () => ({ list: [], w: 0 }));
+      items.forEach((it, i) => { const s0 = sets.reduce((m, x) => (x.w < m.w ? x : m), sets[0]); s0.list.push(it); s0.w += cardH * it.a + gap; });
+      sets.forEach((s0, r) => { if (!s0.list.length) { const it = items[(r * 3) % items.length]; s0.list.push(it); s0.w = cardH * it.a + gap; } });
       for (let r = 0; r < rows; r++) {
-        // eine "Runde" = alle Bilder einmal, je Reihe anders verschoben und mit eigenen Formaten
-        const set = []; let loop = 0;
-        const n = Math.max(items.length, 6);
-        for (let i = 0; i < n; i++) {
-          const it = items[(i + r * 3) % items.length], a = asp[(i * 3 + r * 2) % asp.length], w = Math.round(cardH * a);
-          set.push({ it, w }); loop += w + gap;
-        }
+        // Bildformat bestimmt die Kartenbreite: nichts wird beschnitten
+        const set = sets[r].list.map(it => ({ it, w: Math.round(cardH * it.a) })); let loop = 0;
+        for (const x of set) loop += x.w + gap;
         const reps = Math.max(2, Math.ceil((SW + loop) / loop) + 1);
         const rowEl = h('div', { class: 'b-reel__row', style: { height: cardH + 'px', top: r * (cardH + gap) + 'px' } });
         for (let k = 0; k < reps; k++) for (const { it, w } of set) {
@@ -90,6 +83,7 @@ export default {
       }
     };
 
+    let ready = false;
     let tgt = 0, cur = 0, t0 = performance.now(), vis = false, raf = 0, firstDone = false;
     const apply = (x, t) => {
       for (const R of rowsEls) {
@@ -105,6 +99,8 @@ export default {
       if (Math.abs(tgt - cur) > .05 || (num(p.drift, 0) && !still())) raf = requestAnimationFrame(frame);
     };
     const kick = () => { if (!raf && vis) raf = requestAnimationFrame(frame); };
+    // Bildformate erst messen, dann bauen (Karte = genau das Format des Bildes)
+    Promise.all(items.map(it => new Promise(ok => { const im = new Image(); im.onload = () => { it.a = im.naturalWidth / Math.max(1, im.naturalHeight) || 1.5; ok(); }; im.onerror = () => { it.a = 1.5; ok(); }; im.src = it.src; }))).then(() => { ready = true; built = ''; build(); apply(cur, 0); kick(); });
     track(el, (r) => {
       build(); vis = true;
       tgt = -r.top * 1.25 * num(p.speed, 1);
