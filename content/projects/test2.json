@@ -52,8 +52,8 @@
       "props": {
         "items": [
           {
-            "image": "https://vimeo.com/1235599551",
-            "imageMobile": "https://vimeo.com/1235599551",
+            "image": "media/notua-logo.png",
+            "imageMobile": "",
             "title": "",
             "subtitle": "",
             "link": ""
@@ -61,15 +61,15 @@
         ],
         "height": 620,
         "heightMobile": 560,
-        "bg": "dunkel",
+        "bg": "transparent",
         "scrollSpin": true,
         "startItem": 1,
         "spinFrom": 360,
         "spinDuration": 1.6,
         "showLeft": true,
         "showRight": false,
-        "leftTitle": "",
-        "leftText": "",
+        "leftTitle": "12312312312312",
+        "leftText": "12312321321312\n",
         "rightTitle": "",
         "rightText": "",
         "orientation": "hochkant",
@@ -88,7 +88,8 @@
         "intro": true,
         "interval": 0,
         "textScale": 1,
-        "leftText_de": "12321312"
+        "leftText_de": "12321312",
+        "leftTitle_de": "12312312321"
       }
     }
   ],
