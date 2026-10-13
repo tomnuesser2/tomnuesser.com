@@ -12,6 +12,329 @@
   },
   "blocks": [
     {
+      "type": "reelGallery",
+      "props": {
+        "source": "eigene Bilder",
+        "items": [
+          {
+            "image": "media/30_a3-hoch_devices_ibm-plex-sans.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/31_s-9x16_gratis_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/32_s-og_features_inter.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/33_dl-quer_gratis_playfair-display.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/34_a4-hoch_devices_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/35_a5-hoch_minimal_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/36_visitenkarte-h_features_inter.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/37_lesezeichen_gratis_playfair-display.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/38_a4-hoch_showcase_inter.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/39_dl-quer_minimal_playfair-display.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/40_poster-50x70_showcase_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/41_rollup_gratis_anton.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/42_a5-quer_devices_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/43_a4-hoch_features_anton.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/44_s-3x1_screenshot_permanent-marker.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/45_s-3x1_features_inter.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/46_s-3x1_gratis_anton.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/47_a4-hoch_minimal_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/48_s-16x9_features_permanent-marker.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/49_s-og_gratis_caveat.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/50_s-4x5_devices_permanent-marker.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/01_a4-hoch_devices_ibm-plex-sans.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/02_s-16x9_gratis_anton.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/03_s-9x16_gratis_ibm-plex-sans.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/04_rollup_gratis_playfair-display.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/05_dl-quer_features_permanent-marker.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/06_a4-quer_screenshot_playfair-display.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/07_a4-hoch_screenshot_playfair-display.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/08_rollup_gratis_playfair-display.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/09_s-4x1_gratis_playfair-display.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/10_dl-hoch_devices_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/11_s-16x9_showcase_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/12_a6-hoch_minimal_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/13_s-4x5_devices_caveat.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/14_a5-quer_devices_anton.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/15_a6-quer_features_anton.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/16_s-16x9_showcase_caveat.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/17_a4-quer_showcase_playfair-display.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/18_visitenkarte-h_showcase_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/19_lesezeichen_minimal_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/20_a4-quer_minimal_permanent-marker.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/21_s-9x16_screenshot_anton.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/22_rollup_minimal_playfair-display.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/23_dl-hoch_showcase_inter.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/24_a6-hoch_devices_playfair-display.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/25_visitenkarte-h_minimal_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/26_lesezeichen_minimal_ibm-plex-sans.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/27_a5-hoch_screenshot_bebas-neue.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/28_visitenkarte_screenshot_permanent-marker.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          },
+          {
+            "image": "media/29_s-3x1_screenshot_ibm-plex-sans.webp",
+            "imageMobile": "",
+            "title": "",
+            "link": ""
+          }
+        ],
+        "height": 860,
+        "heightMobile": 560,
+        "rows": 4,
+        "rowsMobile": 3,
+        "tilt": 8,
+        "tilt3d": 30,
+        "speed": 1,
+        "drift": 0,
+        "gap": 14,
+        "radius": 14,
+        "format": "gemischt",
+        "width": "volle Breite",
+        "fade": true,
+        "hover": true,
+        "bg": "hell"
+      }
+    },
+    {
       "type": "notuaFlight",
       "props": {
         "title": "NOTUA – the most powerful creative planning & mind-map app.",

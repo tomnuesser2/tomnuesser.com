@@ -35,13 +35,13 @@ export default {
     { name: 'gap', label: 'Abstand zwischen Bildern in px', type: 'number', default: 14 },
     { name: 'radius', label: 'Rundung der Bilder in px', type: 'number', default: 14 },
     { name: 'format', label: 'Bildformate', type: 'select', options: ['gemischt', 'quer', 'hochkant', 'quadrat'], default: 'gemischt' },
-    { name: 'width', label: 'Breite', type: 'select', options: ['Rahmen', 'volle Breite'], default: 'Rahmen' },
-    { name: 'fade', label: 'Ränder weich ausblenden', type: 'checkbox', default: true },
+    { name: 'width', label: 'Breite', type: 'select', options: ['volle Breite', 'Rahmen'], default: 'volle Breite' },
+    { name: 'fade', label: 'Ränder weich ausblenden', type: 'checkbox', default: false },
     { name: 'hover', label: 'Bild beim Darüberfahren hervorheben', type: 'checkbox', default: true },
-    { name: 'bg', label: 'Hintergrund', type: 'select', options: ['dunkel', 'hell'], default: 'dunkel' },
+    { name: 'bg', label: 'Hintergrund', type: 'select', options: ['transparent', 'dunkel', 'hell'], default: 'transparent' },
   ],
   render(p0, ctx) {
-    const p = { source: 'eigene Bilder', height: 860, heightMobile: 560, rows: 5, rowsMobile: 4, tilt: 8, tilt3d: 0, speed: 1, drift: 0, gap: 14, radius: 14, format: 'gemischt', width: 'Rahmen', fade: true, hover: true, bg: 'dunkel', ...p0 };
+    const p = { source: 'eigene Bilder', height: 860, heightMobile: 560, rows: 5, rowsMobile: 4, tilt: 8, tilt3d: 0, speed: 1, drift: 0, gap: 14, radius: 14, format: 'gemischt', width: 'volle Breite', fade: false, hover: true, bg: 'transparent', ...p0 };
     let items;
     if (p.source === 'alle Projekte') {
       const idx = ctx.content.index;
@@ -49,7 +49,7 @@ export default {
         .map(x => ({ src: imgFor(x), title: String(x.title || x.slug).replace(/\n/g, ' '), href: x.slug }));
     } else items = (p.items || []).filter(i => i.image).map(i => ({ src: imgFor(i), title: i.title || '', href: i.link || '' }));
 
-    const el = h('div', { class: `b-reel${p.bg === 'hell' ? ' b-reel--light' : ''}${p.width === 'volle Breite' ? ' b-reel--full' : ''}${p.fade ? ' has-fade' : ''}${p.hover ? ' has-hover' : ''}` });
+    const el = h('div', { class: `b-reel${p.bg === 'hell' ? ' b-reel--light' : p.bg === 'dunkel' ? '' : ' b-reel--clear'}${p.width === 'volle Breite' ? ' b-reel--full' : ''}${p.fade ? ' has-fade' : ''}${p.hover ? ' has-hover' : ''}` });
     if (items.length < 2) { el.append(h('p', { class: 'b-reel__empty' }, 'Mindestens 2 Bilder hinzufügen.')); el.style.height = '200px'; return el; }
     const stage = h('div', { class: 'b-reel__stage' }); el.append(stage);
     const rowsEls = []; let built = '';
