@@ -12,18 +12,38 @@
   },
   "blocks": [
     {
-      "type": "spacer",
+      "type": "notuaFlight",
       "props": {
-        "size": 40
-      }
-    },
-    {
-      "type": "heading",
-      "props": {
-        "text": "test2",
-        "level": 1,
-        "align": "center",
-        "bold": false
+        "title": "NOTUA – the most powerful creative planning & mind-map app.",
+        "text": "Plan projects, sort ideas and connect them on one endless board: notes, tables, tasks, widgets and boards inside boards. Made by me – free to use.",
+        "endTitle": "Built, shipped, free to use.",
+        "endText": "Runs in the browser, as a desktop app and on Android.",
+        "linkText": "open NOTUA ↗",
+        "linkUrl": "https://notua.site/",
+        "projectText": "view the project →",
+        "projectUrl": "notua",
+        "sub": "web · desktop · android",
+        "hint": "scroll to fly",
+        "logo": "media/notua-logo.png",
+        "featureText": "Notes | Capture ideas the second they appear – scripts, shot notes, thoughts. Everything lives on one endless canvas.\nTables | Scene overview, budget, schedule – clear in cells.\nTasks | Tick off what is done, keep the rest in sight.\nWidgets | Pin images, YouTube videos and Spotify playlists right next to your ideas.\nBoards | Boards inside boards – every project gets its own space.\nYour look | Make it yours: colour world, light or dark, corners, shadow, border and font. Then keep the look.",
+        "notes": "Script intro\n– Hook in 3 sec\n– Scene 1: workshop\n– Scene 2: interview",
+        "tableTitle": "Scene overview",
+        "table": "Intro, 0:12, Wide\nWorkshop, 0:28, Close-up\nInterview, 0:45, Medium",
+        "tasksTitle": "Tasks",
+        "tasks": "x Review footage\nx Rough cut\nx Color grade\nSound design\nExport in 4K",
+        "images": [],
+        "wImgText": "moodboard.jpg",
+        "wYtText": "Behind the scenes",
+        "wSpText": "Late night mix",
+        "wSpSub": "Playlist",
+        "boardsTitle": "Boards",
+        "boards": "Shoot 2026 | Clients | Ideas",
+        "subBoards": "Day 1 | Day 2 | B-Roll",
+        "cBg": "#E7EAEE",
+        "cDot": "#C6CCD4",
+        "cSurface": "#FFFFFF",
+        "cInk": "#1B2027",
+        "cAccent": "#FF6B57"
       }
     }
   ],

@@ -24,9 +24,10 @@ import deviceSwitch from '../blocks/deviceSwitch.js';
 import projectHead from '../blocks/projectHead.js';
 import projectText from '../blocks/projectText.js';
 import projectNext from '../blocks/projectNext.js';
+import reelGallery from '../blocks/reelGallery.js';
 import galleryBlocks from '../blocks/gallery.js';
 
-export const blocks = [hero, chapter, statement, services, device, flythrough, notuaFlight, deviceSwitch, projectHead, projectText, projectNext, kinetic, spacer, heading, text, media, mediaStack, projectGrid, contactForm, socials, impressum, ...galleryBlocks];
+export const blocks = [hero, chapter, statement, services, device, flythrough, notuaFlight, deviceSwitch, projectHead, projectText, projectNext, kinetic, spacer, heading, text, media, mediaStack, projectGrid, contactForm, socials, impressum, reelGallery, ...galleryBlocks];
 
 const byType = new Map(blocks.map(b => [b.type, b]));
 export const getBlock = (type) => byType.get(type);

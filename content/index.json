@@ -1,10 +1,10 @@
 {
   "order": [
     "leona-livesessions",
+    "test2",
     "project-10",
     "project-9",
-    "123",
-    "test2"
+    "123"
   ],
   "projects": {
     "123": {

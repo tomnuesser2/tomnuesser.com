@@ -569,9 +569,7 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 @media (max-width: 760px) { .dv--laptop.dv--nochrome-m .dv__vol { top: auto; bottom: 8px; height: auto; padding: 5px 9px 5px 6px; background: rgba(12,12,14,.62); color: #fff; } .dv--laptop.dv--nochrome-m .dv__rng { accent-color: #fff; } }
 
 /* FlexCarousel: Rahmen liegt eng um die Bilder; auf dem Handy randlos bis an den Bildschirmrand */
-@media (max-width: 700px) {
-  .b-gal--flex { width: 100%; margin-left: 0; margin-right: 0; border-radius: 0; box-shadow: none; }
-}
+.b-gal--flex { width: 100%; margin-left: 0; margin-right: 0; border-radius: 0; box-shadow: none; }
 
 /* Laptop ohne Adresszeile: Bildschirm füllt alles (kein weißer Streifen oben) */
 .dv--nochrome .dv__page { top: 0; }
@@ -582,3 +580,18 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 .dv__scr .media-frame, .dv__scr .media-inner { background: #000; }
 .dv--nochrome .dv__laptop .dv__screen, .dv--nochrome .dv__page { background: #000; }
 @media (max-width: 760px) { .dv--nochrome-m .dv__laptop .dv__screen, .dv--nochrome-m .dv__page { background: #000; } }
+
+/* Reel-Galerie */
+.b-reel { position: relative; width: min(100% - 2 * var(--gutter, 20px), 1600px); margin: clamp(24px, 6vw, 72px) auto; height: 860px; border-radius: 22px; background: #0b0b0c; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); overflow: hidden; contain: layout paint; color: #fff; }
+.b-reel--light { background: #f4f4f2; box-shadow: inset 0 0 0 1px rgba(0,0,0,.07); }
+.b-reel--full { width: 100%; border-radius: 0; box-shadow: none; }
+.b-reel__stage { position: absolute; left: 50%; top: 50%; transform-origin: 50% 50%; will-change: transform; pointer-events: none; }
+.b-reel__row { position: absolute; left: 0; display: flex; flex-wrap: nowrap; width: max-content; will-change: transform; }
+.b-reel__card { flex: 0 0 auto; height: 100%; border-radius: var(--r, 14px); overflow: hidden; background: #1a1a1d; pointer-events: auto; transition: transform .35s cubic-bezier(.2,.7,.2,1), filter .35s; }
+.b-reel--light .b-reel__card { background: #e4e4e0; }
+.b-reel__card img { width: 100%; height: 100%; object-fit: cover; display: block; user-select: none; -webkit-user-drag: none; }
+.b-reel__card.is-link { cursor: pointer; }
+.b-reel.has-hover .b-reel__card:hover { transform: scale(1.06); z-index: 2; box-shadow: 0 14px 40px rgba(0,0,0,.45); }
+.b-reel.has-fade { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%); }
+.b-reel__empty { display: grid; place-items: center; height: 100%; margin: 0; opacity: .6; font-family: var(--mono, monospace); }
+@media (max-width: 760px) { .b-reel { width: 100%; border-radius: 0; box-shadow: none; } .b-reel.has-hover .b-reel__card:hover { transform: none; box-shadow: none; } }
