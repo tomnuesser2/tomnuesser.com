@@ -10,10 +10,10 @@ const ease = (t) => 1 - Math.pow(1 - t, 3);
 export default {
   type: 'spinShutter', label: 'Spin Shutter (kreisender Foto-Ring mit Tiefenunschärfe)',
   fields: [
-    SOURCE, ITEMS, FORMAT(), ...HEIGHT(640, 640), BG,
+    SOURCE, ITEMS, FORMAT(), ...HEIGHT(780, 640), BG,
     { name: 'count', label: 'Anzahl Karten (Bilder wiederholen sich; 0 = jedes Bild einmal)', type: 'number', default: 0 },
-    { name: 'size', label: 'Kartengröße (0.15–0.7, relativ zum Ring)', type: 'number', default: .3 },
-    { name: 'radius', label: 'Rundung in px', type: 'number', default: 14 },
+    { name: 'size', label: 'Kartengröße (0.15–0.7, relativ zum Ring)', type: 'number', default: .4 },
+    { name: 'radius', label: 'Rundung in px (0 = keine; bei transparenten Bildern 0 lassen)', type: 'number', default: 0 },
     { name: 'tilt', label: 'Kamerahöhe in Grad (0 = flache Reihe, höher = offener Ring)', type: 'number', default: 20 },
     { name: 'roll', label: 'Drehung des ganzen Rings in Grad (diagonal)', type: 'number', default: -24 },
     { name: 'distance', label: 'Kameraabstand (kleiner = mehr Perspektive, 1.8–6)', type: 'number', default: 3.2 },
@@ -33,22 +33,24 @@ export default {
   render(p0, ctx) {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
     const base = getItems(p, ctx);
-    const el = h('div', { class: `ss${bgClass(p.bg)}`, style: { '--ss-rad': num(p.radius, 14) + 'px' } });
+    const el = h('div', { class: `ss${bgClass(p.bg)}`, style: { '--ss-rad': num(p.radius, 0) + 'px' } });
     if (base.length < 2) { el.style.height = '200px'; el.append(h('p', { class: 'reel-empty' }, 'Mindestens 2 Bilder hinzufügen.')); return el; }
     const N = Math.max(base.length, Math.min(48, Math.round(num(p.count, 0)) || base.length));
     const list = Array.from({ length: N }, (_, i) => base[i % base.length]);
-    const ring = h('div', { class: 'ss__ring' }), cards = list.map((it, i) => { const c = h('div', { class: 'ss__card', 'data-i': i }, mediaNode(it.src, 'ss__img', it.title)); ring.append(c); return c; });
+    const ring = h('div', { class: 'ss__ring' }), cards = list.map((it, i) => { const m = mediaNode(it.src, 'ss__img', it.title), c = h('div', { class: 'ss__card', 'data-i': i }, m); c._a = 0; const set = () => { const a = (m.naturalWidth || m.videoWidth) / (m.naturalHeight || m.videoHeight); if (a > 0) { c._a = a; fit(); } }; m.addEventListener('load', set); m.addEventListener('loadedmetadata', set); if (m.complete && m.naturalWidth) setTimeout(set); ring.append(c); return c; });
     const capT = h('b'), capS = h('span'), cap = p.captions !== false ? h('div', { class: 'ss__cap' }, capT, capS) : null;
     el.append(ring); if (cap) el.append(cap); playVideosWhenVisible(el);
     const asp = aspectOf(p.format, 16 / 9, 9 / 16);
     let W = 0, H = 0, R = 0, ch = 0, cw = 0;
+    // Jede Karte bekommt das Seitenverhältnis ihres Bildes bei gleicher Fläche: breite werden breiter, hohe höher, nichts wird abgeschnitten
+    const fit = () => { if (!cw) return; const A = Math.sqrt(cw * ch), maxW = R * 1.15, maxH = H * .5; cards.forEach(c => { const a = c._a || asp; let w = A * Math.sqrt(a), hh = A / Math.sqrt(a); const k = Math.min(1, maxW / w, maxH / hh); c._w = w * k; c._h = hh * k; c.style.width = c._w + 'px'; c.style.height = c._h + 'px'; }); };
     let rot = 0, vel = 0, hold = false, hover = false, introT = p.intro !== false && !still() ? 0 : 1, tiltExtra = 0, tiltV = 0, goal = null, front = -1, speedK = 1, wheelGoal = null;
     const step = TAU / N, cl = Math.max(1, Math.round(num(p.cluster, 1))), spr = clamp(num(p.spread, .6), .05, 1);
     const baseAngle = (i) => { if (cl <= 1) return i * step; const g = Math.floor(i / cl), j = i % cl; return (g * cl + (cl - 1) / 2) * step + (j - (cl - 1) / 2) * step * spr; };
     watchSize(el, (w, hh) => {
       W = w; H = hh - (p.captions !== false ? 56 : 0); const sc = num(p.scale, 1);
-      R = Math.min(W * (asp < 1 ? .5 : .46), H * .54) * sc; ch = R * num(p.size, .3) * (asp < 1 ? 1.35 : 1.15); cw = ch * asp; if (cw > R * .9) { cw = R * .9; ch = cw / asp; }
-      cards.forEach(c => { c.style.width = cw + 'px'; c.style.height = ch + 'px'; });
+      R = Math.min(W * (asp < 1 ? .5 : .46), H * .54) * sc; ch = R * num(p.size, .4) * (asp < 1 ? 1.35 : 1.15); cw = ch * asp; if (cw > R * .9) { cw = R * .9; ch = cw / asp; }
+      fit();
       ring.style.height = H + 'px';
     });
     const D = Math.max(1.6, num(p.distance, 3.2)), roll = num(p.roll, -24) * Math.PI / 180, ap = num(p.aperture, .45), hz = clamp(num(p.haze, .3)), sh = clamp(num(p.shadow, .35));
@@ -77,11 +79,11 @@ export default {
         const rx = sx * Math.cos(roll) - sy * Math.sin(roll), ry = sx * Math.sin(roll) + sy * Math.cos(roll);
         const dn = clamp((z / R + 1) / 2), c = cards[i];
         const bl = ap * (1 - dn) * 9, op = (1 - hz * (1 - dn)) * clamp(introT * 3);
-        c.style.transform = `translate3d(${(cx + rx - cw / 2).toFixed(1)}px,${(cy + ry - ch / 2).toFixed(1)}px,0) scale(${s.toFixed(3)})`;
+        c.style.transform = `translate3d(${(cx + rx - (c._w || cw) / 2).toFixed(1)}px,${(cy + ry - (c._h || ch) / 2).toFixed(1)}px,0) scale(${s.toFixed(3)})`;
         c.style.zIndex = String(Math.round(zz + R * 2));
         c.style.filter = bl > .25 ? `blur(${bl.toFixed(1)}px)` : '';
         c.style.opacity = op.toFixed(3);
-        c.style.boxShadow = sh ? `0 ${(18 * dn * s).toFixed(0)}px ${(46 * s).toFixed(0)}px rgba(0,0,0,${(sh * (.35 + dn * .65)).toFixed(2)})` : 'none';
+        c.style.setProperty('--sh', sh ? `drop-shadow(0 ${(16 * dn * s).toFixed(0)}px ${(34 * s).toFixed(0)}px rgba(0,0,0,${(sh * (.35 + dn * .65)).toFixed(2)}))` : 'none');
       }
       const f = frontIdx();
       if (f !== front) { front = f; if (cap) { capT.textContent = list[f].title || ''; capS.textContent = list[f].subtitle || ''; cap.classList.remove('is-in'); void cap.offsetWidth; cap.classList.add('is-in'); } }

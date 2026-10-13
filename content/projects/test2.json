@@ -5,275 +5,12 @@
     "vimeo": "",
     "ratio": "16/9",
     "group": 1,
-    "category": "design",
+    "category": "code",
     "stills": [],
     "featured": false,
     "imageMobile": "media/notua-flyer-s-9x16-showcase.webp"
   },
   "blocks": [
-    {
-      "type": "reelGallery",
-      "props": {
-        "source": "eigene Bilder",
-        "items": [
-          {
-            "image": "media/30_a3-hoch_devices_ibm-plex-sans.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/31_s-9x16_gratis_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/32_s-og_features_inter.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/35_a5-hoch_minimal_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/36_visitenkarte-h_features_inter.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/37_lesezeichen_gratis_playfair-display.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/38_a4-hoch_showcase_inter.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/40_poster-50x70_showcase_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/42_a5-quer_devices_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/43_a4-hoch_features_anton.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/45_s-3x1_features_inter.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/47_a4-hoch_minimal_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/48_s-16x9_features_permanent-marker.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/01_a4-hoch_devices_ibm-plex-sans.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/03_s-9x16_gratis_ibm-plex-sans.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/05_dl-quer_features_permanent-marker.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/06_a4-quer_screenshot_playfair-display.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/07_a4-hoch_screenshot_playfair-display.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/08_rollup_gratis_playfair-display.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/09_s-4x1_gratis_playfair-display.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/10_dl-hoch_devices_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/11_s-16x9_showcase_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/12_a6-hoch_minimal_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/13_s-4x5_devices_caveat.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/14_a5-quer_devices_anton.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/15_a6-quer_features_anton.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/16_s-16x9_showcase_caveat.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/17_a4-quer_showcase_playfair-display.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/18_visitenkarte-h_showcase_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/19_lesezeichen_minimal_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/20_a4-quer_minimal_permanent-marker.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/21_s-9x16_screenshot_anton.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/22_rollup_minimal_playfair-display.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/23_dl-hoch_showcase_inter.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/24_a6-hoch_devices_playfair-display.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/25_visitenkarte-h_minimal_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/26_lesezeichen_minimal_ibm-plex-sans.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/27_a5-hoch_screenshot_bebas-neue.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/28_visitenkarte_screenshot_permanent-marker.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          },
-          {
-            "image": "media/29_s-3x1_screenshot_ibm-plex-sans.webp",
-            "imageMobile": "",
-            "title": "",
-            "link": ""
-          }
-        ],
-        "height": 860,
-        "heightMobile": 560,
-        "rows": 4,
-        "rowsMobile": 3,
-        "tilt": 8,
-        "tilt3d": 30,
-        "speed": 1,
-        "drift": 0,
-        "gap": 14,
-        "radius": 14,
-        "format": "gemischt",
-        "width": "volle Breite",
-        "fade": true,
-        "hover": true,
-        "bg": "hell"
-      }
-    },
     {
       "type": "notuaFlight",
       "props": {
@@ -307,6 +44,51 @@
         "cSurface": "#FFFFFF",
         "cInk": "#1B2027",
         "cAccent": "#FF6B57"
+      },
+      "hidden": true
+    },
+    {
+      "type": "phone3d",
+      "props": {
+        "items": [
+          {
+            "image": "https://vimeo.com/1235599551",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          }
+        ],
+        "height": 620,
+        "heightMobile": 560,
+        "bg": "transparent",
+        "scrollSpin": true,
+        "startItem": 1,
+        "spinFrom": 360,
+        "spinDuration": 1.6,
+        "showLeft": true,
+        "showRight": false,
+        "leftTitle": "",
+        "leftText": "",
+        "rightTitle": "",
+        "rightText": "",
+        "orientation": "hochkant",
+        "finish": "blue",
+        "frameColor": "",
+        "scale": 0.86,
+        "rotateX": -4,
+        "rotateY": -14,
+        "rotateZ": 0,
+        "tilt": 12,
+        "float": 1,
+        "lift": 1,
+        "drag": true,
+        "reflection": 1,
+        "shadow": 1,
+        "intro": true,
+        "interval": 0,
+        "textScale": 1,
+        "leftText_de": "12321312"
       }
     }
   ],

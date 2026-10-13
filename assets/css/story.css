@@ -620,6 +620,11 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 .ar__rec i { position: absolute; left: 31%; top: 31%; width: 38%; height: 38%; border-radius: 50%; background: #333 center / cover; box-shadow: 0 0 0 3px rgba(0,0,0,.35); }
 .ar__rec i::after { content: ''; position: absolute; left: 50%; top: 50%; width: 9%; height: 9%; margin: -4.5% 0 0 -4.5%; border-radius: 50%; background: #0b0b0c; }
 .ar__it { top: 0; } .ar__it .ar__rec { top: 50%; }
+.ar__mos { position: absolute; left: 0; right: 0; top: 0; z-index: 20; pointer-events: none; display: grid; place-items: center; } .ar__mos.is-on { pointer-events: auto; cursor: pointer; }
+.ar__mg { grid-area: 1 / 1; position: relative; visibility: hidden; transition: visibility 0s .9s; } .ar__mg.is-open { visibility: visible; transition-delay: 0s; }
+.ar__tl { position: absolute; padding: calc(var(--gap, 12px) / 2); opacity: 0; transform: translate(var(--fx, 0), var(--fy, 0)) rotate(var(--fr, 0)) scale(.25); transition: transform .8s cubic-bezier(.2, .85, .25, 1) var(--d, 0ms), opacity .35s ease var(--d, 0ms); box-sizing: border-box; }
+.ar__mg.is-open .ar__tl { opacity: 1; transform: none; }
+.ar__ti { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: var(--rad, 14px); box-shadow: 0 14px 36px rgba(0,0,0,.28), 0 2px 8px rgba(0,0,0,.2); pointer-events: none; background: #1a1a1d; } .ar__ti.is-contain { object-fit: contain; background: none; box-shadow: none; filter: drop-shadow(0 12px 22px rgba(0,0,0,.3)); }
 .ar__cap { text-align: center; height: 64px; display: grid; align-content: center; gap: 4px; padding: 0 20px; }
 .ar__cap b { font-size: clamp(16px, 2.4vw, 20px); font-weight: 600; } .ar__cap span { opacity: .6; font-size: 14px; }
 .ar__cap.is-in { animation: arIn .45s var(--ease) both; } @keyframes arIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -657,8 +662,8 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 /* --- Spin Shutter --- */
 .ss { height: 640px; touch-action: pan-y; }
 .ss__ring { position: relative; width: 100%; cursor: grab; touch-action: pan-y; }
-.ss__card { position: absolute; left: 0; top: 0; border-radius: var(--ss-rad, 14px); overflow: hidden; background: #1a1a1d; will-change: transform, filter, opacity; cursor: pointer; }
-.ss__img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.ss__card { position: absolute; left: 0; top: 0; border-radius: var(--ss-rad, 0px); background: none; will-change: transform, filter, opacity; cursor: pointer; }
+.ss__img { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none; border-radius: var(--ss-rad, 0px); background: none; filter: var(--sh, none); }
 .ss__cap { position: absolute; left: 0; right: 0; bottom: 8px; height: 56px; text-align: center; display: grid; align-content: center; gap: 3px; pointer-events: none; z-index: 9999; }
 .ss__cap b { font-size: 17px; font-weight: 600; } .ss__cap span { opacity: .6; font-size: 14px; }
 .ss__cap.is-in { animation: arIn .45s var(--ease) both; }
@@ -677,7 +682,7 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 /* Phone 3D (WebGL) */
 .ph3 { overflow: visible; }
 .ph3__row { display: flex; align-items: center; width: 100%; }
-.ph3__stage { position: relative; flex: 1 1 0; min-width: 0; height: var(--h-d, 620px); touch-action: pan-y; cursor: grab; }
+.ph3__stage { position: relative; flex: 1 1 0; min-width: 0; height: min(var(--h-d, 620px), calc(100svh - 120px)); touch-action: pan-y; cursor: grab; }
 .ph3__t { flex: 0 0 27%; padding: 0 var(--gutter, 24px); } .ph3__t.is-empty { visibility: hidden; }
 .ph3__t--l { text-align: right; } .ph3__t--r { text-align: left; }
 .ph3__t h3 { font-size: clamp(22px, 2.6vw, 38px); line-height: 1.12; font-weight: 700; letter-spacing: -.02em; margin: 0 0 12px; }

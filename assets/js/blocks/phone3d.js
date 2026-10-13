@@ -2,6 +2,7 @@ import { h } from '../core/dom.js';
 import { still } from '../core/scrollhub.js';
 import { ITEMS, BG, HEIGHT, isVideo, playVideosWhenVisible, goto, bgClass, ticker, watchSize, dragHandler, clamp, num } from '../core/reelKit.js';
 import { createPhone } from '../core/phoneGL.js';
+import { isEmbedUrl, parseVimeo, parseYouTube, vimeoThumb } from '../core/media.js';
 
 // Phone 3D: echtes 3D-Smartphone (WebGL, ohne Bibliothek) mit Studio-Licht, Titan-Rahmen, Glas und Kameramodul.
 const FINISH = { // [Rahmen, Rückseite] als lineare Reflexionsfarbe
@@ -48,7 +49,7 @@ export default {
     const items = raw.map(i => ({ src: land ? (i.image || i.imageMobile) : (i.imageMobile || i.image), title: i.title || '', href: i.link || '' }));
     const el = h('div', { class: `ph3${land ? ' ph3--land' : ''}${bgClass(p.bg)}` });
     if (!items.length) { el.style.height = '200px'; el.append(h('p', { class: 'reel-empty' }, 'Mindestens 1 Bild hinzufügen.')); return el; }
-    const media = items.map(it => { if (isVideo(it.src)) { const v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = true; v.crossOrigin = 'anonymous'; v.src = it.src; v.play().catch(() => { }); return v; } const im = new Image(); im.crossOrigin = 'anonymous'; im.decoding = 'async'; im.src = it.src; return im; });
+    const media = items.map(it => { if (isVideo(it.src)) { const v = document.createElement('video'); v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = true; v.crossOrigin = 'anonymous'; v.src = it.src; v.play().catch(() => { }); return v; } const im = new Image(); im.crossOrigin = 'anonymous'; im.decoding = 'async'; if (isEmbedUrl(it.src)) { const yt = parseYouTube(it.src), v = yt ? { id: yt.id, yt: true } : parseVimeo(it.src); if (v) vimeoThumb(v).then((u) => { if (u) im.src = u; }); } else im.src = it.src; return im; });
     const canvas = h('canvas', { class: 'ph3__cv' }), shadow = h('div', { class: 'ph3__shadow' });
     const stage = h('div', { class: 'ph3__stage', style: { '--h-d': num(p.height, 620) + 'px', '--h-m': num(p.heightMobile, 560) + 'px' } }, shadow, canvas);
     const col = (title, text, side) => { if (!title && !text) return null; const c = h('div', { class: `ph3__t ph3__t--${side}` }); if (title) c.append(h('h3', {}, title)); for (const para of String(text || '').split(/\n\s*\n/).filter(Boolean)) c.append(h('p', {}, para)); return c; };

@@ -2,7 +2,7 @@
 // Jeder Block hat eine Computer- und eine Smartphone-Variante: 💻 Bild/Video (meist 16:9) und 📱 Bild/Video (meist 9:16).
 // Fehlt eine Variante, wird die andere genommen – es geht also immer beides.
 import { h } from './dom.js';
-import { imgFor, mobileView } from './media.js';
+import { imgFor, mobileView, isEmbedUrl, parseVimeo, parseYouTube, vimeoThumb } from './media.js';
 import { still } from './scrollhub.js';
 
 export const isVideo = (s) => /\.(mp4|webm)(\?|$)/i.test(s || '');
@@ -47,11 +47,19 @@ export function getItems(p, ctx) {
     src: mobileView() ? (i.imageMobile || i.image) : (i.image || i.imageMobile),
     srcAlt: mobileView() ? (i.image || i.imageMobile) : (i.imageMobile || i.image),
     title: i.title || '', subtitle: i.subtitle || '', href: i.link || '',
+    screens: (i.screens || []).filter(x => x && x.src).map(x => ({ src: x.src, size: x.size || '' })),
   }));
 }
 
 // Bild oder Video (mp4/webm läuft stumm in Schleife, nur wenn sichtbar)
 export function mediaNode(src, cls = '', alt = '') {
+  // Vimeo-/YouTube-Link: kann nicht in 3D/Fächern laufen, daher wird das Vorschaubild des Videos gezeigt (für echtes Abspielen eine mp4-Datei hochladen)
+  if (isEmbedUrl(src)) {
+    const im = h('img', { class: cls, alt, decoding: 'async', draggable: 'false', crossorigin: 'anonymous' });
+    const yt = parseYouTube(src), v = yt ? { id: yt.id, yt: true } : parseVimeo(src);
+    if (v) vimeoThumb(v).then((u) => { if (u) im.src = u; });
+    return im;
+  }
   if (isVideo(src)) {
     const v = h('video', { class: cls, src, muted: '', loop: '', playsinline: '', preload: 'metadata', 'aria-label': alt || null });
     v.muted = true; v.defaultMuted = true; v.dataset.vid = '1';
