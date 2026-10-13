@@ -1,4 +1,5 @@
 import { h } from '../core/dom.js';
+import { imgFor } from '../core/media.js';
 // Projektseite: Link zum nächsten Projekt (aus der Projektliste).
 export default {
   type: 'projectNext', label: 'Nächstes Projekt (automatisch)',
@@ -7,6 +8,6 @@ export default {
     const idx = ctx.content.index, list = (idx.order || []).filter(s => idx.projects[s] && !idx.projects[s].hidden);
     const i = list.indexOf(ctx.route); const next = list[(i + 1) % list.length]; if (!next || next === ctx.route) return null;
     const pr = idx.projects[next];
-    return h('a', { class: 'pn', href: next, 'data-link': '' }, h('span', { class: 'pn__k' }, p.label || 'next project'), h('span', { class: 'pn__t' }, pr.title, ' ↗'), pr.image ? h('img', { class: 'pn__i', src: pr.image, alt: '', loading: 'lazy' }) : null);
+    return h('a', { class: 'pn', href: next, 'data-link': '' }, h('span', { class: 'pn__k' }, p.label || 'next project'), h('span', { class: 'pn__t' }, pr.title, ' ↗'), pr.image ? h('img', { class: 'pn__i', src: imgFor(pr), alt: '', loading: 'lazy' }) : null);
   },
 };

@@ -1,4 +1,5 @@
 import { h } from '../core/dom.js';
+import { imgFor } from '../core/media.js';
 import { track, still, clamp, trackProgress } from '../core/scrollhub.js';
 // 3D-Flug: Beim Scrollen fliegt die Kamera durch einen dunklen Raum. Die Projekte hängen als Bild-Flächen im Raum,
 // dazu Drahtgitter-Würfel, Punktwolke und Bodenraster. Glitch (RGB-Versatz, Streifen) reagiert auf Scroll-Tempo.
@@ -40,7 +41,7 @@ function prog(gl, vs, fs) {
 const buf = (gl, data) => { const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW); return b; };
 
 function fallback(list) {
-  return h('div', { class: 'ft__fallback' }, list.map(pr => h('a', { class: 'ft__fb', href: pr.slug, 'data-link': '' }, h('img', { src: pr.image, alt: '', loading: 'lazy' }), h('span', {}, pr.title))));
+  return h('div', { class: 'ft__fallback' }, list.map(pr => h('a', { class: 'ft__fb', href: pr.slug, 'data-link': '' }, h('img', { src: imgFor(pr), alt: '', loading: 'lazy' }), h('span', {}, pr.title))));
 }
 
 export default {
@@ -92,7 +93,7 @@ export default {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         pl.tex = t; pl.ratio = img.naturalWidth / img.naturalHeight;
       };
-      img.src = pr_src(pl.pr.image);
+      img.src = pr_src(imgFor(pl.pr));
     });
     function pr_src(s) { return new URL(s, document.baseURI).href; }
 

@@ -1,6 +1,6 @@
 // Gemeinsame Helfer für alle Scroll-Szenen-Varianten.
 import { h } from '../core/dom.js';
-import { parseVimeo, parseYouTube, vimeoThumb } from '../core/media.js';
+import { imgFor, parseVimeo, parseYouTube, vimeoThumb } from '../core/media.js';
 
 export const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 export const sm = (t) => t * t * (3 - 2 * t);
@@ -10,13 +10,13 @@ export const seg = (p, a, b) => clamp((p - a) / (b - a));
 export const pad = (n) => String(n).padStart(2, '0');
 export const ratioNum = (r = '16/9') => { const [a, b] = String(r).split('/').map(Number); return a && b ? a / b : 16 / 9; };
 export const rolesOf = (pr) => String(pr.roles || '').split(',').map(s => s.trim()).filter(Boolean);
-export const stillsOf = (pr) => [...new Set([pr.image, ...(pr.stills || [])].filter(Boolean))];
+export const stillsOf = (pr) => [...new Set([imgFor(pr), ...(pr.stills || [])].filter(Boolean))];
 export const setVars = (el, o) => { for (const k in o) el.style.setProperty(k, String(o[k])); };
 
 export function mediaNode(pr, i, cls = 'scene__media') {
   const media = h('div', { class: cls });
   const setImg = (src) => media.replaceChildren(h('img', { src, alt: '', decoding: 'async', loading: i < 2 ? 'eager' : 'lazy' }));
-  if (pr.image) setImg(pr.image);
+  if (pr.image) setImg(imgFor(pr));
   else {
     media.append(h('div', { class: 'ph', style: { '--h1': (i * 67) % 360, '--h2': (i * 67 + 70) % 360 } }));
     const yy = parseYouTube(pr.vimeo), v = yy ? { id: yy.id, yt: true } : parseVimeo(pr.vimeo); if (v) vimeoThumb(v).then(t => { if (t) setImg(t); });

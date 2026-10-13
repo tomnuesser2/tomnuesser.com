@@ -1,6 +1,6 @@
 import { ui } from '../core/i18n.js';
 import { h } from '../core/dom.js';
-import { mediaEl, parseVimeo, parseYouTube, vimeoThumb } from '../core/media.js';
+import { mediaEl, imgFor, parseVimeo, parseYouTube, vimeoThumb } from '../core/media.js';
 import { pick, names } from '../scenes/index.js';
 import { mediaNode } from '../scenes/shared.js';
 import { hudEl } from '../core/hud.js';
@@ -28,7 +28,7 @@ function renderStack(p, ctx) {
     const grp = h('div', { class: 'p-group' });
     for (const pr of list) {
       const card = h('a', { class: 'p-card', href: pr.slug, 'data-link': '', 'aria-label': pr.title || pr.slug });
-      card.append(mediaEl({ sound: false, src: pr.image, vimeo: pr.vimeo, poster: pr.image ? '' : 'auto', ratio: pr.ratio || '16/9', radius: 'sm', alt: pr.title, hud: false }));
+      card.append(mediaEl({ sound: false, src: imgFor(pr), vimeo: pr.vimeo, poster: pr.image ? '' : 'auto', ratio: pr.ratio || '16/9', radius: 'sm', alt: pr.title, hud: false }));
       card.querySelector('.media-play')?.remove();
       card.append(h('span', { class: 'p-card__label' }, pr.title || ''));
       grp.append(card);
@@ -66,7 +66,7 @@ function renderIndex(p, ctx) {
   const stage = h('div', { class: 'wi__stage' }, pane, h('div', { class: 'wi__side' }, listEl, meta));
   // Handy: gestapelte Vollbild-Karten (Hochformat), die beim Scrollen übereinander schieben
   const wm = h('div', { class: 'wm' }, list.map((pr, i) => h('a', { class: 'wm__card', href: pr.slug, 'data-link': '', style: { '--i': i }, 'aria-label': pr.title },
-    pr.image ? h('img', { class: 'wm__img', src: pr.image, alt: '', loading: i < 2 ? 'eager' : 'lazy', decoding: 'async' }) : h('span', { class: 'wm__img wm__img--ph' }),
+    pr.image ? h('img', { class: 'wm__img', src: imgFor(pr), alt: '', loading: i < 2 ? 'eager' : 'lazy', decoding: 'async' }) : h('span', { class: 'wm__img wm__img--ph' }),
     h('span', { class: 'wm__n' }, `${pad(i + 1)} / ${pad(n)}`), h('span', { class: 'wm__go', 'aria-hidden': 'true' }, '↗'),
     h('span', { class: 'wm__txt' }, h('span', { class: 'wm__t' }, pr.title || pr.slug),
       pr.roles ? h('span', { class: 'wm__r' }, String(pr.roles).split(',').map(x => x.trim()).filter(Boolean).slice(0, 3).join(' · ')) : null))));

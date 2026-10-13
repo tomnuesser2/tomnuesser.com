@@ -86,11 +86,11 @@
       ]
     },
     "test2": {
-      "title": "test2",
-      "title_de": "",
+      "title": "notua",
+      "title_de": "notua",
       "summary_de": "",
       "roles_de": "",
-      "image": "",
+      "image": "media/notua-flyer-a6-quer-showcase-1-.webp",
       "vimeo": "",
       "ratio": "16/9",
       "group": 1,
@@ -99,7 +99,7 @@
       "summary": "",
       "anim": "expand",
       "roles": "",
-      "category": "video",
+      "category": "design",
       "cam": "",
       "stills": []
     }

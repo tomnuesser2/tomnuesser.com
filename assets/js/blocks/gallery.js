@@ -3,10 +3,12 @@ import { carousel3d } from '../core/carousel3d.js';
 import { flexCarousel } from '../core/flexCarousel.js';
 import { still, clamp } from '../core/scrollhub.js';
 import { getLang } from '../core/i18n.js';
+import { imgFor } from '../core/media.js';
 
 // Galerie-Elemente für Projektseiten (und überall sonst): 3D-Karussell, Flex-Karussell, Accordion, Vorher/Nachher.
 const ITEM = [
-  { name: 'image', label: 'Bild', type: 'image' },
+  { name: 'image', label: '💻 Bild (Computer)', type: 'image' },
+  { name: 'imageMobile', label: '📱 Bild für Smartphone (leer = wie Computer)', type: 'image' },
   { name: 'title', label: 'Titel (optional)', type: 'text' },
   { name: 'subtitle', label: 'Untertitel (optional)', type: 'text' },
   { name: 'link', label: 'Link beim Antippen (optional, z. B. ein Projekt-Name)', type: 'text' },
@@ -18,9 +20,9 @@ function getItems(p, ctx) {
   if (p.source === 'alle Projekte') {
     const idx = ctx.content.index;
     return (idx.order || []).map(s => ({ slug: s, ...idx.projects[s] })).filter(x => x.image && !x.hidden)
-      .map(x => ({ src: x.image, title: String(x.title || x.slug).replace(/\n/g, ' '), subtitle: x.roles || '', href: x.slug }));
+      .map(x => ({ src: imgFor(x), title: String(x.title || x.slug).replace(/\n/g, ' '), subtitle: x.roles || '', href: x.slug }));
   }
-  return (p.items || []).filter(i => i.image).map(i => ({ src: i.image, title: i.title || '', subtitle: i.subtitle || '', href: i.link || '' }));
+  return (p.items || []).filter(i => i.image).map(i => ({ src: imgFor(i), title: i.title || '', subtitle: i.subtitle || '', href: i.link || '' }));
 }
 const wrapEl = (cls, p, extra = {}) => {
   const el = h('div', { class: `b-gal ${cls}${p.bg === 'dunkel' ? ' b-gal--dark' : ''}`, style: { '--gh': `${Number(p.height) || 560}px`, ...extra } });
@@ -66,7 +68,7 @@ export const flexBlock = {
       const ch = p.captions ? .8 : (narrow ? .92 : .9);
       // Handy: Karte ca. 3/4 der Breite → links und rechts schauen die Nachbarbilder heraus
       const fitV = narrow && p.fit !== 'natural' ? Math.max(.6, Math.min(1.7, (el.clientWidth * .76) / (ch * el.clientHeight))) : p.fit;
-      const c = flexCarousel(el, items, { preset: p.preset, fit: fitV, cardHeight: ch, gap: narrow ? 8 : 14, radius: 10, captions: !!p.captions, autoplay: !!p.autoplay, onSelect: goto });
+      const c = flexCarousel(el, items, { preset: p.preset, fit: fitV, cardHeight: ch, maxW: narrow ? el.clientWidth * .78 : 0, gap: narrow ? 8 : 14, radius: 10, captions: !!p.captions, autoplay: !!p.autoplay, onSelect: goto });
       if (!c) { el.classList.add('is-nogl'); items.forEach(i => el.append(h('img', { src: i.src, alt: i.title || '', loading: 'lazy' }))); }
     });
     return el;

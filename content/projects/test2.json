@@ -1,11 +1,13 @@
 {
-  "title": "test2",
+  "title": "notua",
   "card": {
-    "image": "",
+    "image": "media/notua-flyer-a6-quer-showcase-1-.webp",
     "vimeo": "",
     "ratio": "16/9",
     "group": 1,
-    "category": "video"
+    "category": "design",
+    "stills": [],
+    "featured": false
   },
   "blocks": [
     {
@@ -23,5 +25,6 @@
         "bold": false
       }
     }
-  ]
+  ],
+  "title_de": "notua"
 }

@@ -1,4 +1,4 @@
-import { videoCfg } from './core/media.js';
+import { videoCfg, imgFor } from './core/media.js';
 import { h, svg, prefersReducedMotion } from './core/dom.js';
 import { renderBlocks } from './core/registry.js';
 import { localize, getLang, setLang, ui } from './core/i18n.js';
@@ -355,7 +355,7 @@ function entry(site) {
   const veil = h('div', { class: 'entry' }, h('div', { class: 'entry__in' }, h('h1', { class: 'entry__name' }, letters), tag ? h('p', { class: 'entry__tag' }, tag) : null, h('div', { class: 'entry__line' }, bar)));
   document.body.append(veil);
   // Erste Projektbilder vorladen, damit das Karussell nicht leer hereinfliegt (höchstens 2,6 s warten)
-  const idx = state.index || {}, imgs = (idx.order || []).map(sl => idx.projects[sl]).filter(x => x && x.image && !x.hidden).slice(0, 6).map(x => new Promise((res) => { const im = new Image(); im.onload = im.onerror = () => res(); im.src = x.image; if (im.decode) im.decode().then(res, res); }));
+  const idx = state.index || {}, imgs = (idx.order || []).map(sl => idx.projects[sl]).filter(x => x && x.image && !x.hidden).slice(0, 6).map(x => new Promise((res) => { const im = new Image(); im.onload = im.onerror = () => res(); im.src = imgFor(x); if (im.decode) im.decode().then(res, res); }));
   const minShow = new Promise(r => setTimeout(r, 950));
   bar.animate([{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], { duration: 950, easing: 'cubic-bezier(.65,0,.25,1)', fill: 'forwards' });
   return new Promise((resolve) => {
