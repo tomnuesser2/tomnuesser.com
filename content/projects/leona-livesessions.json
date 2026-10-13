@@ -9,7 +9,8 @@
     "stills": [],
     "featured": true,
     "hidden": false,
-    "anim": "gallery"
+    "anim": "gallery",
+    "imageMobile": "media/dsc03461-2.webp"
   },
   "blocks": [
     {

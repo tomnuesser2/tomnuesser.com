@@ -6,7 +6,8 @@
     "ratio": "16/9",
     "group": 1,
     "category": "video",
-    "stills": []
+    "stills": [],
+    "imageMobile": ""
   },
   "blocks": [
     {
