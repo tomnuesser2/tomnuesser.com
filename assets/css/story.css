@@ -580,3 +580,5 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 .dv__scr { container-type: size; }
 .dv__scr .media-inner > iframe.media-embed { inset: auto; left: 50%; top: 50%; right: auto; bottom: auto; width: max(102cqw, 102cqh * 16 / 9); height: max(102cqh, 102cqw * 9 / 16); max-width: none; max-height: none; transform: translate(-50%, -50%); }
 .dv__scr .media-frame, .dv__scr .media-inner { background: #000; }
+.dv--nochrome .dv__laptop .dv__screen, .dv--nochrome .dv__page { background: #000; }
+@media (max-width: 760px) { .dv--nochrome-m .dv__laptop .dv__screen, .dv--nochrome-m .dv__page { background: #000; } }

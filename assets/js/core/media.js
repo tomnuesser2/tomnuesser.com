@@ -13,6 +13,9 @@ export function parseYouTube(input) {
   const m = String(input).match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/i);
   return m ? { id: m[1] } : null;
 }
+// Handy-Ansicht (unter 900 px): jedes Vorschaubild kann eine eigene Smartphone-Variante haben (imageMobile / srcMobile)
+export const mobileView = () => typeof matchMedia === 'function' && matchMedia('(max-width: 899px)').matches;
+export const imgFor = (o, k = 'image') => (mobileView() && o && o[k + 'Mobile'] ? o[k + 'Mobile'] : o && o[k]);
 export const isEmbedUrl = (s) => /(?:vimeo\.com|youtu\.be|youtube\.com)\//i.test(s || '');
 export function parseVimeo(input) {
   if (!input || parseYouTube(input)) return null;
@@ -48,6 +51,7 @@ const PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-
  * props: { src, alt, vimeo, poster ("auto" | Pfad), ratio, radius: sm|xl|none, parallax, reveal }
  */
 export function mediaEl(p = {}) {
+  if (p.srcMobile && mobileView()) p = { ...p, src: p.srcMobile };
   if (!p.vimeo && isEmbedUrl(p.src)) p = { ...p, vimeo: p.src, src: '' };
   const radius = p.radius || 'sm';
   const frame = h('figure', {

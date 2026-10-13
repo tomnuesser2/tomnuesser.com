@@ -177,7 +177,7 @@ export function flexCarousel(root, items, o = {}) {
   let resnap = false;
 
   const metrics = () => {
-    const cardH = Math.max(24, s.cardHeight * height), fixed = typeof s.fit === 'number' ? s.fit : FIT[s.fit], widths = slots.map(x => (fixed || x.aspect) * cardH), centers = []; let cur = 0;
+    const cardH = Math.max(24, s.cardHeight * height), fixed = typeof s.fit === 'number' ? s.fit : FIT[s.fit], widths = slots.map(x => Math.min((fixed || x.aspect) * cardH, s.maxW > 0 ? s.maxW : Infinity)), centers = []; let cur = 0;
     for (let i = 0; i < widths.length; i++) { centers.push(cur + widths[i] / 2); cur += widths[i] + s.gap; }
     return { cardH, widths, centers, gap: s.gap, loop: Math.max(cur, 1) };
   };

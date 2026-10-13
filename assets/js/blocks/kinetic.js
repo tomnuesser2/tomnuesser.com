@@ -14,6 +14,8 @@ export default {
     { name: 'frames', label: 'ODER Bildsequenz: Knopf drücken und die Reihe wählen (z. B. f_0001.jpg, f_0002.jpg … in einem Ordner unter media/). Anzahl wird automatisch erkannt.', type: 'sequence', default: '' },
     { name: 'frameStart', label: 'Erste Bildnummer der Sequenz (meist 1)', type: 'number', default: 1 },
     { name: 'frameCount', label: 'Anzahl Bilder der Sequenz', type: 'number', default: 120 },
+    { name: 'play', label: 'Ablauf', type: 'select', options: ['automatisch', 'nur Scrollen'], default: 'automatisch' },
+    { name: 'duration', label: 'Dauer der Animation in Sekunden (bei „automatisch“: so lange läuft sie normal durch; Scrollen macht sie schneller)', type: 'number', default: 8 },
     { name: 'length', label: 'Länge der Animation = Scroll-Strecke (in Bildschirmhöhen, z. B. 6 = sechs mal runterscrollen)', type: 'number', default: 6 },
     { name: 'smooth', label: 'Weichheit (0 = direkt, 0.2 = sehr weich/träge)', type: 'number', default: 0.12 },
     { name: 'wordsOn', label: 'Wörter einblenden', type: 'checkbox', default: true },
@@ -42,13 +44,15 @@ export default {
     const clip = h('div', { class: `kn__clip is-${p.size}${vid || vmf || cv ? ' has-vid' : ''}`, style: { '--dim': String((Number(p.dim) || 0) / 100) } }, vid, vmf, cv, shapes, wEls);
     const cta = p.ctaText ? h('a', { class: 'cta cta--light kn__cta', href: p.ctaLink || 'projects', 'data-link': '' }, h('span', {}, p.ctaText), h('i', { 'aria-hidden': 'true' }, '→')) : null;
     const stage = h('div', { class: 'kn__stage', style: { '--accent': p.accent || '#ff2d2d' } }, clip, cta);
-    const L = Math.max(2, Number(p.length) || 6);
+    const L = Math.max(2, p.play === 'nur Scrollen' ? (Number(p.length) || 6) : Math.min(Number(p.length) || 6, 3));
     const el = h('section', { class: 'kn', id: p.id, style: { '--n': n, '--len': L } }, h('div', { class: 'kn__track' }, stage));
     if (still()) { el.classList.add('is-still'); wEls.forEach((w, i) => { if (i) w.style.display = 'none'; }); stage.style.setProperty('--e', 1); return el; }
     const ring = shapes.querySelector('.kn__ring'), ring2 = shapes.querySelector('.kn__ring2'), sq = shapes.querySelector('.kn__sq');
     const la = shapes.querySelector('.kn__ln--a'), lb = shapes.querySelector('.kn__ln--b'), lc = shapes.querySelector('.kn__ln--c');
     if (vid && !scrub && 'IntersectionObserver' in window) new IntersectionObserver((es) => { es.forEach(e => { if (e.isIntersecting) vid.play().catch(() => {}); else vid.pause(); }); }, { rootMargin: '20%' }).observe(el);
     const SMALL = matchMedia('(max-width: 899px)').matches; let svgAt = 0, seekAt = 0, pend = false; let beat = -1, target = 0, curP = 0, vis = false, raf = 0;
+    // Automatik: ein Scroll startet die Animation, sie läuft in normaler Geschwindigkeit durch; weiterscrollen macht sie schneller
+    const auto = p.play !== 'nur Scrollen'; const DUR = Math.max(2, Number(p.duration) || 8); let scrollP = 0, aP = 0, started = false, lastT = 0;
     // Bildsequenz vorladen
     const imgs = []; let ctx2 = null, lastF = -1;
     if (cv) { const N = Math.max(1, Number(p.frameCount) || 1), pad = (i) => String(i).padStart((p.frames.match(/#+/) || ['####'])[0].length, '0'); ctx2 = cv.getContext('2d');
@@ -73,12 +77,18 @@ export default {
       if ('ResizeObserver' in window) new ResizeObserver(fit).observe(clip); fit();
     }
     const tick = () => { raf = 0; pend = false; const k = Math.max(0, Math.min(1, Number(p.smooth)));
+      const nowA = performance.now(), dtA = lastT ? Math.min(.05, (nowA - lastT) / 1000) : 0; lastT = nowA;
+      if (auto) {
+        if (scrollP < .004) { started = false; aP = 0; } else if (scrollP > .012 && vis) started = true;
+        if (started && aP < 1) aP = Math.min(1, aP + dtA / DUR);
+        target = started ? Math.max(aP, scrollP) : scrollP; aP = Math.max(aP, started ? scrollP : 0);
+      } else target = scrollP;
       curP += (target - curP) * (k ? 1 - Math.pow(1 - k, 1) : 1); if (Math.abs(target - curP) < .0004) curP = target;
       const q = clamp((curP - .1) / .9);
       if (vid && scrub && vid.duration) { const t = q * vid.duration, nw = performance.now(); if (!vid.seeking && Math.abs(vid.currentTime - t) > (SMALL ? .1 : .03) && nw - seekAt > (SMALL ? 110 : 0)) { seekAt = nw; vid.currentTime = t; } else if (Math.abs(vid.currentTime - t) > (SMALL ? .1 : .03)) pend = true; }
       if (vmf && scrub && vReady && vDur) { const t = Math.min(vDur - .05, q * vDur), nw = performance.now(); if (Math.abs(t - vLast) > .04 && nw - vAt > (SMALL ? 160 : 90)) { vAt = nw; vLast = t; vpost({ method: 'setCurrentTime', value: t }); } else if (Math.abs(t - vLast) > .04) pend = true; }
       drawFrame(q); apply(curP);
-      if (vis && (curP !== target || pend)) raf = requestAnimationFrame(tick); };
+      if (vis && (curP !== target || pend || (auto && started && aP < 1))) raf = requestAnimationFrame(tick); else lastT = 0; };
     const apply = (raw) => {
       const e = ease(clamp(raw / .14));
       stage.style.setProperty('--e', e.toFixed(4));
@@ -104,7 +114,7 @@ export default {
     };
     if ('IntersectionObserver' in window) new IntersectionObserver((es) => { es.forEach(e => { vis = e.isIntersecting; if (vis && !raf) raf = requestAnimationFrame(tick); }); }, { rootMargin: '30%' }).observe(el); else vis = true;
     if (vid && scrub) { vid.pause(); vid.addEventListener('loadedmetadata', () => { vid.currentTime = 0.001; }); }
-    track(el.querySelector('.kn__track'), (r) => { target = trackProgress(r, stage.offsetHeight); if (!raf) raf = requestAnimationFrame(tick); });
+    track(el.querySelector('.kn__track'), (r) => { scrollP = trackProgress(r, stage.offsetHeight); if (!raf) raf = requestAnimationFrame(tick); });
     return el;
   },
 };

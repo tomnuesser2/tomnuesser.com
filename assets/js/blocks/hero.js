@@ -93,7 +93,7 @@ function mobileHero(p, ctx) {
   { let k = 0; [...title.children].forEach((r) => { splitChars(r, k); k += r.textContent.length; }); }
   const cue = h('p', { class: 'hm__cue' }, p.cue || 'scroll', h('i', { 'aria-hidden': 'true' }, '↓'));
   const shots = feat.map((f, i) => {
-    const img = h('img', { src: f.image, alt: '', decoding: 'async' });
+    const img = h('img', { src: f.imageMobile || f.image, alt: '', decoding: 'async' });
     const cap = h('div', { class: 'hm__cap' }, h('span', { class: 'hm__n' }, `${String(i + 1).padStart(2, '0')} / ${String(N).padStart(2, '0')}`), h('strong', { class: 'hm__t' }, name(f)), f.roles ? h('em', { class: 'hm__r' }, f.roles) : null);
     const a = h('a', { class: 'hm__shot', href: f.slug, 'data-link': '', 'aria-label': name(f) }, h('div', { class: 'hm__img' }, img), h('i', { class: 'hm__shade' }), cap);
     return { a, img: a.firstChild, cap };
@@ -114,7 +114,7 @@ function mobileHero(p, ctx) {
     if (need > avail && need > 0) title.style.fontSize = (parseFloat(getComputedStyle(title).fontSize) * avail / need * .98).toFixed(1) + 'px'; };
   requestAnimationFrame(fitTitle); [250, 900, 2200].forEach(t => setTimeout(fitTitle, t)); document.fonts && document.fonts.ready.then(fitTitle); addEventListener('resize', fitTitle, { passive: true });
   const open = (it) => { const a = document.createElement('a'); a.href = it.href; a.setAttribute('data-link', ''); a.hidden = true; document.body.append(a); a.click(); a.remove(); };
-  (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true }); }));
+  (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.imageMobile || x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true }); }));
   const apply = (u) => {
     if (!R) measure();
     const z = ease(clamp((u - 1) / 1)), rot = clamp((u - .04) / .96);
