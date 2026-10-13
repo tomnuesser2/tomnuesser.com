@@ -11,7 +11,8 @@ export default {
     { name: 'words', label: 'Wörter (eins pro Zeile)', type: 'textarea', default: 'film\ndesign\ndevelop\none thread.' },
     { name: 'video', label: 'Hintergrund-Video: Datei (mp4/webm) oder Vimeo-Link. Bei „scrub“ läuft das Video durchs Scrollen vor und zurück (mp4 = ruckelfrei, Vimeo = etwas gröber). Leer = nur Typo-Animation.', type: 'image', default: '' },
     { name: 'videoMode', label: 'Video-Verhalten', type: 'select', options: ['scrub', 'loop'], default: 'scrub' },
-    { name: 'frames', label: 'ODER Bildsequenz (z. B. media/seq/f_####.jpg – #### wird durch 0001, 0002 … ersetzt, ideal für 3D-Renderings)', type: 'text', default: '' },
+    { name: 'frames', label: 'ODER Bildsequenz: Knopf drücken und die Reihe wählen (z. B. f_0001.jpg, f_0002.jpg … in einem Ordner unter media/). Anzahl wird automatisch erkannt.', type: 'sequence', default: '' },
+    { name: 'frameStart', label: 'Erste Bildnummer der Sequenz (meist 1)', type: 'number', default: 1 },
     { name: 'frameCount', label: 'Anzahl Bilder der Sequenz', type: 'number', default: 120 },
     { name: 'length', label: 'Länge der Animation = Scroll-Strecke (in Bildschirmhöhen, z. B. 6 = sechs mal runterscrollen)', type: 'number', default: 6 },
     { name: 'smooth', label: 'Weichheit (0 = direkt, 0.2 = sehr weich/träge)', type: 'number', default: 0.12 },
@@ -51,7 +52,7 @@ export default {
     // Bildsequenz vorladen
     const imgs = []; let ctx2 = null, lastF = -1;
     if (cv) { const N = Math.max(1, Number(p.frameCount) || 1), pad = (i) => String(i).padStart((p.frames.match(/#+/) || ['####'])[0].length, '0'); ctx2 = cv.getContext('2d');
-      for (let i = 0; i < N; i++) { const im = new Image(); im.decoding = 'async'; im.src = p.frames.replace(/#+/, pad(i + 1)); imgs.push(im); } }
+      for (let i = 0; i < N; i++) { const im = new Image(); im.decoding = 'async'; im.src = p.frames.replace(/#+/, pad(i + (Number(p.frameStart) || 1))); imgs.push(im); } }
     const drawFrame = (q) => { if (!cv) return; const i = Math.min(imgs.length - 1, Math.floor(q * imgs.length)); if (i === lastF) return; const im = imgs[i]; if (!im.complete || !im.naturalWidth) return; lastF = i; if (cv.width !== im.naturalWidth) { cv.width = im.naturalWidth; cv.height = im.naturalHeight; } ctx2.drawImage(im, 0, 0); };
     // Vimeo-Scrub
     let vDur = 0, vReady = false, vLast = -1, vAt = 0, vSrcSet = false;
