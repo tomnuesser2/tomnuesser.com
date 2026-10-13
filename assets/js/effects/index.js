@@ -15,9 +15,10 @@ import scenes from './scenes.js';
 import hud from './hud.js';
 import scramble from './scramble.js';
 import palette from './palette.js';
+import statusbar from './statusbar.js';
 
 export const effects = {
-  reveal, splitText, parallax, magnetic, smoothScroll, grain, progress, cursor, headerHide, pageTransition, scenes, hud, scramble, palette,
+  reveal, splitText, parallax, magnetic, smoothScroll, grain, progress, cursor, headerHide, pageTransition, scenes, hud, scramble, palette, statusbar,
 };
 
 const running = [];

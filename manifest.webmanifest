@@ -1,0 +1,10 @@
+{
+  "name": "tom nuesser",
+  "short_name": "tomnuesser",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#fcfcfc",
+  "theme_color": "#fcfcfc"
+}
