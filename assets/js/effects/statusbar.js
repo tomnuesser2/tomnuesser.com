@@ -7,10 +7,11 @@ const lum = (c) => { const m = String(c).match(/[\d.]+/g); if (!m || m.length < 
 export default {
   name: 'statusbar',
   init() {
-    let meta = document.querySelector('meta[name="theme-color"]');
-    if (!meta) { meta = document.createElement('meta'); meta.name = 'theme-color'; document.head.append(meta); }
+    // Alle theme-color-Angaben (hell/dunkel) bekommen denselben Wert – Chrome im Dunkelmodus nimmt sonst eine dunkle Leiste
+    let metas = [...document.querySelectorAll('meta[name="theme-color"]')];
+    if (!metas.length) { const m = document.createElement('meta'); m.name = 'theme-color'; document.head.append(m); metas = [m]; }
     let cur = '', queued = false;
-    const set = (c) => { if (c === cur) return; cur = c; meta.setAttribute('content', c); document.documentElement.style.setProperty('--statusbar', c); };
+    const set = (c) => { if (c === cur) return; cur = c; metas.forEach(m => m.setAttribute('content', c)); document.documentElement.style.setProperty('--statusbar', c); };
     const sample = () => {
       queued = false;
       const hd = document.querySelector('.site-header');
