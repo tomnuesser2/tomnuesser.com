@@ -15,6 +15,7 @@ export default {
   fields: [
     { name: 'kind', label: 'Gerät', type: 'select', options: ['phone', 'laptop'], default: 'phone' },
     { name: 'side', label: 'Gerät steht', type: 'select', options: ['left', 'right'], default: 'left' },
+    { name: 'textAlign', label: 'Text-Versatz neben dem Gerät', type: 'select', options: ['links', 'mitte', 'rechts'], default: 'links' },
     { name: 'kicker', label: 'Kleine Zeile (z. B. short-form / web)', type: 'text', default: '' },
     { name: 'title', label: 'Überschrift', type: 'text', default: '' },
     { name: 'text', label: 'Text unter der Überschrift', type: 'textarea', default: '' },
@@ -46,7 +47,7 @@ export default {
       p.text ? h('p', { class: 'dv__p' }, p.text) : null, copyItem, items.length > 1 ? dots : null,
       p.linkText && p.linkUrl ? h('a', { class: 'dv__link', href: p.linkUrl, ...(/^https?:/.test(p.linkUrl) ? { target: '_blank', rel: 'noopener' } : { 'data-link': '' }) }, p.linkText + ' ↗') : null);
     const stage = h('div', { class: 'dv__stage' }, device, copy);
-    const el = h('section', { class: `dv dv--${phone ? 'phone' : 'laptop'} dv--${p.side === 'right' ? 'right' : 'left'}${p.chrome === false ? ' dv--nochrome' : ''}${p.chromeMobile === false ? ' dv--nochrome-m' : ''}${p.volumeUi ? ' dv--vol' : ''}`, id: p.id, style: { '--n': n } }, h('div', { class: 'dv__track' }, stage));
+    const el = h('section', { class: `dv dv--${phone ? 'phone' : 'laptop'} dv--${p.side === 'right' ? 'right' : 'left'} dv--ta-${p.textAlign === 'mitte' ? 'center' : p.textAlign === 'rechts' ? 'right' : 'left'}${p.chrome === false ? ' dv--nochrome' : ''}${p.chromeMobile === false ? ' dv--nochrome-m' : ''}${p.volumeUi ? ' dv--vol' : ''}`, id: p.id, style: { '--n': n, '--ts': Number(p.textScale) > 0 ? Number(p.textScale) : 1 } }, h('div', { class: 'dv__track' }, stage));
 
     // Lautstärke-Regler (optional)
     let vol = 0, lastVol = Math.max(10, Number(videoCfg.volume) || 40), cur = -1;
