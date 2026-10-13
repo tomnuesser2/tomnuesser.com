@@ -595,3 +595,6 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 .b-reel.has-fade { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%); }
 .b-reel__empty { display: grid; place-items: center; height: 100%; margin: 0; opacity: .6; font-family: var(--mono, monospace); }
 @media (max-width: 760px) { .b-reel { width: 100%; border-radius: 0; box-shadow: none; } .b-reel.has-hover .b-reel__card:hover { transform: none; box-shadow: none; } }
+
+.b-reel--clear { background: transparent; box-shadow: none; color: inherit; }
+.b-reel--clear .b-reel__card { background: rgba(127,127,127,.15); }
