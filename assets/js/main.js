@@ -157,7 +157,8 @@ const dock = () => { const hd = document.querySelector('.site-header'); if (!hd)
   const on = flPinned(); if (on !== flOn) { flOn = on; morph(on); } else if (on && !morphAnim.length) { hd.classList.add('mnav-off'); document.body.classList.add('fl-pinned'); } };
 addEventListener('tn-dark', () => dock());
 let spyQ = false;
-addEventListener('scroll', () => { if (spyQ) return; spyQ = true; requestAnimationFrame(() => { spyQ = false; spy(); dock(); }); }, { passive: true });
+let spyT = 0;
+addEventListener('scroll', () => { if (spyQ) return; spyQ = true; requestAnimationFrame((now) => { spyQ = false; if (now - spyT < 90) { setTimeout(() => { if (!spyQ) { spyQ = true; requestAnimationFrame(() => { spyQ = false; spyT = performance.now(); spy(); dock(); }); } }, 90); return; } spyT = now; spy(); dock(); }); }, { passive: true });
 
 function markActiveLinks() {
   spy(); dock();

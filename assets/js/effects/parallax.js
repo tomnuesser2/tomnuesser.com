@@ -5,11 +5,14 @@ let ticking = false;
 
 function update() {
   ticking = false;
-  const vh = window.innerHeight;
-  for (const { frame, inner } of items) {
-    if (!frame.isConnected || frame.classList.contains('is-playing')) continue;
-    const r = frame.getBoundingClientRect();
+  const vh = window.innerHeight, work = [];
+  for (const it of items) {
+    if (!it.frame.isConnected || it.frame.classList.contains('is-playing')) continue;
+    const r = it.frame.getBoundingClientRect();
     if (r.bottom < -100 || r.top > vh + 100) continue;
+    work.push([it.inner, r]);
+  }
+  for (const [inner, r] of work) {
     const p = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2); // -1 … 1
     const shift = Math.max(-1, Math.min(1, p)) * 5; // Prozent
     inner.style.transform = `translate3d(0, ${shift.toFixed(2)}%, 0) scale(1.14)`;

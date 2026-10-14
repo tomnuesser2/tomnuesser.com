@@ -1,8 +1,10 @@
 import { h } from '../core/dom.js';
 import { mobileView } from '../core/media.js';
+import { mountFinder } from '../core/viewfinder.js';
 import { still } from '../core/scrollhub.js';
 import { SOURCE, ITEMS, BG, HEIGHT, getItems, mediaNode, playVideosWhenVisible, openLightbox, goto, bgClass, ticker, watchSize, dragHandler, aspectOf, heightOf, clamp, num } from '../core/reelKit.js';
 
+const M_FIND = 'Sucher (Rahmen wechselt zwischen 9:16 und 16:9, Filmstreifen unten)', M_WHEEL = 'Rad am rechten Rand', M_ROW = 'Reihe wie am Computer';
 const ORIG = 'Format des jeweiligen Bildes (Hochformat bleibt Hochformat)';
 const fixedRatio = (f) => { const m = String(f || '').match(/^(\d+(?:\.\d+)?)\s*[:/]\s*(\d+(?:\.\d+)?)$/); return m ? Number(m[1]) / Number(m[2]) : 0; };
 // Parallax-Carousel: Reihe aus Bildkarten; beim Verschieben gleiten die Bilder in den Karten gegenläufig (Tiefe).
@@ -10,7 +12,9 @@ export default {
   type: 'parallaxCarousel', label: 'Parallax-Carousel (Karten mit gleitenden Bildern)',
   fields: [
     SOURCE, ITEMS, { name: 'format', label: 'Format der Rahmen', type: 'select', options: [ORIG, '16:9', '9:16', '1:1', '4:5', '4:3', '3:2'], default: ORIG }, ...HEIGHT(520, 560), BG,
-    { name: 'mobileWheel', label: '📱 Handy: Karten laufen als Rad am rechten Bildschirmrand (alle quadratisch, von oben nach unten)', type: 'checkbox', default: true },
+    { name: 'mobileMode', label: '📱 Darstellung am Handy', type: 'select', options: [M_FIND, M_WHEEL, M_ROW], default: M_FIND },
+    { name: 'mobileTitle', label: '📱 Text über dem Sucher (Überschrift, gilt für die ganze Reihe, nur Smartphone)', type: 'text', default: '' },
+    { name: 'mobileText', label: '📱 Text über dem Sucher (Zeile darunter, optional)', type: 'textarea', default: '' },
     { name: 'alternate', label: 'Automatisch abwechselnd sortieren: Hochformat, Querformat, Hochformat …', type: 'checkbox', default: true },
     { name: 'gap', label: 'Abstand zwischen den Karten in px', type: 'number', default: 32 },
     { name: 'radius', label: 'Rundung in px', type: 'number', default: 16 },
@@ -33,7 +37,7 @@ export default {
     el.style.height = Math.max(200, heightOf(p, 520, 400)) + 'px';
     const track = h('div', { class: 'pc__track' }); const bar = h('i', { class: 'pc__bar' }); const prog = h('div', { class: 'pc__prog' }, bar);
     el.append(track); if (p.showProgress !== false && !p.loop) el.append(prog);
-    let list = base.slice(), planes = [], W = 0, H = 0, pw = 0, ph = 0, gap = num(p.gap, 32), total = 0, pos = 0, target = 0, hover = false, held = false, off = [], wid = [], hei = [], mob = false, inited = false, wheelOn = false, CX = 0, R = 0, S = 0, stepA = 0, capK = .86;
+    let list = base.slice(), planes = [], W = 0, H = 0, pw = 0, ph = 0, gap = num(p.gap, 32), total = 0, pos = 0, target = 0, hover = false, held = false, off = [], wid = [], hei = [], vf = null, vfOn = false, cap = null, capKey = '', capT = 0, mob = false, inited = false, wheelOn = false, CX = 0, R = 0, S = 0, stepA = 0, capK = .86;
     const fixed = fixedRatio(p.format), asp = new Map(), dflt = () => (mobileView() ? 9 / 16 : 16 / 9);
     const aspOf = (src) => fixed || asp.get(src) || dflt();
     let order = base.slice();
@@ -48,11 +52,12 @@ export default {
     if (!fixed) base.forEach((it) => { if (/\.(mp4|webm|mov)(\?|$)/i.test(it.src) || /vimeo|youtu/i.test(it.src)) return; const im = new Image(); im.onload = () => learn(it.src, im.naturalWidth, im.naturalHeight); im.src = it.src; });
     const loop = p.loop !== false, uv = clamp(num(p.uvScale, .7), .5, 1), par = clamp(num(p.parallax, 1), 0, 1.2), lerpK = clamp(num(p.lerp, .08), .01, 1);
     const build = () => {
+      if (vfOn) { el.style.setProperty('--pc-fb', '0px'); vf.refresh(); return; }
       track.textContent = ''; planes = [];
       // Bei Endlos genug Karten, damit der Bildschirm immer voll ist
       if (wheelOn) {
-        order = base.slice(); const n = Math.max(order.length, Math.ceil((2 * Math.PI * R) / ((S + gap) * .95))); list = []; for (let k = 0; k < n; k++) list.push(order[k % order.length]);
-        stepA = (2 * Math.PI * R) / n; wid = list.map(() => S); hei = list.map(() => S); off = list.map((_, k) => k * stepA); total = n * stepA;
+        order = base.slice(); const n = Math.max(order.length, Math.ceil((2 * Math.PI * R) / ((S + gap) * .6))); list = []; for (let k = 0; k < n; k++) list.push(order[k % order.length]);
+        stepA = (2 * Math.PI * R) / n; wid = list.map(() => S); hei = list.map(() => S); off = list.map((_, k) => k * stepA); total = n * stepA; el.style.setProperty('--pc-fb', '0px');
         list.forEach((it, i) => { const m = mediaNode(it.src, 'pc__img', it.title); const pl = h('a', { class: 'pc__plane', href: it.href || null, 'data-link': it.href ? '' : null, draggable: 'false', style: { width: S + 'px', height: S + 'px' } }, m); if (!it.href) { pl.removeAttribute('href'); pl.classList.add('is-zoom'); pl.addEventListener('click', () => openLightbox(order, i % order.length)); } track.append(pl); planes.push({ pl, m, w: S, hh: S, i }); });
         planes.forEach(({ m }) => { m.style.width = (S / uv) + 'px'; m.style.height = (S / uv) + 'px'; m.style.left = -(S / uv - S) / 2 + 'px'; m.style.top = -(S / uv - S) / 2 + 'px'; });
         playVideosWhenVisible(el); return;
@@ -60,7 +65,7 @@ export default {
       const widthOf = (it) => Math.max(80, Math.min(Math.round(ph * aspOf(it.src)), Math.round(W * capK)));
       arrange(); list = order.slice(); const sum = (l) => l.reduce((t, it) => t + widthOf(it) + gap, 0);
       if (loop) while (sum(list) < W + (widthOf(order[0]) + gap) * 2.5) list = list.concat(order);
-      wid = list.map(widthOf); hei = list.map((it, i) => Math.min(ph, Math.round(wid[i] / aspOf(it.src)))); off = []; total = 0; wid.forEach((w) => { off.push(total); total += w + gap; });
+      wid = list.map(widthOf); hei = list.map((it, i) => Math.min(ph, Math.round(wid[i] / aspOf(it.src)))); el.style.setProperty('--pc-fb', Math.max(0, Math.round((H - Math.max(...hei)) / 2)) + 'px'); off = []; total = 0; wid.forEach((w) => { off.push(total); total += w + gap; });
       list.forEach((it, i) => { const m = mediaNode(it.src, 'pc__img', it.title); const pl = h('a', { class: 'pc__plane', href: it.href || null, 'data-link': it.href ? '' : null, draggable: 'false', style: { width: wid[i] + 'px', height: hei[i] + 'px' } }, m); if (!it.href) { pl.removeAttribute('href'); pl.classList.add('is-zoom'); pl.addEventListener('click', () => openLightbox(order, i % order.length)); } if (m.tagName === 'IMG') m.addEventListener('load', () => learn(it.src, m.naturalWidth, m.naturalHeight)); else if (m.tagName === 'VIDEO') m.addEventListener('loadedmetadata', () => learn(it.src, m.videoWidth, m.videoHeight)); track.append(pl); planes.push({ pl, m, w: wid[i], hh: hei[i], i }); });
       planes.forEach(({ m, w, hh }) => { m.style.width = (w / uv) + 'px'; m.style.height = (hh / uv) + 'px'; m.style.left = -(w / uv - w) / 2 + 'px'; m.style.top = -(hh / uv - hh) / 2 + 'px'; });
       if (!inited && loop && mob) { inited = true; pos = target = -(W - wid[0]) / 2; }
@@ -68,29 +73,32 @@ export default {
     };
     watchSize(el, (w, hh) => {
       W = w; H = hh; mob = mobileView() || W < 700; capK = mob ? .62 : .86; gap = mob ? Math.min(num(p.gap, 32), 16) : num(p.gap, 32); ph = Math.round(H * (mob ? .68 : .82)); pw = Math.max(80, Math.min(Math.round(ph * aspOf((order[0] || base[0]).src)), Math.round(W * capK)));
-      wheelOn = mob && p.mobileWheel !== false && loop; el.classList.toggle('pc--wheel', wheelOn); if (wheelOn) { S = Math.round(Math.min(W * .4, H * .36)); CX = W + Math.round(W * .65); R = CX - S / 2 - 10; gap = Math.min(gap, 14); }
+      const mode = p.mobileMode || (p.mobileWheel === false ? M_ROW : M_FIND); wheelOn = mob && mode === M_WHEEL && loop; const vfWant = mob && mode === M_FIND; el.classList.toggle('pc--vf', vfWant);
+      if (vfWant) { if (!vf) vf = mountFinder(el, { getList: () => { arrange(); return order; }, aspOf, title: p.mobileTitle || '', text: p.mobileText || '' }); vfOn = true; build(); vf.layout(W, H); return; } if (vf && vfOn) { vfOn = false; vf.destroy(); vf = null; } el.classList.toggle('pc--wheel', wheelOn); if (wheelOn && !cap) { cap = h('div', { class: 'pc__cap' }); el.append(cap); } if (cap) { cap.style.width = Math.max(60, W - S - 36) + 'px'; cap.style.display = wheelOn ? '' : 'none'; } if (wheelOn) { S = Math.round(Math.min(W * .52, H * .42)); R = Math.round(S * .95); CX = (W - S / 2 - 12) + R; gap = Math.min(gap, 14); }
       build();
     });
     const clampPos = () => { if (!loop) { const max = Math.max(0, off[off.length - 1] + (wid[wid.length - 1] - wid[0]) / 2); pos = clamp(pos, -0, max); target = clamp(target, 0, max); } };
     const move = (d) => { target += d; clampPos(); };
-    dragHandler(track, { start: () => { held = true; }, move: (dx) => { move(-dx * num(p.dragSensitivity, 1.4)); }, end: (was, v) => { held = false; if (was) move(-v * 220 * num(p.dragSensitivity, 1.4) / 1.4); } });
+    dragHandler(track, { start: () => { held = true; }, move: (dx) => { move(-dx * num(p.dragSensitivity, 1.4) * (wheelOn ? 1.3 : 1)); }, end: (was, v) => { held = false; if (was) move(-v * (wheelOn ? 420 : 220) * num(p.dragSensitivity, 1.4) / 1.4); } });
     el.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && p.pauseOnHover !== false) hover = true; }); el.addEventListener('pointerleave', () => { hover = false; });
     if (p.wheel) el.addEventListener('wheel', (e) => { e.preventDefault(); move((Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * num(p.wheelSensitivity, 1)); }, { passive: false });
     ticker(el, (dt) => {
-      if (!still() && !held && !hover && num(p.autoplaySpeed, 0)) { move(num(p.autoplaySpeed, 0) * dt); }
-      pos += (target - pos) * (1 - Math.pow(1 - lerpK, dt * 60)); if (Math.abs(target - pos) < .05) pos = target;
+      if (!still() && !held && !hover && num(p.autoplaySpeed, 0)) { move(num(p.autoplaySpeed, 0) * dt * (wheelOn ? 2.4 : 1)); }
+      pos += (target - pos) * (1 - Math.pow(1 - (wheelOn ? Math.max(lerpK, .16) : lerpK), dt * 60)); if (Math.abs(target - pos) < .05) pos = target;
+      if (vfOn) return;
       if (!pw) return; const cx = W / 2;
       if (wheelOn) {
-        const TAU = Math.PI * 2;
+        const TAU = Math.PI * 2; let best = -2, bi = 0;
         for (let i = 0; i < planes.length; i++) {
           const { pl, m } = planes[i]; let a = ((((i * stepA + pos) / R) % TAU) + TAU) % TAU; if (a > Math.PI) a -= TAU;
-          const c = Math.cos(a); if (c < 0) { pl.style.visibility = 'hidden'; continue; }
-          const x = CX - R * c, y = H / 2 + R * Math.sin(a), sc = .74 + .26 * Math.max(0, c);
+          const c = Math.cos(a); if (c < .05) { pl.style.visibility = 'hidden'; continue; }
+          const x = CX - R * c, y = H / 2 + R * Math.sin(a), sc = .7 + .3 * Math.max(0, c); if (c > best) { best = c; bi = i; }
           if (y < -S || y > H + S || x > W + S / 2) { pl.style.visibility = 'hidden'; continue; }
-          pl.style.visibility = 'visible'; pl.style.zIndex = String(Math.round(c * 100) + 100); pl.style.opacity = String(clamp(.5 + c * 2, 0, 1).toFixed(2));
+          pl.style.visibility = 'visible'; pl.style.zIndex = String(Math.round(c * 100) + 100); pl.style.opacity = String(clamp(.3 + c * 1.1, 0, 1).toFixed(2));
           pl.style.transform = `translate3d(${(x - S / 2).toFixed(1)}px,${(y - S / 2).toFixed(1)}px,0) scale(${sc.toFixed(3)})`;
           const over = S / uv - S; m.style.transform = `translate3d(0,${clamp(-Math.sin(a) * par * over * .5, -over / 2, over / 2).toFixed(1)}px,0)`;
         }
+        if (cap) { const it = list[bi] || {}, key = (it.title || '') + '|' + (it.subtitle || ''); if (key !== capKey) { capKey = key; cap.classList.remove('is-on'); clearTimeout(capT); capT = setTimeout(() => { cap.replaceChildren(...[it.title ? h('b', {}, it.title) : null, it.subtitle ? h('span', {}, it.subtitle) : null].filter(Boolean)); if (it.title || it.subtitle) cap.classList.add('is-on'); }, 160); } }
         return;
       }
       for (let i = 0; i < planes.length; i++) {

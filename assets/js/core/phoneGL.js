@@ -166,3 +166,6 @@ export function createPhone(canvas, { tint = [.32, .32, .34], back = [.2, .2, .2
   };
   return api;
 }
+
+// Gemeinsame Bausteine für weitere 3D-Geräte (Laptop)
+export { slab, cap, ring, pushGeo, mul, ident, rotX, rotY, rotZ, trans, persp };

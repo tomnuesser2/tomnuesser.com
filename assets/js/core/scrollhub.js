@@ -3,13 +3,15 @@
 import { prefersReducedMotion } from './dom.js';
 const subs = new Set(); let queued = false, bound = false;
 const run = () => {
-  queued = false; const vh = innerHeight;
+  queued = false; const vh = innerHeight, live = [];
+  // 1) alle Maße lesen (ein einziges Layout), 2) erst danach die Blöcke zeichnen lassen – sonst erzwingt jeder Block ein neues Layout
   for (const s of subs) {
     if (!s.el.isConnected) { subs.delete(s); continue; }
     const r = s.el.getBoundingClientRect();
     if (r.bottom < -vh * .5 || r.top > vh * 1.5) continue;
-    try { s.fn(r, vh); } catch (e) { console.error('[scrollhub]', e); }
+    live.push([s, r]);
   }
+  for (const [s, r] of live) { try { s.fn(r, vh); } catch (e) { console.error('[scrollhub]', e); } }
 };
 export const kick = () => { if (!queued) { queued = true; requestAnimationFrame(run); } };
 export function track(el, fn) {

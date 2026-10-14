@@ -35,8 +35,9 @@ import spinShutter from '../blocks/spinShutter.js';
 import frameScrub from '../blocks/frameScrub.js';
 import timelinePlayer from '../blocks/timelinePlayer.js';
 import galleryBlocks from '../blocks/gallery.js';
+import laptop3d from '../blocks/laptop3d.js';
 
-export const blocks = [hero, chapter, statement, services, device, flythrough, notuaTeaser, notuaFlight, notuaBoard, deviceSwitch, projectHead, projectText, projectNext, kinetic, spacer, heading, text, media, mediaStack, projectGrid, contactForm, socials, impressum, reelGallery, albumRail, phone3d, elasticReel, parallaxCarousel, spinShutter, frameScrub, timelinePlayer, ...galleryBlocks];
+export const blocks = [hero, chapter, statement, services, device, flythrough, notuaTeaser, notuaFlight, notuaBoard, deviceSwitch, projectHead, projectText, projectNext, kinetic, spacer, heading, text, media, mediaStack, projectGrid, contactForm, socials, impressum, reelGallery, albumRail, phone3d, laptop3d, elasticReel, parallaxCarousel, spinShutter, frameScrub, timelinePlayer, ...galleryBlocks];
 
 // Globaler Textgrößen-Regler: jeder Block mit Text bekommt einen Schieber „Textgröße“ (zoomt nur die Textelemente).
 const NO_TEXT = new Set(['spacer', 'media', 'mediaStack', 'reelGallery', 'frameScrub']);

@@ -1,5 +1,5 @@
 {
-  "title": "test",
+  "title": "norder147 x canim3denim - upcycling workshop",
   "card": {
     "image": "media/workshop-table.jpg",
     "vimeo": "",
@@ -74,6 +74,63 @@
         "autoplaySpeed": 40,
         "pauseOnHover": true,
         "showProgress": true,
+        "textScale": 1,
+        "textScaleMobile": 0,
+        "mobileTitle_de": "norder147 x canim3denim - upcycling workshop",
+        "mobileTitle": "norder147 x canim3denim - upcycling workshop"
+      }
+    },
+    {
+      "type": "device",
+      "props": {
+        "kind": "laptop",
+        "side": "right",
+        "textAlign": "links",
+        "kicker": "",
+        "title": "volunteering for norder147 x canim3denim",
+        "text": "This non-profit project documents an upcycling workshop at NORDER147, a creative space in Flensburg. The goal was to capture the vibe and show how simple sustainable fashion can be: transforming old clothes into something new with ease.\n\nI shot the event together with my friend Larissa, handling all editing and post-production myself. Since the workshop was organized by a friend (canim3denim), we volunteered to support the initiative. The result is a short highlight video that captures the creative community spirit and the best moments of the day.",
+        "items": [
+          {
+            "src": "https://vimeo.com/1207050796",
+            "title": "",
+            "url": "",
+            "text": ""
+          }
+        ],
+        "chrome": false,
+        "chromeMobile": true,
+        "volumeUi": false,
+        "linkText": "",
+        "linkUrl": "",
+        "textScale": 1,
+        "textScaleMobile": 0,
+        "title_de": "volunteering for norder147 x canim3denim",
+        "text_de": "Dieses gemeinnützige Projekt dokumentiert einen Upcycling-Workshop im Kreativraum NORDER147 in Flensburg. Ziel war es, die besondere Atmosphäre einzufangen und zu zeigen, wie einfach und zugänglich nachhaltige Mode sein kann: Aus alter Kleidung entsteht mit wenig Aufwand etwas völlig Neues.\n\nGefilmt habe ich das Event gemeinsam mit meiner Freundin Larissa, Schnitt und Postproduktion lagen in meiner Hand. Da der Workshop von einer befreundeten Designerin (canim3denim) organisiert wurde, haben wir das Projekt ehrenamtlich unterstützt. Entstanden ist ein kurzer Highlight-Film, der den kreativen Community-Spirit und die besten Momente des Tages festhält."
+      }
+    },
+    {
+      "type": "laptop3d",
+      "props": {
+        "side": "left",
+        "textAlign": "links",
+        "kicker": "",
+        "title": "",
+        "text": "",
+        "titleSize": 1,
+        "titleSizeMobile": 0,
+        "textSize": 1,
+        "textSizeMobile": 0,
+        "items": [
+          {
+            "src": "https://vimeo.com/1207050796",
+            "title": "",
+            "url": "",
+            "text": ""
+          }
+        ],
+        "chrome": true,
+        "linkText": "",
+        "linkUrl": "",
         "textScale": 1,
         "textScaleMobile": 0
       }

@@ -490,7 +490,7 @@
 .ag__panel.is-on .ag__bar, .ag__panel.is-on .ag__text { opacity: 1; transform: none; }
 
 .cmp { position: relative; width: min(100% - 2 * var(--gutter, 20px), 1400px); margin: clamp(24px, 6vw, 72px) auto; overflow: hidden; background: #000; cursor: ew-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none; --v: 50%; outline: none; }
-.cmp--h { cursor: ns-resize; touch-action: none; } .cmp--sm { border-radius: 14px; } .cmp--xl { border-radius: 28px; }
+.cmp--h { cursor: ns-resize; touch-action: pan-y; } .cmp--h .cmp__handle { touch-action: none; } .cmp--sm { border-radius: 14px; } .cmp--xl { border-radius: 28px; }
 .cmp__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; -webkit-user-drag: none; }
 .cmp__before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--v)) 0 0); } .cmp--h .cmp__before { clip-path: inset(0 0 calc(100% - var(--v)) 0); }
 .cmp__handle { position: absolute; top: 0; bottom: 0; left: var(--v); width: 44px; margin: 0 0 0 -22px; padding: 0; border: 0; background: none; cursor: inherit; display: grid; place-items: center; color: #111; outline: none; }
@@ -958,3 +958,63 @@ html.lbx-open { overflow: hidden; }
 
 /* Parallax-Carousel am Handy als Rad: oben/unten weich ausblenden */
 .pc--wheel .pc__track { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%); }
+.pc--wheel .pc__track { -webkit-mask-image: none; mask-image: none; }
+.pc__cap { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); z-index: 5; display: grid; gap: 6px; pointer-events: none; opacity: 0; transition: opacity .25s ease; }
+.pc__cap.is-on { opacity: 1; } .pc__cap b { font-size: 20px; line-height: 1.15; letter-spacing: -.01em; } .pc__cap span { font-size: 13px; line-height: 1.4; opacity: .7; }
+
+/* Sucher (Handy): Rahmen wechselt zwischen 9:16 und 16:9 */
+.pc--vf .pc__track, .pc--vf .pc__prog { display: none; }
+.pcs { position: absolute; inset: 0; display: flex; flex-direction: column; color: inherit; }
+.pcs__st { flex: 1 1 auto; min-height: 0; display: grid; place-items: center; touch-action: pan-y; cursor: grab; }
+.pcs__w { position: relative; transition: width .75s cubic-bezier(.2,.95,.25,1.12), height .75s cubic-bezier(.2,.95,.25,1.12), transform .35s ease; will-change: width, height; }
+.pcs__f { position: absolute; inset: 0; border-radius: var(--pc-rad, 16px); overflow: hidden; background: #141416; box-shadow: 0 22px 60px -18px rgba(0,0,0,.45); }
+.pcs__l { position: absolute; inset: 0; opacity: 0; transform: scale(1.16); filter: blur(9px); transition: opacity .6s ease, transform .9s cubic-bezier(.2,.8,.2,1), filter .8s ease; }
+.pcs__l.is-on { opacity: 1; transform: none; filter: none; } .pcs__l.is-out { opacity: 0; transform: scale(.94); filter: blur(4px); }
+.pcs__m { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+.pcs__c { position: absolute; width: 16px; height: 16px; border: 0 solid currentColor; pointer-events: none; opacity: .85; }
+.pcs__c--tl { left: -9px; top: -9px; border-width: 2px 0 0 2px; } .pcs__c--tr { right: -9px; top: -9px; border-width: 2px 2px 0 0; } .pcs__c--bl { left: -9px; bottom: -9px; border-width: 0 0 2px 2px; } .pcs__c--br { right: -9px; bottom: -9px; border-width: 0 2px 2px 0; }
+.pcs__rec, .pcs__fmt, .pcs__cnt { position: absolute; font: 600 10.5px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: .1em; opacity: .8; pointer-events: none; }
+.pcs__rec { left: 0; top: -24px; display: flex; align-items: center; gap: 6px; } .pcs__rec i { width: 7px; height: 7px; border-radius: 50%; background: #ff3b30; animation: pcsRec 1.2s steps(1) infinite; }
+.pcs__fmt { right: 0; top: -24px; } .pcs__cnt { right: 0; bottom: -25px; }
+@keyframes pcsRec { 50% { opacity: 0; } }
+.pcs__cap { height: 20px; margin: 22px 16px 0; text-align: center; font-size: 13px; opacity: 0; transition: opacity .3s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pcs__cap.is-on { opacity: .85; }
+.pcs__s { flex: 0 0 auto; height: 74px; overflow: hidden; position: relative; -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent); mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent); }
+.pcs__si { position: absolute; left: 0; top: 10px; display: flex; gap: 8px; transition: transform .55s cubic-bezier(.2,.8,.2,1); will-change: transform; }
+.pcs__t { all: unset; box-sizing: border-box; flex: none; border-radius: 7px; overflow: hidden; cursor: pointer; opacity: .45; transform: scale(.92); transition: opacity .3s, transform .3s, box-shadow .3s; background: #141416; }
+.pcs__t.is-cur { opacity: 1; transform: scale(1.04); box-shadow: 0 0 0 2px currentColor; }
+.pcs__tm { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .pcs__w, .pcs__l, .pcs__si { transition: none; } .pcs__rec i { animation: none; } }
+.pcs__h { flex: 0 0 auto; padding: 20px 22px 4px; text-align: center; display: grid; gap: 6px; }
+.pcs__h h3 { margin: 0; font-size: clamp(20px, 6vw, 26px); line-height: 1.15; font-weight: 700; letter-spacing: -.02em; text-wrap: balance; }
+.pcs__h p { margin: 0; font-size: 14px; line-height: 1.5; opacity: .72; text-wrap: balance; white-space: pre-line; }
+
+/* Touch: Tippen reagiert sofort (kein Doppeltipp-Zoom), kein graues Aufblitzen, Bilder lassen sich beim Scrollen nicht „anfassen" */
+a, button, [role="button"], summary, label, .pc__plane, .pcs__t { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+@media (pointer: coarse) { img, video, canvas { -webkit-touch-callout: none; } .pc, .ar, .er, .ss, .fc, .cc, .ph3__stage, .pcs__st { -webkit-user-select: none; user-select: none; } }
+
+/* Gerät: eigene Größen-Schieber für Überschrift und Textblock (--hs / --ps; am Handy --hs-m / --ps-m) */
+.dv__h { font-size: calc(clamp(19px, 5vw, 30px) * var(--hs, 1)); }
+.dv__p { font-size: calc(13px * var(--ps, 1)); }
+@media (min-width: 900px) { .dv__p { font-size: calc(14px * var(--ps, 1)); } }
+@media (max-width: 899px) {
+  .dv__h { font-size: calc(clamp(22px, 6.4vw, 28px) * var(--hs-m, var(--hs, 1))); }
+  .dv__p, .ds .dv__p { font-size: calc(14px * var(--ps-m, var(--ps, 1))); }
+}
+
+/* Gerät direkt nach Parallax-Carousel / Laptop: weniger Leerraum davor (Bühne rückt nach oben, festgepinnt bleibt alles gleich) */
+.pc + .dv .dv__track { margin-top: calc(-1 * clamp(60px, 14svh, 130px)); }
+.pc + .dv .dv__stage { pointer-events: none; } .pc + .dv .dv__stage > * { pointer-events: auto; }
+@media (max-width: 899px) { .dv--laptop:not(.pc + .dv) .dv__track { margin-top: -56px; } }
+
+/* Parallax-Carousel ohne eigenen Hintergrund: Schatten laufen unten sanft ins Seiten-Weiß aus (kein grauer Streifen vor dem nächsten Block) */
+.pc:not(.is-dark):not(.is-light) { position: relative; }
+.pc:not(.is-dark):not(.is-light)::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: var(--pc-fb, 0px); background: linear-gradient(to bottom, rgba(255,255,255,0), var(--bg) 92%); pointer-events: none; z-index: 5; }
+
+/* ===== Laptop 3D (WebGL, Block „Laptop 3D“) ===== */
+.dv__laptop--gl { z-index: 3; width: calc(min(100vw, 820px) * var(--ls, 1)); aspect-ratio: 1.2; position: relative; perspective: none; }
+@media (min-width: 900px) { .dv__laptop--gl { width: calc(min(58vw, 1040px) * var(--ls, 1)); } }
+.dv__gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.dv__gsrc { position: absolute; left: 0; top: 0; width: 2px; height: 2px; overflow: hidden; opacity: 0; pointer-events: none; }
+.dv__laptop--gl .dv__sh { position: absolute; z-index: -1; left: 12%; right: 12%; bottom: 7%; height: 9%; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,.4), rgba(0,0,0,0) 70%); filter: blur(12px); pointer-events: none; }
+
+.dv--laptop .dv__copy { position: relative; z-index: 1; }

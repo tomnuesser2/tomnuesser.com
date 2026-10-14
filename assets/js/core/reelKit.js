@@ -81,7 +81,7 @@ export function ticker(el, fn) {
   let vis = false, raf = 0, last = 0;
   const loop = (t) => { raf = 0; if (!vis) return; const dt = Math.min(.05, last ? (t - last) / 1000 : .016); last = t; try { fn(dt, t / 1000); } catch (e) { console.error('[reel]', e); } raf = requestAnimationFrame(loop); };
   const start = () => { if (vis && !raf) { last = 0; raf = requestAnimationFrame(loop); } };
-  if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { vis = e.isIntersecting; start(); }, { rootMargin: '10%' }).observe(el); else { vis = true; start(); }
+  if ('IntersectionObserver' in window) new IntersectionObserver((es) => { vis = es[es.length - 1].isIntersecting; start(); }, { rootMargin: '10%' }).observe(el); else { vis = true; start(); }
   return { get on() { return vis; } };
 }
 // Größe beobachten (Breite/Höhe in px) – ruft cb sofort, sobald das Element eine Größe hat
@@ -93,13 +93,19 @@ export function watchSize(el, cb) {
 }
 // Ziehen mit der Maus/dem Finger: Senkrecht-Wischen scrollt weiter die Seite (touch-action: pan-y)
 export function dragHandler(el, { start, move, end, threshold = 5 }) {
-  let id = null, sx = 0, sy = 0, lx = 0, lt = 0, vx = 0, moved = false;
+  let id = null, sx = 0, sy = 0, lx = 0, lt = 0, vx = 0, moved = false, pt = 'mouse';
   el.addEventListener('pointerdown', (e) => {
-    if (e.button > 0) return; id = e.pointerId; sx = lx = e.clientX; sy = e.clientY; lt = performance.now(); vx = 0; moved = false; start?.(e);
+    if (e.button > 0) return; id = e.pointerId; pt = e.pointerType || 'mouse'; sx = lx = e.clientX; sy = e.clientY; lt = performance.now(); vx = 0; moved = false; start?.(e);
   });
   addEventListener('pointermove', (e) => {
     if (e.pointerId !== id) return;
     const dx = e.clientX - lx, now = performance.now(), dt = Math.max(1, now - lt);
+    if (!moved && pt !== 'mouse') {
+      // Finger: erst entscheiden, ob waagerecht gewischt (Carousel) oder senkrecht gescrollt (Seite) wird – beim Scrollen lassen wir die Seite in Ruhe
+      const ax = Math.abs(e.clientX - sx), ay = Math.abs(e.clientY - sy);
+      if (ay > 8 && ay > ax * .7) { id = null; el.classList.remove('is-drag'); end?.(false, 0, e); return; }
+      if (ax < 10 || ax < ay * 1.4) { lx = e.clientX; lt = now; return; }
+    }
     if (!moved && Math.abs(e.clientX - sx) > threshold) { moved = true; try { el.setPointerCapture(id); } catch { /* */ } el.classList.add('is-drag'); }
     if (moved) { vx = vx * .6 + (dx / dt) * .4; move?.(dx, e, vx); }
     lx = e.clientX; lt = now;

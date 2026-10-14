@@ -138,9 +138,17 @@ export default {
     loopB.addEventListener('click', () => { p.loop = p.loop === false; loopB.classList.toggle('on', p.loop !== false); });
     vp.addEventListener('click', () => { const c = clips[idxAt(t)]; if (c && c.link) goto(c.link); });
     const xToT = (e) => { const r = scroll.getBoundingClientRect(); return clamp((e.clientX - r.left + pan) / PPS, 0, T - .001); };
-    scroll.addEventListener('pointerdown', (e) => { if (scrollMode) return; drag = true; scroll.setPointerCapture?.(e.pointerId); t = xToT(e); hold = 0; });
-    scroll.addEventListener('pointermove', (e) => { if (drag) t = xToT(e); });
-    const up = () => { if (drag) { drag = false; resume = 1.4; } };
+    // Maus: sofort greifen. Finger: erst nach klar waagerechter Bewegung, damit die Seite beim Scrollen über der Zeitleiste normal weiterläuft
+    let pend = null; const grab = (e) => { drag = true; try { scroll.setPointerCapture?.(e.pointerId); } catch { /* egal */ } t = xToT(e); hold = 0; };
+    scroll.addEventListener('pointerdown', (e) => { if (scrollMode) return; if (e.pointerType === 'mouse') { grab(e); return; } pend = { x: e.clientX, y: e.clientY, id: e.pointerId }; });
+    scroll.addEventListener('pointermove', (e) => {
+      if (drag) { t = xToT(e); return; }
+      if (!pend || e.pointerId !== pend.id) return;
+      const dx = Math.abs(e.clientX - pend.x), dy = Math.abs(e.clientY - pend.y);
+      if (dy > 8 && dy > dx * .7) { pend = null; return; }
+      if (dx > 10 && dx > dy * 1.4) { pend = null; grab(e); }
+    });
+    const up = () => { pend = null; if (drag) { drag = false; resume = 1.4; } };
     scroll.addEventListener('pointerup', up); scroll.addEventListener('pointercancel', up);
     if (scrollMode && !still()) track(trkEl, (r) => { tProg = trackProgress(r, stk.offsetHeight); });
     const mix = (a, b, g) => a + (b - a) * g;

@@ -7,12 +7,14 @@ const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
 function update() {
   ticking = false;
-  const vh = window.innerHeight, vw = window.innerWidth;
+  const vh = window.innerHeight, vw = window.innerWidth, work = [];
   for (const sc of scenes) {
     if (!sc.track.isConnected) continue;
     const r = sc.track.getBoundingClientRect();
     if (r.bottom < -vh * 0.2 || r.top > vh * 1.2) continue;
-    const total = Math.max(1, r.height - sc.stage.offsetHeight);
+    work.push([sc, r, Math.max(1, r.height - sc.stage.offsetHeight)]);
+  }
+  for (const [sc, r, total] of work) {
     try { sc.v.update(sc, clamp(-r.top / total), { vw, vh }); } catch (e) { console.error('[scenes]', sc.v.name, e); }
   }
 }

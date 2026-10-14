@@ -42,7 +42,7 @@ export default {
     { name: 'tilt', label: 'Neigung zum Mauszeiger in Grad', type: 'number', default: 12 },
     { name: 'float', label: 'Schweben im Leerlauf (0 = aus, 1 = normal)', type: 'number', default: 1 },
     { name: 'lift', label: 'Anheben beim Darüberfahren (0–2)', type: 'number', default: 1 },
-    { name: 'drag', label: 'Ziehen dreht das Telefon', type: 'checkbox', default: true },
+    { name: 'drag', label: 'Ziehen dreht das Telefon (links/rechts und hoch/runter)', type: 'checkbox', default: true },
     { name: 'reflection', label: 'Lichtreflexe (0–2)', type: 'number', default: 1 },
     { name: 'shadow', label: 'Schatten (0–2)', type: 'number', default: 1 },
     { name: 'intro', label: 'Einblend-Animation beim Erscheinen', type: 'checkbox', default: true },
@@ -76,7 +76,7 @@ export default {
     const show = (i) => { if (i === cur || to >= 0) return; to = i; gp.setSlot(1, media[i]); mix = 0; };
     const next = () => { if (media.length > 1) show((cur + 1) % media.length); };
     let W = 0, H = 0, dpr = 1, cvOff = 0;
-    const set = { rx: 0, ry: 0, spin: 0, spinV: 0, drag: false, hover: false, px: 0, py: 0, lift: 0, intro: p.intro !== false && !still() && !scroll ? 0 : 1 };
+    const set = { rx: 0, ry: 0, spin: 0, spinV: 0, pitch: 0, pitchV: 0, drag: false, hover: false, px: 0, py: 0, lift: 0, intro: p.intro !== false && !still() && !scroll ? 0 : 1 };
     let sp = still() ? 1 : 0, playing = still();
     if (scroll && !still() && 'IntersectionObserver' in window) new IntersectionObserver(([e]) => { if (e.isIntersecting && e.intersectionRatio > .18) playing = true; else if (!e.isIntersecting) { playing = false; sp = 0; } }, { threshold: [0, .18, .4] }).observe(el); else if (scroll) { playing = true; }
     watchSize(stage, (w, hh) => { W = w; H = hh; dpr = Math.min(window.devicePixelRatio || 1, 2); canvas.width = Math.max(2, Math.round(w * dpr)); canvas.height = Math.max(2, Math.round(hh * dpr)); });
@@ -84,7 +84,7 @@ export default {
     const rect = () => stage.getBoundingClientRect();
     stage.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse' || !p.tilt) return; const r = rect(); set.px = clamp((e.clientX - r.left) / r.width * 2 - 1, -1, 1); set.py = clamp((e.clientY - r.top) / r.height * 2 - 1, -1, 1); set.hover = true; });
     stage.addEventListener('pointerleave', () => { set.hover = false; });
-    if (p.drag !== false) dragHandler(stage, { start: () => { set.drag = true; set.spinV = 0; }, move: (dx, e, v) => { set.spin += dx * .5; set.spinV = v * 22; }, end: () => { set.drag = false; } });
+    if (p.drag !== false) { let ly = 0, lyt = 0; dragHandler(stage, { start: (e) => { set.drag = true; set.spinV = 0; set.pitchV = 0; ly = e.clientY; lyt = performance.now(); }, move: (dx, e, v) => { const dy = e.clientY - ly, now = performance.now(); set.pitch += dy * .45; set.pitchV = set.pitchV * .6 + (dy / Math.max(1, now - lyt)) * 22 * .4; ly = e.clientY; lyt = now; set.spin += dx * .5; set.spinV = v * 22; }, end: () => { set.drag = false; } }); }
     stage.addEventListener('click', () => { if (items[cur]?.href && media.length < 2) { goto(items[cur].href); return; } next(); set.spinV += 70; });
     let acc = 0;
     ticker(el, (dt, t) => {
@@ -97,12 +97,13 @@ export default {
       const tx = set.hover ? -set.py * tiltD : Math.sin(t * .7) * 2.4 * fl, ty = set.hover ? set.px * tiltD : Math.cos(t * .5) * 4 * fl;
       set.rx += (tx - set.rx) * Math.min(1, dt * 6); set.ry += (ty - set.ry) * Math.min(1, dt * 6);
       if (!set.drag) { const k = 24, c = 6; set.spinV += (-k * set.spin - c * set.spinV) * dt * 4; set.spin += set.spinV * dt * 4; if (Math.abs(set.spin) < .01 && Math.abs(set.spinV) < .01) { set.spin = 0; set.spinV = 0; } }
-      else set.spin = clamp(set.spin, -200, 200);
+      if (!set.drag) { set.pitchV += (-24 * set.pitch - 6 * set.pitchV) * dt * 4; set.pitch += set.pitchV * dt * 4; if (Math.abs(set.pitch) < .01 && Math.abs(set.pitchV) < .01) { set.pitch = 0; set.pitchV = 0; } }
+      else { set.spin = clamp(set.spin, -200, 200); set.pitch = clamp(set.pitch, -80, 80); }
       const lift = set.hover || set.drag ? 1 : 0; set.lift += (lift - set.lift) * Math.min(1, dt * 6);
       const S = clamp(num(p.scale, .86), .2, 1);
       let spinAdd = 0, rxAdd = 0, sk = 1, upY = 0;
       if (scroll) { if (playing) sp = Math.min(1, sp + dt / Math.max(.4, num(p.spinDuration, 1.6))); const e = ease(clamp(sp / .8)); spinAdd = num(p.spinFrom, 360) * (1 - e); rxAdd = -8 * (1 - e); sk = Math.max(.001, e); upY = -Math.pow(1 - e, 1.5) * 1.5; const tf = clamp((sp - .7) / .3); [tl, tr].forEach(c => { if (c) { c.style.opacity = tf.toFixed(3); c.style.transform = `translateY(${((1 - tf) * 24).toFixed(1)}px)`; } }); }
-      gp.draw({ rx: num(p.rotateX, -4) + set.rx + rxAdd, ry: num(p.rotateY, -14) + set.ry + set.spin + spinAdd + (1 - iv) * -50, rz: num(p.rotateZ, 0) + (land ? 90 : 0), y: set.lift * .035 * num(p.lift, 1) - (1 - iv) * .25 + Math.sin(t * .9) * .012 * fl + upY, fit: S * (.9 + .1 * iv) * sk, mix: to >= 0 ? ease(clamp(mix)) : 0, intro: .1 + .9 * clamp((iv - .3) / .7), light: clamp(num(p.reflection, 1), 0, 2), time: t });
+      gp.draw({ rx: num(p.rotateX, -4) + set.rx + rxAdd + set.pitch, ry: num(p.rotateY, -14) + set.ry + set.spin + spinAdd + (1 - iv) * -50, rz: num(p.rotateZ, 0) + (land ? 90 : 0), y: set.lift * .035 * num(p.lift, 1) - (1 - iv) * .25 + Math.sin(t * .9) * .012 * fl + upY, fit: S * (.9 + .1 * iv) * sk, mix: to >= 0 ? ease(clamp(mix)) : 0, intro: .1 + .9 * clamp((iv - .3) / .7), light: clamp(num(p.reflection, 1), 0, 2), time: t });
       const sh = clamp(num(p.shadow, 1), 0, 2);
       // Steht die Bühne am Seitenanfang (z. B. als erstes Element unter dem Menü) tiefer als die Fenstermitte, wird das Gerät fest um den Unterschied nach oben geschoben (unabhängig vom Scrollen)
       { const r = stage.getBoundingClientRect(), dt0 = r.top + scrollY, off = dt0 < innerHeight * .5 ? clamp(dt0 + r.height / 2 - innerHeight / 2, 0, H * .3) : 0; cvOff += (off - cvOff) * Math.min(1, dt * 4); canvas.style.transform = `translateY(${(-cvOff).toFixed(1)}px)`; shadow.dataset.o = (-cvOff).toFixed(1); row.style.setProperty('--tdy', (-cvOff).toFixed(1) + 'px'); }

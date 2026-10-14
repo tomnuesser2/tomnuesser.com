@@ -153,9 +153,23 @@ export const compareBlock = {
       let v = clamp(Number(p.start) / 100 || .5), drag = false;
       const apply = () => { el.style.setProperty('--v', (v * 100).toFixed(2) + '%'); handle.setAttribute('aria-valuenow', String(Math.round(v * 100))); };
       const at = (e) => { const r = el.getBoundingClientRect(); v = clamp(vertical ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width, .0, 1); apply(); };
-      el.addEventListener('pointerdown', (e) => { if (e.button) return; drag = true; el.classList.add('is-drag'); try { el.setPointerCapture(e.pointerId); } catch { /* egal */ } at(e); });
-      el.addEventListener('pointermove', (e) => { if (drag) at(e); });
-      const end = () => { drag = false; el.classList.remove('is-drag'); }; el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+      // Maus: sofort greifen. Finger: nur wenn der Griff berührt wird (senkrecht) bzw. erst nach klar waagerechter Bewegung – so lässt sich die Seite über dem Bild ganz normal scrollen
+      let pend = null;
+      const begin = (e) => { drag = true; el.classList.add('is-drag'); try { el.setPointerCapture(e.pointerId); } catch { /* egal */ } };
+      el.addEventListener('pointerdown', (e) => {
+        if (e.button) return;
+        if (e.pointerType === 'mouse') { begin(e); at(e); return; }
+        if (vertical) { if (e.target.closest && e.target.closest('.cmp__handle')) { begin(e); at(e); } return; }
+        pend = { x: e.clientX, y: e.clientY, id: e.pointerId };
+      });
+      el.addEventListener('pointermove', (e) => {
+        if (drag) { at(e); return; }
+        if (!pend || e.pointerId !== pend.id) return;
+        const dx = Math.abs(e.clientX - pend.x), dy = Math.abs(e.clientY - pend.y);
+        if (dy > 8 && dy > dx * .7) { pend = null; return; }
+        if (dx > 10 && dx > dy * 1.4) { pend = null; begin(e); at(e); }
+      });
+      const end = () => { drag = false; pend = null; el.classList.remove('is-drag'); }; el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
       el.addEventListener('keydown', (e) => { const d = { ArrowLeft: -.04, ArrowDown: -.04, ArrowRight: .04, ArrowUp: .04 }[e.key]; if (d) { e.preventDefault(); v = clamp(v + d); apply(); } });
       apply();
       return el;
