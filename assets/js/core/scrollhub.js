@@ -42,7 +42,7 @@ export function holdScroll(ms = 200) {
 // Handy: Jeder Abschnitt hält beim Erreichen seines Anfangs an. Schneller Wisch → schnell los, kurz vor dem Anfang sanft abbremsen, bis der Abschnitt perfekt sitzt – erst der nächste Wisch scrollt weiter.
 let snapOn = false, lastY = 0, fingers = 0, snapping = false;
 function snapTargets() {
-  const out = []; for (const b of document.querySelectorAll('main [data-bi]')) out.push(Math.round(b.getBoundingClientRect().top + scrollY));
+  const out = []; for (const b of document.querySelectorAll('.page[data-page="home"] [data-bi]')) out.push(Math.round(b.getBoundingClientRect().top + scrollY));
   return out;
 }
 export function initSnapStop() {
@@ -52,7 +52,7 @@ export function initSnapStop() {
   addEventListener('touchcancel', () => { fingers = 0; }, { passive: true });
   addEventListener('scroll', () => {
     const y = scrollY, d = y - lastY; lastY = y;
-    if (snapping || held || fingers || Math.abs(d) < 14) return;       // nur während des Auslaufens (Finger weg) und bei echter Fahrt
+    if (snapping || held || fingers || Math.abs(d) < 14 || !document.querySelector('.page[data-page="home"]')) return;       // nur während des Auslaufens (Finger weg) und bei echter Fahrt
     const dir = d > 0 ? 1 : -1, vh = innerHeight;
     // nächster Abschnittsanfang, den man in Fahrtrichtung gleich erreicht/überfahren hat
     const t = snapTargets().filter(v => dir > 0 ? (v > y - d + 4 && v <= y + 4) : (v < y - d - 4 && v >= y - 4)).sort((a, b) => dir > 0 ? b - a : a - b)[0];

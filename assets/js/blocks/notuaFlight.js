@@ -374,7 +374,7 @@ function mount(root, OPT) {
   const stations = [{ t: o.title || 'NOTUA', d: o.text || '', card: null }, ...feats, { t: o.endTitle || 'All in one place.', d: o.endText || '', card: null, end: true }];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canvas = document.createElement('canvas'); canvas.className = 'fl__cv'; canvas.setAttribute('aria-hidden', 'true');
-  let gl = null; if (!reduce) { try { gl = canvas.getContext('webgl', { antialias: true, premultipliedAlpha: true, alpha: true }); } catch { gl = null; } }
+  let gl = null; if (!reduce) { try { gl = canvas.getContext('webgl', { antialias: !matchMedia('(max-width: 899px)').matches, premultipliedAlpha: true, alpha: true }); } catch { gl = null; } }
   const STATIONS = stations, N = STATIONS.length - 1, SP = 4.4, PL = 5.2, TOT = N + PL;
   const cvs = STATIONS.map(s => { if (!s.card) return null; const cv = document.createElement('canvas'); const lk = s.card === 'look'; cv.width = lk ? LW : CW; cv.height = lk ? LH : CH; return cv; });
   const paint = (i, t) => { const s = STATIONS[i]; if (!cvs[i]) return; DRAW[s.card](cvs[i].getContext('2d'), t, D); };
@@ -438,8 +438,8 @@ function mount(root, OPT) {
     LG = { n, cv, ctx: x, base, acc: null }; tintLogo(); return cv; } catch { return im; } };
   logo.onload = () => { const t = makeTex(prepLogo(logo)); planes.forEach(pl => { if (pl.logo) { pl.tex = t; pl.ratio = 1; } }); if (LG) tintLogo(); }; logo.src = o.logo || 'media/notua-logo.png';
 
-  const SMALL = matchMedia('(max-width: 899px)').matches; let lastPaint = 0; let W = 1, Hh = 1, prog0 = 0, prevP = 0, vel = 0, gv = 0, px = 0, py = 0, tpx = 0, tpy = 0, active = -1, running = false, aT0 = 0; const t0 = performance.now();
-  const resize = () => { const dpr = Math.min(devicePixelRatio || 1, SMALL ? 1.5 : 2); W = canvas.clientWidth; Hh = canvas.clientHeight; canvas.width = Math.max(1, Math.round(W * dpr)); canvas.height = Math.max(1, Math.round(Hh * dpr)); };
+  const SMALL = matchMedia('(max-width: 899px)').matches; let lastPaint = 0, lastP = -1, lastMv = 0; let W = 1, Hh = 1, prog0 = 0, prevP = 0, vel = 0, gv = 0, px = 0, py = 0, tpx = 0, tpy = 0, active = -1, running = false, aT0 = 0; const t0 = performance.now();
+  const resize = () => { const dpr = Math.min(devicePixelRatio || 1, SMALL ? 1.25 : 2); W = canvas.clientWidth; Hh = canvas.clientHeight; canvas.width = Math.max(1, Math.round(W * dpr)); canvas.height = Math.max(1, Math.round(Hh * dpr)); };
   addEventListener('resize', resize);
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) { stage.addEventListener('pointermove', (e) => { tpx = e.clientX / innerWidth * 2 - 1; tpy = e.clientY / innerHeight * 2 - 1; }); }
   const setActive = (i, now) => {
@@ -464,6 +464,8 @@ function mount(root, OPT) {
   function cardPos(i) { const wN = narrow(); if (i === 0) return wN ? [0, .34] : [.62, 0]; if (i === N) return wN ? [0, .34] : [.62, 0]; if (i === lookIdx) return wN ? [0, .02] : [.62, 0]; return [wN ? (i % 2 ? .1 : -.1) : (.85 + (i % 2 ? .12 : -.05)), wN ? .08 : Math.sin(i * 2) * .12]; }
   const draw = (now) => {
     if (!running) return; requestAnimationFrame(draw);
+    // Handy: steht der Scroll still, nur noch in großen Abständen neu zeichnen (spart Akku/Ruckler)
+    if (SMALL) { if (prog0 !== lastP) { lastP = prog0; lastMv = now; } else if (now - lastMv > 220 && now - lastPaint < 140 && !D.dirtyImg) return; }
     const t = (now - t0) / 1000; px += (tpx - px) * .06; py += (tpy - py) * .06;
     vel += (Math.abs(prog0 - prevP) * 90 - vel) * .2; prevP = prog0; gv += (clamp(vel * .7) * .35 - gv) * .25;
     gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
@@ -496,7 +498,7 @@ function mount(root, OPT) {
     setActive(near, now);
     // Look-Skript: Zustand aus der Scroll-Position (nur im Look-Abschnitt), sonst Standard-Look
     const lookT = Math.abs(f - lookIdx) < .01 ? (active === lookIdx ? lu * 10 : -1) : (f > lookIdx ? 99 : -1); applyState(lookState(lookT)); if (LG && LG.acc !== TH.accent) tintLogo();
-    if (cvs[active] && active === near && Math.abs(f - active) < .6 && now - lastPaint > (SMALL ? 90 : 33)) { lastPaint = now; paint(active, active === lookIdx ? lookT : (now - aT0) / 1000); pver[active] = ver; upload(active); }
+    if (cvs[active] && active === near && Math.abs(f - active) < .6 && now - lastPaint > (SMALL ? (vel > .06 ? 400 : 140) : 33)) { lastPaint = now; paint(active, active === lookIdx ? lookT : (now - aT0) / 1000); pver[active] = ver; upload(active); }
     if (D.dirtyImg) { D.dirtyImg = false; ver++; }
     for (let i = 0; i < STATIONS.length; i++) if (cvs[i] && i !== active && pver[i] !== ver && Math.abs(f - i) < 2.6) { paint(i, 99); upload(i); pver[i] = ver; }
     hud.style.setProperty('--gl', '0'); bar.style.transform = `scaleX(${prog0.toFixed(4)})`; hint.style.opacity = prog0 < .03 ? '1' : '0';

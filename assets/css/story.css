@@ -1132,3 +1132,20 @@ body.is-nbend, body.is-nbend .app, body.is-nbend main { background: var(--nb-end
 @media (pointer: coarse) { :is(.dv, .fl, .nb, .nt) * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; } .dv__vs { background: rgba(20,20,24,.72); } }
 
 @media (max-width: 899px) { .scue { bottom: calc(92px + env(safe-area-inset-bottom)); } }
+
+/* Großansicht am Handy: Bild/Video füllt den ganzen Bildschirm, kein Rand unten */
+@media (max-width: 700px), (pointer: coarse) and (max-width: 900px) {
+  .lbx { height: 100vh; height: 100dvh; background: #08080a; }
+  .lbx__st { max-width: 100vw; max-height: 100dvh; width: 100vw; height: 100dvh; }
+  .lbx__m { max-width: 100vw; max-height: 100dvh; border-radius: 0; box-shadow: none; }
+  .lbx__m:is(img, video) { width: 100%; height: 100%; object-fit: contain; }
+  .lbx__cap { text-shadow: 0 1px 8px rgba(0,0,0,.7); }
+}
+
+/* Handy (Landingpage): nativer Scroll-Snap – jeder Abschnitt hält an seinem Anfang, flüssig und vom Browser gebremst.
+   Lange Abschnitte (Flug, Laptop) sind größer als der Bildschirm → darin scrollt man frei. */
+@media (pointer: coarse) and (max-width: 899px) {
+  html.snap-home { scroll-snap-type: y proximity; }
+  html.snap-home .page[data-page="home"] > [data-bi] { scroll-snap-align: start; }
+  html.snap-home .site-footer { scroll-snap-align: end; }
+}
