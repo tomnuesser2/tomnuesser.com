@@ -939,3 +939,6 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 .nb__go:hover { filter: brightness(1.08); }
 .nb--static .nb__goW { display: flex; justify-content: center; padding: 24px 16px 8px; } .nb--static .nb__go { position: static; opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
 @media (prefers-reduced-motion: reduce) { .nb__ar, .nb__db.is-hot { animation: none; } }
+
+/* Phone 3D (PC): Texte links/rechts ein Stück näher ans Handy */
+@media (min-width: 900px) { .ph3__t--l { transform: translate(4.5vw, var(--tdy, 0px)); } .ph3__t--r { transform: translate(-4.5vw, var(--tdy, 0px)); } }

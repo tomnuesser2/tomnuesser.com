@@ -14,7 +14,7 @@ export default {
     { name: 'linkText', label: 'Button 1: Text (öffnet die App)', type: 'text', default: 'open NOTUA ↗', de: 'NOTUA öffnen ↗' },
     { name: 'linkUrl', label: 'Button 1: Link', type: 'text', default: 'https://notua.site/' },
     { name: 'projectText', label: 'Button 2: Text (führt zur NOTUA-Projektseite)', type: 'text', default: 'view the project →', de: 'zum Projekt →' },
-    { name: 'projectUrl', label: 'Button 2: Projekt', type: 'text', default: 'notua' },
+    { name: 'projectUrl', label: 'Button 2: Ziel (Projektname, oder „#next“ = direkt zum nächsten Abschnitt)', type: 'text', default: 'notua' },
     { name: 'sub', label: 'Kleine Zeile unter den Buttons', type: 'text', default: 'web · desktop · android', de: 'Web · Desktop · Android' },
     { name: 'notes', label: 'Notiz-Karte (1. Zeile = Titel)', type: 'textarea', default: 'Script intro\n– Hook in 3 sec\n– Scene 1: workshop', de: 'Skript-Intro\n– Hook in 3 Sek.\n– Szene 1: Werkstatt' },
     { name: 'tasksTitle', label: 'Aufgaben-Karte: Titel', type: 'text', default: 'Tasks', de: 'Aufgaben' },

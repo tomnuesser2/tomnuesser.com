@@ -69,13 +69,16 @@ export default {
     { name: 'width', label: 'Maximale Breite des Boards am Computer in px', type: 'number', default: 1240 },
     { name: 'height', label: 'Höhe des Boards (Anteil der Bildschirmhöhe, 0.5–0.95)', type: 'number', default: .8 },
     { name: 'interactive', label: 'Im Board darf man selbst Karten anlegen und verschieben', type: 'checkbox', default: true },
-    { name: 'hint', label: 'Hinweis, sobald man im Board ist (leer = keiner)', type: 'text', default: 'Try it: add notes and move cards around.', de: 'Probier es aus: Notizen hinzufügen, Karten verschieben.' },
+    { name: 'outroLength', label: 'Scroll-Strecke für das Ende (Notizen verschwinden, Pfeil, großer Button) in Bildschirmhöhen', type: 'number', default: 1.6 },
+    { name: 'endText', label: 'Großer Button am Ende: Text', type: 'text', default: 'Go to NOTUA ↗', de: 'Zu NOTUA ↗' },
+    { name: 'endUrl', label: 'Großer Button am Ende: Ziel (https://… oder Projektname; leer = kein Button)', type: 'text', default: 'https://notua.site/' },
     { name: 'tools', label: 'Werkzeuge in der Leiste unten', type: 'select', options: ['alle', 'Notiz + Aufgaben + Tabelle', 'nur Notiz'], default: 'alle' },
   ],
   render(p0) {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
     const live0 = p.interactive !== false, ac = /^#?[0-9a-f]{6}$/i.test(String(p.accent || '').trim()) ? '#' + String(p.accent).trim().replace('#', '') : '#FF6B57';
-    const root = h('div', { class: `nb${p.theme === 'dunkel' ? ' nb--dark' : ''}`, style: { '--nb-ac': ac, '--nb-len': String(Math.max(.5, num(p.scrollLength, 2.6))), '--nb-w': Math.max(480, num(p.width, 1240)) + 'px', '--nb-h': clamp(num(p.height, .8), .5, .95) } });
+    const endUrl0 = String(p.endUrl == null ? 'https://notua.site/' : p.endUrl).trim();
+    const root = h('div', { class: `nb${p.theme === 'dunkel' ? ' nb--dark' : ''}`, style: { '--nb-ac': ac, '--nb-len': String(Math.max(.5, num(p.scrollLength, 2.6)) + (endUrl0 ? Math.max(.6, num(p.outroLength, 1.6)) : 0)), '--nb-w': Math.max(480, num(p.width, 1240)) + 'px', '--nb-h': clamp(num(p.height, .8), .5, .95) } });
     const static0 = still();
     if (static0) root.classList.add('nb--static');
 
@@ -115,9 +118,12 @@ export default {
     }
     const dots = h('div', { class: 'nb__dots' });
     const head = p.hideTexts ? null : h('div', { class: 'nb__head' }, p.kicker ? h('p', { class: 'nb__k' }, p.kicker) : null, p.title ? h('h2', { class: 'nb__h' }, p.title) : null, p.text ? h('p', { class: 'nb__p' }, p.text) : null);
-    const hint = p.hint && live0 ? h('div', { class: 'nb__hint' }, h('i'), p.hint) : null;
-    const sticky = h('div', { class: 'nb__sticky' }, dots, space, win, head, hint);
+    const isExt = /^https?:/i.test(endUrl0);
+    const goBtn = endUrl0 ? h('a', { class: 'nb__go', href: endUrl0, ...(isExt ? { target: '_blank', rel: 'noopener' } : { 'data-link': '' }) }, p.endText || 'Go to NOTUA ↗') : null;
+    const arrow = live0 ? h('div', { class: 'nb__ar', 'aria-hidden': 'true', html: '<svg viewBox="0 0 40 56" width="40" height="56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4v40M7 31l13 14 13-14"/></svg>' }) : null;
+    const sticky = h('div', { class: 'nb__sticky' }, dots, space, win, head, arrow, static0 ? null : goBtn);
     root.append(h('div', { class: 'nb__track' }, sticky));
+    if (static0 && goBtn) root.append(h('div', { class: 'nb__goW' }, goBtn));
 
     /* ---- Karten-Modell ---- */
     let bw = 1000, bh = 600, zTop = 10;
@@ -211,17 +217,19 @@ export default {
 
     /* ---- Scroll-Animation ---- */
     let live = false, cur = static0 ? 1 : 0, tgt = cur, raf = 0, vw = 1000, vh = 800;
-    const apply = (pr) => {
+    const L0 = Math.max(.5, num(p.scrollLength, 2.6)), O0 = endUrl0 ? Math.max(.6, num(p.outroLength, 1.6)) : 0, A0 = L0 / (L0 + O0);
+    const noteBtn = dock.querySelector('[data-k="note"]') || dock.firstChild;
+    const apply = (u) => {
+      const pr = clamp(u / A0), q = O0 ? clamp((u - A0) / (1 - A0)) : 0;
       vw = innerWidth; vh = innerHeight;
       const fl = clamp(pr / .6), e = ease(fl), k1 = 1 - e;
       // Fenster: aus der Ferne, gekippt, angeflogen
       const wz = -2700 * k1, wy = 190 * k1, wx = 60 * k1;
-      win.style.opacity = String(clamp(fl / .14));
+      const dimE = clamp((q - .78) / .16); win.style.opacity = String(clamp(fl / .14) * (1 - .6 * dimE)); win.style.filter = dimE > 0 ? `blur(${(dimE * 4).toFixed(1)}px)` : '';
       win.style.transform = e >= .999 ? 'translate(-50%,-50%)' : `translate(-50%,-50%) translate3d(${wx.toFixed(1)}px,${wy.toFixed(1)}px,${wz.toFixed(1)}px) rotateX(${(46 * k1).toFixed(2)}deg) rotateY(${(-36 * k1).toFixed(2)}deg) rotateZ(${(7 * k1).toFixed(2)}deg)`;
       // UI-Rahmen blendet ein, danach erscheinen die Karten nacheinander
       const ui = clamp((pr - .48) / .12); app.style.setProperty('--ui', ui.toFixed(3));
-      const was = live; live = live0 && pr >= .78; win.classList.toggle('is-live', live); root.classList.toggle('nb--live', live);
-      if (hint) hint.style.opacity = String(clamp((pr - .8) / .1) * (live ? 1 : 0));
+      const was = live; live = live0 && pr >= .78 && q < .03; win.classList.toggle('is-live', live); root.classList.toggle('nb--live', live);
       cards.forEach((c) => {
         if (!c.seed) return; const st = .56 + c.idx * .045, tp = clamp((pr - st) / .08), done = pr >= .8 || c.touched;
         c.seedP = tp; c.el.style.opacity = String(clamp(tp * 2)); c.el.style.transform = tp >= 1 ? 'none' : `translateY(${((1 - tp) * 18).toFixed(1)}px) scale(${(.92 + .08 * tp).toFixed(3)})`;
@@ -231,6 +239,19 @@ export default {
         if (c.type === 'tasks' || c.type === 'column') c.items.forEach((it, k) => { if (!it.el) return; const q = clamp(ty * c.items.length - k); const n = Math.floor(it.full.length * q); const tt = it.el.querySelector('.nb__tt'); if (tt && document.activeElement !== tt && it.shown !== n) { it.shown = n; tt.textContent = it.full.slice(0, n); it.t = tt.textContent; } });
         if (c.type === 'table' && c.bodyEl) { const cells = c.bodyEl.querySelectorAll('td > div'); let idx = 0; const total = c.full.reduce((a, r) => a + r.length, 0); c.full.forEach((r, ri) => r.forEach((v, ci) => { const q = clamp(ty * total * 1.1 - idx); idx++; const d = cells[ri * Math.max(...c.rows.map(x => x.length)) + ci]; if (d && document.activeElement !== d) { const n = Math.floor(v.length * q); if (d._n !== n) { d._n = n; d.textContent = v.slice(0, n); c.rows[ri][ci] = d.textContent; } } })); }
       });
+      // Ende: alle Notizen verschwinden nacheinander (auch selbst angelegte) – dann zeigt ein Pfeil auf den Notiz-Button, danach kommt der große Button
+      const nC = cards.length;
+      cards.forEach((c, i) => {
+        const out = q > 0 ? clamp((q - .04 - (i / Math.max(1, nC)) * .42) / .07) : 0;
+        if (out > 0) { c.wasOut = true; c.el.style.opacity = String((c.seed ? clamp((c.seedP || 0) * 2) : 1) * (1 - out)); c.el.style.transform = `translateY(${(out * 10).toFixed(1)}px) scale(${(1 - .12 * out).toFixed(3)})`; }
+        else if (c.wasOut) { c.wasOut = false; if (!c.seed) { c.el.style.opacity = ''; c.el.style.transform = ''; } }
+      });
+      if (arrow) {
+        const a = clamp((q - .52) / .1) * (1 - clamp((q - .8) / .1));
+        arrow.style.opacity = a.toFixed(3); noteBtn && noteBtn.classList.toggle('is-hot', a > .05);
+        if (a > .01 && noteBtn) { const ar = app.getBoundingClientRect(), br = noteBtn.getBoundingClientRect(); arrow.style.left = (br.left + br.width / 2 - ar.left) + 'px'; arrow.style.top = (br.top - ar.top - 62) + 'px'; }
+      }
+      if (goBtn && !static0) { const g = ease(clamp((q - .8) / .16)); goBtn.style.opacity = g.toFixed(3); goBtn.style.transform = `translate(-50%,-50%) scale(${(.86 + .14 * g).toFixed(3)})`; goBtn.style.visibility = g <= 0 ? 'hidden' : 'visible'; goBtn.style.pointerEvents = g > .6 ? 'auto' : 'none'; }
       // fliegende Karten (Parallaxe-Flug)
       const sc = clamp(vw / 1400, .62, 1.1);
       fly.forEach((f) => {
@@ -245,7 +266,7 @@ export default {
       if (was !== live && !live && document.activeElement && document.activeElement.blur && win.contains(document.activeElement)) document.activeElement.blur();
     };
     const tick = () => { raf = 0; cur += (tgt - cur) * .16; if (Math.abs(tgt - cur) < .0008) cur = tgt; apply(cur); if (cur !== tgt) raf = requestAnimationFrame(tick); };
-    if (static0) { apply(1); }
+    if (static0) { apply(A0); }
     else { apply(0); track(root.querySelector('.nb__track'), (r) => { tgt = trackProgress(r, sticky.offsetHeight); if (!raf) raf = requestAnimationFrame(tick); }); addEventListener('resize', () => apply(cur), { passive: true }); }
     return root;
   },

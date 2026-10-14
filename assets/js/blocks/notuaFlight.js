@@ -184,18 +184,22 @@ const lerp = (a, b, t) => a + (b - a) * t;
 const eio = (x) => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
 /* Zufälliger Ablauf: bei jedem Laden andere Farben, Schrift, Hintergrund und Rundung (nie ganz rund). Der End-Look bleibt danach aktiv. */
 const rnd = (a) => a[Math.floor(Math.random() * a.length)], rf = (a, b) => a + Math.random() * (b - a);
-const PLAN = (() => {
+const mkPlan = (random) => {
+  if (!random) return { p1: 'default', p2: 'default', pf: 'default', dark: false, rf: 16, rp: 42, shf: .5, bdf: .5, font: 'default', bg: 'grid' };
   const ids = ['mono', 'matcha', 'cherry', 'blue', 'green', 'orange', 'lilac', 'mocha'];
   const pick = (ex) => rnd(ids.filter(i => !ex.includes(i)));
   const p1 = pick([]), p2 = pick([p1]), pf = pick([p1, p2]);
   return { p1, p2, pf, dark: false, rf: rnd([0, 8, 12, 16, 20, 26]), rp: rf(38, 48), shf: rf(.15, .6), bdf: rf(.15, .6), font: rnd(['default', 'serif', 'mono']), bg: rnd(['grid', 'lines', 'paper']) };
-})();
-const WP = (() => {
-  const P = PLAN, ix = (id) => ['mono', 'matcha', 'cherry', 'blue', 'green', 'orange', 'lilac', 'mocha'].indexOf(id), sx = (v) => LC.sx + LC.sw * v;
+};
+let PLAN = mkPlan(false);
+let WP = null;
+const mkWP = () => {
+  const P = PLAN, ix = (id) => Math.max(0, ['mono', 'matcha', 'cherry', 'blue', 'green', 'orange', 'lilac', 'mocha'].indexOf(id)), sx = (v) => LC.sx + LC.sw * v;
   const w = [[0, 840, 610], [.6, LC.cx(ix(P.p1)), 160], [1.0, LC.cx(ix(P.p1)) + 2, 162], [1.7, LC.cx(ix(P.pf)), 160], [2.0, LC.cx(ix(P.pf)) + 2, 162], [2.6, 596, 229]];
   w.push([3.2, sx(10 / 64), 290], [3.9, sx(P.rp / 64), 290], [4.2, sx(P.rp / 64), 290], [4.7, sx(P.rf / 64), 290], [4.9, sx(.35), 340], [5.3, sx(.9), 340], [5.5, sx(.9), 340], [5.8, sx(P.shf), 340], [6.2, sx(.4), 390], [6.5, sx(.85), 390], [6.6, sx(.85), 390], [6.95, sx(P.bdf), 390], [7.3, LC.fx(['default', 'serif', 'mono'].indexOf(P.font)), 443], [7.5, LC.fx(['default', 'serif', 'mono'].indexOf(P.font)) + 2, 445], [8.2, LC.fx(['grid', 'lines', 'paper'].indexOf(P.bg)), 498], [8.4, LC.fx(['grid', 'lines', 'paper'].indexOf(P.bg)) + 2, 500], [8.9, 683, 546], [9.6, 685, 548], [10, 780, 640]);
   return PORT ? w.map(([t, x, y]) => [t, ...PZ(x, y)]) : w;
-})();
+};
+WP = mkWP();
 const CLICKS = [.95, 1.95, 7.4, 8.3, 9.2];
 const LOOK_BASE = { pal: 'default', dark: false, r: 10, font: 'default', bg: 'grid', shV: .35, bdV: .4 };
 function lookState(T) {
@@ -343,6 +347,7 @@ function stageBg(TH, bg) {
 }
 function mount(root, OPT) {
   const o = OPT; const D = {};
+  PLAN = mkPlan(o.lookRandom === true || o.lookRandom === 'true'); WP = mkWP();
   for (const k of Object.keys(DEF)) D[k] = (o[k] !== undefined && o[k] !== '') ? o[k] : DEF[k];
   D.tableTitle = o.tableTitle || DEF.tableTitle; D.tasksTitle = o.tasksTitle || DEF.tasksTitle; D.columnsTitle = o.columnsTitle || DEF.columnsTitle; D.boardsTitle = o.boardsTitle || DEF.boardsTitle; D.widgetTitle = o.widgetTitle || DEF.widgetTitle;
   TH = { ...TH, bg: o.cBg || TH.bg, dot: o.cDot || TH.dot, surface: o.cSurface || TH.surface, ink: o.cInk || TH.ink, accent: o.cAccent || TH.accent };
@@ -497,7 +502,7 @@ export default {
     { name: 'linkText', label: 'Button 1: Text (öffnet die App)', type: 'text', default: 'open NOTUA ↗', de: 'NOTUA öffnen ↗' },
     { name: 'linkUrl', label: 'Button 1: Link', type: 'text', default: 'https://notua.site/' },
     { name: 'projectText', label: 'Button 2: Text (führt zur NOTUA-Projektseite)', type: 'text', default: 'view the project →', de: 'zum Projekt →' },
-    { name: 'projectUrl', label: 'Button 2: Projekt (Name der Projektseite, z. B. notua)', type: 'text', default: 'notua' },
+    { name: 'projectUrl', label: 'Button 2: Ziel (Projektname, oder „#next“ = direkt zum nächsten Abschnitt darunter springen)', type: 'text', default: 'notua' },
     { name: 'sub', label: 'Kleine Zeile unter den Buttons (am Ende)', type: 'text', default: 'web · desktop · android', de: 'Web · Desktop · Android' },
     { name: 'hint', label: 'Hinweis „scroll“', type: 'text', default: 'scroll to fly', de: 'scrollen und fliegen' },
     { name: 'logo', label: 'NOTUA-Logo (Bild)', type: 'image', default: 'media/notua-logo.png' },
@@ -515,6 +520,7 @@ export default {
     { name: 'boardsTitle', label: 'Boards-Karte: Titel', type: 'text', default: DEF.boardsTitle },
     { name: 'boards', label: 'Boards-Karte: Namen der Boards (mit | trennen, max. 3)', type: 'text', default: DEF.boards, de: 'Shoot 2026 | Kunden | Ideen' },
     { name: 'subBoards', label: 'Boards-Karte: Unter-Boards im ersten Board (mit | trennen)', type: 'text', default: DEF.subBoards, de: 'Tag 1 | Tag 2 | B-Roll' },
+    { name: 'lookRandom', label: 'Look-Finder am Ende: zufällige Farben/Schrift/Rundung (aus = immer das Standard-Farbschema)', type: 'checkbox', default: false },
     { name: 'cBg', label: 'Basis-Look: Hintergrund (Hex)', type: 'text', default: '#E7EAEE' },
     { name: 'cDot', label: 'Basis-Look: Punktraster (Hex)', type: 'text', default: '#C6CCD4' },
     { name: 'cSurface', label: 'Basis-Look: Karten (Hex)', type: 'text', default: '#FFFFFF' },
