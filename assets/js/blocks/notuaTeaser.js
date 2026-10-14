@@ -23,7 +23,8 @@ export default {
     { name: 'table', label: 'Tabellen-Karte: Zeilen (Zellen mit Komma trennen)', type: 'textarea', default: 'Intro, 0:12\nWorkshop, 0:28\nInterview, 0:45', de: 'Intro, 0:12\nWerkstatt, 0:28\nInterview, 0:45' },
     { name: 'boardsTitle', label: 'Boards-Karte: Titel', type: 'text', default: 'Boards', de: 'Boards' },
     { name: 'boards', label: 'Boards-Karte: Namen (mit | trennen)', type: 'text', default: 'Shoot 2026 | Clients | Ideas', de: 'Shoot 2026 | Kunden | Ideen' },
-    { name: 'scrollLength', label: 'Länge des Scrolls (in Bildschirmen, 0.6 = sehr kurz, 1.1 = normal)', type: 'number', default: 1.1 },
+    { name: 'introDur', label: 'Dauer der Animation in Sekunden (läuft automatisch ab)', type: 'number', default: 2.8 },
+    { name: 'scrollLength', label: 'Länge des Scrolls (in Bildschirmen, 0.5 = kurz)', type: 'number', default: .5 },
     { name: 'cBg', label: 'Look: Hintergrund (Hex)', type: 'text', default: '#E7EAEE' },
     { name: 'cDot', label: 'Look: Punktraster (Hex)', type: 'text', default: '#C6CCD4' },
     { name: 'cInk', label: 'Look: Text (Hex)', type: 'text', default: '#1B2027' },
@@ -47,7 +48,7 @@ export default {
     const btns = h('div', { class: 'nt__btns' }, b1, b2), sub = p.sub ? h('p', { class: 'nt__sub' }, p.sub) : null;
     const copy = h('div', { class: 'nt__copy' }, logo, t, x, btns, sub);
     const stage = h('div', { class: 'nt__stage' }, h('div', { class: 'nt__grid' }), cards, copy);
-    const len = Math.max(.3, Number(p.scrollLength) || 1.1);
+    const len = Math.max(.3, Number(p.scrollLength) || .5);
     const el = h('section', { class: 'nt', id: p.id, style: { '--nt-len': String(len), '--nt-bg': p.cBg, '--nt-dot': p.cDot, '--nt-ink': p.cInk, '--nt-ac': p.cAccent } }, h('div', { class: 'nt__track' }, stage));
     // Startlagen der vier Karten (Richtung, aus der sie hereinfliegen, und Schräglage)
     const FROM = [[-70, -40, -9], [70, -50, 8], [-60, 55, 7], [65, 50, -8]];
@@ -65,8 +66,19 @@ export default {
       stage.style.setProperty('--nt-p', pr.toFixed(3));
     };
     if (still()) { el.classList.add('is-still'); apply(1); return el; }
+    // Läuft automatisch ab, sobald man hier ankommt/hinscrollt (zeitgesteuert, nicht am Scrollrad hängend); beim Wegscrollen setzt es sich zurück
     apply(0);
-    track(el.querySelector('.nt__track'), (r) => apply(trackProgress(r, stage.offsetHeight)));
+    let ip = 0, ipT = 0, raf = 0, lt = 0; const dur = Math.max(.8, Number(p.introDur) || 2.8);
+    const tick = (t) => {
+      raf = 0; const dt = lt ? Math.min(.1, (t - lt) / 1000) : .016; lt = t;
+      if (ip < ipT) ip = Math.min(ipT, ip + dt / dur); else if (ip > ipT) ip = Math.max(ipT, ip - dt / dur * 2.5);
+      apply(ip); if (ip !== ipT) raf = requestAnimationFrame(tick); else lt = 0;
+    };
+    track(el.querySelector('.nt__track'), (r, vh) => {
+      const past = trackProgress(r, stage.offsetHeight) > .6;
+      const nt = (r.top < vh * .4 || past) ? 1 : (r.top > vh * .75 ? 0 : ipT);
+      if (nt !== ipT || (ip !== ipT && !raf)) { ipT = nt; if (!raf) { lt = 0; raf = requestAnimationFrame(tick); } }
+    });
     return el;
   },
 };

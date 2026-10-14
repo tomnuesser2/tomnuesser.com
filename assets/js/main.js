@@ -222,6 +222,15 @@ async function render() {
   const frag = h('div', { class: 'page', 'data-page': target });
   frag.append(renderBlocks(page.blocks, ctx), h('div', { class: 'b-spacer', style: { '--h': '40px' } }));
   els.main.replaceChildren(frag);
+  // Projektseiten: der erste Abschnitt zeigt einen „Scroll"-Hinweis (verschwindet beim ersten Scrollen); der NOTUA-Flug hat einen eigenen
+  if (state.index?.projects?.[target]) {
+    const first = frag.firstElementChild; const blk = first && first.classList.contains('b-spacer') ? null : first;
+    if (blk && !blk.classList.contains('fl') && !prefersReducedMotion()) {
+      const cue = h('div', { class: 'scue', 'aria-hidden': 'true' }, h('span', {}, getLang() === 'de' ? 'Scrollen' : 'Scroll'), h('i', {}));
+      frag.append(cue);
+      const off = () => { if (scrollY > 30) { cue.classList.add('is-off'); removeEventListener('scroll', off); } }; addEventListener('scroll', off, { passive: true });
+    }
+  }
   setMeta((getLang() === 'de' && page.title_de) || page.title);
   window.scrollTo(0, 0);
   state.els.header.classList.remove('is-hidden');
@@ -234,7 +243,7 @@ function scrollToHash(hash, smooth = true) {
   const el = hash && document.getElementById(decodeURIComponent(hash.slice(1)));
   if (!el) return;
   // Der NOTUA-Flug klebt am Bildschirm: Menüsprung landet genau auf seinem Start (Logo), nicht davor
-  let y = el.getBoundingClientRect().top + scrollY - (el.querySelector('.fl__track') ? -2 : 70);
+  let y = el.getBoundingClientRect().top + scrollY - (el.querySelector('.fl__track, .nt__track') || el.matches?.('.nt, .fl') ? -2 : 70);
   // Kreatives (Kinetic-Abschnitt): direkt dorthin springen, wo der Button „meine aktuellen Design-Arbeiten“ schon voll zu sehen ist
   const kt = el.querySelector('.kn__track') || (el.classList.contains('kn__track') ? el : null);
   if (kt) y = kt.getBoundingClientRect().top + scrollY + .17 * Math.max(0, kt.offsetHeight - innerHeight);

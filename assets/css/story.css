@@ -1086,3 +1086,15 @@ a, button, [role="button"], summary, label, .pc__plane, .pcs__t { touch-action: 
   .pc__pt p { margin-top: 10px; font-size: 15px; line-height: 1.7; color: #1a1a1a; }
 }
 @media (min-width: 900px) { .pc--pt { overflow-x: clip; overflow-y: visible; } }
+
+/* Sound-Regler: kompakter */
+.dv__vs { padding: 7px 3px; gap: 5px; }
+.dv__vs .dv__mute { width: 18px; height: 18px; } .dv__vs .dv__mute svg { width: 15px; height: 15px; } .dv__vr { width: 12px; }
+
+/* „Scroll"-Hinweis im ersten Abschnitt einer Projektseite */
+.scue { position: fixed; left: 50%; bottom: calc(26px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft, #1c1c1c); transition: opacity .5s; animation: scueBob 2.2s ease-in-out infinite; }
+.scue i { width: 1px; height: 30px; background: currentColor; transform-origin: top; animation: scueLine 2.2s ease-in-out infinite; }
+.scue.is-off { opacity: 0; }
+@keyframes scueBob { 0%, 100% { translate: 0 0; } 50% { translate: 0 6px; } }
+@keyframes scueLine { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .scue, .scue i { animation: none; } }

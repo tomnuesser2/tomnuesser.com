@@ -169,11 +169,11 @@ export default {
           if (vq) { // am Laptop „festgemacht": mit Abstand außen neben dem Bildschirm, folgt jeder Bewegung und Drehung
             const cl = cv.offsetLeft, ct = cv.offsetTop, cwv = cv.clientWidth, chv = cv.clientHeight;
             let x0 = 9e9, x1 = -9e9, y0 = 9e9, y1 = -9e9; vq.pts.forEach(([fx, fy]) => { x0 = Math.min(x0, fx); x1 = Math.max(x1, fx); y0 = Math.min(y0, fy); y1 = Math.max(y1, fy); });
-            const left = x0 * cwv + cl, right = x1 * cwv + cl, top = y0 * chv + ct, bot = y1 * chv + ct, sh = bot - top, hh = Math.max(110, Math.min(340, sh * 1.12)), w = vsEl.offsetWidth || 36, gap = Math.max(14, Math.min(34, sh * .09)), wide = innerWidth >= 900;
+            const left = x0 * cwv + cl, right = x1 * cwv + cl, top = y0 * chv + ct, bot = y1 * chv + ct, sh = bot - top, hh = Math.max(84, Math.min(190, sh * .46)), w = vsEl.offsetWidth || 36, gap = Math.max(14, Math.min(34, sh * .09)), wide = innerWidth >= 900;
             const onRight = el.classList.contains('dv--right') ? true : false;
             // Desktop: Regler außen neben dem Laptop (Laptop links → links, rechts → rechts); Handy: knapp innen am Rand
             const lx = wide ? (onRight ? right + gap : left - gap - w) : (onRight ? right - w - 6 : left + 6);
-            vsEl.style.right = 'auto'; vsEl.style.transform = 'none'; vsEl.style.left = lx.toFixed(1) + 'px'; vsEl.style.top = ((top + bot) / 2 - hh / 2 + sh * .06).toFixed(1) + 'px'; vsEl.style.height = hh.toFixed(1) + 'px'; vsEl.style.maxHeight = 'none';
+            vsEl.style.right = 'auto'; vsEl.style.transform = 'none'; vsEl.style.left = lx.toFixed(1) + 'px'; vsEl.style.top = ((top + bot) / 2 - hh / 2).toFixed(1) + 'px'; vsEl.style.height = hh.toFixed(1) + 'px'; vsEl.style.maxHeight = 'none';
           }
           vsEl.style.opacity = vq ? String(Math.min(1, ovAlpha)) : '0'; vsEl.style.pointerEvents = vq ? 'auto' : 'none';
         }

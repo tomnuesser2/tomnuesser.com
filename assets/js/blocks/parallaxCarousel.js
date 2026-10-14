@@ -15,7 +15,7 @@ export default {
     { name: 'mobileMode', label: '📱 Darstellung am Handy', type: 'select', options: [M_FIND, M_WHEEL, M_ROW], default: M_FIND },
     { name: 'mobileTitle', label: '📱 Text über dem Sucher (Überschrift, gilt für die ganze Reihe, nur Smartphone)', type: 'text', default: '' },
     { name: 'mobileText', label: '📱 Text über dem Sucher (Zeile darunter, optional)', type: 'textarea', default: '' },
-    { name: 'pcLift', label: '🖥 Am Computer: Abschnitt so viele px weiter nach oben schieben', type: 'number', default: 70 },
+    { name: 'pcLift', label: '🖥 Am Computer: Abschnitt so viele px weiter nach oben schieben', type: 'number', default: 28 },
     { name: 'pcTitle', label: '🖥 Text unter dem Karussell (Überschrift, nur Computer)', type: 'text', default: '' },
     { name: 'pcText', label: '🖥 Text unter dem Karussell (nur Computer)', type: 'textarea', default: '' },
     { name: 'alternate', label: 'Automatisch abwechselnd sortieren: Hochformat, Querformat, Hochformat …', type: 'checkbox', default: true },
@@ -40,7 +40,7 @@ export default {
     el.style.height = Math.max(200, heightOf(p, 520, 400)) + 'px';
     const track = h('div', { class: 'pc__track' }); const bar = h('i', { class: 'pc__bar' }); const prog = h('div', { class: 'pc__prog' }, bar);
     el.append(track); if (p.showProgress !== false && !p.loop) el.append(prog);
-    el.style.setProperty('--pc-lift', Math.max(0, num(p.pcLift, 70)) + 'px'); el.classList.add('pc--lift');
+    el.style.setProperty('--pc-lift', Math.max(0, num(p.pcLift, 28)) + 'px'); el.classList.add('pc--lift');
     if (p.pcTitle || p.pcText) { // Text unter dem Karussell, nur am Computer (am Handy blendet CSS ihn aus)
       const pt = h('div', { class: 'pc__pt' }, p.pcTitle ? h('h3', {}, p.pcTitle) : null, p.pcText ? h('p', {}, p.pcText) : null); el.append(pt); el.classList.add('pc--pt');
       watchSize(pt, (w, hh) => { el.style.setProperty('--pc-ptH', Math.ceil(hh) + 'px'); });
