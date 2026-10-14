@@ -107,3 +107,31 @@ export function dragHandler(el, { start, move, end, threshold = 5 }) {
   const up = (e) => { if (e.pointerId !== id) return; const was = moved; id = null; el.classList.remove('is-drag'); end?.(was, vx, e); if (was) { const stop = (ev) => { ev.stopPropagation(); ev.preventDefault(); }; el.addEventListener('click', stop, { capture: true, once: true }); setTimeout(() => el.removeEventListener('click', stop, true), 60); } };
   addEventListener('pointerup', up); addEventListener('pointercancel', up);
 }
+
+// Großansicht: Bild/Video vergrößert über der Seite. Schließen per Klick daneben, ×, Esc; Pfeile/Tasten wechseln zum nächsten Bild.
+export function openLightbox(list, start = 0) {
+  const items = (list || []).filter(i => i && i.src); if (!items.length) return;
+  let i = Math.max(0, Math.min(start, items.length - 1));
+  const box = h('div', { class: 'lbx', role: 'dialog', 'aria-modal': 'true' });
+  const stage = h('div', { class: 'lbx__st' }), cap = h('div', { class: 'lbx__cap' });
+  const close = h('button', { type: 'button', class: 'lbx__x', 'aria-label': 'Schließen' }, '×');
+  const prev = h('button', { type: 'button', class: 'lbx__n lbx__n--p', 'aria-label': 'Zurück' }, '‹'), next = h('button', { type: 'button', class: 'lbx__n lbx__n--n', 'aria-label': 'Weiter' }, '›');
+  box.append(stage, cap, close); if (items.length > 1) box.append(prev, next);
+  const show = () => {
+    const it = items[i]; stage.textContent = '';
+    let m;
+    if (isEmbedUrl(it.src)) { m = mediaNode(it.src, 'lbx__m', it.title); }
+    else if (isVideo(it.src)) { m = h('video', { class: 'lbx__m', src: it.src, controls: '', autoplay: '', loop: '', playsinline: '' }); }
+    else m = h('img', { class: 'lbx__m', src: it.src, alt: it.title || '', draggable: 'false' });
+    stage.append(m); cap.textContent = [it.title, it.subtitle].filter(Boolean).join(' · ');
+  };
+  const go = (d) => { i = (i + d + items.length) % items.length; show(); };
+  const end = () => { document.removeEventListener('keydown', key, true); box.classList.remove('is-on'); setTimeout(() => { box.remove(); document.documentElement.classList.remove('lbx-open'); }, 200); };
+  const key = (e) => { if (e.key === 'Escape') { e.preventDefault(); end(); } else if (e.key === 'ArrowRight') go(1); else if (e.key === 'ArrowLeft') go(-1); };
+  box.addEventListener('click', (e) => { if (e.target === box || e.target === stage || e.target === close) end(); });
+  prev.addEventListener('click', (e) => { e.stopPropagation(); go(-1); }); next.addEventListener('click', (e) => { e.stopPropagation(); go(1); });
+  let tx = null; box.addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; }, { passive: true });
+  box.addEventListener('touchend', (e) => { if (tx == null || items.length < 2) return; const dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1); }, { passive: true });
+  document.addEventListener('keydown', key, true); document.documentElement.classList.add('lbx-open');
+  show(); document.body.append(box); requestAnimationFrame(() => box.classList.add('is-on')); close.focus({ preventScroll: true });
+}

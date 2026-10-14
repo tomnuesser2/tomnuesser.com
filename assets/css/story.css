@@ -942,3 +942,16 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 
 /* Phone 3D (PC): Texte links/rechts ein Stück näher ans Handy */
 @media (min-width: 900px) { .ph3__t--l { transform: translate(4.5vw, var(--tdy, 0px)); } .ph3__t--r { transform: translate(-4.5vw, var(--tdy, 0px)); } }
+
+/* Großansicht (Lightbox) für Bilder/Videos */
+.pc__plane.is-zoom { cursor: zoom-in; }
+.lbx { position: fixed; inset: 0; z-index: 400; display: flex; align-items: center; justify-content: center; background: rgba(8,8,10,.94); opacity: 0; transition: opacity .2s ease; -webkit-tap-highlight-color: transparent; }
+.lbx.is-on { opacity: 1; }
+.lbx__st { max-width: 94vw; max-height: 88dvh; display: flex; align-items: center; justify-content: center; }
+.lbx__m { max-width: 94vw; max-height: 88dvh; width: auto; height: auto; object-fit: contain; border-radius: 6px; box-shadow: 0 30px 90px rgba(0,0,0,.5); transform: scale(.97); transition: transform .25s ease; } .lbx.is-on .lbx__m { transform: none; }
+.lbx__cap { position: absolute; left: 0; right: 0; bottom: max(14px, env(safe-area-inset-bottom)); text-align: center; color: rgba(255,255,255,.75); font-size: 14px; padding: 0 64px; pointer-events: none; }
+.lbx__x, .lbx__n { all: unset; box-sizing: border-box; position: absolute; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,.12); color: #fff; cursor: pointer; font: 300 30px/1 system-ui, sans-serif; transition: background .15s; }
+.lbx__x:hover, .lbx__n:hover { background: rgba(255,255,255,.24); } .lbx__x:focus-visible, .lbx__n:focus-visible { outline: 2px solid #fff; }
+.lbx__x { top: max(14px, env(safe-area-inset-top)); right: 14px; } .lbx__n { top: 50%; margin-top: -23px; } .lbx__n--p { left: 14px; } .lbx__n--n { right: 14px; }
+html.lbx-open { overflow: hidden; }
+@media (max-width: 700px) { .lbx__n { top: auto; bottom: max(56px, env(safe-area-inset-bottom)); margin: 0; } }

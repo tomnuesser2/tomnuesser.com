@@ -22,14 +22,14 @@
         "source": "eigene Bilder",
         "items": [
           {
-            "image": "media/dsc03753_0000_dsc03751.webp",
+            "image": "media/dsc03753_0001_dsc03760.webp",
             "imageMobile": "",
             "title": "",
             "subtitle": "",
             "link": ""
           },
           {
-            "image": "media/dsc03753_0001_dsc03760.webp",
+            "image": "media/dsc03753_0000_dsc03751.webp",
             "imageMobile": "",
             "title": "",
             "subtitle": "",
@@ -43,13 +43,6 @@
             "link": ""
           },
           {
-            "image": "media/dsc03753_0003_ebene-0.webp",
-            "imageMobile": "",
-            "title": "",
-            "subtitle": "",
-            "link": ""
-          },
-          {
             "image": "media/dsc03767_0000_dsc03758.webp",
             "imageMobile": "",
             "title": "",
@@ -57,14 +50,21 @@
             "link": ""
           },
           {
-            "image": "media/dsc03767_0001_ebene-0.webp",
+            "image": "media/dsc03767_0002_dsc03769.webp",
             "imageMobile": "",
             "title": "",
             "subtitle": "",
             "link": ""
           },
           {
-            "image": "media/dsc03767_0002_dsc03769.webp",
+            "image": "media/dsc03753_0003_ebene-0.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03767_0001_ebene-0.webp",
             "imageMobile": "",
             "title": "",
             "subtitle": "",
