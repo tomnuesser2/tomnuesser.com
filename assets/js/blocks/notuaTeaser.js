@@ -69,15 +69,17 @@ export default {
     // Läuft automatisch ab, sobald man hier ankommt/hinscrollt (zeitgesteuert, nicht am Scrollrad hängend); beim Wegscrollen setzt es sich zurück
     apply(0);
     let ip = 0, ipT = 0, raf = 0, lt = 0; const dur = Math.max(.8, Number(p.introDur) || 2.8);
-    let held1 = false;
+    let held1 = false, topNow = 999;
     const tick = (t) => {
       raf = 0; const dt = lt ? Math.min(.1, (t - lt) / 1000) : .016; lt = t;
-      if (ip === 0 && ipT === 1 && !held1) { held1 = true; holdScroll(dur * 1000 + 250); }
+      // Scroll erst sperren, wenn die Bühne am Bildschirm klebt (nicht mitten beim Heranscrollen)
+      if (ipT === 1 && ip < 1 && topNow <= 2 && !held1) { held1 = true; holdScroll((1 - ip) * dur * 1000 + 250); }
       if (ip >= 1 || ipT === 0) { held1 = false; releaseScroll(); }
       if (ip < ipT) ip = Math.min(ipT, ip + dt / dur); else if (ip > ipT) ip = Math.max(ipT, ip - dt / dur * 2.5);
       apply(ip); if (ip !== ipT) raf = requestAnimationFrame(tick); else lt = 0;
     };
     track(el.querySelector('.nt__track'), (r, vh) => {
+      topNow = r.top;
       const past = trackProgress(r, stage.offsetHeight) > .6;
       const nt = (r.top < vh * .4 || past) ? 1 : (r.top > vh * .75 ? 0 : ipT);
       if (nt !== ipT || (ip !== ipT && !raf)) { ipT = nt; if (!raf) { lt = 0; raf = requestAnimationFrame(tick); } }

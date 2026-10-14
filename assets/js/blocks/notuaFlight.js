@@ -355,6 +355,7 @@ function mount(root, OPT) {
       nb.style.setProperty('--nb-bg', TH.bg); nb.style.setProperty('--nb-dot', TH.dot);
       nb.style.setProperty('--fl-img', !/^(grid|lines|cross|paper)$/.test(sk) ? 'none' : stageBg(TH, sk).slice(0, -(TH.bg.length + 2)));
       lastPos = '';
+      if (SMALL) nb.style.setProperty('--fl-pos', `0px ${(-stage.offsetHeight).toFixed(0)}px`);
     }
     const pos = stage.style.backgroundPosition; if (!pos || pos === lastPos) return; lastPos = pos;
     const m = pos.match(/(-?[\d.]+)px\s+(-?[\d.]+)px/); if (!m) return;
@@ -468,8 +469,8 @@ function mount(root, OPT) {
     gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
     gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     const [f, lu] = fromProg(prog0); const asp = W / Hh, camZ = 3.0 - f * SP, camX = Math.sin(f * 1.1) * (narrow() ? .1 : .35), camY = Math.cos(f * .8) * .1;
-    if (lookSig.split('|')[4] !== 'plain') stage.style.backgroundPosition = `${(-prog0 * TOT * 40 - px * 18).toFixed(1)}px ${(prog0 * TOT * 90 - py * 14).toFixed(1)}px`;
-    syncNext(false);
+    if (!SMALL && lookSig.split('|')[4] !== 'plain') stage.style.backgroundPosition = `${(-prog0 * TOT * 40 - px * 18).toFixed(1)}px ${(prog0 * TOT * 90 - py * 14).toFixed(1)}px`;
+    if (!SMALL) syncNext(false);
     const VP = M.mul(M.persp(.96, asp, .1, 40), M.mul(M.mul(M.rx(py * .05), M.ry(px * .09)), M.tr(-camX, -camY, -camZ)));
     // Verbindungslinien zwischen den Karten (wie die Verbinder in NOTUA)
     gl.useProgram(L.p); const link = []; for (let i = 1; i < N - 1; i++) { const A = cardPos(i), B = cardPos(i + 1); link.push(A[0], A[1], -i * SP, B[0], B[1], -(i + 1) * SP); }
