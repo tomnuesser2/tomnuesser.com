@@ -1,6 +1,6 @@
 import { h } from '../core/dom.js';
 import { mediaEl, isEmbedUrl, videoCfg, parseYouTube, parseVimeo } from '../core/media.js';
-import { track, still, clamp, trackProgress } from '../core/scrollhub.js';
+import { track, still, clamp, trackProgress, holdScroll, releaseScroll } from '../core/scrollhub.js';
 import { createLaptop } from '../core/laptopGL.js';
 import { LAP_FIN, hexc, easeOut, eA, pose, normAnim, holdT, alphaAt } from '../core/laptopAnim.js';
 import { ticker, watchSize, mediaNode, dragHandler } from '../core/reelKit.js';
@@ -115,7 +115,8 @@ export default {
       gp.setSlot(0, srcEl(0));
       // Auflösung: mind. 2-faches Supersampling (glatte Kanten), mit Pixel-Budget; wird automatisch gesenkt, wenn das Gerät zu langsam ist
       let rq = 1, cw = 0, ch = 0, slow = 0, fast = 0;
-      const resize = () => { if (!cw) return; const mobile = matchMedia('(pointer: coarse)').matches, budget = mobile ? 3.2e6 : 7.5e6, want = Math.min(Math.max(window.devicePixelRatio || 1, 2), mobile ? 2.5 : 3) * rq, sc = Math.min(want, Math.sqrt(budget / (cw * ch))); const nw = Math.max(2, Math.round(cw * sc)), nh = Math.max(2, Math.round(ch * sc)); if (cv.width !== nw || cv.height !== nh) { cv.width = nw; cv.height = nh; } };
+      if (mq.matches) { cv.style.transition = 'opacity .45s ease'; }
+      const resize = () => { if (!cw) return; const mobile = matchMedia('(pointer: coarse)').matches, budget = mobile ? 2.3e6 : 7.5e6, want = Math.min(Math.max(window.devicePixelRatio || 1, 2), mobile ? 2.5 : 3) * rq, sc = Math.min(want, Math.sqrt(budget / (cw * ch))); const nw = Math.max(2, Math.round(cw * sc)), nh = Math.max(2, Math.round(ch * sc)); if (cv.width !== nw || cv.height !== nh) { cv.width = nw; cv.height = nh; } };
       watchSize(cv, (w, hh) => { cw = w; ch = hh; resize(); });
       if (!statik) {
         el.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; const r = cv.getBoundingClientRect(); tx = clamp(((e.clientX - r.left) / r.width - .5) * 2 * PAD, -1.2, 1.2); ty = clamp(((e.clientY - r.top) / r.height - .5) * 2 * PAD, -1.2, 1.2); }, { passive: true });
@@ -172,8 +173,10 @@ export default {
             const left = x0 * cwv + cl, right = x1 * cwv + cl, top = y0 * chv + ct, bot = y1 * chv + ct, sh = bot - top, hh = Math.max(84, Math.min(190, sh * .46)), w = vsEl.offsetWidth || 36, gap = Math.max(14, Math.min(34, sh * .09)), wide = innerWidth >= 900;
             const onRight = el.classList.contains('dv--right') ? true : false;
             // Desktop: Regler außen neben dem Laptop (Laptop links → links, rechts → rechts); Handy: knapp innen am Rand
-            const lx = wide ? (onRight ? right + gap : left - gap - w) : (onRight ? right - w - 6 : left + 6);
-            vsEl.style.right = 'auto'; vsEl.style.transform = 'none'; vsEl.style.left = lx.toFixed(1) + 'px'; vsEl.style.top = ((top + bot) / 2 - hh / 2).toFixed(1) + 'px'; vsEl.style.height = hh.toFixed(1) + 'px'; vsEl.style.maxHeight = 'none';
+            if (wide) { const lx = onRight ? right + gap : left - gap - w; vsEl.style.right = 'auto'; vsEl.style.transform = 'none'; vsEl.style.left = lx.toFixed(1) + 'px'; vsEl.style.top = ((top + bot) / 2 - hh / 2).toFixed(1) + 'px'; vsEl.style.height = hh.toFixed(1) + 'px'; vsEl.style.maxHeight = 'none'; }
+            else { // Handy: waagerechter Regler unter dem Laptop, überdeckt ihn nie
+              const lw = lap.clientWidth, lh = lap.clientHeight; vsEl.style.right = 'auto'; vsEl.style.transform = 'none'; vsEl.style.height = 'auto'; vsEl.style.maxHeight = 'none'; vsEl.style.left = (lw / 2 - (vsEl.offsetWidth || 150) / 2).toFixed(1) + 'px'; vsEl.style.top = (lh + 4).toFixed(1) + 'px';
+            }
           }
           vsEl.style.opacity = vq ? String(Math.min(1, ovAlpha)) : '0'; vsEl.style.pointerEvents = vq ? 'auto' : 'none';
         }
@@ -182,14 +185,14 @@ export default {
         if (!cv.width) return;
         if (dt > .034) { if (++slow > 25 && rq > .55) { rq *= .8; slow = 0; resize(); } } else if (slow > 0) slow--;
         const k = Math.min(1, dt * 6), tgt = statik ? 1 : A ? L.a : clamp(L.p / .26); if (A && !statik) { const stp = Math.min(dt, .1) / Math.max(.6, Number(A.dur) || 4.5); oc = tgt > oc ? Math.min(tgt, oc + stp) : Math.max(tgt, oc - stp); } else oc += (tgt - oc) * Math.min(1, dt * 7);
-        hx += (tx - hx) * k; hy += (ty - hy) * k;
+        hx += (tx - hx) * k; hy += (ty - hy) * k; if (A && oc >= 1 && tgt === 1) releaseScroll();
         calm = (!dr.on && Math.abs(dr.ry) < .3 && Math.abs(dr.rx) < .3) ? calm + dt : 0; ovk += ((emb.some((e) => e && e.f) && oc > .985 ? 1 : 0) - ovk) * Math.min(1, dt * 3);
         if (!dr.on) { const sd = Math.min(dt, .05); dr.ryV += (-60 * dr.ry - 11 * dr.ryV) * sd; dr.ry += dr.ryV * sd; dr.rxV += (-60 * dr.rx - 11 * dr.rxV) * sd; dr.rx += dr.rxV * sd; if (Math.abs(dr.ry) < .02 && Math.abs(dr.ryV) < .05) { dr.ry = 0; dr.ryV = 0; } if (Math.abs(dr.rx) < .02 && Math.abs(dr.rxV) < .05) { dr.rx = 0; dr.rxV = 0; } }
         if (L.i !== shown && to < 0) { to = L.i; gp.setSlot(1, srcEl(to)); mixv = 0; }
         if (to >= 0) { mixv += dt / .5; if (mixv >= 1) { shown = to; to = -1; mixv = 0; gp.setSlot(0, srcEl(shown)); } }
         const o = ease(clamp(oc)), idle = statik ? 0 : 1 - ovk, mv = 1 - ease(clamp(oc * 1.05));
         if (A) {
-          const pz = pose(A, statik ? 1 : holdT(A, eA(A, clamp(oc)))); { const al = statik ? 1 : alphaAt(A, eA(A, clamp(oc))); ovAlpha = al; if (al !== lastAl) { lastAl = al; cv.style.opacity = al.toFixed(3); if (shEl) shEl.style.opacity = al.toFixed(3); } };
+          const pz = pose(A, statik ? 1 : holdT(A, eA(A, clamp(oc)))); { const al = statik ? 1 : alphaAt(A, eA(A, clamp(oc))) * (mq.matches && L.a === 0 && oc < .002 ? 0 : 1); ovAlpha = al; if (al !== lastAl) { lastAl = al; cv.style.opacity = al.toFixed(3); if (shEl) shEl.style.opacity = al.toFixed(3); } };
           if (!statik) { lap.style.translate = `${(pz.x / 100 * stage.clientWidth).toFixed(1)}px ${(pz.y / 100 * stage.clientHeight).toFixed(1)}px`; copy.style.opacity = clamp((eA(A, clamp(oc)) - (A.textAt ?? .42)) / .22).toFixed(3); }
           gp.draw({ pad: PAD, open: pz.open, rz: pz.rz, rx: pz.rx + dr.rx - hy * 4 * (1 - ovk) + Math.sin(t * .5) * 1.2 * idle, ry: pz.ry + dr.ry + hx * 11 * (1 - ovk) + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle, y: Math.sin(t * .9) * .008 * idle, fit: pz.fit,
             mix: to >= 0 ? ease(clamp(mixv)) : 0, intro: clamp((pz.open - .3) / .45), time: t, light: 1, scroll: clamp((L.fr - .08) / .84), chrome: p.chrome !== false });
@@ -212,7 +215,7 @@ export default {
       const p0 = trackProgress(r, stage.offsetHeight), f = p0 * n, i = Math.min(n - 1, Math.floor(f)), fr = f - i;
       setCur(i);
       el.style.setProperty('--p', p0.toFixed(4)); el.style.setProperty('--e', clamp(p0 / .12).toFixed(3));
-      if (gpOn) { L.p = p0; L.fr = fr; L.i = i; if (A) { const th = clamp(Number(A.pre ?? .85)) * vh; if (r.top < th) L.a = 1; else if (r.top > th + .06 * vh) L.a = 0; } }
+      if (gpOn) { L.p = p0; L.fr = fr; L.i = i; if (A) { const th = (mq.matches ? Math.min(.55, clamp(Number(A.pre ?? .85))) : clamp(Number(A.pre ?? .85))) * vh; if (r.top < th) { if (L.a !== 1 && mq.matches) holdScroll(Math.min(7000, (Number(A.dur) || 4.5) * 1000 + 250)); L.a = 1; } else if (r.top > th + .06 * vh) L.a = 0; } }
       bars.forEach((b, k) => { b.style.transform = `scaleX(${k < i ? 1 : k === i ? fr : 0})`; });
       if (!phone && !gpOn) {
         const pg = screens[i]?.querySelector('img'); const page = el.querySelector('.dv__page');

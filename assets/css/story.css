@@ -1103,3 +1103,32 @@ a, button, [role="button"], summary, label, .pc__plane, .pcs__t { touch-action: 
   .pc--pt:not(.is-dark):not(.is-light)::after { bottom: -90px; height: calc(var(--pc-fb, 0px) + 90px); background: linear-gradient(to bottom, rgba(255,255,255,0), var(--bg, #fff) 70%); }
   .pc--pt .pc__pt { z-index: 6; }
 }
+
+/* Sucher am Handy: weniger Weißraum, größere Bilder */
+.pc--vf { margin-top: 0; margin-bottom: 6px; }
+.pcs__h { padding: 4px 22px 0; }
+.pcs__cap { margin-top: 12px; height: 18px; }
+.pcs__s { height: 66px; }
+
+/* Sound-Regler am Handy: waagerecht unter dem Laptop */
+@media (max-width: 899px) {
+  .dv__vs { flex-direction: row; padding: 4px 10px; gap: 8px; border-radius: 999px; width: auto; }
+  .dv__vr { writing-mode: horizontal-tb; direction: ltr; width: 120px; height: 14px; flex: none; }
+}
+
+body.is-nbend .site-footer { display: none; }
+body.is-nbend { padding-bottom: 0; }
+@media (max-width: 899px) { .dv:has(.dv__vs) .dv__laptop { margin-bottom: 44px; } }
+
+/* NOTUA-Board: kleiner Button zum Losfliegen */
+.nb__fly { margin-top: 18px; padding: 9px 18px; border-radius: 999px; border: 1.5px solid var(--nb-ink, #1B2027); background: transparent; color: var(--nb-ink, #1B2027); font: 600 13px/1 system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; cursor: pointer; transition: opacity .3s, background .2s, color .2s; pointer-events: auto; }
+.nb__fly:hover { background: var(--nb-ink, #1B2027); color: var(--nb-bg, #fff); }
+/* Seite endet mit dem NOTUA-Board: unten keinen weißen Streifen, der Hintergrund läuft bis zum Ende durch */
+body.is-nbend .nb:not(.nb--static) { background: var(--nb-bg); margin-bottom: 0; }
+body.is-nbend .fl + .nb::before { -webkit-mask-image: none; mask-image: none; }
+body.is-nbend .page > .nb:last-child { margin-bottom: 0; }
+body.is-nbend, body.is-nbend .app, body.is-nbend main { background: var(--nb-end, #E7EAEE); }
+/* Handy: teure Unschärfe-Effekte in den Szenen aus (flüssigeres Scrollen) */
+@media (pointer: coarse) { :is(.dv, .fl, .nb, .nt) * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; } .dv__vs { background: rgba(20,20,24,.72); } }
+
+@media (max-width: 899px) { .scue { bottom: calc(92px + env(safe-area-inset-bottom)); } }

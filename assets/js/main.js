@@ -222,13 +222,19 @@ async function render() {
   const frag = h('div', { class: 'page', 'data-page': target });
   frag.append(renderBlocks(page.blocks, ctx), h('div', { class: 'b-spacer', style: { '--h': '40px' } }));
   els.main.replaceChildren(frag);
+  // Seite endet mit dem NOTUA-Board (großer Button am Ende): dahinter gibt es nichts mehr zum Weiterscrollen
+  { const nbs = frag.querySelectorAll(':scope > .nb:not(.nb--static)'), lastNb = nbs[nbs.length - 1];
+    const end = !!(lastNb && lastNb.querySelector('.nb__go'));
+    if (end) { while (lastNb.nextSibling) lastNb.nextSibling.remove(); }
+    document.body.classList.toggle('is-nbend', end); }
   // Projektseiten: der erste Abschnitt zeigt einen „Scroll"-Hinweis (verschwindet beim ersten Scrollen); der NOTUA-Flug hat einen eigenen
   if (state.index?.projects?.[target]) {
     const first = frag.firstElementChild; const blk = first && first.classList.contains('b-spacer') ? null : first;
     if (blk && !blk.classList.contains('fl') && !prefersReducedMotion()) {
       const cue = h('div', { class: 'scue', 'aria-hidden': 'true' }, h('span', {}, getLang() === 'de' ? 'Scrollen' : 'Scroll'), h('i', {}));
       frag.append(cue);
-      const off = () => { if (scrollY > 30) { cue.classList.add('is-off'); removeEventListener('scroll', off); } }; addEventListener('scroll', off, { passive: true });
+      const lap = frag.querySelector('.dv'); // gibt es einen Laptop/Geräte-Abschnitt, bleibt der Hinweis, bis dieser ins Bild kommt
+      const off = () => { if (!cue.isConnected) { removeEventListener('scroll', off); return; } const gone = lap && lap !== blk ? lap.getBoundingClientRect().top < innerHeight * .5 : scrollY > 30; cue.classList.toggle('is-off', gone); if (gone && !lap) removeEventListener('scroll', off); }; addEventListener('scroll', off, { passive: true });
     }
   }
   setMeta((getLang() === 'de' && page.title_de) || page.title);

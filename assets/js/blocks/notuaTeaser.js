@@ -1,5 +1,5 @@
 import { h } from '../core/dom.js';
-import { track, still, clamp, trackProgress } from '../core/scrollhub.js';
+import { track, still, clamp, trackProgress, holdScroll, releaseScroll } from '../core/scrollhub.js';
 // NOTUA kurz (Startseite): Eine kurze Szene, die nur erklärt „das ist NOTUA“. Beim Scrollen setzt sich um die Überschrift herum ein kleines Board
 // aus vier Karten zusammen, am Ende erscheinen die Buttons. Dauert nur etwa einen Bildschirm. Die lange Version (3D-Flug) gehört auf die Projektseite.
 const lines = (s) => String(s == null ? '' : s).split('\n').map(x => x.trim()).filter(Boolean);
@@ -69,8 +69,11 @@ export default {
     // Läuft automatisch ab, sobald man hier ankommt/hinscrollt (zeitgesteuert, nicht am Scrollrad hängend); beim Wegscrollen setzt es sich zurück
     apply(0);
     let ip = 0, ipT = 0, raf = 0, lt = 0; const dur = Math.max(.8, Number(p.introDur) || 2.8);
+    let held1 = false;
     const tick = (t) => {
       raf = 0; const dt = lt ? Math.min(.1, (t - lt) / 1000) : .016; lt = t;
+      if (ip === 0 && ipT === 1 && !held1) { held1 = true; holdScroll(dur * 1000 + 250); }
+      if (ip >= 1 || ipT === 0) { held1 = false; releaseScroll(); }
       if (ip < ipT) ip = Math.min(ipT, ip + dt / dur); else if (ip > ipT) ip = Math.max(ipT, ip - dt / dur * 2.5);
       apply(ip); if (ip !== ipT) raf = requestAnimationFrame(tick); else lt = 0;
     };

@@ -23,3 +23,18 @@ export const still = () => prefersReducedMotion();
 export const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 // Fortschritt (0–1) durch eine hohe Scroll-Strecke mit klebender Bühne.
 export const trackProgress = (r, stageH) => clamp(-r.top / Math.max(1, r.height - stageH));
+
+// Handy: beim Scroll-Stopp den restlichen Schwung (Auslaufen des Wischens) entfernen und für ms den Scroll sperren – z. B. solange eine zeitgesteuerte Animation läuft.
+// So rauscht man nicht an Abschnitten vorbei und die Animation landet immer im perfekten Bild. Am Computer (Maus) passiert nichts.
+let holdT = 0, held = false;
+const coarse = () => matchMedia('(pointer: coarse)').matches;
+export function releaseScroll() {
+  clearTimeout(holdT); if (!held) return; held = false;
+  const de = document.documentElement; de.style.overflow = ''; de.style.overscrollBehavior = ''; document.body.style.overflow = '';
+}
+export function holdScroll(ms = 200) {
+  if (!coarse() || ms <= 0) return;
+  const de = document.documentElement, y = window.scrollY;
+  if (!held) { held = true; de.style.overflow = 'hidden'; de.style.overscrollBehavior = 'none'; document.body.style.overflow = 'hidden'; window.scrollTo(0, y); }
+  clearTimeout(holdT); holdT = setTimeout(releaseScroll, Math.min(9000, ms));
+}

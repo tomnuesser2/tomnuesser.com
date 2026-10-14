@@ -1,5 +1,5 @@
 import { h } from '../core/dom.js';
-import { track, still, trackProgress } from '../core/scrollhub.js';
+import { track, still, trackProgress, holdScroll, releaseScroll } from '../core/scrollhub.js';
 import { getLang } from '../core/i18n.js';
 import { watchSize, clamp, num } from '../core/reelKit.js';
 
@@ -66,6 +66,7 @@ export default {
     ] },
     { name: 'flyCards', label: 'Fliegende Karten beim Anflug (0 = keine)', type: 'number', default: 9 },
     { name: 'introDur', label: 'Dauer der Anflug-Animation in Sekunden (läuft automatisch, sobald man scrollt)', type: 'number', default: 4.2 },
+    { name: 'flyText', label: 'Kleiner Button zum Losfliegen (unter dem Text)', type: 'text', default: 'Fly in ↓', de: 'Losfliegen ↓' },
     { name: 'tryText', label: 'Text am Pfeil nach dem Anflug', type: 'text', default: 'Try it yourself', de: 'Probier es selbst aus' },
     { name: 'scrollLength', label: 'Scroll-Strecke zum Ausprobieren (in Bildschirmhöhen, Board bleibt stehen)', type: 'number', default: 1.2 },
     { name: 'width', label: 'Maximale Breite des Boards am Computer in px', type: 'number', default: 1240 },
@@ -119,7 +120,7 @@ export default {
       space.append(c);
     }
     const dots = h('div', { class: 'nb__dots' });
-    const head = p.hideTexts ? null : h('div', { class: 'nb__head' }, p.kicker ? h('p', { class: 'nb__k' }, p.kicker) : null, p.title ? h('h2', { class: 'nb__h' }, p.title) : null, p.text ? h('p', { class: 'nb__p' }, p.text) : null);
+    const head = p.hideTexts ? null : h('div', { class: 'nb__head' }, p.kicker ? h('p', { class: 'nb__k' }, p.kicker) : null, p.title ? h('h2', { class: 'nb__h' }, p.title) : null, p.text ? h('p', { class: 'nb__p' }, p.text) : null, static0 ? null : h('button', { type: 'button', class: 'nb__fly' }, p.flyText == null ? (DE ? 'Losfliegen ↓' : 'Fly in ↓') : p.flyText));
     const isExt = /^https?:/i.test(endUrl0);
     const goBtn = endUrl0 ? h('a', { class: 'nb__go', href: endUrl0, ...(isExt ? { target: '_blank', rel: 'noopener' } : { 'data-link': '' }) }, p.endText || 'Go to NOTUA ↗') : null;
     const arrow = live0 ? h('div', { class: 'nb__ar', 'aria-hidden': 'true', html: `<span class="nb__art">${String(p.tryText == null ? 'Try it yourself' : p.tryText).replace(/[<>&]/g, '')}</span><svg viewBox="0 0 40 56" width="40" height="56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4v40M7 31l13 14 13-14"/></svg>` }) : null;
@@ -264,13 +265,17 @@ export default {
         f.el.style.transform = `translate(-50%,-50%) translate3d(${(f.x * vw).toFixed(1)}px,${(f.y * vh).toFixed(1)}px,${z.toFixed(0)}px) rotateX(${f.rx}deg) rotateY(${f.ry}deg) rotateZ(${f.rz}deg) scale(${sc.toFixed(3)})`;
       });
       dots.style.opacity = String((1 - clamp(fl * 1.2)) * .9); dots.style.transform = `scale(${(.7 + e * 2.2).toFixed(3)})`;
+      if (head) { const fb = head.querySelector('.nb__fly'); if (fb) { fb.style.pointerEvents = pr < .02 ? 'auto' : 'none'; fb.style.opacity = pr < .02 ? '1' : '0'; } }
       if (head) { const o = 1 - clamp(pr / .2); head.style.opacity = o.toFixed(3); head.style.transform = `translate(-50%, ${(-pr * 90).toFixed(1)}px)`; head.style.visibility = o <= 0 ? 'hidden' : 'visible'; head.style.filter = o < 1 ? `blur(${((1 - o) * 6).toFixed(1)}px)` : ''; }
       if (was !== live && !live && document.activeElement && document.activeElement.blur && win.contains(document.activeElement)) document.activeElement.blur();
     };
+    let held1 = false;
     const tick = (t) => {
       raf = 0; const dt = lt ? Math.min(.1, (t - lt) / 1000) : .016; lt = t;
       cur += (tgt - cur) * .16; if (Math.abs(tgt - cur) < .0008) cur = tgt;
       const sp = (O0 && tgt >= A0 ? 4 : 1) / Math.max(.8, num(p.introDur, 4.2));
+      if (ip === 0 && ipT === 1 && !held1) { held1 = true; holdScroll(Math.max(.8, num(p.introDur, 4.2)) * 1000 + 250); }
+      if (ip >= 1 || ipT === 0) { held1 = false; releaseScroll(); }
       if (ip < ipT) ip = Math.min(ipT, ip + dt * sp); else if (ip > ipT) ip = Math.max(ipT, ip - dt * sp * 2);
       if (ip <= 0) tried = false;
       apply(cur);
@@ -278,8 +283,19 @@ export default {
     };
     const markTried = () => { if (tried) return; tried = true; if (arrow) arrow.style.opacity = '0'; noteBtn && noteBtn.classList.remove('is-hot'); };
     win.addEventListener('pointerdown', markTried, true);
+    // Die Animation startet nicht beim Ankommen (auch nicht bei schnellem Scrollen): erst nach zwei weiteren Scroll-Bewegungen im Board-Fenster
+    let arrT = performance.now(), gest = 0, lastG = 0, go1 = false;
+    const countG = () => {
+      const t = performance.now(); if (ipT || ip > 0 || t - arrT < 450 || t - lastG < 160) { lastG = t; return; }
+      lastG = t; const r = root.querySelector('.nb__track').getBoundingClientRect(); if (r.top > 4 || r.bottom < innerHeight * .5) return;
+      gest++; if (gest >= 2) { ipT = 1; if (!raf) { lt = 0; raf = requestAnimationFrame(tick); } }
+    };
+    if (!static0) { addEventListener('wheel', countG, { passive: true }); addEventListener('touchmove', countG, { passive: true }); addEventListener('keydown', (e) => { if (['ArrowDown', 'PageDown', ' ', 'End'].includes(e.key)) countG(); }); }
+    const flyB = head && head.querySelector('.nb__fly');
+    if (flyB) flyB.addEventListener('click', () => { go1 = true; ipT = 1; if (!raf) { lt = 0; raf = requestAnimationFrame(tick); } });
     if (static0) { apply(A0); }
-    else { apply(0); track(root.querySelector('.nb__track'), (r, vhh) => { tgt = trackProgress(r, sticky.offsetHeight); ipT = (r.top < vhh * .35 || tgt >= A0) ? 1 : (r.top > vhh * .6 ? 0 : ipT); if (!raf) { lt = 0; raf = requestAnimationFrame(tick); } }); addEventListener('resize', () => apply(cur), { passive: true }); }
+    else { apply(0); track(root.querySelector('.nb__track'), (r, vhh) => { tgt = trackProgress(r, sticky.offsetHeight); if (r.top > 4) { arrT = performance.now(); gest = 0; }
+      ipT = (go1 || tgt >= A0 || (r.top <= 4 && gest >= 2)) ? 1 : (r.top > vhh * .25 ? (go1 = false, 0) : ipT); if (!raf) { lt = 0; raf = requestAnimationFrame(tick); } }); addEventListener('resize', () => apply(cur), { passive: true }); }
     return root;
   },
 };

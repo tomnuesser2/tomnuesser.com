@@ -7,7 +7,7 @@ import { still } from './scrollhub.js';
 // Bildes (hoch ↔ quer), das neue Bild fokussiert sich ein (Zoom + Unschärfe), unten läuft ein Filmstreifen mit allen Bildern im echten Format.
 const pad = (n) => String(n).padStart(2, '0');
 export function mountFinder(host, { getList, aspOf, interval = 3600, title = '', text = '' }) {
-  let list = [], i = 0, W = 0, H = 0, t0 = 0, timer = 0, vis = false, held = false, tTouch = 0, layer = 0;
+  let abs = 0, snapT = 0, list = [], i = 0, W = 0, H = 0, t0 = 0, timer = 0, vis = false, held = false, tTouch = 0, layer = 0;
   const A = h('div', { class: 'pcs__l' }), B = h('div', { class: 'pcs__l' }); let cur = A;
   const frame = h('div', { class: 'pcs__f' }, A, B);
   const rec = h('span', { class: 'pcs__rec' }, h('i'), 'REC'), fmt = h('span', { class: 'pcs__fmt' }), cnt = h('span', { class: 'pcs__cnt' });
@@ -21,27 +21,36 @@ export function mountFinder(host, { getList, aspOf, interval = 3600, title = '',
 
   const label = (a) => (a < .75 ? '9:16' : a > 1.4 ? '16:9' : a > .95 && a < 1.05 ? '1:1' : a < 1 ? '4:5' : '4:3');
   const sizeFor = (a) => {
-    const aw = Math.max(120, W - 44), ah = Math.max(120, stage.clientHeight - 58);
+    const aw = Math.max(120, W - 28), ah = Math.max(120, stage.clientHeight - 46);
     let w, hh; if (a >= 1) { w = aw; hh = w / a; if (hh > ah) { hh = ah; w = hh * a; } } else { hh = ah; w = hh * a; if (w > aw) { w = aw; hh = w / a; } }
     return [Math.round(w), Math.round(hh)];
   };
   function fillLayer(L, it) {
     L.textContent = ''; const m = mediaNode(it.src, 'pcs__m', it.title || ''); L.append(m); if (m.tagName === 'VIDEO') { m.play?.().catch(() => {}); }
   }
-  function show(n, instant) {
-    if (!list.length) return; i = (n + list.length) % list.length; const it = list[i], a = aspOf(it.src), [w, hh] = sizeFor(a);
+  function show(n, instant, jumpTo) {
+    if (!list.length) return; const prevI = i; i = (n + list.length) % list.length; const it = list[i], a = aspOf(it.src), [w, hh] = sizeFor(a);
     const next = cur === A ? B : A; fillLayer(next, it);
     wrap.style.width = w + 'px'; wrap.style.height = hh + 'px';
     if (instant) { cur.classList.remove('is-on'); next.classList.add('is-on'); next.style.transition = 'none'; requestAnimationFrame(() => { next.style.transition = ''; }); }
     else { next.classList.remove('is-on', 'is-out'); void next.offsetWidth; next.classList.add('is-on'); cur.classList.remove('is-on'); cur.classList.add('is-out'); setTimeout(() => cur.classList.remove('is-out'), 700); }
     cur = next; fmt.textContent = label(a); cnt.textContent = `${pad(i + 1)} / ${pad(list.length)}`;
     cap.textContent = it.title || ''; cap.classList.toggle('is-on', !!it.title);
-    [...stripIn.children].forEach((t, k) => t.classList.toggle('is-cur', k === i));
-    const t = stripIn.children[i]; if (t) { const x = t.offsetLeft + t.offsetWidth / 2; stripIn.style.transform = `translateX(${Math.round(strip.clientWidth / 2 - x)}px)`; }
+    centerStrip(instant, prevI, jumpTo);
+  }
+  // Endlos-Filmstreifen: alle Bilder dreimal hintereinander; nach dem Wechsel über die Kante springt der Streifen unsichtbar zurück in die Mitte
+  function centerStrip(instant, prevI, jumpTo) {
+    const n = list.length; if (!n || !stripIn.children.length) return;
+    if (jumpTo != null) abs = jumpTo;
+    else if (instant || prevI == null) abs = n + i;
+    else { let d = (i - prevI + n) % n; if (d > n / 2) d -= n; abs += d; }
+    const place = (noAnim) => { const t = stripIn.children[abs]; if (!t) return; [...stripIn.children].forEach((c, k) => c.classList.toggle('is-cur', k === abs)); const x = t.offsetLeft + t.offsetWidth / 2; if (noAnim) stripIn.style.transition = 'none'; stripIn.style.transform = `translateX(${Math.round(strip.clientWidth / 2 - x)}px)`; if (noAnim) { void stripIn.offsetWidth; stripIn.style.transition = ''; } };
+    place(!!instant); clearTimeout(snapT);
+    if (abs < n || abs >= 2 * n) snapT = setTimeout(() => { while (abs >= 2 * n) abs -= n; while (abs < n) abs += n; place(true); }, 640);
   }
   function buildStrip() {
     stripIn.textContent = '';
-    list.forEach((it, k) => { const a = aspOf(it.src), th = 54, tw = Math.round(th * Math.max(.5, Math.min(2, a))); const m = mediaNode(it.src, 'pcs__tm', ''); const b = h('button', { type: 'button', class: 'pcs__t', style: { width: tw + 'px', height: th + 'px' }, 'aria-label': it.title || String(k + 1) }, m); b.addEventListener('click', () => { restart(); show(k); }); stripIn.append(b); });
+    [0, 1, 2].forEach((copy) => list.forEach((it, k0) => { const k = k0 + copy * list.length; const a = aspOf(it.src), th = 54, tw = Math.round(th * Math.max(.5, Math.min(2, a))); const m = mediaNode(it.src, 'pcs__tm', ''); const b = h('button', { type: 'button', class: 'pcs__t', style: { width: tw + 'px', height: th + 'px' }, 'aria-label': it.title || String(k + 1) }, m); b.addEventListener('click', () => { restart(); show(k0, false, k); }); stripIn.append(b); }));
   }
   const restart = () => { clearTimeout(timer); tTouch = performance.now(); if (vis && !still()) timer = setTimeout(autoNext, interval); };
   const autoNext = () => { if (!vis || held || still() || document.hidden) { timer = setTimeout(autoNext, 800); return; } show(i + 1); timer = setTimeout(autoNext, interval); };
