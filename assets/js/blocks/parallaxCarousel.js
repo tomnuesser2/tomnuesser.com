@@ -9,7 +9,7 @@ const fixedRatio = (f) => { const m = String(f || '').match(/^(\d+(?:\.\d+)?)\s*
 export default {
   type: 'parallaxCarousel', label: 'Parallax-Carousel (Karten mit gleitenden Bildern)',
   fields: [
-    SOURCE, ITEMS, { name: 'format', label: 'Format der Rahmen', type: 'select', options: [ORIG, '16:9', '9:16', '1:1', '4:5', '4:3', '3:2'], default: ORIG }, ...HEIGHT(520, 520), BG,
+    SOURCE, ITEMS, { name: 'format', label: 'Format der Rahmen', type: 'select', options: [ORIG, '16:9', '9:16', '1:1', '4:5', '4:3', '3:2'], default: ORIG }, ...HEIGHT(520, 400), BG,
     { name: 'alternate', label: 'Automatisch abwechselnd sortieren: Hochformat, Querformat, Hochformat …', type: 'checkbox', default: true },
     { name: 'gap', label: 'Abstand zwischen den Karten in px', type: 'number', default: 32 },
     { name: 'radius', label: 'Rundung in px', type: 'number', default: 16 },
@@ -29,9 +29,10 @@ export default {
     const base = getItems(p, ctx);
     const el = h('div', { class: `pc${bgClass(p.bg)}`, style: { '--pc-rad': num(p.radius, 16) + 'px' } });
     if (base.length < 2) { el.style.height = '200px'; el.append(h('p', { class: 'reel-empty' }, 'Mindestens 2 Bilder hinzufügen.')); return el; }
+    el.style.height = Math.max(200, heightOf(p, 520, 400)) + 'px';
     const track = h('div', { class: 'pc__track' }); const bar = h('i', { class: 'pc__bar' }); const prog = h('div', { class: 'pc__prog' }, bar);
     el.append(track); if (p.showProgress !== false && !p.loop) el.append(prog);
-    let list = base.slice(), planes = [], W = 0, H = 0, pw = 0, ph = 0, gap = num(p.gap, 32), total = 0, pos = 0, target = 0, hover = false, held = false, off = [], wid = [];
+    let list = base.slice(), planes = [], W = 0, H = 0, pw = 0, ph = 0, gap = num(p.gap, 32), total = 0, pos = 0, target = 0, hover = false, held = false, off = [], wid = [], hei = [], mob = false, inited = false, capK = .86;
     const fixed = fixedRatio(p.format), asp = new Map(), dflt = () => (mobileView() ? 9 / 16 : 16 / 9);
     const aspOf = (src) => fixed || asp.get(src) || dflt();
     let order = base.slice();
@@ -48,16 +49,17 @@ export default {
     const build = () => {
       track.textContent = ''; planes = [];
       // Bei Endlos genug Karten, damit der Bildschirm immer voll ist
-      const widthOf = (it) => Math.max(80, Math.min(Math.round(ph * aspOf(it.src)), Math.round(W * .86)));
+      const widthOf = (it) => Math.max(80, Math.min(Math.round(ph * aspOf(it.src)), Math.round(W * capK)));
       arrange(); list = order.slice(); const sum = (l) => l.reduce((t, it) => t + widthOf(it) + gap, 0);
       if (loop) while (sum(list) < W + (widthOf(order[0]) + gap) * 2.5) list = list.concat(order);
-      wid = list.map(widthOf); off = []; total = 0; wid.forEach((w) => { off.push(total); total += w + gap; });
-      list.forEach((it, i) => { const m = mediaNode(it.src, 'pc__img', it.title); const pl = h('a', { class: 'pc__plane', href: it.href || null, 'data-link': it.href ? '' : null, draggable: 'false', style: { width: wid[i] + 'px', height: ph + 'px' } }, m); if (!it.href) { pl.removeAttribute('href'); pl.classList.add('is-zoom'); pl.addEventListener('click', () => openLightbox(order, i % order.length)); } if (m.tagName === 'IMG') m.addEventListener('load', () => learn(it.src, m.naturalWidth, m.naturalHeight)); else if (m.tagName === 'VIDEO') m.addEventListener('loadedmetadata', () => learn(it.src, m.videoWidth, m.videoHeight)); track.append(pl); planes.push({ pl, m, w: wid[i], i }); });
-      planes.forEach(({ m, w }) => { m.style.width = (w / uv) + 'px'; m.style.height = (ph / uv) + 'px'; m.style.left = -(w / uv - w) / 2 + 'px'; m.style.top = -(ph / uv - ph) / 2 + 'px'; });
+      wid = list.map(widthOf); hei = list.map((it, i) => Math.min(ph, Math.round(wid[i] / aspOf(it.src)))); off = []; total = 0; wid.forEach((w) => { off.push(total); total += w + gap; });
+      list.forEach((it, i) => { const m = mediaNode(it.src, 'pc__img', it.title); const pl = h('a', { class: 'pc__plane', href: it.href || null, 'data-link': it.href ? '' : null, draggable: 'false', style: { width: wid[i] + 'px', height: hei[i] + 'px' } }, m); if (!it.href) { pl.removeAttribute('href'); pl.classList.add('is-zoom'); pl.addEventListener('click', () => openLightbox(order, i % order.length)); } if (m.tagName === 'IMG') m.addEventListener('load', () => learn(it.src, m.naturalWidth, m.naturalHeight)); else if (m.tagName === 'VIDEO') m.addEventListener('loadedmetadata', () => learn(it.src, m.videoWidth, m.videoHeight)); track.append(pl); planes.push({ pl, m, w: wid[i], hh: hei[i], i }); });
+      planes.forEach(({ m, w, hh }) => { m.style.width = (w / uv) + 'px'; m.style.height = (hh / uv) + 'px'; m.style.left = -(w / uv - w) / 2 + 'px'; m.style.top = -(hh / uv - hh) / 2 + 'px'; });
+      if (!inited && loop && mob) { inited = true; pos = target = -(W - wid[0]) / 2; }
       playVideosWhenVisible(el);
     };
     watchSize(el, (w, hh) => {
-      W = w; H = hh; ph = Math.round(H * .82); pw = Math.max(80, Math.min(Math.round(ph * aspOf((order[0] || base[0]).src)), Math.round(W * .86))); build();
+      W = w; H = hh; mob = mobileView() || W < 700; capK = mob ? .62 : .86; gap = mob ? Math.min(num(p.gap, 32), 16) : num(p.gap, 32); ph = Math.round(H * (mob ? .68 : .82)); pw = Math.max(80, Math.min(Math.round(ph * aspOf((order[0] || base[0]).src)), Math.round(W * capK))); build();
     });
     const clampPos = () => { if (!loop) { const max = Math.max(0, off[off.length - 1] + (wid[wid.length - 1] - wid[0]) / 2); pos = clamp(pos, -0, max); target = clamp(target, 0, max); } };
     const move = (d) => { target += d; clampPos(); };
@@ -67,10 +69,10 @@ export default {
     ticker(el, (dt) => {
       if (!still() && !held && !hover && num(p.autoplaySpeed, 0)) { move(num(p.autoplaySpeed, 0) * dt); }
       pos += (target - pos) * (1 - Math.pow(1 - lerpK, dt * 60)); if (Math.abs(target - pos) < .05) pos = target;
-      if (!pw) return; const y = (H - ph) / 2, cx = W / 2;
+      if (!pw) return; const cx = W / 2;
       for (let i = 0; i < planes.length; i++) {
         const w = wid[i]; let x = off[i] - pos + (loop ? 0 : (W - wid[0]) / 2); if (loop) { x = ((x % total) + total) % total; if (x > total - (w + gap) * 1.3) x -= total; } // um die Mitte herum wickeln
-        const { pl, m } = planes[i];
+        const { pl, m, hh } = planes[i], y = Math.round((H - hh) / 2);
         if (x > W + 40 || x < -w - 40) { pl.style.visibility = 'hidden'; continue; }
         pl.style.visibility = 'visible'; const dn0 = clamp(((x + w / 2) - cx) / (W / 2 + w / 2), -1.2, 1.2); pl.style.transform = `translate3d(${x.toFixed(1)}px,${y}px,0) perspective(900px) rotateY(${(-dn0 * 16).toFixed(1)}deg) scale(${(1 - Math.abs(dn0) * .06).toFixed(3)})`;
         const dn = clamp(((x + w / 2) - cx) / (W / 2 + w / 2), -1.2, 1.2), over = (w / uv - w);

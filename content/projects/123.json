@@ -11,25 +11,12 @@
   },
   "blocks": [
     {
-      "type": "spacer",
-      "props": {
-        "size": 51
-      }
-    },
-    {
       "type": "parallaxCarousel",
       "props": {
         "source": "eigene Bilder",
         "items": [
           {
             "image": "media/dsc03753_0001_dsc03760.webp",
-            "imageMobile": "",
-            "title": "",
-            "subtitle": "",
-            "link": ""
-          },
-          {
-            "image": "media/dsc03753_0000_dsc03751.webp",
             "imageMobile": "",
             "title": "",
             "subtitle": "",
