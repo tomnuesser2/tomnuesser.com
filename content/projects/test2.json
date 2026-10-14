@@ -1,14 +1,14 @@
 {
   "title": "notua",
   "card": {
-    "image": "media/notua-flyer-a6-quer-showcase-1-.webp",
+    "image": "media/notua-flyer-s-16x9-screenshot.webp",
     "vimeo": "",
     "ratio": "16/9",
     "group": 1,
     "category": "code",
     "stills": [],
     "featured": true,
-    "imageMobile": "media/notua-flyer-s-9x16-showcase.webp"
+    "imageMobile": "media/notua-flyer-s-9x16-screenshot-1-.webp"
   },
   "blocks": [
     {

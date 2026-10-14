@@ -500,10 +500,10 @@ function mount(root, OPT) {
     const lookT = Math.abs(f - lookIdx) < .01 ? (active === lookIdx ? lu * 10 : -1) : (f > lookIdx ? 99 : -1); applyState(lookState(lookT)); if (LG && LG.acc !== TH.accent) tintLogo();
     if (cvs[active] && active === near && Math.abs(f - active) < .6 && now - lastPaint > (SMALL ? (vel > .06 ? 400 : 140) : 33)) { lastPaint = now; paint(active, active === lookIdx ? lookT : (now - aT0) / 1000); pver[active] = ver; upload(active); }
     if (D.dirtyImg) { D.dirtyImg = false; ver++; }
-    for (let i = 0; i < STATIONS.length; i++) if (cvs[i] && i !== active && pver[i] !== ver && Math.abs(f - i) < 2.6) { paint(i, 99); upload(i); pver[i] = ver; }
+    for (let i = 0; i < STATIONS.length; i++) if (cvs[i] && i !== active && pver[i] !== ver && Math.abs(f - i) < 2.6) { paint(i, 99); upload(i); pver[i] = ver; if (SMALL) break; }   // Handy: höchstens eine Karte pro Bild, kein Ruckler beim Einstieg
     hud.style.setProperty('--gl', '0'); bar.style.transform = `scaleX(${prog0.toFixed(4)})`; hint.style.opacity = prog0 < .03 ? '1' : '0';
   };
-  new IntersectionObserver((es) => { if (es[0].isIntersecting) { if (!running) { running = true; resize(); requestAnimationFrame(draw); } } else { running = false; } }, { rootMargin: '10%' }).observe(stage);
+  new IntersectionObserver((es) => { if (es[0].isIntersecting) { if (!running) { running = true; resize(); requestAnimationFrame(draw); } } else { running = false; } }, { rootMargin: SMALL ? '70% 0px' : '10%' }).observe(stage);
   const onScroll = () => { const r = track.getBoundingClientRect(); prog0 = clamp(-r.top / Math.max(1, r.height - stage.offsetHeight)); };
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 }
@@ -550,7 +550,7 @@ export default {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
     const root = document.createElement('section'); root.className = 'fl'; if (p.id) root.id = p.id;
     const go = () => { try { mount(root, p); } catch (e) { console.error(e); } };
-    if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); go(); } }, { rootMargin: '150% 0px' }); io.observe(root); root.style.minHeight = '100svh'; }
+    if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); go(); } }, { rootMargin: '150% 0px' }); io.observe(root); root.style.minHeight = `calc(100svh + ${FEATURES.length + 2 + 5.2} * 78svh)`; }   // endgültige Höhe gleich reservieren – sonst springt die Seite beim Zurückscrollen
     else go();
     return root;
   },
