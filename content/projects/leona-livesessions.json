@@ -99,29 +99,118 @@
       }
     },
     {
-      "type": "device",
+      "type": "laptop3d",
       "props": {
-        "kind": "laptop",
-        "side": "left",
+        "side": "right",
+        "textAlign": "links",
         "kicker": "",
-        "title": "",
-        "text": "",
+        "title": "working for LEONA",
+        "text": "\nProduced a cinematic live session at Deutsches Haus Flensburg to support LEONA’s festival applications with high-end visuals for booking agencies.\n\nShot on a multicam Sony FX3 & A7 IV setup with separately mastered audio. I handled the complete workflow – from filming and editing to color grading and final delivery.",
+        "titleSize": 1,
+        "titleSizeMobile": 0,
+        "textSize": 1,
+        "textSizeMobile": 0,
         "items": [
           {
             "src": "https://vimeo.com/1207034763",
-            "title": "working for leona",
-            "text": "Produced a cinematic live session at Deutsches Haus Flensburg to support LEONA’s festival applications with high-end visuals for booking agencies.\n\nShot on a multicam Sony FX3 & A7 IV setup with separately mastered audio. I handled the complete workflow – from filming and editing to color grading and final delivery.",
-            "text_de": "Für LEONAs Festival-Bewerbungen habe ich eine cinematische Live-Session im Deutschen Haus in Flensburg produziert. Ziel war ein intimes, hochwertiges Performance-Video für Veranstalter und Booking-Agenturen.\n\nGefilmt im Multicam-Setup (Sony FX3 & A7 IV) mit extern gemastertem Ton. Ich habe den gesamten Workflow übernommen – von Dreh und Schnitt über Color Grading bis zur Fertigstellung.",
-            "title_de": "Live-Session für LEONA"
+            "title": "",
+            "url": "",
+            "text": ""
           }
         ],
+        "chrome": false,
         "linkText": "",
         "linkUrl": "",
-        "chrome": false,
-        "volumeUi": true,
-        "linkText_de": "",
-        "chromeMobile": false,
-        "textScale": 1.7
+        "finish": "space schwarz",
+        "frameColor": "",
+        "logo": "media/notua-logo.png",
+        "drag": true,
+        "soundUi": true,
+        "anim": {
+          "span": 0.45,
+          "dur": 2.5,
+          "acc": 2,
+          "ease": 4.8,
+          "pre": 0.6,
+          "textAt": 0.62,
+          "mid": false,
+          "hold": 0.12,
+          "fi": 0.9,
+          "fo": 0,
+          "s": {
+            "x": -78.5,
+            "y": -76.5,
+            "ry": -101,
+            "rx": -84,
+            "rz": 319,
+            "open": 0,
+            "fit": 1.1
+          },
+          "m": {
+            "t": 0.45,
+            "x": -12,
+            "y": -6,
+            "ry": 38,
+            "rx": 38,
+            "rz": 0,
+            "open": 0.55,
+            "fit": 0.9
+          },
+          "e": {
+            "x": -4,
+            "y": -8,
+            "ry": -25,
+            "rx": 13,
+            "rz": 0,
+            "open": 1,
+            "fit": 1.1
+          }
+        },
+        "animMobile": {
+          "span": 0.45,
+          "dur": 2,
+          "acc": 2,
+          "ease": 5.3,
+          "pre": 1,
+          "textAt": 0.57,
+          "mid": false,
+          "hold": 0.12,
+          "fi": 0.25,
+          "fo": 0,
+          "s": {
+            "x": -2.5,
+            "y": -86,
+            "ry": -265,
+            "rx": 0,
+            "rz": 0,
+            "open": 0,
+            "fit": 1.04
+          },
+          "m": {
+            "t": 0.45,
+            "x": -10,
+            "y": -4,
+            "ry": 38,
+            "rx": 38,
+            "rz": 0,
+            "open": 0.55,
+            "fit": 0.8
+          },
+          "e": {
+            "x": 0,
+            "y": 0,
+            "ry": -12,
+            "rx": 12,
+            "rz": 0,
+            "open": 1,
+            "fit": 0.86
+          }
+        },
+        "scale": 1,
+        "textScale": 1,
+        "textScaleMobile": 0,
+        "text_de": "\nFür LEONAs Festival-Bewerbungen habe ich eine cinematische Live-Session im Deutschen Haus in Flensburg produziert. Ziel war ein intimes, hochwertiges Performance-Video für Veranstalter und Booking-Agenturen.\n\nGefilmt im Multicam-Setup (Sony FX3 & A7 IV) mit extern gemastertem Ton. Ich habe den gesamten Workflow übernommen – von Dreh und Schnitt über Color Grading bis zur Fertigstellung.",
+        "title_de": "Live-Session für LEONA"
       }
     },
     {

@@ -355,7 +355,7 @@ function mount(root, OPT) {
       nb.style.setProperty('--nb-bg', TH.bg); nb.style.setProperty('--nb-dot', TH.dot);
       nb.style.setProperty('--fl-img', !/^(grid|lines|cross|paper)$/.test(sk) ? 'none' : stageBg(TH, sk).slice(0, -(TH.bg.length + 2)));
       lastPos = '';
-      if (SMALL) nb.style.setProperty('--fl-pos', `0px ${(-stage.offsetHeight).toFixed(0)}px`);
+      if (PORT) nb.style.setProperty('--fl-pos', `0px ${(-stage.offsetHeight).toFixed(0)}px`);
     }
     const pos = stage.style.backgroundPosition; if (!pos || pos === lastPos) return; lastPos = pos;
     const m = pos.match(/(-?[\d.]+)px\s+(-?[\d.]+)px/); if (!m) return;

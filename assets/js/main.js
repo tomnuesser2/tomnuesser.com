@@ -428,3 +428,6 @@ function entry(site) {
     });
   });
 }
+
+// Mess-Modus für echte Geräte (nur mit ?perf in der Adresse)
+if (/[?&]perf\b/.test(location.search)) import('./core/perfhud.js').catch(() => {});

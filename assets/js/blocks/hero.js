@@ -1,5 +1,5 @@
 import { h } from '../core/dom.js';
-import { track, still, clamp, trackProgress, kick } from '../core/scrollhub.js';
+import { track, still, clamp, trackProgress, kick, registerStops } from '../core/scrollhub.js';
 import { isFinePointer } from '../core/dom.js';
 import { ui } from '../core/i18n.js';
 import { carousel3d } from '../core/carousel3d.js';
@@ -163,6 +163,9 @@ function mobileHero(p, ctx) {
     });
   };
   addEventListener('resize', () => { R = null; kick(); }, { passive: true });
+  // Handy: Die Animation läuft nach dem Loslassen zu Ende und hält an jeder Vollbild-Karte an (Karussell → Karte 1 → Karte 2 …)
+  { const trk = el.querySelector('.hm__track'), uStops = [0, 2]; for (let i = 1; i < N; i++) uStops.push(3.6 + (i - 1) * 1.6);
+    registerStops(() => { if (!el.isConnected || !trk.offsetParent) return []; const top = trk.getBoundingClientRect().top + scrollY, run = trk.offsetHeight - stage.offsetHeight; return run > 50 ? uStops.map((u) => top + (u / T) * run) : []; }, true); }
   track(el.querySelector('.hm__track'), (r) => { apply(trackProgress(r, stage.offsetHeight) * T); });
   apply(0);
   return el;

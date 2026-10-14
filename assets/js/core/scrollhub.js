@@ -17,7 +17,7 @@ export const kick = () => { if (!queued) { queued = true; requestAnimationFrame(
 export function track(el, fn) {
   subs.add({ el, fn });
   if (!bound) { bound = true; addEventListener('scroll', kick, { passive: true }); addEventListener('resize', kick, { passive: true }); }
-  kick(); requestAnimationFrame(kick); 
+  kick(); requestAnimationFrame(kick); setTimeout(() => initSnapStop(), 0);
 }
 export const still = () => prefersReducedMotion();
 export const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -40,18 +40,36 @@ export function holdScroll(ms = 200) {
 }
 
 // Handy: Jeder Abschnitt hält beim Erreichen seines Anfangs an. Schneller Wisch → schnell los, kurz vor dem Anfang sanft abbremsen, bis der Abschnitt perfekt sitzt – erst der nächste Wisch scrollt weiter.
-let snapOn = false, lastY = 0, fingers = 0, snapping = false, snapT = 0;
+let snapOn = false, lastY = 0, fingers = 0, snapping = false, snapT = 0, gestY = 0;
+const stopFns = [];
+// Abschnitte können eigene Anhaltepunkte melden (absolute Scroll-Positionen). settle: Läuft eine Animation zwischen zwei Punkten, wird sie nach dem Loslassen zu Ende geführt.
+export function registerStops(fn, settle = false) { const z = { fn, settle }; stopFns.push(z); return () => { const i = stopFns.indexOf(z); if (i >= 0) stopFns.splice(i, 1); }; }
+function extraStops() { const o = []; for (const z of stopFns) { try { for (const v of z.fn() || []) o.push(Math.round(v)); } catch { /* weg */ } } return o; }
 function snapTargets() {
-  const out = []; for (const b of document.querySelectorAll('.page[data-page="home"] [data-bi]')) out.push(Math.round(b.getBoundingClientRect().top + scrollY));
+  const out = [...extraStops()]; for (const b of document.querySelectorAll('.page[data-page="home"] [data-bi]')) out.push(Math.round(b.getBoundingClientRect().top + scrollY));
   return out;
 }
 export function initSnapStop() {
   if (snapOn || !coarse() || prefersReducedMotion()) return; snapOn = true; lastY = scrollY;
-  addEventListener('touchstart', e => { fingers = e.touches.length; snapping = false; }, { passive: true });
+  addEventListener('touchstart', e => { fingers = e.touches.length; snapping = false; if (fingers === 1) gestY = scrollY; }, { passive: true });
   addEventListener('touchend', e => { fingers = e.touches.length; }, { passive: true });
   addEventListener('touchcancel', () => { fingers = 0; }, { passive: true });
+  let settleT = 0, dirLast = 1;
+  const settle = () => {
+    if (fingers || snapping || held) return; const y = scrollY, vh = innerHeight;
+    for (const z of stopFns) { if (!z.settle) continue; let st; try { st = (z.fn() || []).map(Math.round).sort((a, b) => a - b); } catch { continue; } if (st.length < 2) continue;
+      if (y < st[0] - 4 || y > st[st.length - 1] + 4) continue; if (st.some((v) => Math.abs(v - y) <= 6)) return;
+      const t = dirLast >= 0 ? st.find((v) => v > y) : [...st].reverse().find((v) => v < y); if (t == null || Math.abs(t - y) > vh * 1.6) return;
+      snapping = true; scrollTo({ top: t, behavior: 'smooth' }); clearTimeout(snapT); snapT = setTimeout(() => { snapping = false; lastY = scrollY; }, 900); return; }
+    // Kräftiger Wisch, der kurz vor dem nächsten Abschnittsanfang ausläuft → bis dahin weiterschicken (leichter Wisch bleibt wo er ist)
+    if (!document.querySelector('.page[data-page="home"]')) return;
+    const trav = Math.abs(y - gestY); if (trav < vh * .45) return;
+    const dir = dirLast >= 0 ? 1 : -1, near = snapTargets().filter((v) => dir > 0 ? (v > y + 6 && v - y < vh * .5) : (v < y - 6 && y - v < vh * .5)).sort((a, b) => dir > 0 ? a - b : b - a)[0];
+    if (near != null) { snapping = true; scrollTo({ top: near, behavior: 'smooth' }); clearTimeout(snapT); snapT = setTimeout(() => { snapping = false; lastY = scrollY; }, 900); }
+  };
   addEventListener('scroll', () => {
-    const y = scrollY, d = y - lastY; lastY = y;
+    const y = scrollY, d = y - lastY; lastY = y; if (Math.abs(d) > 0) dirLast = d > 0 ? 1 : -1;
+    clearTimeout(settleT); settleT = setTimeout(settle, 170);
     if (snapping || held || fingers || Math.abs(d) < 14 || !document.querySelector('.page[data-page="home"]')) return;       // nur während des Auslaufens (Finger weg) und bei echter Fahrt
     const dir = d > 0 ? 1 : -1, vh = innerHeight;
     // nächster Abschnittsanfang, den man in Fahrtrichtung gleich erreicht/überfahren hat
