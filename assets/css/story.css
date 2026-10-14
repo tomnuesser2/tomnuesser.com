@@ -424,21 +424,22 @@
   .hero-wrap > .hm { display: block; margin-top: calc(var(--header-h) * -1); }
 }
 .hm { position: relative; background: var(--bg, #fff); color: var(--ink, #000); }
-.hm__track { position: relative; height: calc(100svh + var(--len, 4) * 100svh); }
-.hm__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; background: var(--bg, #fff); }
+.hm__track { position: relative; height: calc(100svh + var(--len, 4) * 100svh); overflow: clip; }
+.hm { --uh: max(0px, calc(100lvh - 100svh)); }
+.hm__stage { position: sticky; top: 0; height: 100lvh; margin-bottom: calc(var(--uh) * -1); overflow: hidden; background: var(--bg, #fff); }
 /* 3D-Karussell (Handy-Intro, Desktop-Hero) */
-.hm .hm__car { position: absolute; height: auto; left: 0; right: 0; top: calc(var(--header-h, 56px) - 34px); bottom: calc(302px + env(safe-area-inset-bottom)); will-change: transform, opacity; transform-origin: 50% 50%; --cc-fade: #fff; }
-.hm__title { position: absolute; left: var(--gutter, 20px); right: var(--gutter, 20px); bottom: calc(186px + env(safe-area-inset-bottom)); margin: 0; display: flex; flex-direction: column; gap: 0; font-size: calc(var(--k, 1) * clamp(38px, 11.4vw, 60px)); line-height: .98; letter-spacing: -.04em; font-weight: 700; will-change: transform, opacity; }
+.hm .hm__car { position: absolute; height: auto; left: 0; right: 0; top: calc(var(--header-h, 56px) - 34px); bottom: calc(186px + var(--hmt, 112px) + 24px + var(--uh) + env(safe-area-inset-bottom)); will-change: transform, opacity; transform-origin: 50% 50%; --cc-fade: #fff; }
+.hm__title { position: absolute; left: var(--gutter, 20px); right: var(--gutter, 20px); bottom: calc(186px + var(--uh) + env(safe-area-inset-bottom)); margin: 0; display: flex; flex-direction: column; gap: 0; font-size: calc(var(--k, 1) * clamp(38px, 11.4vw, 60px)); line-height: .98; letter-spacing: -.04em; font-weight: 700; will-change: transform, opacity; }
 .hm__title span { display: block; }
 .hm__title span:nth-child(2) { color: transparent; -webkit-text-stroke: 1.3px var(--ink, #000); }
-.hm__cue { position: absolute; left: 0; right: 0; bottom: calc(100px + env(safe-area-inset-bottom)); margin: 0; text-align: center; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+.hm__cue { position: absolute; left: 0; right: 0; bottom: calc(100px + var(--uh) + env(safe-area-inset-bottom)); margin: 0; text-align: center; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
 .hm__cue i { display: block; font-style: normal; margin-top: 4px; animation: hmCue 1.6s ease-in-out infinite; }
 @keyframes hmCue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
 .hm__shot { position: absolute; inset: 0; display: block; color: #fff; background: #000; will-change: clip-path; }
 .hm__img { position: absolute; inset: 0; will-change: transform; }
 .hm__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; will-change: transform; }
 .hm__shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.2) 36%, rgba(0,0,0,0) 60%); pointer-events: none; }
-.hm__cap { position: absolute; left: var(--gutter, 20px); right: var(--gutter, 20px); bottom: calc(112px + env(safe-area-inset-bottom)); display: grid; gap: 4px; will-change: transform, opacity; opacity: 0; }
+.hm__cap { position: absolute; left: var(--gutter, 20px); right: var(--gutter, 20px); bottom: calc(112px + var(--uh) + env(safe-area-inset-bottom)); display: grid; gap: 4px; will-change: transform, opacity; opacity: 0; }
 .hm__n { font-size: 12px; letter-spacing: .12em; opacity: .75; }
 .hm__t { font-size: clamp(26px, 8vw, 40px); line-height: 1.02; letter-spacing: -.03em; font-weight: 700; }
 .hm__r { font-style: normal; font-size: 13px; opacity: .8; }
@@ -508,9 +509,9 @@
 /* PC-Intro mit 3D-Karussell: Karussell nimmt die Höhe ein, Titel darunter */
 @media (min-width: 900px) {
   .hero--car { height: calc(100svh - var(--header-h)); min-height: 480px; }
-  .hero--car .hero__cards { flex: 1 1 0; height: auto; min-height: 220px; max-height: 620px; margin-top: 0; }
+  .hero--car .hero__cards { flex: none; height: clamp(260px, 56svh, 600px); margin-top: auto; }   /* Karussell + Titel als Gruppe mittig zwischen Kopf und "Scroll" */
   .hero--car .hn--d, .hero--car .hero__roles { flex: none; }
-  .hero--car .hero__cue { padding-top: clamp(6px, 1.2svh, 14px); padding-bottom: calc(clamp(10px, 2svh, 22px) + env(safe-area-inset-bottom)); }
+  .hero--car .hero__cue { padding-top: clamp(6px, 1.2svh, 14px); padding-bottom: calc(clamp(26px, 5svh, 52px) + env(safe-area-inset-bottom)); }
   .hero--car .hero__roles { margin-top: clamp(10px, 2.4svh, 28px); }
 }
 
@@ -1149,3 +1150,8 @@ body.is-nbend, body.is-nbend .app, body.is-nbend main { background: var(--nb-end
   html.snap-home .page[data-page="home"] > [data-bi] { scroll-snap-align: start; }
   html.snap-home .site-footer { scroll-snap-align: end; }
 }
+
+/* Album-Rail „Bildschirm füllen“: Seite scrollt nicht, Fußzeile ausgeblendet */
+html.is-fill, html.is-fill body { overflow: hidden; overscroll-behavior: none; }
+html.is-fill .site-footer { display: none; }
+.ar.is-fill { margin: 0; }

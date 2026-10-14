@@ -107,6 +107,8 @@ function spy() {
   }
   let cur = null; const lim = innerHeight * .45;
   for (const [a, el] of spyMap) if (el && el.getBoundingClientRect().top < lim) cur = a;
+  // Übersichtsseiten (z. B. /videography) markieren ihren Menüpunkt
+  if (!cur) { const pg = document.querySelector('.page')?.dataset.page, id = { videography: 'video', design: 'design' }[pg]; if (id) cur = links.find((a) => (a.getAttribute('href') || '').endsWith('#' + id)) || null; }
   const ch = cur && cur.getAttribute('href'); for (const a of links) a.classList.toggle('is-active', !!ch && a.getAttribute('href') === ch);
 }
 // Beschriftungen des unteren Menüs: genaue Breite messen, damit nichts aus der Pille rutscht
@@ -216,7 +218,7 @@ async function render() {
   { const pv = state.index && state.index.projects && state.index.projects[target] && state.index.projects[target].vimeo;
     const m1 = pv && (page.blocks || []).find(b => b.type === 'media');
     if (m1 && m1.props && !m1.props.vimeo) page = { ...page, blocks: page.blocks.map(b => b === m1 ? { ...b, props: { ...b.props, vimeo: pv } } : b) }; }
-  document.body.classList.toggle('is-sub', target !== 'home'); document.querySelector('.mnav')?.classList.remove('is-open');
+  document.body.classList.toggle('is-sub', target !== 'home'); document.documentElement.classList.toggle('snap-home', target === 'home'); document.documentElement.classList.remove('is-fill'); document.querySelector('.mnav')?.classList.remove('is-open');
   if (target === 'home' && !state.entered) { state.entered = true; window.tnEnterP = entry(site); } else if (!window.tnEnterP) window.tnEnterP = Promise.resolve();
   const ctx = { site, content: { index: state.index }, route: target };
   const frag = h('div', { class: 'page', 'data-page': target });

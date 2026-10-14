@@ -41,7 +41,7 @@ export function getItems(p, ctx) {
   if (p.source === 'alle Projekte') {
     const idx = ctx.content.index;
     return (idx.order || []).map(s => ({ slug: s, ...idx.projects[s] })).filter(x => x.image && !x.hidden)
-      .map(x => ({ src: imgFor(x), srcAlt: x.image, title: String(x.title || x.slug).replace(/\n/g, ' '), subtitle: x.roles || '', href: x.slug }));
+      .map(x => ({ src: imgFor(x), srcAlt: x.image, title: String(x.title || x.slug).replace(/\n/g, ' '), subtitle: x.roles || '', href: x.slug, ratio: x.ratio || '' }));
   }
   return (p.items || []).filter(i => i.image || i.imageMobile).map(i => ({
     src: mobileView() ? (i.imageMobile || i.image) : (i.image || i.imageMobile),

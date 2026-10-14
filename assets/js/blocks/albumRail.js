@@ -21,7 +21,10 @@ const SCREEN = [
 export default {
   type: 'albumRail', label: 'Album-Rail (Cover-Fächer mit Schallplatte oder Screens-Mosaik)',
   fields: [
-    SOURCE, { ...ITEMS, itemFields: [...ITEM, { name: 'screens', label: 'Screens zum Cover (Mosaik beim Antippen, beliebig viele)', type: 'list', itemFields: SCREEN }] }, FORMAT('1:1'), ...HEIGHT(620, 640), BG,
+    SOURCE, { ...ITEMS, itemFields: [...ITEM, { name: 'screens', label: 'Screens zum Cover (Mosaik beim Antippen, beliebig viele)', type: 'list', itemFields: SCREEN }] }, FORMAT('1:1'),
+    { name: 'fit', label: 'Bildformat der Cover', type: 'select', options: ['wie oben (alle im gleichen Format)', 'jedes Bild in seinem eigenen Format (nicht zuschneiden)'], default: 'wie oben (alle im gleichen Format)' },
+    { name: 'fill', label: 'Bildschirm füllen: Seite scrollt nicht, Fächer sitzt mittig (z. B. für Projekt-Übersichtsseiten)', type: 'checkbox', default: false },
+    ...HEIGHT(620, 640), BG,
     { name: 'size', label: 'Größe des mittleren Covers (0.3–0.9)', type: 'number', default: .62 },
     { name: 'spread', label: 'Abstand zu den Nachbarn (0.3–1)', type: 'number', default: .58 },
     { name: 'fan', label: 'Fächer-Neigung in Grad', type: 'number', default: 6 },
@@ -48,9 +51,12 @@ export default {
   render(p0, ctx) {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
     const items = getItems(p, ctx);
-    const el = h('div', { class: `ar${bgClass(p.bg)}`, style: { '--accent': p.accent || '#ff6a4d', '--vinyl': p.vinylColor || '#131116', '--rad': num(p.radius, 14) + 'px' } });
+    const el = h('div', { class: `ar${bgClass(p.bg)}${p.fill ? ' is-fill' : ''}`, style: { '--accent': p.accent || '#ff6a4d', '--vinyl': p.vinylColor || '#131116', '--rad': num(p.radius, 14) + 'px' } });
     if (items.length < 2) { el.style.height = '200px'; el.append(h('p', { class: 'reel-empty' }, 'Mindestens 2 Bilder hinzufügen.')); return el; }
     const n = items.length, asp = aspectOf(p.format, 1, 1);
+    const own = String(p.fit || '').startsWith('jedes'), asps = items.map((it) => { const m = String(it.ratio || '').match(/^(\d+(?:\.\d+)?)\s*[:/]\s*(\d+(?:\.\d+)?)$/); return m ? Number(m[1]) / Number(m[2]) : asp; });
+    let relay = () => {};
+    if (own) items.forEach((it, i) => { if (!it.src || /\.(mp4|webm)/i.test(it.src)) return; const im = new Image(); im.onload = () => { if (im.naturalWidth && im.naturalHeight) { asps[i] = Math.max(.4, Math.min(2.4, im.naturalWidth / im.naturalHeight)); relay(); } }; im.src = it.src; });
     const stage = h('div', { class: 'ar__stage', tabindex: '0', role: 'group', 'aria-label': 'Album-Rail' });
     const kinds = items.map((it) => { const hs = (it.screens || []).length > 0, ex = p.extra || 'automatisch'; return ex === 'keins' ? null : ex === 'Schallplatte' ? (p.vinyl !== false ? 'vinyl' : null) : ex === 'Screens-Mosaik' ? (hs ? 'mos' : null) : hs ? 'mos' : p.vinyl !== false ? 'vinyl' : null; });
     const its = items.map((it, i) => {
@@ -85,13 +91,24 @@ export default {
     const idx = () => ((Math.round(pos) % n) + n) % n;
     const goTo = (t) => { target = loop ? t : clamp(t, 0, n - 1); };
     const step = (d) => { playing = -1; goTo(Math.round(target) + d); };
-    watchSize(el, (w, hh) => {
+    const lay = (w, hh) => {
       W = w; H = hh; const capH = (p.captions !== false ? 64 : 10) + (p.controls !== false ? 74 : 10);
       SH = Math.max(120, H - capH); ch = Math.min(SH * num(p.size, .62), SH * .92); cw = ch * asp;
       if (cw > W * .78) { cw = W * .78; ch = cw / asp; }
       stage.style.height = SH + 'px'; layer.style.height = SH + 'px'; layMos();
-      its.forEach(({ cov, rec }) => { cov.style.width = cw + 'px'; cov.style.height = ch + 'px'; if (rec) { rec.style.width = rec.style.height = ch * .96 + 'px'; rec.style.top = `calc(50% - ${ch * .48}px)`; rec.style.left = -(ch * .96) / 2 + 'px'; } });
-    });
+      const bh = Math.min(SH * num(p.size, .62), SH * .92), bw = W * .78; let sum = 0;
+      its.forEach(({ cov, rec }, i) => {
+        let w = cw, hh2 = ch; if (own) { const a = asps[i]; hh2 = Math.min(bh, bw / a); w = hh2 * a; } sum += w;
+        cov.style.width = w + 'px'; cov.style.height = hh2 + 'px'; if (rec) { rec.style.width = rec.style.height = hh2 * .96 + 'px'; rec.style.top = `calc(50% - ${hh2 * .48}px)`; rec.style.left = -(hh2 * .96) / 2 + 'px'; } });
+      if (own) cw = sum / its.length;   // Abstand der Cover = mittlere Breite
+    };
+    watchSize(el, lay); relay = () => { if (W) lay(W, H); };
+    // Bildschirm füllen: Fächer nimmt genau den Rest des Bildschirms ein, die Seite scrollt nicht
+    if (p.fill) {
+      const fit = () => { if (!el.isConnected) return; document.documentElement.classList.add('is-fill'); window.scrollTo(0, 0);
+        const top = el.getBoundingClientRect().top + scrollY, foot = matchMedia('(max-width: 899px)').matches ? 92 : 16; el.style.height = Math.max(420, Math.round(innerHeight - top - foot)) + 'px'; };
+      [0, 120, 500, 1200].forEach((t) => setTimeout(fit, t)); addEventListener('resize', fit); document.fonts && document.fonts.ready.then(fit);
+    }
     const paint = (dt) => {
       if (!cw) return;
       pos += (target - pos) * (1 - Math.pow(.0009, dt)); if (Math.abs(target - pos) < .0005) pos = target;

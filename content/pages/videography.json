@@ -1,11 +1,11 @@
 {
-  "title": "Videography",
+  "title": "videography",
   "title_de": "Videografie",
   "blocks": [
     {
       "type": "spacer",
       "props": {
-        "size": 60
+        "size": 0
       }
     },
     {
@@ -19,11 +19,40 @@
       }
     },
     {
-      "type": "projectGrid",
+      "type": "albumRail",
       "props": {
-        "mode": "index",
-        "anim": "project",
-        "category": "video"
+        "source": "alle Projekte",
+        "items": [],
+        "format": "1:1",
+        "height": 620,
+        "heightMobile": 640,
+        "bg": "transparent",
+        "size": 0.62,
+        "spread": 0.58,
+        "fan": 6,
+        "stack": 0.5,
+        "turn": 22,
+        "depth": 0.5,
+        "visible": 3,
+        "radius": 14,
+        "dim": 0.45,
+        "extra": "Screens-Mosaik",
+        "vinyl": false,
+        "gap": 12,
+        "screenFit": "füllen (zuschneiden)",
+        "vinylColor": "#131116",
+        "accent": "#ff6a4d",
+        "rpm": 33,
+        "autoplay": true,
+        "interval": 4,
+        "loop": true,
+        "wheel": false,
+        "captions": true,
+        "controls": true,
+        "textScale": 1,
+        "textScaleMobile": 0,
+        "fit": "jedes Bild in seinem eigenen Format (nicht zuschneiden)",
+        "fill": true
       }
     }
   ]
