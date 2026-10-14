@@ -13,17 +13,84 @@
     {
       "type": "spacer",
       "props": {
-        "size": 40
+        "size": 51
       }
     },
     {
-      "type": "heading",
+      "type": "parallaxCarousel",
       "props": {
-        "text": "test",
-        "level": 1,
-        "align": "center",
-        "bold": false
+        "source": "eigene Bilder",
+        "items": [
+          {
+            "image": "media/dsc03753_0000_dsc03751.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03753_0001_dsc03760.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03753_0002_dsc03748.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03753_0003_ebene-0.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03767_0000_dsc03758.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03767_0001_ebene-0.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03767_0002_dsc03769.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          }
+        ],
+        "format": "automatisch (PC 16:9 · Handy 9:16)",
+        "height": 520,
+        "heightMobile": 520,
+        "bg": "transparent",
+        "gap": 32,
+        "radius": 16,
+        "parallax": 1,
+        "uvScale": 0.7,
+        "lerp": 0.08,
+        "dragSensitivity": 1.4,
+        "wheel": false,
+        "wheelSensitivity": 1,
+        "loop": true,
+        "autoplaySpeed": 40,
+        "pauseOnHover": true,
+        "showProgress": true,
+        "textScale": 1,
+        "textScaleMobile": 0
       }
     }
-  ]
+  ],
+  "title_de": "norder147 x canim3denim - upcycling workshop"
 }
