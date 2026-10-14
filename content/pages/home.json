@@ -46,7 +46,7 @@
       "props": {
         "shortItems": [
           {
-            "src": "media/reel-1.jpg",
+            "src": "",
             "title": "Live session teaser",
             "text": "15 s cut from a multicam concert shoot, graded for Reels",
             "duration": 4,
@@ -88,32 +88,37 @@
         ],
         "longItems": [
           {
-            "src": "media/leona-live.jpg",
-            "title": "LEONA – festival live sessions",
-            "text": "Multicam live session, mixed and graded – full length",
-            "duration": 4,
-            "title_de": "LEONA – Festival-Live-Sessions",
-            "text_de": "Multicam-Live-Session, gemischt und gegradet – volle Länge"
-          },
-          {
-            "src": "media/norder-xl.jpg",
-            "title": "norder147 x canim3denim",
-            "text": "Upcycling workshop highlight movie",
-            "duration": 4,
-            "title_de": "norder147 x canim3denim",
-            "text_de": "Highlight-Film vom Upcycling-Workshop"
-          },
-          {
-            "src": "media/stage-purple.jpg",
+            "src": "",
             "title": "Gården Festival 2026",
-            "text": "Festival coverage for Qrue Collective and artists",
+            "text": "worked for Qrue Collective & Festival Artists",
             "duration": 4,
             "title_de": "Gården Festival 2026",
-            "text_de": "Festivalbegleitung für das Qrue Collective und Künstler"
+            "text_de": "worked for Qrue Collective & Festival Artists",
+            "vimeo": "https://vimeo.com/1207050247"
+          },
+          {
+            "src": "",
+            "title": "norder147 x canim3denim",
+            "text": "volunteering for norder147 x canim3denim",
+            "duration": 4,
+            "title_de": "norder147 x canim3denim",
+            "text_de": "Voluntary Work für norder147 x canim3denim",
+            "vimeo": "https://vimeo.com/1207050796"
           }
         ],
         "front": "phone",
-        "ctaLink": "videography"
+        "ctaLink": "videography",
+        "shortTitle_de": "9:16",
+        "shortTitle": "9:16",
+        "shortText": "Vertical content built to scroll-stop and keep people hooked.",
+        "shortText_de": "Vertikaler Content, der im Feed hängenbleibt und Raum für echte Stories lässt",
+        "longText_de": "Höchste Bildqualität, gepaart mit Storys, die wirklich bewegen.",
+        "longTitle_de": "16:9",
+        "longTitle": "16:9",
+        "longText": "crafted for big screens, high quality and storytelling that stays.",
+        "ctaText": "recent work",
+        "ctaText_de": "aktuelle projekte",
+        "textScale": 1
       },
       "id": "video"
     },
@@ -178,23 +183,6 @@
           }
         ]
       }
-    },
-    {
-      "type": "kinetic",
-      "props": {
-        "words": "",
-        "accent": "#ff2d2d",
-        "video": "",
-        "poster": "media/stage-purple.jpg",
-        "dim": 45,
-        "size": "l",
-        "words_de": "",
-        "ctaLink": "design",
-        "frames": "media/frif/f_####.jpg",
-        "frameCount": 89,
-        "length": 7
-      },
-      "id": "design"
     },
     {
       "type": "chapter",

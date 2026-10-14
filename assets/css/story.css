@@ -880,3 +880,12 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 .hm--lab .hm__car { top: calc(var(--header-h, 56px) + 96px); }
 .hn--m .hn__x { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .hn.hn--m.is-out { transform: translateY(-5px); }
+
+/* Short-/Long-form: füllt auf dem Handy genau einen Bildschirm und bleibt kurz kleben (kein Rand von davor/danach); am PC mittig unter dem Menü */
+.dd__sticky { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; min-height: 100vh; min-height: 100dvh; box-sizing: border-box; padding-top: 104px; padding-bottom: 28px; }
+@media (max-width: 899px) {
+  .dd { --W: clamp(140px, calc((100dvh - 560px) / .86), min(84vw, 440px)); padding: 0 var(--gutter-media); height: calc(100dvh + 45dvh); margin-block: 0; }
+  .dd__sticky { position: sticky; top: 0; height: 100dvh; min-height: 0; padding-top: calc(66px + env(safe-area-inset-top)); padding-bottom: calc(92px + env(safe-area-inset-bottom)); gap: 14px; overflow: hidden; }
+  .dd__stage { gap: 22px; }
+  .dd__item { margin-top: 12px; padding-top: 10px; min-height: 52px; }
+}

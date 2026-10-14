@@ -54,7 +54,7 @@ export default {
       S[m].shots = items[m].map(it => {
         const vm = parseVimeo(it.vimeo), v = !vm && isVideo(it.src);
         const node = vm ? h('div', { class: 'dd__vm' }) : v ? h('video', { src: it.src, muted: '', playsinline: '', preload: 'metadata', 'aria-hidden': 'true' }) : h('img', { src: it.src, alt: '', decoding: 'async', loading: 'lazy' });
-        if (v) { node.muted = true; node.defaultMuted = true; }
+        if (v) { node.muted = true; node.defaultMuted = true; node.preload = 'auto'; node.addEventListener('loadedmetadata', () => { try { if (node.paused && !node.currentTime) node.currentTime = .05; } catch { /* weg */ } }, { once: true }); }
         if (vm) vimeoThumb(vm).then(t => { if (t) node.style.background = `#000 url("${t}") center / cover no-repeat`; }).catch(() => {});
         const s = h('div', { class: 'dd__shot' }, node); S[m].el.append(s); return s;
       });
@@ -75,7 +75,7 @@ export default {
     };
     // Fortschritt: Video = eigene Länge, Bild = Dauer
     const run = () => {
-      clearT(); const m = front, st = S[m], list = items[m]; if (!list.length) return;
+      clearT(); if (!visible) return; const m = front, st = S[m], list = items[m]; if (!list.length) return;
       const it = list[st.cur], shot = st.shots[st.cur], v = shot && shot.querySelector('video'), vm = parseVimeo(it.vimeo);
       const next = () => { if (!visible || front !== m) return; if (list.length > 1 || v) show(m, st.cur + 1); };
       if (vm) {
@@ -108,7 +108,7 @@ export default {
       if (!items[m].length && items[m === 'phone' ? 'laptop' : 'phone'].length) return;
       front = m; el.dataset.front = m; sw.forEach(s => s.classList.toggle('is-on', s.dataset.m === m));
       gT.textContent = m === 'phone' ? p.shortTitle : p.longTitle; gX.textContent = m === 'phone' ? p.shortText : p.longText;
-      ['phone', 'laptop'].forEach(x => { if (x !== m) { S[x].shots.forEach(s => s.querySelector('video')?.pause()); } });
+      ['phone', 'laptop'].forEach(x => { if (x !== m) { S[x].shots.forEach(s => { const v = s.querySelector('video'); if (v) { v.pause(); } s.querySelector('.dd__vm')?.replaceChildren(); }); } });
       show(m, S[m].cur);
     };
     // Bedienung: nicht vorne → nach vorn holen; vorne → Handy: links/rechts tippen, Laptop: nächster Eintrag
@@ -116,8 +116,8 @@ export default {
     laptop.addEventListener('click', () => { if (front !== 'laptop') return setFront('laptop'); show('laptop', S.laptop.cur + 1); });
     sw.forEach(s => s.addEventListener('click', () => setFront(s.dataset.m)));
     el.dataset.front = front; setFront(front); show(front === 'phone' ? 'laptop' : 'phone', 0, false);
-    if ('IntersectionObserver' in window) new IntersectionObserver((es) => { es.forEach(e => { visible = e.isIntersecting; if (visible) run(); else { clearT(); ['phone', 'laptop'].forEach(x => S[x].shots.forEach(s => s.querySelector('video')?.pause())); } }); }, { threshold: .3 }).observe(el);
-    else visible = true;
+    if ('IntersectionObserver' in window) new IntersectionObserver((es) => { es.forEach(e => { visible = e.isIntersecting; if (visible) run(); else { clearT(); ['phone', 'laptop'].forEach(x => S[x].shots.forEach(s => s.querySelector('video')?.pause())); } }); }, { threshold: .2 }).observe(el);
+    else { visible = true; run(); }
     return el;
   },
 };
