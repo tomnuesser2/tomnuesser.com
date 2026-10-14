@@ -327,7 +327,7 @@ document.addEventListener('click', (e) => {
   if (!a) return;
   e.preventDefault();
   // „#next“ = direkt (ohne Animation) zum nächsten Abschnitt derselben Seite springen, z. B. vom NOTUA-Flug zum Board darunter
-  if (a.getAttribute('href') === '#next') {
+  if (a.getAttribute('href') === '#next' || (a.matches('.fl__cta2, .nt__b--2') && !a.getAttribute('href').includes('#') && new URL(fixHref(a.getAttribute('href')), location.href).pathname === loc().pathname)) {
     const nx = a.closest('[data-bi]')?.nextElementSibling;
     if (nx) { const go = () => window.scrollTo({ top: nx.getBoundingClientRect().top + scrollY, behavior: 'auto' }); go(); requestAnimationFrame(() => { go(); setTimeout(go, 120); }); }
     return;
