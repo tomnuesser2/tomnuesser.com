@@ -2,11 +2,10 @@ import { h } from '../core/dom.js';
 import { mediaEl, isEmbedUrl, videoCfg } from '../core/media.js';
 import { track, still, clamp, trackProgress } from '../core/scrollhub.js';
 import { createLaptop } from '../core/laptopGL.js';
+import { LAP_FIN, hexc, easeOut, pose, normAnim } from '../core/laptopAnim.js';
 import { ticker, watchSize, mediaNode } from '../core/reelKit.js';
 // Device: Smartphone (Hochformat-Videos/Reels, wie Stories) oder Laptop (Websites, scrollen im Bildschirm) neben Text.
 // Beim Scrollen klebt die Bühne fest: Das Gerät schaltet durch die Einträge, der Text daneben wechselt mit.
-const LAP_FIN = { silber: [.74, .75, .78], 'space grau': [.3, .31, .34], mitternacht: [.1, .14, .24], sternenlicht: [.82, .77, .7], gold: [.78, .66, .46] };
-const hexc = (v) => { const m = /^#?([0-9a-f]{6})$/i.exec(String(v || '').trim()); if (!m) return null; const n = parseInt(m[1], 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; };
 const isVideo = (s) => /\.(mp4|webm|mov)(\?|$)/i.test(s || '');
 const media = (src) => isEmbedUrl(src)
   ? mediaEl({ vimeo: src, ratio: '1/1', radius: 'none', reveal: false, parallax: false, sound: false, hud: false, ext: true })
@@ -54,7 +53,7 @@ export default {
       if (p._gl) {
         try {
           const cv = h('canvas', { class: 'dv__gl', 'aria-hidden': 'true' }); gp = createLaptop(cv, { onLost: () => { gp = null; } });
-          if (gp) { const fin = LAP_FIN[p.finish] || LAP_FIN.silber, fc = hexc(p.frameColor); gp.setTint(fc || fin); const lsrc = p.logo === undefined ? 'media/notua-logo.png' : p.logo; if (lsrc) { const lg = new Image(); lg.crossOrigin = 'anonymous'; lg.src = lsrc; gp.setLogo(lg); } const srcs = h('div', { class: 'dv__gsrc', 'aria-hidden': 'true' }, screens); screens.forEach(sc => sc.querySelectorAll('img').forEach(im => { im.loading = 'eager'; if (!/^(\/|\.|data:|blob:)/.test(im.getAttribute('src') || '')) im.crossOrigin = 'anonymous'; })); device = h('div', { class: 'dv__laptop dv__laptop--gl' }, cv, h('div', { class: 'dv__sh' }), srcs); }
+          if (gp) { const fin = LAP_FIN[p.finish] || LAP_FIN['space schwarz'], fc = hexc(p.frameColor); gp.setTint(fc || fin); const lsrc = p.logo === undefined ? 'media/notua-logo.png' : p.logo; if (lsrc) { const lg = new Image(); lg.crossOrigin = 'anonymous'; lg.src = lsrc; gp.setLogo(lg); } const srcs = h('div', { class: 'dv__gsrc', 'aria-hidden': 'true' }, screens); screens.forEach(sc => sc.querySelectorAll('img').forEach(im => { im.loading = 'eager'; if (!/^(\/|\.|data:|blob:)/.test(im.getAttribute('src') || '')) im.crossOrigin = 'anonymous'; })); device = h('div', { class: 'dv__laptop dv__laptop--gl' }, cv, h('div', { class: 'dv__sh' }), srcs); }
         } catch (e) { console.warn('Laptop3D:', e); gp = null; }
       }
     }
@@ -124,15 +123,24 @@ export default {
       const lap = el.querySelector('.dv__laptop'); let ox = 0, oy = 0;
       const measure = () => { if (!lap.isConnected || !copy.offsetWidth) return; ox = (copy.offsetLeft + copy.offsetWidth / 2) - (lap.offsetLeft + lap.offsetWidth / 2); oy = (copy.offsetTop + copy.offsetHeight / 2) - (lap.offsetTop + lap.offsetHeight / 2); if (Math.abs(oy) > Math.abs(ox)) ox = 0; const sw = stage.clientWidth, l0 = lap.offsetLeft; ox = Math.max(8 - l0, Math.min(sw - 8 - l0 - lap.offsetWidth, ox)); };
       requestAnimationFrame(() => requestAnimationFrame(measure)); addEventListener('resize', measure); setTimeout(measure, 700); document.fonts?.ready?.then(measure);
+      const A = p.anim && typeof p.anim === 'object' ? normAnim(p.anim, p.side) : null; // eigene Animation aus dem Admin-Editor
       ticker(cv, (dt, t) => {
         if (!cv.width) return;
-        const k = Math.min(1, dt * 6), tgt = statik ? 1 : clamp(L.p / .26); oc += (tgt - oc) * Math.min(1, dt * 7);
+        const k = Math.min(1, dt * 6), tgt = statik ? 1 : clamp(L.p / (A ? Math.max(.05, A.span) : .26)); oc += (tgt - oc) * Math.min(1, dt * 7);
         hx += (tx - hx) * k; hy += (ty - hy) * k;
         if (L.i !== shown && to < 0) { to = L.i; gp.setSlot(1, srcEl(to)); mixv = 0; }
         if (to >= 0) { mixv += dt / .5; if (mixv >= 1) { shown = to; to = -1; mixv = 0; gp.setSlot(0, srcEl(shown)); } }
         const o = ease(clamp(oc)), idle = statik ? 0 : 1, mv = 1 - ease(clamp(oc * 1.05));
+        if (A) {
+          const pz = pose(A, statik ? 1 : easeOut(clamp(oc)));
+          if (!statik) { lap.style.translate = `${(pz.x / 100 * stage.clientWidth).toFixed(1)}px ${(pz.y / 100 * stage.clientHeight).toFixed(1)}px`; copy.style.opacity = clamp((easeOut(clamp(oc)) - (A.textAt ?? .42)) / .5).toFixed(3); }
+          gp.draw({ open: pz.open, rx: pz.rx - hy * 4 + Math.sin(t * .5) * 1.2 * idle, ry: pz.ry + hx * 11 + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle, y: Math.sin(t * .9) * .008 * idle, fit: pz.fit,
+            mix: to >= 0 ? ease(clamp(mixv)) : 0, intro: clamp((pz.open - .3) / .45), time: t, light: 1, scroll: clamp((L.fr - .08) / .84), chrome: p.chrome !== false });
+          if (!started) { started = true; el.classList.add('is-gl'); }
+          return;
+        }
         if (!statik) { lap.style.translate = `${(ox * mv).toFixed(1)}px ${(oy * mv - stage.clientHeight * .13 * mv).toFixed(1)}px`; const ta = clamp((o - .42) / .5); copy.style.opacity = ta.toFixed(3); }
-        gp.draw({ open: o, rx: lerp(80, 11, o) - hy * 4 + Math.sin(t * .5) * 1.2 * idle, ry: dir * -(o * 15 + Math.sin(Math.PI * o) * 46) + hx * 11 + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle,
+        gp.draw({ open: o, rx: lerp(80, 11, o) - hy * 4 + Math.sin(t * .5) * 1.2 * idle, ry: dir * (50 * Math.pow(1 - o, 1.7) * clamp(o * 6) - o * 15) + hx * 11 + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle,
           y: Math.sin(t * .9) * .008 * idle, fit: 1.1 - .24 * Math.sin(Math.PI * o), mix: to >= 0 ? ease(clamp(mixv)) : 0, intro: clamp((o - .3) / .45), time: t, light: 1, scroll: clamp((L.fr - .08) / .84), chrome: p.chrome !== false });
         if (!started) { started = true; el.classList.add('is-gl'); }
       });

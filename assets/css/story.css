@@ -1018,3 +1018,8 @@ a, button, [role="button"], summary, label, .pc__plane, .pcs__t { touch-action: 
 .dv__laptop--gl .dv__sh { position: absolute; z-index: -1; left: 12%; right: 12%; bottom: 7%; height: 9%; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,.4), rgba(0,0,0,0) 70%); filter: blur(12px); pointer-events: none; }
 
 .dv--laptop .dv__copy { position: relative; z-index: 1; }
+
+/* NOTUA-Board: nahtloser Übergang vom Flug – gleicher Hintergrund wie das Flug-Ende, erst ganz am Schluss wieder ins Seitenweiß */
+.nb:not(.nb--static) { background: linear-gradient(to bottom, var(--nb-bg) 0, var(--nb-bg) calc(100% - 55svh), var(--bg, #fff) 100%); }
+.fl + .nb, .fl + .nb:not(.nb--static) { margin-top: 0; }
+.fl:has(+ .nb) { margin-bottom: 0; }

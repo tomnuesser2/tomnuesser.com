@@ -49,8 +49,8 @@ void main(){
         float pill=sdRR(p-vec2(.02,top-bar*.5),vec2(uScr.x*.62,bar*.3),bar*.3); c=mix(c,vec3(1.),1.-smoothstep(-.001,.001,pill)); }
       else { float hh=top*2.-bar; vec2 uv=vec2(p.x/(uScr.x*2.)+.5,(top-bar-p.y)/hh); float asp=uScr.x*2./hh; vec3 a=cover(uT0,uv,uA.x,asp), b=cover(uT1,uv,uA.y,asp); c=mix(a,b,uMix); }
       base=c*uIntro*.96; }
-    float notch=sdRR(p-vec2(0.,uScr.y-.003),vec2(.052,.012),.009); if(notch<0.&&uChrome<.5) base=vec3(0.);
-    float lens=length(p-vec2(0.,uScr.y+.0105)); if(lens<.0035) base=mix(vec3(.01,.012,.03),vec3(.05,.09,.22),smoothstep(.0035,.001,lens));
+    float notch=sdRR(p-vec2(0.,uScr.y),vec2(.06,.027),.0095); base=mix(base,vec3(0.),1.-smoothstep(-.0006,.0006,notch));
+    float lens=length(p-vec2(0.,uScr.y-.0125)); if(lens<.0042) base=mix(vec3(.012,.014,.03),vec3(.05,.09,.22),smoothstep(.0042,.0012,lens));
     col=base+env(R,.05)*(.04+.9*fr)*.5+vec3(.02,.025,.04)*pow(1.-nv,3.); }
   else if(uMat==2){ // Deckel-Rückseite + Spiegel-Logo
     col=alum(R,nv,vP,N);
@@ -59,11 +59,11 @@ void main(){
         float hxp=lh(uv+vec2(e.x,0.)), hxm=lh(uv-vec2(e.x,0.)), hyp=lh(uv+vec2(0.,e.y)), hym=lh(uv-vec2(0.,e.y));
         float gx=(hxp-hxm), gy=(hyp-hym);
         vec3 Tx=normalize(uNrm[0]), Ty=normalize(uNrm[1]); vec3 N2=normalize(N+(-Tx*gx+Ty*gy)*1.4); vec3 R2=reflect(-V,N2);
-        vec3 pol=(uTint+(1.-uTint)*pow(1.-clamp(dot(N2,V),0.,1.),5.)*.4)*min(env(R2,.08),vec3(1.5))*1.02+uTint*.07;
+        vec3 pol=(vec3(.42)+uTint*.6)*min(env(R2,.08),vec3(1.5))*1.05+uTint*.07;
         float m=clamp(lg.a*1.2,0.,1.); col=mix(col,pol*(1.-.16*lh(uv)),m); col*=1.-.1*clamp(abs(gx)+abs(gy),0.,1.); } }
   }
   else if(uMat==3){ col=vec3(.016)+env(R,.4)*(.015+.25*fr)*.6; }
-  else if(uMat==4){ float e=min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y)); float line=smoothstep(.0,.006,e); col=alum(R,nv,vP,N)*(.9+.1*line)+min(env(R,.06),vec3(.7))*.08; }
+  else if(uMat==4){ float e=min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y)); float line=smoothstep(.0,.006,e); col=alum(R,nv,vP,N)*(.72+.28*line)+min(env(R,.06),vec3(.7))*.06*line; }
   else if(uMat==5){ col=vec3(.004)+env(R,.7)*.008; }
   else if(uMat==6){ col=env(R,.35)*vec3(.09)+vec3(.012); }
   else { vec2 g=fract(vP.xy*190.)-.5; float dt=smoothstep(.34,.25,length(g)); col=mix(alum(R,nv,vP,N),vec3(.012),dt); }
@@ -94,17 +94,17 @@ export function createLaptop(canvas, { tint: tint0 = [.74, .75, .78], onLost } =
   const row = (ks) => ks.map((k) => (Array.isArray(k) ? k : [k, 1]));
   const KR = [
     [.62, [['esc', 1.5], ...L5('F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12').map(k => [k, 1]), ['', 1, 'id']]],
-    [1, [...L5('` 1 2 3 4 5 6 7 8 9 0 - =').map(k => [k, 1]), ['delete', 1.5]]],
-    [1, [['tab', 1.5], ...L5('Q W E R T Y U I O P [ ] \\').map(k => [k, 1])]],
-    [1, [['caps lock', 1.75], ...L5("A S D F G H J K L ; '").map(k => [k, 1]), ['return', 1.75]]],
-    [1, [['shift', 2.25], ...L5('Z X C V B N M , . /').map(k => [k, 1]), ['shift', 2.25]]],
+    [1, [...L5('^ 1 2 3 4 5 6 7 8 9 0 ß ´').map(k => [k, 1]), ['delete', 1.5]]],
+    [1, [['tab', 1.5], ...L5('Q W E R T Z U I O P Ü +').map(k => [k, 1]), ['#', 1]]],
+    [1, [['caps lock', 1.75], ...L5('A S D F G H J K L Ö Ä').map(k => [k, 1]), ['return', 1.75]]],
+    [1, [['shift', 1.25], ['<', 1], ...L5('Y X C V B N M , . -').map(k => [k, 1]), ['shift', 2.25]]],
     [1, [['fn', 1], ['control', 1], ['option', 1], ['command', 1.25], ['', 5], ['command', 1.25], ['option', 1], ['◀', 1, 'arrow'], ['', 1, 'ud'], ['▶', 1, 'arrow']]],
   ];
   const kbW = .86, gap = .0052, uW = (kbW - gap * 15) / 14.5, kh = uW * .98;
-  const kbH = KR.reduce((a, [hs]) => a + hs * kh, 0) + gap * (KR.length + 1), kbY = DD / 2 - .03 - kbH / 2, zt = DT / 2;
+  const kbH = KR.reduce((a, [hs]) => a + hs * kh, 0) + gap * (KR.length + 1), kbY = DD / 2 - .07 - kbH / 2, zt = DT / 2;
   const keys = []; // {x,y,w,h,label,kind}
   { let y = kbY + kbH / 2 - gap; KR.forEach(([hs, ks]) => { const hh = hs * kh; y -= hh / 2; let x = -kbW / 2 + gap; ks.forEach(([lab, w, kind]) => { const kw = w * uW + (w - 1) * gap * (w > 1 ? 1 : 0); if (kind === 'ud') { keys.push({ x: x + kw / 2, y: y + hh / 4 + gap / 4, w: kw, h: hh / 2 - gap / 2, label: '▲', kind: 'arrow' }, { x: x + kw / 2, y: y - hh / 4 - gap / 4, w: kw, h: hh / 2 - gap / 2, label: '▼', kind: 'arrow' }); } else keys.push({ x: x + kw / 2, y, w: kw, h: hh, label: lab, kind }); x += kw + gap; }); y -= hh / 2 + gap; }); }
-  { const y0 = kbY - kbH / 2 - .004, y1 = DD / 2 - .003; mk(0, 5, (g) => cap(g, { w: kbW + .01, h: y1 - y0, r: .005, ins: 0, z: zt + .0003, nz: 1, cy: (y0 + y1) / 2, seg: 6 })); }
+  mk(0, 5, (g) => cap(g, { w: kbW + .014, h: kbH + .014, r: .007, ins: 0, z: zt + .0003, nz: 1, cy: kbY, seg: 6 }));
   mk(0, 7, (g) => { for (const sx of [-1, 1]) cap(g, { w: .034, h: kbH, r: .004, ins: 0, z: zt + .0004, nz: 1, cx: sx * (kbW / 2 + .036), cy: kbY, seg: 4 }); });
   mk(0, 4, (g) => cap(g, { w: .44, h: .27, r: .012, ins: 0, z: zt + .0003, nz: 1, cy: -DD / 2 + .04 + .135, seg: 8, uvw: .44, uvh: .27 }));
   mk(0, 3, (g) => { for (const k of keys) slab(g, { w: k.w, h: k.h, r: .0055, rr: .0022, z0: zt, z1: zt + .0030, cx: k.x, cy: k.y, seg: 3, na: 2 }); });
@@ -120,7 +120,7 @@ export function createLaptop(canvas, { tint: tint0 = [.74, .75, .78], onLost } =
     return c; })();
   mk(0, 8, (g) => cap(g, { w: kbW, h: kbH, r: .002, ins: 0, z: zt + .0034, nz: 1, cy: kbY, seg: 3, uvw: kbW, uvh: kbH }));
   // Scharnier
-  mk(2, 5, (g) => cylinder(g, kbW + .01, .0052));
+  mk(2, 5, (g) => cylinder(g, LW * .9, .0052));
   // Deckel (lokal um die Mitte; Vorderseite = +Z)
   mk(1, 0, (g) => { slab(g, { w: LW, h: LH, r: R, rr: RR * .75, z0: -LT, z1: 0, seg: 10, na: 6 }); ring(g, { w: LW, h: LH, r: R, ins0: RR * .75 - .001, ins1: RR * .75 + FW, z: 0, nz: 1, seg: 10 }); ring(g, { w: LW, h: LH, r: R, ins0: RR * .75 - .001, ins1: RR * .75 + FW, z: -LT, nz: -1, seg: 10 }); });
   mk(1, 1, (g) => cap(g, { w: LW, h: LH, r: R, ins: RR * .75 + FW - .0006, z: -.0006, nz: 1, seg: 10 }));
