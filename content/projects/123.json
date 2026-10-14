@@ -81,31 +81,9 @@
       }
     },
     {
-      "type": "device",
+      "type": "spacer",
       "props": {
-        "kind": "laptop",
-        "side": "right",
-        "textAlign": "links",
-        "kicker": "",
-        "title": "volunteering for norder147 x canim3denim",
-        "text": "This non-profit project documents an upcycling workshop at NORDER147, a creative space in Flensburg. The goal was to capture the vibe and show how simple sustainable fashion can be: transforming old clothes into something new with ease.\n\nI shot the event together with my friend Larissa, handling all editing and post-production myself. Since the workshop was organized by a friend (canim3denim), we volunteered to support the initiative. The result is a short highlight video that captures the creative community spirit and the best moments of the day.",
-        "items": [
-          {
-            "src": "https://vimeo.com/1207050796",
-            "title": "",
-            "url": "",
-            "text": ""
-          }
-        ],
-        "chrome": false,
-        "chromeMobile": true,
-        "volumeUi": false,
-        "linkText": "",
-        "linkUrl": "",
-        "textScale": 1,
-        "textScaleMobile": 0,
-        "title_de": "volunteering for norder147 x canim3denim",
-        "text_de": "Dieses gemeinnützige Projekt dokumentiert einen Upcycling-Workshop im Kreativraum NORDER147 in Flensburg. Ziel war es, die besondere Atmosphäre einzufangen und zu zeigen, wie einfach und zugänglich nachhaltige Mode sein kann: Aus alter Kleidung entsteht mit wenig Aufwand etwas völlig Neues.\n\nGefilmt habe ich das Event gemeinsam mit meiner Freundin Larissa, Schnitt und Postproduktion lagen in meiner Hand. Da der Workshop von einer befreundeten Designerin (canim3denim) organisiert wurde, haben wir das Projekt ehrenamtlich unterstützt. Entstanden ist ein kurzer Highlight-Film, der den kreativen Community-Spirit und die besten Momente des Tages festhält."
+        "size": 48
       }
     },
     {
@@ -123,28 +101,38 @@
         "items": [
           {
             "src": "https://vimeo.com/1207050796",
-            "title": "",
+            "title": "volunteering for norder147 x canim3denim",
             "url": "",
-            "text": ""
+            "text": "This non-profit project documents an upcycling workshop at NORDER147, a creative space in Flensburg. The goal was to capture the vibe and show how simple sustainable fashion can be: transforming old clothes into something new with ease. I shot the event together with my friend Larissa, handling all editing and post-production myself. Since the workshop was organized by a friend (canim3denim), we volunteered to support the initiative. The result is a short highlight video that captures the creative community spirit and the best moments of the day.\n\n",
+            "title_de": "volunteering for norder147 x canim3denim",
+            "text_de": "This non-profit project documents an upcycling workshop at NORDER147, a creative space in Flensburg. The goal was to capture the vibe and show how simple sustainable fashion can be: transforming old clothes into something new with ease. I shot the event together with my friend Larissa, handling all editing and post-production myself. Since the workshop was organized by a friend (canim3denim), we volunteered to support the initiative. The result is a short highlight video that captures the creative community spirit and the best moments of the day.\n\n"
           }
         ],
-        "chrome": true,
+        "chrome": false,
         "linkText": "",
         "linkUrl": "",
-        "textScale": 1,
+        "textScale": 1.25,
         "textScaleMobile": 0,
         "finish": "space schwarz",
         "anim": {
-          "span": 0.26,
-          "textAt": 0.42,
+          "span": 0.5,
+          "dur": 2,
+          "acc": 2,
+          "ease": 5.3,
+          "pre": 0.3,
+          "textAt": 0.7,
           "mid": false,
+          "hold": 0.12,
+          "fi": 0.5,
+          "fo": 0,
           "s": {
-            "x": 46,
-            "y": -54,
-            "ry": -20,
-            "rx": 90,
+            "x": 53.5,
+            "y": -12,
+            "ry": -273,
+            "rx": 78,
+            "rz": 0,
             "open": 0,
-            "fit": 0.92
+            "fit": 0.7
           },
           "m": {
             "t": 0.45,
@@ -152,16 +140,58 @@
             "y": -6,
             "ry": -38,
             "rx": 38,
+            "rz": 0,
             "open": 0.55,
             "fit": 0.9
           },
           "e": {
-            "x": -4,
-            "y": -4,
-            "ry": 15,
-            "rx": 11,
-            "open": 1,
+            "x": 2,
+            "y": 0,
+            "ry": 9,
+            "rx": 4,
+            "rz": 0,
+            "open": 0.91,
             "fit": 1.1
+          }
+        },
+        "animMobile": {
+          "span": 0.45,
+          "dur": 2,
+          "acc": 2,
+          "ease": 5.8,
+          "pre": 0.8,
+          "textAt": 0.62,
+          "mid": false,
+          "hold": 0.12,
+          "fi": 0.85,
+          "fo": 0,
+          "s": {
+            "x": 79,
+            "y": -25.5,
+            "ry": 484,
+            "rx": -60,
+            "rz": 0,
+            "open": 0,
+            "fit": 1
+          },
+          "m": {
+            "t": 0.45,
+            "x": 10,
+            "y": -4,
+            "ry": -38,
+            "rx": 38,
+            "rz": 0,
+            "open": 0.55,
+            "fit": 0.8
+          },
+          "e": {
+            "x": 0,
+            "y": -1,
+            "ry": 13,
+            "rx": 13,
+            "rz": 0,
+            "open": 1,
+            "fit": 1.12
           }
         }
       }

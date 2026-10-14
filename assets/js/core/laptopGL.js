@@ -138,20 +138,29 @@ export function createLaptop(canvas, { tint: tint0 = [.74, .75, .78], onLost } =
   const legT = tex(); gl.bindTexture(gl.TEXTURE_2D, legT); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, legendTex); gl.generateMipmap(gl.TEXTURE_2D);
   const logoT = tex(); let logoOn = 0;
   const setLogo = (img) => { if (!img) { logoOn = 0; return; } const go = () => { gl.bindTexture(gl.TEXTURE_2D, logoT); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false); try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); gl.generateMipmap(gl.TEXTURE_2D); logoOn = 1; } catch (e) { logoOn = 0; } }; if (img.complete && img.naturalWidth) go(); else img.addEventListener('load', go, { once: true }); };
-  const SCR = [LW / 2 - .017, LH / 2 - .016];
+  const SCR = [LW / 2 - .017, LH / 2 - .016]; let last = null;
   return {
     setSlot, setLogo, setTint: (c) => { tint = c; },
+    // Drehachsen sind am Laptop befestigt: ry = senkrechte Achse, rx = Breite (von Kante zu Kante), rz = Länge (kurze Seitenkante, vorne→hinten). Reihenfolge außen→innen: ry, rx, rz
     // st: { open 0..1, rx, ry (Grad), y, fit, mix, intro, time, light, scroll 0..1, chrome 0/1 }
+    // Ecken der Bildschirmfläche (ohne Browser-Leiste, mit kleinem Innenrand) im Canvas: [[x,y]×4] als Anteil 0..1 (oben links, oben rechts, unten rechts, unten links) + Seitenverhältnis
+    screenQuad(chrome = true, inset = .006) {
+      if (!last) return null; const { proj, view, model } = last, mv = mul(proj, mul(view, model)), bar = chrome ? .05 : 0, sx = SCR[0] - inset, sy = SCR[1] - inset;
+      const pts = [[-sx, sy - bar], [sx, sy - bar], [sx, -sy], [-sx, -sy]].map(([x, y]) => { const z = 0, X = mv[0] * x + mv[4] * y + mv[8] * z + mv[12], Y = mv[1] * x + mv[5] * y + mv[9] * z + mv[13], W = mv[3] * x + mv[7] * y + mv[11] * z + mv[15]; return [(X / W * .5 + .5), (1 - (Y / W * .5 + .5))]; });
+      let ar = 0; for (let i = 0; i < 4; i++) { const a = pts[i], b = pts[(i + 1) % 4]; ar += a[0] * b[1] - b[0] * a[1]; }
+      return { pts, aspect: (2 * sx) / (2 * sy - bar), facing: ar }; // facing > 0: Bildschirm zeigt zur Kamera, < 0: man sieht die Rückseite
+    },
     draw(st) {
       const cw = canvas.width, ch = canvas.height; gl.viewport(0, 0, cw, ch); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       const fov = 24 * Math.PI / 180, asp = cw / ch, tn = Math.tan(fov / 2), o = st.open;
       const ang = (90 - o * 112) * Math.PI / 180; // 90° = zugeklappt (liegt auf der Basis), -22° = offen, leicht nach hinten geneigt
-      const eh = .76 + (.24) * o, ew = 1.08, dist = Math.max(eh / (2 * tn * st.fit), ew / (2 * tn * asp * st.fit)) + .55;
+      const ft = st.fit / (st.pad || 1), eh = .76 + (.24) * o, ew = 1.08, dist = Math.max(eh / (2 * tn * ft), ew / (2 * tn * asp * ft)) + .55;
       const cy = .3 * o + .02 * (1 - o);
       const proj = persp(fov, asp, .4, 20), view = trans(0, 0, -dist);
-      const world = mul(trans(0, st.y || 0, 0), mul(rotZ((st.rz || 0) * Math.PI / 180), mul(rotX((st.rx || 0) * Math.PI / 180), mul(rotY((st.ry || 0) * Math.PI / 180), trans(0, -cy, 0)))));
+      const world = mul(trans(0, st.y || 0, 0), mul(rotY((st.ry || 0) * Math.PI / 180), mul(rotX((st.rx || 0) * Math.PI / 180), mul(rotZ((st.rz || 0) * Math.PI / 180), trans(0, -cy, 0)))));
       const base = rotX(-Math.PI / 2), lid = mul(trans(0, HY, HZ), mul(rotX(ang), trans(0, LH / 2, 0))), hinge = trans(0, HY, HZ);
       const mats = [base, lid, hinge];
+      last = { proj, view, model: mul(world, lid) };
       gl.uniform3f(U.uEye, 0, 0, dist); gl.uniform1f(U.uTime, st.time || 0); gl.uniform1f(U.uIntro, st.intro == null ? 1 : st.intro); gl.uniform1f(U.uMix, st.mix || 0); gl.uniform1f(U.uLight, st.light == null ? 1 : st.light);
       gl.uniform1f(U.uScroll, st.scroll || 0); gl.uniform1f(U.uChrome, st.chrome ? 1 : 0); gl.uniform1f(U.uOpen, o);
       for (let i = 0; i < 2; i++) { const s = slots[i]; if (s.vid && s.ready && s.el.readyState >= 2) upload(s, s.el); gl.activeTexture(gl.TEXTURE0 + i); gl.bindTexture(gl.TEXTURE_2D, s.t); }

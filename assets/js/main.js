@@ -322,6 +322,21 @@ async function introTransition(u) {
   veil.remove();
 }
 
+
+/* Sanft (mit Scroll-Animation) zu einem Abschnitt fahren – der Flug läuft dabei durch, statt zu springen */
+let glideRaf = 0;
+function glideTo(target) {
+  const dest = () => target.getBoundingClientRect().top + scrollY, y0 = scrollY;
+  if (prefersReducedMotion()) { window.scrollTo(0, dest()); return; }
+  cancelAnimationFrame(glideRaf);
+  const dur = Math.min(4800, Math.max(1100, Math.abs(dest() - y0) / innerHeight * 420)), t0 = performance.now();
+  const ease = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const stop = () => { cancelAnimationFrame(glideRaf); glideRaf = 0; removeEventListener('wheel', stop); removeEventListener('touchstart', stop); removeEventListener('keydown', stop); removeEventListener('pointerdown', stop); };
+  addEventListener('wheel', stop, { passive: true }); addEventListener('touchstart', stop, { passive: true }); addEventListener('keydown', stop); addEventListener('pointerdown', stop);
+  const step = (now) => { const t = Math.min(1, (now - t0) / dur); window.scrollTo(0, y0 + (dest() - y0) * ease(t)); if (t < 1) glideRaf = requestAnimationFrame(step); else stop(); };
+  glideRaf = requestAnimationFrame(step);
+}
+
 document.addEventListener('click', (e) => {
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   const a = e.target.closest?.('a[data-link]');
@@ -330,7 +345,7 @@ document.addEventListener('click', (e) => {
   // „#next“ = direkt (ohne Animation) zum nächsten Abschnitt derselben Seite springen, z. B. vom NOTUA-Flug zum Board darunter
   if (/^#(next|b\d+)$/.test(a.getAttribute('href') || '') || (a.matches('.fl__cta2, .nt__b--2') && !a.getAttribute('href').includes('#') && new URL(fixHref(a.getAttribute('href')), location.href).pathname === loc().pathname)) {
     const mb = /^#b(\d+)$/.exec(a.getAttribute('href') || ''), nx = mb ? document.querySelector(`.page > [data-bi="${+mb[1] - 1}"]`) : a.closest('[data-bi]')?.nextElementSibling;
-    if (nx) { const go = () => window.scrollTo({ top: nx.getBoundingClientRect().top + scrollY, behavior: 'auto' }); go(); requestAnimationFrame(() => { go(); setTimeout(go, 120); }); }
+    if (nx) glideTo(nx);
     return;
   }
   navigate(a.getAttribute('href'), { intro: a.dataset.link === 'intro', label: (a.querySelector('.mnav__l') || a).textContent.trim() });

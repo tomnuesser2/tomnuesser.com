@@ -1013,7 +1013,7 @@ a, button, [role="button"], summary, label, .pc__plane, .pcs__t { touch-action: 
 /* ===== Laptop 3D (WebGL, Block „Laptop 3D“) ===== */
 .dv__laptop--gl { z-index: 3; width: calc(min(100vw, 820px) * var(--ls, 1)); aspect-ratio: 1.2; position: relative; perspective: none; }
 @media (min-width: 900px) { .dv__laptop--gl { width: calc(min(58vw, 1040px) * var(--ls, 1)); } }
-.dv__gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.dv__gl { position: absolute; left: -25%; top: -25%; width: 150%; height: 150%; display: block; pointer-events: none; } /* größer als der Laptop (Faktor 1,5 = PAD in device.js), damit er beim Drehen/Anfahren nicht abgeschnitten wird */
 .dv__gsrc { position: absolute; left: 0; top: 0; width: 2px; height: 2px; overflow: hidden; opacity: 0; pointer-events: none; }
 .dv__laptop--gl .dv__sh { position: absolute; z-index: -1; left: 12%; right: 12%; bottom: 7%; height: 9%; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,.4), rgba(0,0,0,0) 70%); filter: blur(12px); pointer-events: none; }
 
@@ -1023,3 +1023,47 @@ a, button, [role="button"], summary, label, .pc__plane, .pcs__t { touch-action: 
 .nb:not(.nb--static) { background: linear-gradient(to bottom, var(--nb-bg) 0, var(--nb-bg) calc(100% - 55svh), var(--bg, #fff) 100%); }
 .fl + .nb, .fl + .nb:not(.nb--static) { margin-top: 0; }
 .fl:has(+ .nb) { margin-bottom: 0; }
+
+/* Laptop 3D darf nach oben/unten über den Abschnitt hinausragen (seitlich wird weiter abgeschnitten) */
+.dv:has(.dv__laptop--gl) { position: relative; z-index: 2; }
+.dv:has(.dv__laptop--gl) .dv__stage { overflow-x: clip; overflow-y: visible; }
+
+
+/* Laptop 3D: Vimeo/YouTube-Video als Overlay auf dem Bildschirm + Ton-Regler in Laptop-Höhe */
+.dv__ov { position: absolute; left: -25%; top: -25%; width: 150%; height: 150%; pointer-events: none; z-index: 2; }
+.dv__if { max-width: none; max-height: none; position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; opacity: 0; transition: opacity .35s; pointer-events: none; background: #000; }
+.dv__vs { position: absolute; right: 0; top: 50%; height: 42%; max-height: 300px; transform: translateY(-50%); z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 9px 5px; background: rgba(20,20,24,.5); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-radius: 999px; color: #fff; opacity: 0; pointer-events: none; transition: opacity .3s; touch-action: none; }
+.dv__vs .dv__mute { all: unset; cursor: pointer; display: grid; place-items: center; width: 26px; height: 26px; flex: none; } .dv__vs .dv__mute svg { width: 22px; height: 22px; fill: currentColor; }
+.dv__vs:not(.is-on) .on, .dv__vs.is-on .off { display: none; }
+.dv__vr { flex: 1; min-height: 0; width: 20px; margin: 0; writing-mode: vertical-lr; direction: rtl; accent-color: #fff; cursor: pointer; touch-action: none; }
+
+/* NOTUA: Flug → Board ohne Naht: keine Fortschrittslinie am Ende des Flugs, Punkte laufen oben weiter und blenden sanft aus */
+.fl:has(+ .nb) .fl__bar { display: none; }
+.fl + .nb .nb__dots { -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 30%, transparent 85%); mask-image: linear-gradient(to bottom, #000 0, #000 30%, transparent 85%); background-size: 30px 30px; inset: -40% -10%; }
+
+/* Laptop 3D am Computer: Laptop und Text teilen sich die Breite – der Text wird nie aus dem Bild geschoben */
+@media (min-width: 900px) {
+  .dv:has(.dv__laptop--gl) .dv__laptop--gl { flex: 1 1 0; min-width: 0; width: auto; max-width: calc(min(58vw, 1040px) * var(--ls, 1)); }
+  .dv:has(.dv__laptop--gl) .dv__copy { flex: 0 0 min(calc(400px * var(--ts, 1)), 34%); width: auto; max-width: none; min-width: 240px; }
+}
+
+/* Ton-Regler: immer außen am Rand des Laptops (Laptop rechts → rechts außen, Laptop links → links außen) */
+.dv--right .dv__vs { right: 0; left: auto; } .dv--left .dv__vs { left: 0; right: auto; }
+@media (min-width: 900px) { .dv--right .dv__vs { right: -46px; } .dv--left .dv__vs { left: -46px; } }
+.dv__vs .dv__mute { width: 22px; height: 22px; } .dv__vs .dv__mute svg { width: 18px; height: 18px; } .dv__vr { width: 16px; }
+
+/* Laptop 3D: ziehbar */
+.dv__laptop--gl.is-grab { cursor: grab; touch-action: pan-y; } .dv__laptop--gl.is-grab.is-drag { cursor: grabbing; } .dv__laptop--gl.is-drag { user-select: none; }
+
+/* NOTUA: Board teilt den (bewegten) Punkt-Hintergrund des Flugs – keine Kante dazwischen */
+.fl + .nb::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: var(--fl-img, none); background-position: var(--fl-pos, 0 0); -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 75svh), transparent calc(100% - 25svh)); mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 75svh), transparent calc(100% - 25svh)); }
+.fl + .nb .nb__dots { display: none; }
+.fl + .nb > * { position: relative; z-index: 1; }
+.fl + .nb > .nb__track { z-index: 1; }
+.fl:has(+ .nb) .fl__stage { overflow: clip; overflow-clip-margin: 60px; }
+.fl:has(+ .nb) { position: relative; z-index: 1; }
+/* NOTUA: kleine dünne Linie an der Kante Flug → Board */
+.fl + .nb::after { content: ''; position: absolute; left: 50%; top: 0; width: min(180px, 30%); height: 1px; transform: translateX(-50%); background: var(--nb-bd, #D7DBE1); opacity: .9; z-index: 2; pointer-events: none; }
+/* NOTUA-Board: Pfeil „Probier es selbst aus" direkt nach dem Anflug */
+.nb__ar { transition: opacity .45s ease; }
+.nb__art { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 4px; white-space: nowrap; padding: 6px 12px; border-radius: 999px; background: var(--nb-ac); color: #fff; font: 600 13px/1 system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; box-shadow: 0 6px 16px -6px rgba(0,0,0,.35); }

@@ -65,7 +65,9 @@ export default {
       { name: 'w', label: 'Breite in %', type: 'number', default: 22 },
     ] },
     { name: 'flyCards', label: 'Fliegende Karten beim Anflug (0 = keine)', type: 'number', default: 9 },
-    { name: 'scrollLength', label: 'Scroll-Strecke bis zum Board (in Bildschirmhöhen)', type: 'number', default: 2.6 },
+    { name: 'introDur', label: 'Dauer der Anflug-Animation in Sekunden (läuft automatisch, sobald man scrollt)', type: 'number', default: 4.2 },
+    { name: 'tryText', label: 'Text am Pfeil nach dem Anflug', type: 'text', default: 'Try it yourself', de: 'Probier es selbst aus' },
+    { name: 'scrollLength', label: 'Scroll-Strecke zum Ausprobieren (in Bildschirmhöhen, Board bleibt stehen)', type: 'number', default: 1.2 },
     { name: 'width', label: 'Maximale Breite des Boards am Computer in px', type: 'number', default: 1240 },
     { name: 'height', label: 'Höhe des Boards (Anteil der Bildschirmhöhe, 0.5–0.95)', type: 'number', default: .8 },
     { name: 'interactive', label: 'Im Board darf man selbst Karten anlegen und verschieben', type: 'checkbox', default: true },
@@ -78,7 +80,7 @@ export default {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
     const live0 = p.interactive !== false, ac = /^#?[0-9a-f]{6}$/i.test(String(p.accent || '').trim()) ? '#' + String(p.accent).trim().replace('#', '') : '#FF6B57';
     const endUrl0 = String(p.endUrl == null ? 'https://notua.site/' : p.endUrl).trim();
-    const root = h('div', { class: `nb${p.theme === 'dunkel' ? ' nb--dark' : ''}`, style: { '--nb-ac': ac, '--nb-len': String(Math.max(.5, num(p.scrollLength, 2.6)) + (endUrl0 ? Math.max(.6, num(p.outroLength, 1.6)) : 0)), '--nb-w': Math.max(480, num(p.width, 1240)) + 'px', '--nb-h': clamp(num(p.height, .8), .5, .95) } });
+    const root = h('div', { class: `nb${p.theme === 'dunkel' ? ' nb--dark' : ''}`, style: { '--nb-ac': ac, '--nb-len': String(Math.max(.5, num(p.scrollLength, 1.2)) + (endUrl0 ? Math.max(.6, num(p.outroLength, 1.6)) : 0)), '--nb-w': Math.max(480, num(p.width, 1240)) + 'px', '--nb-h': clamp(num(p.height, .8), .5, .95) } });
     const static0 = still();
     if (static0) root.classList.add('nb--static');
 
@@ -120,7 +122,7 @@ export default {
     const head = p.hideTexts ? null : h('div', { class: 'nb__head' }, p.kicker ? h('p', { class: 'nb__k' }, p.kicker) : null, p.title ? h('h2', { class: 'nb__h' }, p.title) : null, p.text ? h('p', { class: 'nb__p' }, p.text) : null);
     const isExt = /^https?:/i.test(endUrl0);
     const goBtn = endUrl0 ? h('a', { class: 'nb__go', href: endUrl0, ...(isExt ? { target: '_blank', rel: 'noopener' } : { 'data-link': '' }) }, p.endText || 'Go to NOTUA ↗') : null;
-    const arrow = live0 ? h('div', { class: 'nb__ar', 'aria-hidden': 'true', html: '<svg viewBox="0 0 40 56" width="40" height="56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4v40M7 31l13 14 13-14"/></svg>' }) : null;
+    const arrow = live0 ? h('div', { class: 'nb__ar', 'aria-hidden': 'true', html: `<span class="nb__art">${String(p.tryText == null ? 'Try it yourself' : p.tryText).replace(/[<>&]/g, '')}</span><svg viewBox="0 0 40 56" width="40" height="56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4v40M7 31l13 14 13-14"/></svg>` }) : null;
     const sticky = h('div', { class: 'nb__sticky' }, dots, space, win, head, arrow, static0 ? null : goBtn);
     root.append(h('div', { class: 'nb__track' }, sticky));
     if (static0 && goBtn) root.append(h('div', { class: 'nb__goW' }, goBtn));
@@ -216,11 +218,11 @@ export default {
     watchSize(cv, (w, hh) => { bw = w; bh = hh; cv.style.setProperty('--k', clamp(w / 1000, .6, 1).toFixed(3)); });
 
     /* ---- Scroll-Animation ---- */
-    let live = false, cur = static0 ? 1 : 0, tgt = cur, raf = 0, vw = 1000, vh = 800;
-    const L0 = Math.max(.5, num(p.scrollLength, 2.6)), O0 = endUrl0 ? Math.max(.6, num(p.outroLength, 1.6)) : 0, A0 = L0 / (L0 + O0);
+    let live = false, cur = static0 ? 1 : 0, tgt = cur, raf = 0, vw = 1000, vh = 800, ip = static0 ? 1 : 0, ipT = ip, lt = 0, tried = false;
+    const L0 = Math.max(.5, num(p.scrollLength, 1.2)), O0 = endUrl0 ? Math.max(.6, num(p.outroLength, 1.6)) : 0, A0 = L0 / (L0 + O0);
     const noteBtn = dock.querySelector('[data-k="note"]') || dock.firstChild;
     const apply = (u) => {
-      const pr = clamp(u / A0), q = O0 ? clamp((u - A0) / (1 - A0)) : 0;
+      const pr = clamp(ip), q = O0 ? clamp((u - A0) / (1 - A0)) : 0;
       vw = innerWidth; vh = innerHeight;
       const fl = clamp(pr / .6), e = ease(fl), k1 = 1 - e;
       // Fenster: aus der Ferne, gekippt, angeflogen
@@ -229,7 +231,7 @@ export default {
       win.style.transform = e >= .999 ? 'translate(-50%,-50%)' : `translate(-50%,-50%) translate3d(${wx.toFixed(1)}px,${wy.toFixed(1)}px,${wz.toFixed(1)}px) rotateX(${(46 * k1).toFixed(2)}deg) rotateY(${(-36 * k1).toFixed(2)}deg) rotateZ(${(7 * k1).toFixed(2)}deg)`;
       // UI-Rahmen blendet ein, danach erscheinen die Karten nacheinander
       const ui = clamp((pr - .48) / .12); app.style.setProperty('--ui', ui.toFixed(3));
-      const was = live; live = live0 && pr >= .78 && q < .03; win.classList.toggle('is-live', live); root.classList.toggle('nb--live', live);
+      const was = live; live = live0 && pr >= .9 && q < .03; win.classList.toggle('is-live', live); root.classList.toggle('nb--live', live);
       cards.forEach((c) => {
         if (!c.seed) return; const st = .56 + c.idx * .045, tp = clamp((pr - st) / .08), done = pr >= .8 || c.touched;
         c.seedP = tp; c.el.style.opacity = String(clamp(tp * 2)); c.el.style.transform = tp >= 1 ? 'none' : `translateY(${((1 - tp) * 18).toFixed(1)}px) scale(${(.92 + .08 * tp).toFixed(3)})`;
@@ -247,9 +249,9 @@ export default {
         else if (c.wasOut) { c.wasOut = false; if (!c.seed) { c.el.style.opacity = ''; c.el.style.transform = ''; } }
       });
       if (arrow) {
-        const a = clamp((q - .52) / .1) * (1 - clamp((q - .8) / .1));
-        arrow.style.opacity = a.toFixed(3); noteBtn && noteBtn.classList.toggle('is-hot', a > .05);
-        if (a > .01 && noteBtn) { const ar = app.getBoundingClientRect(), br = noteBtn.getBoundingClientRect(); arrow.style.left = (br.left + br.width / 2 - ar.left) + 'px'; arrow.style.top = (br.top - ar.top - 62) + 'px'; }
+        const a = (live && !tried && pr >= .94) ? 1 : 0;
+        arrow.style.opacity = String(a); noteBtn && noteBtn.classList.toggle('is-hot', a > .5);
+        if (a && noteBtn) { const ar = sticky.getBoundingClientRect(), br = noteBtn.getBoundingClientRect(); arrow.style.left = (br.left + br.width / 2 - ar.left) + 'px'; arrow.style.top = (br.top - ar.top - 64) + 'px'; }
       }
       if (goBtn && !static0) { const g = ease(clamp((q - .8) / .16)); goBtn.style.opacity = g.toFixed(3); goBtn.style.transform = `translate(-50%,-50%) scale(${(.86 + .14 * g).toFixed(3)})`; goBtn.style.visibility = g <= 0 ? 'hidden' : 'visible'; goBtn.style.pointerEvents = g > .6 ? 'auto' : 'none'; }
       // fliegende Karten (Parallaxe-Flug)
@@ -265,9 +267,19 @@ export default {
       if (head) { const o = 1 - clamp(pr / .2); head.style.opacity = o.toFixed(3); head.style.transform = `translate(-50%, ${(-pr * 90).toFixed(1)}px)`; head.style.visibility = o <= 0 ? 'hidden' : 'visible'; head.style.filter = o < 1 ? `blur(${((1 - o) * 6).toFixed(1)}px)` : ''; }
       if (was !== live && !live && document.activeElement && document.activeElement.blur && win.contains(document.activeElement)) document.activeElement.blur();
     };
-    const tick = () => { raf = 0; cur += (tgt - cur) * .16; if (Math.abs(tgt - cur) < .0008) cur = tgt; apply(cur); if (cur !== tgt) raf = requestAnimationFrame(tick); };
+    const tick = (t) => {
+      raf = 0; const dt = lt ? Math.min(.1, (t - lt) / 1000) : .016; lt = t;
+      cur += (tgt - cur) * .16; if (Math.abs(tgt - cur) < .0008) cur = tgt;
+      const sp = (O0 && tgt >= A0 ? 4 : 1) / Math.max(.8, num(p.introDur, 4.2));
+      if (ip < ipT) ip = Math.min(ipT, ip + dt * sp); else if (ip > ipT) ip = Math.max(ipT, ip - dt * sp * 2);
+      if (ip <= 0) tried = false;
+      apply(cur);
+      if (cur !== tgt || ip !== ipT) raf = requestAnimationFrame(tick); else lt = 0;
+    };
+    const markTried = () => { if (tried) return; tried = true; if (arrow) arrow.style.opacity = '0'; noteBtn && noteBtn.classList.remove('is-hot'); };
+    win.addEventListener('pointerdown', markTried, true);
     if (static0) { apply(A0); }
-    else { apply(0); track(root.querySelector('.nb__track'), (r) => { tgt = trackProgress(r, sticky.offsetHeight); if (!raf) raf = requestAnimationFrame(tick); }); addEventListener('resize', () => apply(cur), { passive: true }); }
+    else { apply(0); track(root.querySelector('.nb__track'), (r, vhh) => { tgt = trackProgress(r, sticky.offsetHeight); ipT = (r.top < vhh * .35 || tgt >= A0) ? 1 : (r.top > vhh * .6 ? 0 : ipT); if (!raf) { lt = 0; raf = requestAnimationFrame(tick); } }); addEventListener('resize', () => apply(cur), { passive: true }); }
     return root;
   },
 };

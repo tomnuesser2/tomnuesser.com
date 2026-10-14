@@ -10,8 +10,11 @@ export default {
     { name: 'finish', label: 'Gehäusefarbe', type: 'select', options: ['space schwarz', 'silber', 'space grau', 'mitternacht', 'sternenlicht', 'gold'], default: 'space schwarz' },
     { name: 'frameColor', label: 'Eigene Gehäusefarbe (Hex, z. B. #8a8f98; leer = wie oben)', type: 'text', default: '' },
     { name: 'logo', label: 'Logo auf dem Deckel (Bild; leer = kein Logo)', type: 'image', default: 'media/notua-logo.png' },
-    { name: 'anim', type: 'laptopAnim', label: '🎬 Animation selbst bestimmen (Start → Ende mit Vorschau)' },
+    { name: 'drag', label: '🖱 Laptop mit Maus/Finger drehbar (federt zurück)', type: 'checkbox', default: true },
+    { name: 'soundUi', label: '🔊 Ton-Regler neben dem Laptop (Videos laufen geloopt, zuerst stumm – Besucher stellt den Ton ein)', type: 'checkbox', default: true },
+    { name: 'anim', type: 'laptopAnim', label: '🖥 Animation am Computer (Start → Ende mit Vorschau)' },
+    { name: 'animMobile', type: 'laptopAnim', mobile: true, label: '📱 Animation am Handy (eigene Animation, Start → Ende mit Vorschau)' },
     { name: 'scale', label: 'Größe des Laptops (1 = normal, 1.3 = größer)', type: 'number', default: 1 },
   ].map(f => f.name === 'chrome' ? { ...f, label: 'Browser-Leiste oben im Bildschirm anzeigen (Punkte + Adresszeile)' } : f.name === 'items' ? { ...f, label: 'Einträge (Bild oder .mp4; hohe Website-Screenshots scrollen im Bildschirm)' } : f),
-  render(p, ctx) { return device.render({ ...p, kind: 'laptop', _gl: true }, ctx); },
+  render(p, ctx) { return device.render({ ...p, anim: p.anim && typeof p.anim === 'object' ? p.anim : {}, animMobile: p.animMobile && typeof p.animMobile === 'object' ? p.animMobile : {}, kind: 'laptop', _gl: true }, ctx); },
 };
