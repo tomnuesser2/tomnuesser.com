@@ -21,6 +21,7 @@ import flythrough from '../blocks/flythrough.js';
 import kinetic from '../blocks/kinetic.js';
 import notuaFlight from '../blocks/notuaFlight.js';
 import notuaBoard from '../blocks/notuaBoard.js';
+import notuaTeaser from '../blocks/notuaTeaser.js';
 import deviceSwitch from '../blocks/deviceSwitch.js';
 import projectHead from '../blocks/projectHead.js';
 import projectText from '../blocks/projectText.js';
@@ -35,17 +36,24 @@ import frameScrub from '../blocks/frameScrub.js';
 import timelinePlayer from '../blocks/timelinePlayer.js';
 import galleryBlocks from '../blocks/gallery.js';
 
-export const blocks = [hero, chapter, statement, services, device, flythrough, notuaFlight, notuaBoard, deviceSwitch, projectHead, projectText, projectNext, kinetic, spacer, heading, text, media, mediaStack, projectGrid, contactForm, socials, impressum, reelGallery, albumRail, phone3d, elasticReel, parallaxCarousel, spinShutter, frameScrub, timelinePlayer, ...galleryBlocks];
+export const blocks = [hero, chapter, statement, services, device, flythrough, notuaTeaser, notuaFlight, notuaBoard, deviceSwitch, projectHead, projectText, projectNext, kinetic, spacer, heading, text, media, mediaStack, projectGrid, contactForm, socials, impressum, reelGallery, albumRail, phone3d, elasticReel, parallaxCarousel, spinShutter, frameScrub, timelinePlayer, ...galleryBlocks];
 
 // Globaler Textgrößen-Regler: jeder Block mit Text bekommt einen Schieber „Textgröße“ (zoomt nur die Textelemente).
 const NO_TEXT = new Set(['spacer', 'media', 'mediaStack', 'reelGallery', 'frameScrub']);
-for (const b of blocks) if (!NO_TEXT.has(b.type) && !(b.fields || []).some(f => f.name === 'textScale')) (b.fields ??= []).push({ name: 'textScale', label: '🔠 Textgröße (Schieber, 1 = normal)', type: 'range', min: .5, max: 3, step: .05, default: 1 });
+for (const b of blocks) if (!NO_TEXT.has(b.type) && !(b.fields || []).some(f => f.name === 'textScale')) (b.fields ??= []).push(
+  { name: 'textScale', label: '🔠 Textgröße am Computer (Schieber, 1 = normal)', type: 'range', min: .5, max: 3, step: .05, default: 1 },
+  { name: 'textScaleMobile', label: '📱 Textgröße am Handy (Schieber, 0 = wie am Computer, sonst 1 = normal)', type: 'range', min: 0, max: 3, step: .05, default: 0 });
 const TEXT_SEL = 'h1,h2,h3,h4,h5,p,blockquote,li,figcaption,.dv__link';
-function applyTextScale(el, s) {
-  s = Number(s); if (!(s > 0) || Math.abs(s - 1) < .01 || !el || el.nodeType !== 1) return;
-  const nodes = [...el.querySelectorAll(TEXT_SEL)]; if (el.matches(TEXT_SEL)) nodes.unshift(el);
-  const set = new Set(nodes);
-  for (const n of nodes) { let a = n.parentElement, nested = false; while (a && a !== el.parentElement) { if (set.has(a)) { nested = true; break; } a = a.parentElement; } if (!nested) n.style.zoom = String(s); }
+const mqM = matchMedia('(max-width: 899px)'), scaled = new Set();
+const useScale = (e) => { const m = mqM.matches && e.mob > 0 ? e.mob : e.pc; return m > 0 && Math.abs(m - 1) >= .01 ? String(m) : ''; };
+mqM.addEventListener('change', () => { for (const e of scaled) { if (!e.el.isConnected && Date.now() - e.t > 5000) { scaled.delete(e); continue; } const z = useScale(e); for (const n of e.nodes) n.style.zoom = z; } });
+function applyTextScale(el, pc, mob) {
+  pc = Number(pc) || 1; mob = Number(mob) || 0;
+  if (!el || el.nodeType !== 1 || (Math.abs(pc - 1) < .01 && mob <= 0)) return;
+  const all = [...el.querySelectorAll(TEXT_SEL)]; if (el.matches(TEXT_SEL)) all.unshift(el);
+  const set = new Set(all), nodes = [];
+  for (const n of all) { let a = n.parentElement, nested = false; while (a && a !== el.parentElement) { if (set.has(a)) { nested = true; break; } a = a.parentElement; } if (!nested) nodes.push(n); }
+  const e = { el, nodes, pc, mob, t: Date.now() }; scaled.add(e); const z = useScale(e); for (const n of nodes) n.style.zoom = z;
 }
 
 const byType = new Map(blocks.map(b => [b.type, b]));
@@ -61,7 +69,7 @@ export function renderBlocks(list = [], ctx) {
       const props = localize(item.props || {});
       if (getLang() === 'de') for (const f of def.fields || []) if (f.de !== undefined && props[f.name] === undefined) props[f.name] = f.de;
       const el = def.render({ ...props, id: item.id }, ctx);
-      if (el) { if (el.nodeType === 1) { el.dataset.bi = String(bi); applyTextScale(el, props.textScale); } frag.append(el); }
+      if (el) { if (el.nodeType === 1) { el.dataset.bi = String(bi); applyTextScale(el, props.textScale, props.textScaleMobile); } frag.append(el); }
     } catch (err) {
       console.error(`[blocks] Fehler in "${item.type}"`, err);
     }

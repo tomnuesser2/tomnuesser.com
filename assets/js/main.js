@@ -237,8 +237,8 @@ function scrollToHash(hash, smooth = true) {
   // Kreatives (Kinetic-Abschnitt): direkt dorthin springen, wo der Button „meine aktuellen Design-Arbeiten“ schon voll zu sehen ist
   const kt = el.querySelector('.kn__track') || (el.classList.contains('kn__track') ? el : null);
   if (kt) y = kt.getBoundingClientRect().top + scrollY + .17 * Math.max(0, kt.offsetHeight - innerHeight);
-  // Videografie (Short-/Long-Form): so weit oben landen, dass der Abschnitt unten endet und NOTUA noch nicht zu sehen ist
-  if (el.classList.contains('dd') || el.querySelector('.dd')) { const r = el.getBoundingClientRect(); y = Math.max(0, Math.min(y, r.bottom + scrollY - innerHeight)) + 100; }  // +100 px = ein Mausrad-Klick weiter unten, damit oben kein Rand des Abschnitts davor zu sehen ist
+  // Videografie (Short-/Long-Form): Abschnitt füllt genau den Bildschirm (Handy: klebt kurz fest) – exakt auf den Anfang springen, ohne Rand davor oder danach
+  if (el.classList.contains('dd') || el.querySelector('.dd')) y = (el.classList.contains('dd') ? el : el.querySelector('.dd')).getBoundingClientRect().top + scrollY + 1;
   window.scrollTo({ top: y, behavior: smooth && !prefersReducedMotion() ? 'smooth' : 'auto' });
 }
 
@@ -277,6 +277,15 @@ async function navigate(href, { intro = false, label = '' } = {}) {
   } finally { navigating = false; }
 }
 
+// Nach dem Sprung ein paar Sekunden lang nachjustieren (Bilder/Videos laden, Leisten blenden ein/aus und verschieben das Layout) – solange der Besucher nicht selbst scrollt
+function settle(hash, ms = 2600) {
+  let touched = false; const mark = () => { touched = true; };
+  const evs = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
+  evs.forEach(ev => addEventListener(ev, mark, { once: true, passive: true }));
+  const t0 = performance.now();
+  const tick = () => { if (touched || performance.now() - t0 > ms) { evs.forEach(ev => removeEventListener(ev, mark)); return; } scrollToHash(hash, false); setTimeout(tick, 140); };
+  setTimeout(tick, 140);
+}
 // Menü-Klick: dunkler Vorhang fährt hoch, zeigt kurz den Namen des Ziels, springt dahinter zum Abschnitt und fährt wieder weg.
 async function sectionJump(hash, label) {
   const target = document.getElementById(decodeURIComponent(hash.slice(1)));
@@ -293,6 +302,7 @@ async function sectionJump(hash, label) {
     scrollToHash(hash, false);
     await new Promise(r => setTimeout(r, 520));
     scrollToHash(hash, false);
+    settle(hash);
     await veil.animate([{ clipPath: 'inset(0 0 0 0)' }, { clipPath: 'inset(0 0 100% 0)' }], { duration: 620, easing: ease, fill: 'forwards' }).finished;
   } finally { veil.remove(); navigating = false; }
 }
@@ -316,6 +326,12 @@ document.addEventListener('click', (e) => {
   const a = e.target.closest?.('a[data-link]');
   if (!a) return;
   e.preventDefault();
+  // „#next“ = direkt (ohne Animation) zum nächsten Abschnitt derselben Seite springen, z. B. vom NOTUA-Flug zum Board darunter
+  if (a.getAttribute('href') === '#next') {
+    const nx = a.closest('[data-bi]')?.nextElementSibling;
+    if (nx) { const go = () => window.scrollTo({ top: nx.getBoundingClientRect().top + scrollY, behavior: 'auto' }); go(); requestAnimationFrame(() => { go(); setTimeout(go, 120); }); }
+    return;
+  }
   navigate(a.getAttribute('href'), { intro: a.dataset.link === 'intro', label: (a.querySelector('.mnav__l') || a).textContent.trim() });
 });
 addEventListener('popstate', () => { render(); });

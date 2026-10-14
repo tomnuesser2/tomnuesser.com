@@ -47,7 +47,7 @@ export default {
     const iT = h('h3', { class: 'dd__it' }), iX = h('p', { class: 'dd__ix' }), item = h('div', { class: 'dd__item' }, iT, iX);
     const sw = ['phone', 'laptop'].map(m => h('button', { type: 'button', class: 'dd__sw', 'data-m': m, 'aria-label': m === 'phone' ? p.shortTitle : p.longTitle }, h('i', {})));
     const cta = p.ctaText ? h('a', { class: 'cta dd__cta', href: p.ctaLink || 'projects', 'data-link': '', 'data-magnetic': '1' }, h('span', {}, p.ctaText), h('i', { 'aria-hidden': 'true' }, '→')) : null;
-    const el = h('section', { class: 'dd', id: p.id }, h('div', { class: 'dd__stage' }, dev, h('div', { class: 'dd__copy' }, k, h('div', { class: 'dd__dots' }, sw), gT, gX, item)), cta);
+    const el = h('section', { class: 'dd', id: p.id }, h('div', { class: 'dd__sticky' }, h('div', { class: 'dd__stage' }, dev, h('div', { class: 'dd__copy' }, k, h('div', { class: 'dd__dots' }, sw), gT, gX, item)), cta));
 
     // Screens aufbauen
     for (const m of ['phone', 'laptop']) {
@@ -115,6 +115,25 @@ export default {
     phone.addEventListener('click', (e) => { if (front !== 'phone') return setFront('phone'); const r = phone.getBoundingClientRect(); show('phone', S.phone.cur + (e.clientX < r.left + r.width * .35 ? -1 : 1)); });
     laptop.addEventListener('click', () => { if (front !== 'laptop') return setFront('laptop'); show('laptop', S.laptop.cur + 1); });
     sw.forEach(s => s.addEventListener('click', () => setFront(s.dataset.m)));
+    // Handy: Gerätegröße so wählen, dass Gerät + Text + Button immer in den Bildschirm passen (egal wie lang der Text / wie groß die Schrift ist)
+    const mqM = matchMedia('(max-width: 899px)'), sticky = el.firstChild;
+    const fit = () => {
+      el.style.removeProperty('--W');
+      if (!mqM.matches || !el.isConnected || !sticky.clientHeight) return;
+      const cs = getComputedStyle(sticky), avail = sticky.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      const need = () => dev.parentElement.offsetHeight + (cta ? cta.offsetHeight + parseFloat(cs.rowGap || cs.gap || 14) : 0);
+      let W = dev.offsetWidth; const keepF = front, saved = [iT.textContent, iX.textContent, gT.textContent, gX.textContent]; let minW = W;
+      for (const m of ['phone', 'laptop']) {
+        gT.textContent = m === 'phone' ? p.shortTitle : p.longTitle; gX.textContent = m === 'phone' ? p.shortText : p.longText;
+        for (const it of items[m].length ? items[m] : [{}]) {
+          iT.textContent = it.title || ''; iX.textContent = it.text || ''; let w = W; el.style.setProperty('--W', w + 'px');
+          while (need() > avail && w > 130) { w -= 8; el.style.setProperty('--W', w + 'px'); }
+          minW = Math.min(minW, w);
+        }
+      }
+      [iT.textContent, iX.textContent, gT.textContent, gX.textContent] = saved; el.style.setProperty('--W', minW + 'px');
+    };
+    requestAnimationFrame(() => requestAnimationFrame(fit)); addEventListener('resize', fit); setTimeout(fit, 700); document.fonts?.ready?.then(fit);
     el.dataset.front = front; setFront(front); show(front === 'phone' ? 'laptop' : 'phone', 0, false);
     if ('IntersectionObserver' in window) new IntersectionObserver((es) => { es.forEach(e => { visible = e.isIntersecting; if (visible) run(); else { clearT(); ['phone', 'laptop'].forEach(x => S[x].shots.forEach(s => s.querySelector('video')?.pause())); } }); }, { threshold: .2 }).observe(el);
     else { visible = true; run(); }

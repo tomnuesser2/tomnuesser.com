@@ -884,8 +884,58 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 /* Short-/Long-form: füllt auf dem Handy genau einen Bildschirm und bleibt kurz kleben (kein Rand von davor/danach); am PC mittig unter dem Menü */
 .dd__sticky { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; min-height: 100vh; min-height: 100dvh; box-sizing: border-box; padding-top: 104px; padding-bottom: 28px; }
 @media (max-width: 899px) {
-  .dd { --W: clamp(140px, calc((100dvh - 560px) / .86), min(84vw, 440px)); padding: 0 var(--gutter-media); height: calc(100dvh + 45dvh); margin-block: 0; }
-  .dd__sticky { position: sticky; top: 0; height: 100dvh; min-height: 0; padding-top: calc(66px + env(safe-area-inset-top)); padding-bottom: calc(92px + env(safe-area-inset-bottom)); gap: 14px; overflow: hidden; }
+  .dd { --W: clamp(140px, calc((100dvh - 560px) / .86), min(84vw, 440px)); padding: 0 var(--gutter-media); height: calc(100dvh + 80dvh); margin-block: 0; }
+  .dd__sticky { position: sticky; top: 0; height: 100dvh; min-height: 0; padding-top: calc(66px + env(safe-area-inset-top)); padding-bottom: calc(104px + env(safe-area-inset-bottom)); gap: 14px; overflow: hidden; }
   .dd__stage { gap: 22px; }
   .dd__item { margin-top: 12px; padding-top: 10px; min-height: 52px; }
 }
+
+/* Short-/Long-form am PC: ebenfalls ein Bildschirm, bleibt für ein paar Scrolls im perfekten Bild stehen, Platz über dem Laptop fürs Menü */
+@media (min-width: 900px) {
+  .dd { height: calc(100dvh + 55dvh); margin-block: 0; }
+  .dd__sticky { position: sticky; top: 0; height: 100dvh; min-height: 0; padding-top: 108px; padding-bottom: 28px; gap: 18px; overflow: hidden; }
+  .dd__dev { height: calc(var(--W) * .8); }
+}
+
+/* ======================= NOTUA kurz (Startseite) */
+.nt { --nt-bg: #E7EAEE; --nt-dot: #C6CCD4; --nt-ink: #1B2027; --nt-ac: #FF6B57; --nt-sf: #fff; --nt-bd: #D7DBE1; --nt-mu: #5C6570; position: relative; margin: 0; color: var(--nt-ink); font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+.nt__track { position: relative; height: calc(100dvh * (1 + var(--nt-len, 1.1))); }
+.nt.is-still .nt__track { height: auto; }
+.nt__stage { position: sticky; top: 0; height: 100dvh; overflow: hidden; background: var(--nt-bg); display: grid; place-items: center; }
+.nt.is-still .nt__stage { position: relative; min-height: 100dvh; }
+.nt__grid { position: absolute; inset: 0; background-image: radial-gradient(circle, var(--nt-dot) 1.5px, transparent 1.8px); background-size: 26px 26px; background-position: calc(var(--nt-p, 0) * -40px) calc(var(--nt-p, 0) * -40px); }
+.nt__copy { position: relative; z-index: 3; width: min(640px, calc(100% - 2 * var(--gutter-media, 20px))); text-align: center; display: grid; justify-items: center; gap: 14px; padding-top: 24px; }
+.nt__logo { height: clamp(36px, 6vw, 56px); width: auto; display: block; }
+.nt__t { font-size: clamp(26px, 4.4vw, 52px); line-height: 1.06; font-weight: 700; letter-spacing: -.025em; text-wrap: balance; margin: 0; }
+.nt__x { font-size: clamp(15px, 1.6vw, 18px); line-height: 1.6; color: var(--nt-mu); max-width: 34em; margin: 0; }
+.nt__btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 6px; }
+.nt__b { display: inline-flex; align-items: center; padding: 13px 22px; border-radius: 999px; font-size: 15px; font-weight: 600; border: 1.5px solid var(--nt-ink); transition: background .2s, color .2s, transform .2s; }
+.nt__b--1 { background: var(--nt-ac); border-color: var(--nt-ac); color: #fff; } .nt__b--2 { background: transparent; color: var(--nt-ink); }
+.nt__b:hover { transform: translateY(-2px); } .nt__b--2:hover { background: var(--nt-ink); color: var(--nt-bg); }
+.nt__sub { font-size: 12px; letter-spacing: .08em; color: var(--nt-mu); margin: 0; text-transform: lowercase; }
+.nt__c { position: absolute; z-index: 2; width: clamp(150px, 17vw, 240px); background: var(--nt-sf); border: 1.5px solid var(--nt-bd); border-radius: 10px; box-shadow: 0 14px 36px -14px rgba(24,28,35,.28); padding: 6px 12px 12px; font-size: clamp(11px, 1vw, 13.5px); will-change: transform, opacity; }
+.nt__c--note { left: 6%; top: 18%; } .nt__c--tasks { right: 6%; top: 15%; } .nt__c--table { left: 8%; bottom: 14%; } .nt__c--boards { right: 8%; bottom: 17%; }
+.nt__h { display: flex; align-items: center; gap: 6px; height: 22px; color: #8A9099; } .nt__h i { width: 11px; height: 9px; border: 1.5px solid currentColor; border-radius: 2px; } .nt__h b { font-weight: 700; color: var(--nt-mu); font-size: .9em; }
+.nt__nb p { margin: 3px 0; font-weight: 600; line-height: 1.4; }
+.nt__tl p { display: flex; align-items: center; gap: 8px; margin: 4px 0; font-weight: 600; } .nt__tl i { flex: none; width: 11px; height: 11px; border: 1.6px solid #8A9099; border-radius: 3px; } .nt__tl .is-done { opacity: .55; text-decoration: line-through; } .nt__tl .is-done i { background: var(--nt-ac); border-color: var(--nt-ac); }
+.nt__tb { border-collapse: collapse; width: 100%; } .nt__tb td { border: 1px solid var(--nt-bd); padding: 5px 7px; font-weight: 500; }
+.nt__bd { display: grid; gap: 5px; } .nt__bd span { display: flex; align-items: center; gap: 8px; background: #F0F2F5; border: 1px solid var(--nt-bd); border-radius: 7px; padding: 6px 9px; font-weight: 600; } .nt__bd i { width: 9px; height: 9px; border-radius: 3px; background: var(--nt-ac); }
+@media (max-width: 899px) {
+  .nt__c { width: 40vw; padding: 5px 9px 9px; font-size: 11px; }
+  .nt__c--note { left: 4%; top: calc(var(--header-h, 60px) + 6px); } .nt__c--tasks { right: 4%; top: calc(var(--header-h, 60px) + 20px); } .nt__c--table { left: 4%; bottom: 96px; } .nt__c--boards { right: 4%; bottom: 112px; }
+  .nt__copy { padding-top: 0; gap: 10px; } .nt__t { font-size: clamp(22px, 6.4vw, 30px); } .nt__x { font-size: 14px; } .nt__b { padding: 11px 18px; font-size: 14px; }
+  .nt__tl p:nth-child(n+4), .nt__tb tr:nth-child(n+3) { display: none; }
+}
+
+/* NOTUA-Blöcke als allererstes Element einer Seite: kein weißer Rand oben – sie reichen bis ganz nach oben (Menü liegt darüber) */
+.page > .fl:first-child, .page > .nb:first-child, .page > .nt:first-child { margin-top: calc(var(--header-h) * -1); }
+
+/* NOTUA-Board: Ende (Pfeil auf den Notiz-Button, großer Button) */
+.nb__ar { position: absolute; z-index: 70; width: 40px; height: 56px; margin-left: -20px; color: var(--nb-ac); opacity: 0; pointer-events: none; animation: nbBob 1s ease-in-out infinite; filter: drop-shadow(0 4px 8px rgba(0,0,0,.18)); }
+@keyframes nbBob { 0%, 100% { translate: 0 0; } 50% { translate: 0 9px; } }
+.nb__db.is-hot { background: var(--nb-ac); color: #fff; animation: nbPulse 1s ease-in-out infinite; }
+@keyframes nbPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,87,.55); } 50% { box-shadow: 0 0 0 9px rgba(255,107,87,0); } }
+.nb__go { position: absolute; left: 50%; top: 50%; z-index: 80; display: inline-flex; align-items: center; justify-content: center; padding: clamp(18px, 3.2svh, 28px) clamp(30px, 6vw, 64px); border-radius: 999px; background: var(--nb-ac); color: #fff; font: 700 clamp(22px, 4.2vw, 40px)/1 "IBM Plex Sans", system-ui, sans-serif; text-decoration: none; white-space: nowrap; box-shadow: 0 24px 60px -18px var(--nb-ac), 0 8px 24px rgba(0,0,0,.18); opacity: 0; visibility: hidden; pointer-events: none; transition: filter .2s; }
+.nb__go:hover { filter: brightness(1.08); }
+.nb--static .nb__goW { display: flex; justify-content: center; padding: 24px 16px 8px; } .nb--static .nb__go { position: static; opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
+@media (prefers-reduced-motion: reduce) { .nb__ar, .nb__db.is-hot { animation: none; } }

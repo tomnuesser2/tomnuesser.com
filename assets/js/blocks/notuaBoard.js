@@ -45,7 +45,7 @@ const lines = (s) => String(s == null ? '' : s).split('\n').map(x => x.trim()).f
 const DEF_W = { note: .2, tasks: .24, table: .34, column: .2, image: .26 };
 
 export default {
-  type: 'notuaBoard', label: 'NOTUA-Board (Scroll-Flug ins Board, danach zum Ausprobieren)',
+  type: 'notuaBoard', label: 'NOTUA-Board zum Ausprobieren (Flug ins Board – für die PROJEKTSEITE)',
   fields: [
     { name: 'kicker', label: 'Kleine Zeile über dem Titel', type: 'text', default: 'NOTUA', de: 'NOTUA' },
     { name: 'title', label: 'Titel (erscheint am Anfang, blendet beim Fliegen aus)', type: 'text', default: 'Fly into the board', de: 'Flieg ins Board' },

@@ -488,7 +488,7 @@ function mount(root, OPT) {
 const ENT = [[0, 0], [-3.4, .6], [3.4, -.7], [2.6, 2.2], [-3, -1.8], [3.6, 1.4], [-2.6, 2], [3, -1.9], [-3.2, .3]];
 const IMG = [{ name: 'src', label: 'Bild', type: 'image' }];
 export default {
-  type: 'notuaFlight', label: 'NOTUA-Flug (meine eigene App, 3D)',
+  type: 'notuaFlight', label: 'NOTUA-Flug groß (3D, langer Scroll – für die PROJEKTSEITE)',
   fields: [
     { name: 'title', label: 'Titel am Anfang', type: 'text', default: 'NOTUA – the most powerful creative planning & mind-map app.', de: 'NOTUA – die mächtigste Planungs- und Mindmap-App für Kreative.' },
     { name: 'text', label: 'Text am Anfang (was kann NOTUA, wofür ist es?)', type: 'textarea', default: 'Plan projects, sort ideas and connect them on one endless board: notes, tables, tasks, widgets and boards inside boards. Made by me – free to use.', de: 'Plane Projekte, sortiere Ideen und verbinde sie auf einem endlosen Board: Notizen, Tabellen, Aufgaben, Widgets und Boards in Boards. Von mir gebaut – kostenlos nutzbar.' },

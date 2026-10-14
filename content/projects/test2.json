@@ -21,7 +21,7 @@
         "linkText": "open NOTUA ↗",
         "linkUrl": "https://notua.site/",
         "projectText": "view the project →",
-        "projectUrl": "notua",
+        "projectUrl": "test2",
         "sub": "web · desktop · android",
         "hint": "scroll to fly",
         "logo": "media/notua-logo.png",
@@ -43,9 +43,73 @@
         "cDot": "#C6CCD4",
         "cSurface": "#FFFFFF",
         "cInk": "#1B2027",
-        "cAccent": "#FF6B57"
-      },
-      "hidden": true
+        "cAccent": "#FF6B57",
+        "textScale": 1,
+        "textScaleMobile": 1.05
+      }
+    },
+    {
+      "type": "notuaBoard",
+      "props": {
+        "kicker": "NOTUA",
+        "title": "just try it out!",
+        "text": "Scroll – and try it yourself.",
+        "hideTexts": false,
+        "boardName": "Untitled board",
+        "url": "notua.site",
+        "theme": "hell",
+        "accent": "#FF6B57",
+        "cards": [
+          {
+            "type": "note",
+            "text": "Script intro\n– Hook in 3 sec\n– Scene 1: workshop",
+            "x": 4,
+            "y": 8,
+            "w": 21
+          },
+          {
+            "type": "note",
+            "text": "Shot list\n1. Wide shot\n2. Close-up\n3. Hands detail",
+            "x": 30,
+            "y": 6,
+            "w": 21
+          },
+          {
+            "type": "tasks",
+            "title": "Tasks",
+            "text": "x Review footage\nx Rough cut\nColor grade\nExport in 4K",
+            "x": 57,
+            "y": 10,
+            "w": 24
+          },
+          {
+            "type": "table",
+            "title": "Scene overview",
+            "text": "Intro, 0:12, Wide\nWorkshop, 0:28, Close-up\nInterview, 0:45, Medium",
+            "x": 8,
+            "y": 48,
+            "w": 36
+          },
+          {
+            "type": "column",
+            "title": "Pipeline",
+            "text": "Moodboard\nCut v2\nGrading",
+            "x": 54,
+            "y": 50,
+            "w": 20
+          }
+        ],
+        "flyCards": 9,
+        "scrollLength": 2.6,
+        "width": 1240,
+        "height": 0.8,
+        "interactive": true,
+        "hint": "Try it: add notes and move cards around.",
+        "tools": "alle",
+        "textScale": 1,
+        "textScaleMobile": 0,
+        "title_de": "probiere es einfach aus!"
+      }
     }
   ],
   "title_de": "notua"

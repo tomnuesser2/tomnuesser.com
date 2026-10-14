@@ -165,23 +165,10 @@
       "hidden": true
     },
     {
-      "type": "notuaFlight",
+      "type": "notuaTeaser",
       "id": "notua",
       "props": {
-        "images": [
-          {
-            "src": "media/leona-live.jpg"
-          },
-          {
-            "src": "media/stage-purple.jpg"
-          },
-          {
-            "src": "media/norder-xl.jpg"
-          },
-          {
-            "src": "media/reel-3.jpg"
-          }
-        ]
+        "projectUrl": "test2"
       }
     },
     {
