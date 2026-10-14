@@ -186,8 +186,6 @@ export default {
         if (dt > .034) { if (++slow > 25 && rq > .55) { rq *= .8; slow = 0; resize(); } } else if (slow > 0) slow--;
         const k = Math.min(1, dt * 6), tgt = statik ? 1 : A ? L.a : clamp(L.p / .26); if (A && !statik) { const stp = Math.min(dt, .1) / Math.max(.6, Number(A.dur) || 4.5); oc = tgt > oc ? Math.min(tgt, oc + stp) : Math.max(tgt, oc - stp); } else oc += (tgt - oc) * Math.min(1, dt * 7);
         hx += (tx - hx) * k; hy += (ty - hy) * k;
-        // Handy: Scroll erst sperren, wenn der Abschnitt am Bildschirm klebt (nicht mitten beim Heranscrollen) – nur so lange, bis die Animation fertig ist
-        if (A && mq.matches && !statik) { if (L.a === 1 && oc < 1 && L.top <= 2) { if (!L.hl) { L.hl = true; holdScroll(Math.min(7000, (1 - oc) * (Number(A.dur) || 4.5) * 1000 + 250)); } } else if (L.a === 0) L.hl = false; if (oc >= 1 && tgt === 1) { releaseScroll(); L.hl = true; } }
         calm = (!dr.on && Math.abs(dr.ry) < .3 && Math.abs(dr.rx) < .3) ? calm + dt : 0; ovk += ((emb.some((e) => e && e.f) && oc > .985 ? 1 : 0) - ovk) * Math.min(1, dt * 3);
         if (!dr.on) { const sd = Math.min(dt, .05); dr.ryV += (-60 * dr.ry - 11 * dr.ryV) * sd; dr.ry += dr.ryV * sd; dr.rxV += (-60 * dr.rx - 11 * dr.rxV) * sd; dr.rx += dr.rxV * sd; if (Math.abs(dr.ry) < .02 && Math.abs(dr.ryV) < .05) { dr.ry = 0; dr.ryV = 0; } if (Math.abs(dr.rx) < .02 && Math.abs(dr.rxV) < .05) { dr.rx = 0; dr.rxV = 0; } }
         if (L.i !== shown && to < 0) { to = L.i; gp.setSlot(1, srcEl(to)); mixv = 0; }

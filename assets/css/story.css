@@ -178,6 +178,7 @@
 /* --- NOTUA-Flug (eigene App) --- */
 .fl { --bg: #E7EAEE; --coral: #FF6B57; --ink: #1B2027; --mute: #5C6570; --g: 22px; background: #E7EAEE; color: #1B2027; margin: var(--group-gap) 0 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; }
 .fl__track { position: relative; height: calc(100svh + var(--n) * 78svh); }
+@media (max-width: 899px) { .fl__track { height: calc(100svh + var(--n) * 58svh); } }
 .fl__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .fl__cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .fl__vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 58%, rgba(24,28,35,.16)); }
@@ -428,7 +429,7 @@
 .hm { --uh: max(0px, calc(100lvh - 100svh)); }
 .hm__stage { position: sticky; top: 0; height: 100lvh; margin-bottom: calc(var(--uh) * -1); overflow: hidden; background: var(--bg, #fff); }
 /* 3D-Karussell (Handy-Intro, Desktop-Hero) */
-.hm .hm__car { position: absolute; height: auto; left: 0; right: 0; top: calc(var(--header-h, 56px) - 34px); bottom: calc(186px + var(--hmt, 112px) + 24px + var(--uh) + env(safe-area-inset-bottom)); will-change: transform, opacity; transform-origin: 50% 50%; --cc-fade: #fff; }
+.hm .hm__car { position: absolute; height: auto; left: 0; right: 0; top: calc(var(--header-h, 56px) - 34px); bottom: calc(186px + var(--hmt, 112px) + 10px + var(--uh) + env(safe-area-inset-bottom)); will-change: transform, opacity; transform-origin: 50% 50%; --cc-fade: #fff; }
 .hm__title { position: absolute; left: var(--gutter, 20px); right: var(--gutter, 20px); bottom: calc(186px + var(--uh) + env(safe-area-inset-bottom)); margin: 0; display: flex; flex-direction: column; gap: 0; font-size: calc(var(--k, 1) * clamp(38px, 11.4vw, 60px)); line-height: .98; letter-spacing: -.04em; font-weight: 700; will-change: transform, opacity; }
 .hm__title span { display: block; }
 .hm__title span:nth-child(2) { color: transparent; -webkit-text-stroke: 1.3px var(--ink, #000); }
@@ -1146,7 +1147,7 @@ body.is-nbend, body.is-nbend .app, body.is-nbend main { background: var(--nb-end
 /* Handy (Landingpage): nativer Scroll-Snap – jeder Abschnitt hält an seinem Anfang, flüssig und vom Browser gebremst.
    Lange Abschnitte (Flug, Laptop) sind größer als der Bildschirm → darin scrollt man frei. */
 @media (pointer: coarse) and (max-width: 899px) {
-  html.snap-home { scroll-snap-type: y proximity; }
+  /* html.snap-home { scroll-snap-type: y proximity; }  – aus: zog kleine Wischer an Abschnittsanfängen zurück */
   html.snap-home .page[data-page="home"] > [data-bi] { scroll-snap-align: start; }
   html.snap-home .site-footer { scroll-snap-align: end; }
 }

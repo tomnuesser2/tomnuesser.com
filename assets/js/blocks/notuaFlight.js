@@ -34,7 +34,7 @@ const seg = (t, a, d) => ez((t - a) / d);
 /* ============ Karten zeichnen (Canvas 2D, wie die Karten im NOTUA-Board) ============ */
 const CW = 880, CH = 620;
 // Handy: Look-Finder hochkant (passt auf ein 9:16-Smartphone) – Vorschau oben, Regler darunter in zwei Spalten
-const PORT = typeof matchMedia === 'function' && matchMedia('(max-width: 899px)').matches, LW = PORT ? 600 : CW, LH = PORT ? 960 : CH;
+const PORT = typeof matchMedia === 'function' && matchMedia('(max-width: 899px)').matches, PLV = PORT ? 3.4 : 4.2, UNIT = PORT ? 58 : 78, LW = PORT ? 600 : CW, LH = PORT ? 960 : CH;
 const PZ = (x, y) => { // Quell-Koordinate (Querformat) → Hochformat
   if (!PORT) return [x, y]; if (x < 530) return [77 + (x - 54) * .95, 30 + (y - 54) * .95];
   if (y < 250) return [x - 538, y + 469]; if (y < 410) return [x - 250, y + 294]; if (y >= 530) return [x - 250, y + 234]; return [x - 538, y + 323]; };
@@ -375,7 +375,7 @@ function mount(root, OPT) {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canvas = document.createElement('canvas'); canvas.className = 'fl__cv'; canvas.setAttribute('aria-hidden', 'true');
   let gl = null; if (!reduce) { try { gl = canvas.getContext('webgl', { antialias: !matchMedia('(max-width: 899px)').matches, premultipliedAlpha: true, alpha: true }); } catch { gl = null; } }
-  const STATIONS = stations, N = STATIONS.length - 1, SP = 4.4, PL = 5.2, TOT = N + PL;
+  const STATIONS = stations, N = STATIONS.length - 1, SP = 4.4, PL = PLV, TOT = N + PL;
   const cvs = STATIONS.map(s => { if (!s.card) return null; const cv = document.createElement('canvas'); const lk = s.card === 'look'; cv.width = lk ? LW : CW; cv.height = lk ? LH : CH; return cv; });
   const paint = (i, t) => { const s = STATIONS[i]; if (!cvs[i]) return; DRAW[s.card](cvs[i].getContext('2d'), t, D); };
 
@@ -550,7 +550,7 @@ export default {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
     const root = document.createElement('section'); root.className = 'fl'; if (p.id) root.id = p.id;
     const go = () => { try { mount(root, p); } catch (e) { console.error(e); } };
-    if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); go(); } }, { rootMargin: '150% 0px' }); io.observe(root); root.style.minHeight = `calc(100svh + ${FEATURES.length + 2 + 5.2} * 78svh)`; }   // endgültige Höhe gleich reservieren – sonst springt die Seite beim Zurückscrollen
+    if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); go(); } }, { rootMargin: '150% 0px' }); io.observe(root); root.style.minHeight = `calc(100svh + ${FEATURES.length + 2 + PLV} * ${UNIT}svh)`; }   // endgültige Höhe gleich reservieren – sonst springt die Seite beim Zurückscrollen
     else go();
     return root;
   },

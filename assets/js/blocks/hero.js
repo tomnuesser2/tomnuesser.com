@@ -104,7 +104,7 @@ function mobileHero(p, ctx) {
   const ring = [feat[0], ...rest];                              // vorne beginnt das erste ausgewählte Projekt
   const name = (x) => String(x.title || x.slug).replace(/\n/g, ' ');
   const carEl = h('div', { class: 'hm__car' });
-  const cardSize = (r) => ({ w: Math.min(r.width * .56, r.height * .74 * .5625), aspect: .5625 });
+  const cardSize = (r) => ({ w: Math.min(r.width * .6, r.height * .86 * .5625), aspect: .5625 });
   let car = null;
   const labM = nameLabel(p, ring); if (labM) labM.el.classList.add('hn--m');
   const lines = String(p.title || '').split('\n').map(s => s.trim()).filter(Boolean);
@@ -130,7 +130,9 @@ function mobileHero(p, ctx) {
   };
   // Überschrift so verkleinern, dass die längste Zeile nie über den Rand ragt (egal ob Deutsch/Englisch oder wie groß eingestellt)
   const fitTitle = () => { title.style.fontSize = ''; const avail = stage.clientWidth - 2 * parseFloat(getComputedStyle(title).left || 20), need = Math.max(...[...title.children].map(s => s.scrollWidth));
-    if (need > avail && need > 0) title.style.fontSize = (parseFloat(getComputedStyle(title).fontSize) * avail / need * .98).toFixed(1) + 'px'; };
+    if (need > avail && need > 0) title.style.fontSize = (parseFloat(getComputedStyle(title).fontSize) * avail / need * .98).toFixed(1) + 'px';
+    // Karussell endet immer oberhalb der Überschrift (egal wie viele Zeilen/wie groß)
+    const th = Math.round(title.offsetHeight); if (th && String(th) !== el.dataset.th) { el.dataset.th = String(th); el.style.setProperty('--hmt', th + 'px'); R = null; kick(); } };
   requestAnimationFrame(fitTitle); [250, 900, 2200].forEach(t => setTimeout(fitTitle, t)); document.fonts && document.fonts.ready.then(fitTitle); addEventListener('resize', fitTitle, { passive: true });
   const open = (it) => { const a = document.createElement('a'); a.href = it.href; a.setAttribute('data-link', ''); a.hidden = true; document.body.append(a); a.click(); a.remove(); };
   (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.imageMobile || x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true, onChange: (i) => labM && labM.set(i) }); }));

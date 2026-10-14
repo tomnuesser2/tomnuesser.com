@@ -72,8 +72,6 @@ export default {
     let held1 = false, topNow = 999;
     const tick = (t) => {
       raf = 0; const dt = lt ? Math.min(.1, (t - lt) / 1000) : .016; lt = t;
-      // Scroll erst sperren, wenn die Bühne am Bildschirm klebt (nicht mitten beim Heranscrollen)
-      if (ipT === 1 && ip < 1 && topNow <= 2 && !held1) { held1 = true; holdScroll((1 - ip) * dur * 1000 + 250); }
       if (ip >= 1 || ipT === 0) { held1 = false; releaseScroll(); }
       if (ip < ipT) ip = Math.min(ipT, ip + dt / dur); else if (ip > ipT) ip = Math.max(ipT, ip - dt / dur * 2.5);
       apply(ip); if (ip !== ipT) raf = requestAnimationFrame(tick); else lt = 0;

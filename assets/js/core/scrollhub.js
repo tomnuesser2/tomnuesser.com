@@ -17,7 +17,7 @@ export const kick = () => { if (!queued) { queued = true; requestAnimationFrame(
 export function track(el, fn) {
   subs.add({ el, fn });
   if (!bound) { bound = true; addEventListener('scroll', kick, { passive: true }); addEventListener('resize', kick, { passive: true }); }
-  kick(); requestAnimationFrame(kick); setTimeout(() => initSnapStop(), 0);
+  kick(); requestAnimationFrame(kick); 
 }
 export const still = () => prefersReducedMotion();
 export const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -40,7 +40,7 @@ export function holdScroll(ms = 200) {
 }
 
 // Handy: Jeder Abschnitt hält beim Erreichen seines Anfangs an. Schneller Wisch → schnell los, kurz vor dem Anfang sanft abbremsen, bis der Abschnitt perfekt sitzt – erst der nächste Wisch scrollt weiter.
-let snapOn = false, lastY = 0, fingers = 0, snapping = false;
+let snapOn = false, lastY = 0, fingers = 0, snapping = false, snapT = 0;
 function snapTargets() {
   const out = []; for (const b of document.querySelectorAll('.page[data-page="home"] [data-bi]')) out.push(Math.round(b.getBoundingClientRect().top + scrollY));
   return out;
@@ -57,16 +57,7 @@ export function initSnapStop() {
     // nächster Abschnittsanfang, den man in Fahrtrichtung gleich erreicht/überfahren hat
     const t = snapTargets().filter(v => dir > 0 ? (v > y - d + 4 && v <= y + 4) : (v < y - d - 4 && v >= y - 4)).sort((a, b) => dir > 0 ? b - a : a - b)[0];
     if (t == null || Math.abs(t - y) > vh) return;
-    snapping = true;
-    const de = document.documentElement; de.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; // Schwung entfernen
-    const y0 = scrollY, dist = t - y0, T = 360 + Math.min(300, Math.abs(dist) * .6), s = performance.now();
-    scrollTo(0, y0);
-    const step = now => {
-      const k = Math.min(1, (now - s) / T), e = 1 - Math.pow(1 - k, 3);
-      scrollTo(0, y0 + dist * e);
-      if (k < 1) requestAnimationFrame(step);
-      else { lastY = scrollY; if (!held) { de.style.overflow = ''; document.body.style.overflow = ''; } setTimeout(() => { snapping = false; }, 80); }
-    };
-    requestAnimationFrame(step);
+    snapping = true; scrollTo({ top: t, behavior: 'smooth' });            // bricht das Auslaufen ab und gleitet sanft an den Anfang
+    clearTimeout(snapT); snapT = setTimeout(() => { snapping = false; lastY = scrollY; }, 650);
   }, { passive: true });
 }
