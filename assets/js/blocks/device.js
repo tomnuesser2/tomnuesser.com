@@ -113,7 +113,10 @@ export default {
       const cv = el.querySelector('.dv__gl'), srcEl = (k) => screens[k]?.querySelector('video, img'), statik = still();
       let shown = 0, to = -1, mixv = 0, oc = statik ? 1 : 0, hx = 0, hy = 0, tx = 0, ty = 0, started = false;
       gp.setSlot(0, srcEl(0));
-      watchSize(cv, (w, hh) => { const dpr = Math.min(window.devicePixelRatio || 1, 2); cv.width = Math.max(2, Math.round(w * dpr)); cv.height = Math.max(2, Math.round(hh * dpr)); });
+      // Auflösung: mind. 2-faches Supersampling (glatte Kanten), mit Pixel-Budget; wird automatisch gesenkt, wenn das Gerät zu langsam ist
+      let rq = 1, cw = 0, ch = 0, slow = 0, fast = 0;
+      const resize = () => { if (!cw) return; const mobile = matchMedia('(pointer: coarse)').matches, budget = mobile ? 2.4e6 : 5.5e6, want = Math.min(Math.max(window.devicePixelRatio || 1, 2), mobile ? 2.5 : 3) * rq, sc = Math.min(want, Math.sqrt(budget / (cw * ch))); const nw = Math.max(2, Math.round(cw * sc)), nh = Math.max(2, Math.round(ch * sc)); if (cv.width !== nw || cv.height !== nh) { cv.width = nw; cv.height = nh; } };
+      watchSize(cv, (w, hh) => { cw = w; ch = hh; resize(); });
       if (!statik) {
         el.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; const r = cv.getBoundingClientRect(); tx = clamp(((e.clientX - r.left) / r.width - .5) * 2, -1.2, 1.2); ty = clamp(((e.clientY - r.top) / r.height - .5) * 2, -1.2, 1.2); }, { passive: true });
         el.addEventListener('pointerleave', () => { tx = ty = 0; });
@@ -126,6 +129,7 @@ export default {
       const A = p.anim && typeof p.anim === 'object' ? normAnim(p.anim, p.side) : null; // eigene Animation aus dem Admin-Editor
       ticker(cv, (dt, t) => {
         if (!cv.width) return;
+        if (dt > .034) { if (++slow > 25 && rq > .55) { rq *= .8; slow = 0; resize(); } } else if (slow > 0) slow--;
         const k = Math.min(1, dt * 6), tgt = statik ? 1 : clamp(L.p / (A ? Math.max(.05, A.span) : .26)); oc += (tgt - oc) * Math.min(1, dt * 7);
         hx += (tx - hx) * k; hy += (ty - hy) * k;
         if (L.i !== shown && to < 0) { to = L.i; gp.setSlot(1, srcEl(to)); mixv = 0; }
@@ -134,7 +138,7 @@ export default {
         if (A) {
           const pz = pose(A, statik ? 1 : easeOut(clamp(oc)));
           if (!statik) { lap.style.translate = `${(pz.x / 100 * stage.clientWidth).toFixed(1)}px ${(pz.y / 100 * stage.clientHeight).toFixed(1)}px`; copy.style.opacity = clamp((easeOut(clamp(oc)) - (A.textAt ?? .42)) / .5).toFixed(3); }
-          gp.draw({ open: pz.open, rx: pz.rx - hy * 4 + Math.sin(t * .5) * 1.2 * idle, ry: pz.ry + hx * 11 + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle, y: Math.sin(t * .9) * .008 * idle, fit: pz.fit,
+          gp.draw({ open: pz.open, rz: pz.rz, rx: pz.rx - hy * 4 + Math.sin(t * .5) * 1.2 * idle, ry: pz.ry + hx * 11 + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle, y: Math.sin(t * .9) * .008 * idle, fit: pz.fit,
             mix: to >= 0 ? ease(clamp(mixv)) : 0, intro: clamp((pz.open - .3) / .45), time: t, light: 1, scroll: clamp((L.fr - .08) / .84), chrome: p.chrome !== false });
           if (!started) { started = true; el.classList.add('is-gl'); }
           return;

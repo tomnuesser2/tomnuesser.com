@@ -133,7 +133,37 @@
         "linkUrl": "",
         "textScale": 1,
         "textScaleMobile": 0,
-        "finish": "space schwarz"
+        "finish": "space schwarz",
+        "anim": {
+          "span": 0.26,
+          "textAt": 0.42,
+          "mid": false,
+          "s": {
+            "x": 46,
+            "y": -54,
+            "ry": -20,
+            "rx": 90,
+            "open": 0,
+            "fit": 0.92
+          },
+          "m": {
+            "t": 0.45,
+            "x": 12,
+            "y": -6,
+            "ry": -38,
+            "rx": 38,
+            "open": 0.55,
+            "fit": 0.9
+          },
+          "e": {
+            "x": -4,
+            "y": -4,
+            "ry": 15,
+            "rx": 11,
+            "open": 1,
+            "fit": 1.1
+          }
+        }
       }
     }
   ],

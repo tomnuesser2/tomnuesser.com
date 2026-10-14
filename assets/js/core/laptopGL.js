@@ -1,6 +1,7 @@
 // WebGL2-Renderer für einen echten 3D-Laptop (ohne Bibliothek): Alu-Gehäuse mit Fase, Scharnier, aufklappbarer Deckel mit Glas-Display,
 // Tastatur mit einzelnen Tasten, Trackpad, Lautsprecher-Gitter. Studio-Licht wird im Shader gespiegelt (Reflexe wandern beim Drehen/Öffnen).
 import { slab, cap, ring, pushGeo, mul, rotX, rotY, trans, persp } from './phoneGL.js';
+const rotZ = (a) => { const c = Math.cos(a), s = Math.sin(a); return [c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]; };
 
 const LW = 1, LH = .70, LT = .0125, DD = .71, DT = .021, HY = DT / 2 + .0047, HZ = -DD / 2 + .008; // Deckel-Breite/-Höhe/-Dicke, Basis-Tiefe/-Dicke, Scharnier
 const VS = `#version 300 es
@@ -148,7 +149,7 @@ export function createLaptop(canvas, { tint: tint0 = [.74, .75, .78], onLost } =
       const eh = .76 + (.24) * o, ew = 1.08, dist = Math.max(eh / (2 * tn * st.fit), ew / (2 * tn * asp * st.fit)) + .55;
       const cy = .3 * o + .02 * (1 - o);
       const proj = persp(fov, asp, .4, 20), view = trans(0, 0, -dist);
-      const world = mul(trans(0, st.y || 0, 0), mul(rotX((st.rx || 0) * Math.PI / 180), mul(rotY((st.ry || 0) * Math.PI / 180), trans(0, -cy, 0))));
+      const world = mul(trans(0, st.y || 0, 0), mul(rotZ((st.rz || 0) * Math.PI / 180), mul(rotX((st.rx || 0) * Math.PI / 180), mul(rotY((st.ry || 0) * Math.PI / 180), trans(0, -cy, 0)))));
       const base = rotX(-Math.PI / 2), lid = mul(trans(0, HY, HZ), mul(rotX(ang), trans(0, LH / 2, 0))), hinge = trans(0, HY, HZ);
       const mats = [base, lid, hinge];
       gl.uniform3f(U.uEye, 0, 0, dist); gl.uniform1f(U.uTime, st.time || 0); gl.uniform1f(U.uIntro, st.intro == null ? 1 : st.intro); gl.uniform1f(U.uMix, st.mix || 0); gl.uniform1f(U.uLight, st.light == null ? 1 : st.light);
