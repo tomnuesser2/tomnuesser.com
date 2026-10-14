@@ -9,7 +9,8 @@ const fixedRatio = (f) => { const m = String(f || '').match(/^(\d+(?:\.\d+)?)\s*
 export default {
   type: 'parallaxCarousel', label: 'Parallax-Carousel (Karten mit gleitenden Bildern)',
   fields: [
-    SOURCE, ITEMS, { name: 'format', label: 'Format der Rahmen', type: 'select', options: [ORIG, '16:9', '9:16', '1:1', '4:5', '4:3', '3:2'], default: ORIG }, ...HEIGHT(520, 400), BG,
+    SOURCE, ITEMS, { name: 'format', label: 'Format der Rahmen', type: 'select', options: [ORIG, '16:9', '9:16', '1:1', '4:5', '4:3', '3:2'], default: ORIG }, ...HEIGHT(520, 560), BG,
+    { name: 'mobileWheel', label: '📱 Handy: Karten laufen als Rad am rechten Bildschirmrand (alle quadratisch, von oben nach unten)', type: 'checkbox', default: true },
     { name: 'alternate', label: 'Automatisch abwechselnd sortieren: Hochformat, Querformat, Hochformat …', type: 'checkbox', default: true },
     { name: 'gap', label: 'Abstand zwischen den Karten in px', type: 'number', default: 32 },
     { name: 'radius', label: 'Rundung in px', type: 'number', default: 16 },
@@ -32,7 +33,7 @@ export default {
     el.style.height = Math.max(200, heightOf(p, 520, 400)) + 'px';
     const track = h('div', { class: 'pc__track' }); const bar = h('i', { class: 'pc__bar' }); const prog = h('div', { class: 'pc__prog' }, bar);
     el.append(track); if (p.showProgress !== false && !p.loop) el.append(prog);
-    let list = base.slice(), planes = [], W = 0, H = 0, pw = 0, ph = 0, gap = num(p.gap, 32), total = 0, pos = 0, target = 0, hover = false, held = false, off = [], wid = [], hei = [], mob = false, inited = false, capK = .86;
+    let list = base.slice(), planes = [], W = 0, H = 0, pw = 0, ph = 0, gap = num(p.gap, 32), total = 0, pos = 0, target = 0, hover = false, held = false, off = [], wid = [], hei = [], mob = false, inited = false, wheelOn = false, CX = 0, R = 0, S = 0, stepA = 0, capK = .86;
     const fixed = fixedRatio(p.format), asp = new Map(), dflt = () => (mobileView() ? 9 / 16 : 16 / 9);
     const aspOf = (src) => fixed || asp.get(src) || dflt();
     let order = base.slice();
@@ -49,6 +50,13 @@ export default {
     const build = () => {
       track.textContent = ''; planes = [];
       // Bei Endlos genug Karten, damit der Bildschirm immer voll ist
+      if (wheelOn) {
+        order = base.slice(); const n = Math.max(order.length, Math.ceil((2 * Math.PI * R) / ((S + gap) * .95))); list = []; for (let k = 0; k < n; k++) list.push(order[k % order.length]);
+        stepA = (2 * Math.PI * R) / n; wid = list.map(() => S); hei = list.map(() => S); off = list.map((_, k) => k * stepA); total = n * stepA;
+        list.forEach((it, i) => { const m = mediaNode(it.src, 'pc__img', it.title); const pl = h('a', { class: 'pc__plane', href: it.href || null, 'data-link': it.href ? '' : null, draggable: 'false', style: { width: S + 'px', height: S + 'px' } }, m); if (!it.href) { pl.removeAttribute('href'); pl.classList.add('is-zoom'); pl.addEventListener('click', () => openLightbox(order, i % order.length)); } track.append(pl); planes.push({ pl, m, w: S, hh: S, i }); });
+        planes.forEach(({ m }) => { m.style.width = (S / uv) + 'px'; m.style.height = (S / uv) + 'px'; m.style.left = -(S / uv - S) / 2 + 'px'; m.style.top = -(S / uv - S) / 2 + 'px'; });
+        playVideosWhenVisible(el); return;
+      }
       const widthOf = (it) => Math.max(80, Math.min(Math.round(ph * aspOf(it.src)), Math.round(W * capK)));
       arrange(); list = order.slice(); const sum = (l) => l.reduce((t, it) => t + widthOf(it) + gap, 0);
       if (loop) while (sum(list) < W + (widthOf(order[0]) + gap) * 2.5) list = list.concat(order);
@@ -59,7 +67,9 @@ export default {
       playVideosWhenVisible(el);
     };
     watchSize(el, (w, hh) => {
-      W = w; H = hh; mob = mobileView() || W < 700; capK = mob ? .62 : .86; gap = mob ? Math.min(num(p.gap, 32), 16) : num(p.gap, 32); ph = Math.round(H * (mob ? .68 : .82)); pw = Math.max(80, Math.min(Math.round(ph * aspOf((order[0] || base[0]).src)), Math.round(W * capK))); build();
+      W = w; H = hh; mob = mobileView() || W < 700; capK = mob ? .62 : .86; gap = mob ? Math.min(num(p.gap, 32), 16) : num(p.gap, 32); ph = Math.round(H * (mob ? .68 : .82)); pw = Math.max(80, Math.min(Math.round(ph * aspOf((order[0] || base[0]).src)), Math.round(W * capK)));
+      wheelOn = mob && p.mobileWheel !== false && loop; el.classList.toggle('pc--wheel', wheelOn); if (wheelOn) { S = Math.round(Math.min(W * .4, H * .36)); CX = W + Math.round(W * .65); R = CX - S / 2 - 10; gap = Math.min(gap, 14); }
+      build();
     });
     const clampPos = () => { if (!loop) { const max = Math.max(0, off[off.length - 1] + (wid[wid.length - 1] - wid[0]) / 2); pos = clamp(pos, -0, max); target = clamp(target, 0, max); } };
     const move = (d) => { target += d; clampPos(); };
@@ -70,6 +80,19 @@ export default {
       if (!still() && !held && !hover && num(p.autoplaySpeed, 0)) { move(num(p.autoplaySpeed, 0) * dt); }
       pos += (target - pos) * (1 - Math.pow(1 - lerpK, dt * 60)); if (Math.abs(target - pos) < .05) pos = target;
       if (!pw) return; const cx = W / 2;
+      if (wheelOn) {
+        const TAU = Math.PI * 2;
+        for (let i = 0; i < planes.length; i++) {
+          const { pl, m } = planes[i]; let a = ((((i * stepA + pos) / R) % TAU) + TAU) % TAU; if (a > Math.PI) a -= TAU;
+          const c = Math.cos(a); if (c < 0) { pl.style.visibility = 'hidden'; continue; }
+          const x = CX - R * c, y = H / 2 + R * Math.sin(a), sc = .74 + .26 * Math.max(0, c);
+          if (y < -S || y > H + S || x > W + S / 2) { pl.style.visibility = 'hidden'; continue; }
+          pl.style.visibility = 'visible'; pl.style.zIndex = String(Math.round(c * 100) + 100); pl.style.opacity = String(clamp(.5 + c * 2, 0, 1).toFixed(2));
+          pl.style.transform = `translate3d(${(x - S / 2).toFixed(1)}px,${(y - S / 2).toFixed(1)}px,0) scale(${sc.toFixed(3)})`;
+          const over = S / uv - S; m.style.transform = `translate3d(0,${clamp(-Math.sin(a) * par * over * .5, -over / 2, over / 2).toFixed(1)}px,0)`;
+        }
+        return;
+      }
       for (let i = 0; i < planes.length; i++) {
         const w = wid[i]; let x = off[i] - pos + (loop ? 0 : (W - wid[0]) / 2); if (loop) { x = ((x % total) + total) % total; if (x > total - (w + gap) * 1.3) x -= total; } // um die Mitte herum wickeln
         const { pl, m, hh } = planes[i], y = Math.round((H - hh) / 2);

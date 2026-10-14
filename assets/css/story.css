@@ -955,3 +955,6 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 .lbx__x { top: max(14px, env(safe-area-inset-top)); right: 14px; } .lbx__n { top: 50%; margin-top: -23px; } .lbx__n--p { left: 14px; } .lbx__n--n { right: 14px; }
 html.lbx-open { overflow: hidden; }
 @media (max-width: 700px) { .lbx__n { top: auto; bottom: max(56px, env(safe-area-inset-bottom)); margin: 0; } }
+
+/* Parallax-Carousel am Handy als Rad: oben/unten weich ausblenden */
+.pc--wheel .pc__track { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%); }
