@@ -1067,3 +1067,22 @@ a, button, [role="button"], summary, label, .pc__plane, .pcs__t { touch-action: 
 /* NOTUA-Board: Pfeil „Probier es selbst aus" direkt nach dem Anflug */
 .nb__ar { transition: opacity .45s ease; }
 .nb__art { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 4px; white-space: nowrap; padding: 6px 12px; border-radius: 999px; background: var(--nb-ac); color: #fff; font: 600 13px/1 system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; box-shadow: 0 6px 16px -6px rgba(0,0,0,.35); }
+
+/* Laptop-Text: Überschrift schwarz, Text dunkel */
+.dv__h, .dv__it { color: #000; }
+.dv__p, .dv__ix { color: #1a1a1a; }
+.dv__k { color: #3a3a3a; }
+
+.dv__if { transition: opacity .16s linear; }
+.dv__vs { will-change: left, top; }
+
+/* Parallax-Carousel am Computer: etwas höher, optional Text darunter */
+.pc__pt { display: none; }
+@media (min-width: 900px) {
+  .pc--lift { margin-top: calc(-1 * var(--pc-lift, 0px)); }
+  .pc--pt { margin-bottom: calc(var(--pc-ptH, 0px) + 40px); }
+  .pc--pt .pc__pt { display: block; position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: 28px; width: min(640px, calc(100% - 48px)); text-align: center; }
+  .pc__pt h3 { font-size: clamp(20px, 2vw, 26px); font-weight: 700; line-height: 1.2; color: #000; }
+  .pc__pt p { margin-top: 10px; font-size: 15px; line-height: 1.7; color: #1a1a1a; }
+}
+@media (min-width: 900px) { .pc--pt { overflow-x: clip; overflow-y: visible; } }

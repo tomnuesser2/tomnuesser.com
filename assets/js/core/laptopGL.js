@@ -163,7 +163,7 @@ export function createLaptop(canvas, { tint: tint0 = [.74, .75, .78], onLost } =
       last = { proj, view, model: mul(world, lid) };
       gl.uniform3f(U.uEye, 0, 0, dist); gl.uniform1f(U.uTime, st.time || 0); gl.uniform1f(U.uIntro, st.intro == null ? 1 : st.intro); gl.uniform1f(U.uMix, st.mix || 0); gl.uniform1f(U.uLight, st.light == null ? 1 : st.light);
       gl.uniform1f(U.uScroll, st.scroll || 0); gl.uniform1f(U.uChrome, st.chrome ? 1 : 0); gl.uniform1f(U.uOpen, o);
-      for (let i = 0; i < 2; i++) { const s = slots[i]; if (s.vid && s.ready && s.el.readyState >= 2) upload(s, s.el); gl.activeTexture(gl.TEXTURE0 + i); gl.bindTexture(gl.TEXTURE_2D, s.t); }
+      for (let i = 0; i < 2; i++) { const s = slots[i]; if (s.vid && s.ready && s.el.readyState >= 2 && s.ct !== s.el.currentTime) { s.ct = s.el.currentTime; upload(s, s.el); } gl.activeTexture(gl.TEXTURE0 + i); gl.bindTexture(gl.TEXTURE_2D, s.t); }
       gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, legT); gl.uniform1i(U.uTK, 3); gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, logoT); gl.uniform1i(U.uTL, 2); gl.uniform1f(U.uLogo, logoOn); gl.uniform1i(U.uT0, 0); gl.uniform1i(U.uT1, 1); gl.uniform2f(U.uA, slots[0].a, slots[1].a); gl.uniform2f(U.uScr, SCR[0], SCR[1]); gl.uniform1f(U.uScrR, .006);
       for (const p of parts) {
         const model = mul(world, mats[p.grp]), mvp = mul(proj, mul(view, model));

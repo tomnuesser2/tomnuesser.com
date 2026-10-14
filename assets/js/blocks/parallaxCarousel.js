@@ -15,6 +15,9 @@ export default {
     { name: 'mobileMode', label: '📱 Darstellung am Handy', type: 'select', options: [M_FIND, M_WHEEL, M_ROW], default: M_FIND },
     { name: 'mobileTitle', label: '📱 Text über dem Sucher (Überschrift, gilt für die ganze Reihe, nur Smartphone)', type: 'text', default: '' },
     { name: 'mobileText', label: '📱 Text über dem Sucher (Zeile darunter, optional)', type: 'textarea', default: '' },
+    { name: 'pcLift', label: '🖥 Am Computer: Abschnitt so viele px weiter nach oben schieben', type: 'number', default: 70 },
+    { name: 'pcTitle', label: '🖥 Text unter dem Karussell (Überschrift, nur Computer)', type: 'text', default: '' },
+    { name: 'pcText', label: '🖥 Text unter dem Karussell (nur Computer)', type: 'textarea', default: '' },
     { name: 'alternate', label: 'Automatisch abwechselnd sortieren: Hochformat, Querformat, Hochformat …', type: 'checkbox', default: true },
     { name: 'gap', label: 'Abstand zwischen den Karten in px', type: 'number', default: 32 },
     { name: 'radius', label: 'Rundung in px', type: 'number', default: 16 },
@@ -37,6 +40,11 @@ export default {
     el.style.height = Math.max(200, heightOf(p, 520, 400)) + 'px';
     const track = h('div', { class: 'pc__track' }); const bar = h('i', { class: 'pc__bar' }); const prog = h('div', { class: 'pc__prog' }, bar);
     el.append(track); if (p.showProgress !== false && !p.loop) el.append(prog);
+    el.style.setProperty('--pc-lift', Math.max(0, num(p.pcLift, 70)) + 'px'); el.classList.add('pc--lift');
+    if (p.pcTitle || p.pcText) { // Text unter dem Karussell, nur am Computer (am Handy blendet CSS ihn aus)
+      const pt = h('div', { class: 'pc__pt' }, p.pcTitle ? h('h3', {}, p.pcTitle) : null, p.pcText ? h('p', {}, p.pcText) : null); el.append(pt); el.classList.add('pc--pt');
+      watchSize(pt, (w, hh) => { el.style.setProperty('--pc-ptH', Math.ceil(hh) + 'px'); });
+    }
     let list = base.slice(), planes = [], W = 0, H = 0, pw = 0, ph = 0, gap = num(p.gap, 32), total = 0, pos = 0, target = 0, hover = false, held = false, off = [], wid = [], hei = [], vf = null, vfOn = false, cap = null, capKey = '', capT = 0, mob = false, inited = false, wheelOn = false, CX = 0, R = 0, S = 0, stepA = 0, capK = .86;
     const fixed = fixedRatio(p.format), asp = new Map(), dflt = () => (mobileView() ? 9 / 16 : 16 / 9);
     const aspOf = (src) => fixed || asp.get(src) || dflt();

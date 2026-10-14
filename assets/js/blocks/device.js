@@ -144,7 +144,7 @@ export default {
       const ov = h('div', { class: 'dv__ov', 'aria-hidden': 'true' }); lapOv(ov);
       function lapOv(n) { el.querySelector('.dv__laptop').append(n); }
       const emb = items.map((it) => { const u = isEmbedUrl(it.src) ? embedUrl(it.src) : null; return u ? { ...u, f: null } : null; });
-      let ovAlpha = 1, soundVol = 0, lastIdx = -1, hasSnd = items.some((it) => isVideo(it.src) || isEmbedUrl(it.src));
+      let ovk = 0, calm = 0, ovAlpha = 1, soundVol = 0, lastIdx = -1, hasSnd = items.some((it) => isVideo(it.src) || isEmbedUrl(it.src));
       const post = (e, msg) => { try { e.f?.contentWindow?.postMessage(typeof msg === 'string' ? msg : JSON.stringify(msg), '*'); } catch { /* */ } };
       const applyEmbedVol = (e, v) => { if (!e.f) return; if (e.yt) { post(e, { event: 'command', func: v > 0 ? 'unMute' : 'mute', args: '' }); post(e, { event: 'command', func: 'setVolume', args: [Math.round(v * 100)] }); } else { post(e, { method: 'setVolume', value: v }); post(e, { method: 'setMuted', value: v <= 0 }); } };
       const applySound = () => { items.forEach((it, k) => { const on = k === L.i; const vv = screens[k]?.querySelector('video'); if (vv) { vv.muted = !(on && soundVol > 0); vv.volume = on ? soundVol : 0; } if (emb[k]) applyEmbedVol(emb[k], on ? soundVol : 0); }); };
@@ -156,40 +156,53 @@ export default {
         rng.addEventListener('input', () => setV(Number(rng.value))); btn.addEventListener('click', (e) => { e.stopPropagation(); setV(soundVol > 0 ? 0 : lastV); }); vs.addEventListener('click', (e) => e.stopPropagation());
         el.querySelector('.dv__laptop').append(vs); L.vs = vs;
       }
-      const updOverlay = (visible) => {
-        const q = visible ? gp.screenQuad(p.chrome !== false, -.004) : null;
+      const updOverlay = (visible, appear) => {
+        const q = (visible || appear) ? gp.screenQuad(p.chrome !== false, -.004) : null;
         emb.forEach((e, k) => {
           if (!e) return; const on = visible && q && q.facing > .004 && k === L.i;
           if (on && !e.f) { e.f = h('iframe', { class: 'dv__if', src: e.url, allow: 'autoplay; fullscreen; picture-in-picture', tabindex: '-1', loading: 'eager', title: '' }); ov.append(e.f); e.f.addEventListener('load', () => setTimeout(applySound, 600)); }
           if (!e.f) return;
-          if (on) { const W0 = 1280, H0 = W0 / q.aspect, cw0 = cv.clientWidth, ch0 = cv.clientHeight; e.f.style.width = W0 + 'px'; e.f.style.height = H0.toFixed(1) + 'px'; e.f.style.clipPath = 'none'; /* Das Video bleibt 16:9 (Vimeo setzt schwarze Balken oben/unten), die schwarze Fläche deckt den ganzen Bildschirm ab */ e.f.style.transform = h2m([[0, 0], [W0, 0], [W0, H0], [0, H0]], q.pts.map(([x, y]) => [x * cw0, y * ch0])); e.f.style.opacity = String(ovAlpha); } else e.f.style.opacity = '0';
+          if (on) { const W0 = 1280, H0 = W0 / q.aspect, cw0 = cv.clientWidth, ch0 = cv.clientHeight; e.f.style.width = W0 + 'px'; e.f.style.height = H0.toFixed(1) + 'px'; e.f.style.clipPath = 'none'; /* Das Video bleibt 16:9 (Vimeo setzt schwarze Balken oben/unten), die schwarze Fläche deckt den ganzen Bildschirm ab */ { const mt = h2m([[0, 0], [W0, 0], [W0, H0], [0, H0]], q.pts.map(([x, y]) => [x * cw0, y * ch0])); if (e.mt !== mt) { e.mt = mt; e.f.style.transform = mt; } }; e.f.style.opacity = String(ovAlpha); } else e.f.style.opacity = '0';
         });
-        if (L.vs) { L.vs.style.opacity = visible ? String(Math.min(1, ovAlpha)) : '0'; L.vs.style.pointerEvents = visible ? 'auto' : 'none'; }
+        if (L.vs) {
+          const vq = appear && q && q.facing > .004 ? q : null, vsEl = L.vs;
+          if (vq) { // am Laptop „festgemacht": mit Abstand außen neben dem Bildschirm, folgt jeder Bewegung und Drehung
+            const cl = cv.offsetLeft, ct = cv.offsetTop, cwv = cv.clientWidth, chv = cv.clientHeight;
+            let x0 = 9e9, x1 = -9e9, y0 = 9e9, y1 = -9e9; vq.pts.forEach(([fx, fy]) => { x0 = Math.min(x0, fx); x1 = Math.max(x1, fx); y0 = Math.min(y0, fy); y1 = Math.max(y1, fy); });
+            const left = x0 * cwv + cl, right = x1 * cwv + cl, top = y0 * chv + ct, bot = y1 * chv + ct, sh = bot - top, hh = Math.max(110, Math.min(340, sh * 1.12)), w = vsEl.offsetWidth || 36, gap = Math.max(14, Math.min(34, sh * .09)), wide = innerWidth >= 900;
+            const onRight = el.classList.contains('dv--right') ? true : false;
+            // Desktop: Regler außen neben dem Laptop (Laptop links → links, rechts → rechts); Handy: knapp innen am Rand
+            const lx = wide ? (onRight ? right + gap : left - gap - w) : (onRight ? right - w - 6 : left + 6);
+            vsEl.style.right = 'auto'; vsEl.style.transform = 'none'; vsEl.style.left = lx.toFixed(1) + 'px'; vsEl.style.top = ((top + bot) / 2 - hh / 2 + sh * .06).toFixed(1) + 'px'; vsEl.style.height = hh.toFixed(1) + 'px'; vsEl.style.maxHeight = 'none';
+          }
+          vsEl.style.opacity = vq ? String(Math.min(1, ovAlpha)) : '0'; vsEl.style.pointerEvents = vq ? 'auto' : 'none';
+        }
       };
       ticker(cv, (dt, t) => {
         if (!cv.width) return;
         if (dt > .034) { if (++slow > 25 && rq > .55) { rq *= .8; slow = 0; resize(); } } else if (slow > 0) slow--;
         const k = Math.min(1, dt * 6), tgt = statik ? 1 : A ? L.a : clamp(L.p / .26); if (A && !statik) { const stp = Math.min(dt, .1) / Math.max(.6, Number(A.dur) || 4.5); oc = tgt > oc ? Math.min(tgt, oc + stp) : Math.max(tgt, oc - stp); } else oc += (tgt - oc) * Math.min(1, dt * 7);
         hx += (tx - hx) * k; hy += (ty - hy) * k;
+        calm = (!dr.on && Math.abs(dr.ry) < .3 && Math.abs(dr.rx) < .3) ? calm + dt : 0; ovk += ((emb.some((e) => e && e.f) && oc > .985 ? 1 : 0) - ovk) * Math.min(1, dt * 3);
         if (!dr.on) { const sd = Math.min(dt, .05); dr.ryV += (-60 * dr.ry - 11 * dr.ryV) * sd; dr.ry += dr.ryV * sd; dr.rxV += (-60 * dr.rx - 11 * dr.rxV) * sd; dr.rx += dr.rxV * sd; if (Math.abs(dr.ry) < .02 && Math.abs(dr.ryV) < .05) { dr.ry = 0; dr.ryV = 0; } if (Math.abs(dr.rx) < .02 && Math.abs(dr.rxV) < .05) { dr.rx = 0; dr.rxV = 0; } }
         if (L.i !== shown && to < 0) { to = L.i; gp.setSlot(1, srcEl(to)); mixv = 0; }
         if (to >= 0) { mixv += dt / .5; if (mixv >= 1) { shown = to; to = -1; mixv = 0; gp.setSlot(0, srcEl(shown)); } }
-        const o = ease(clamp(oc)), idle = statik ? 0 : 1, mv = 1 - ease(clamp(oc * 1.05));
+        const o = ease(clamp(oc)), idle = statik ? 0 : 1 - ovk, mv = 1 - ease(clamp(oc * 1.05));
         if (A) {
           const pz = pose(A, statik ? 1 : holdT(A, eA(A, clamp(oc)))); { const al = statik ? 1 : alphaAt(A, eA(A, clamp(oc))); ovAlpha = al; if (al !== lastAl) { lastAl = al; cv.style.opacity = al.toFixed(3); if (shEl) shEl.style.opacity = al.toFixed(3); } };
-          if (!statik) { lap.style.translate = `${(pz.x / 100 * stage.clientWidth).toFixed(1)}px ${(pz.y / 100 * stage.clientHeight).toFixed(1)}px`; copy.style.opacity = clamp((eA(A, clamp(oc)) - (A.textAt ?? .42)) / .5).toFixed(3); }
-          gp.draw({ pad: PAD, open: pz.open, rz: pz.rz, rx: pz.rx + dr.rx - hy * 4 + Math.sin(t * .5) * 1.2 * idle, ry: pz.ry + dr.ry + hx * 11 + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle, y: Math.sin(t * .9) * .008 * idle, fit: pz.fit,
+          if (!statik) { lap.style.translate = `${(pz.x / 100 * stage.clientWidth).toFixed(1)}px ${(pz.y / 100 * stage.clientHeight).toFixed(1)}px`; copy.style.opacity = clamp((eA(A, clamp(oc)) - (A.textAt ?? .42)) / .22).toFixed(3); }
+          gp.draw({ pad: PAD, open: pz.open, rz: pz.rz, rx: pz.rx + dr.rx - hy * 4 * (1 - ovk) + Math.sin(t * .5) * 1.2 * idle, ry: pz.ry + dr.ry + hx * 11 * (1 - ovk) + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle, y: Math.sin(t * .9) * .008 * idle, fit: pz.fit,
             mix: to >= 0 ? ease(clamp(mixv)) : 0, intro: clamp((pz.open - .3) / .45), time: t, light: 1, scroll: clamp((L.fr - .08) / .84), chrome: p.chrome !== false });
           if (L.i !== lastIdx) { lastIdx = L.i; applySound(); }
-          updOverlay(statik || (oc > .985 && to < 0 && ovAlpha > .02));
+          { const ap = statik || (oc > .985 && to < 0 && ovAlpha > .02); updOverlay(statik || (ap && calm > .22), ap); }
           if (!started) { started = true; el.classList.add('is-gl'); }
           return;
         }
         if (!statik) { lap.style.translate = `${(ox * mv).toFixed(1)}px ${(oy * mv - stage.clientHeight * .13 * mv).toFixed(1)}px`; const ta = clamp((o - .42) / .5); copy.style.opacity = ta.toFixed(3); }
-        gp.draw({ pad: PAD, open: o, rx: lerp(80, 11, o) - hy * 4 + Math.sin(t * .5) * 1.2 * idle, ry: dir * (50 * Math.pow(1 - o, 1.7) * clamp(o * 6) - o * 15) + hx * 11 + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle,
+        gp.draw({ pad: PAD, open: o, rx: lerp(80, 11, o) - hy * 4 * (1 - ovk) + Math.sin(t * .5) * 1.2 * idle, ry: dir * (50 * Math.pow(1 - o, 1.7) * clamp(o * 6) - o * 15) + hx * 11 * (1 - ovk) + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle,
           y: Math.sin(t * .9) * .008 * idle, fit: 1.1 - .24 * Math.sin(Math.PI * o), mix: to >= 0 ? ease(clamp(mixv)) : 0, intro: clamp((o - .3) / .45), time: t, light: 1, scroll: clamp((L.fr - .08) / .84), chrome: p.chrome !== false });
         if (L.i !== lastIdx) { lastIdx = L.i; applySound(); }
-        updOverlay(o > .985 && to < 0);
+        { const ap = o > .985 && to < 0; updOverlay(ap && calm > .22, ap); }
         if (!started) { started = true; el.classList.add('is-gl'); }
       });
     }
