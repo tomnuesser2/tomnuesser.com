@@ -1,7 +1,7 @@
 {
   "title": "Fistball-Euro 2026",
   "card": {
-    "image": "",
+    "image": "media/still-2026-10-15-195930_1.1.1.webp",
     "vimeo": "",
     "ratio": "16/9",
     "group": 1,
@@ -10,10 +10,55 @@
   },
   "blocks": [
     {
-      "type": "spacer",
+      "type": "videoWall",
       "props": {
-        "size": 40
+        "title": "fistball euro 2026",
+        "items": [
+          {
+            "video": "https://vimeo.com/1236194560",
+            "poster": "",
+            "title": "",
+            "tag": ""
+          },
+          {
+            "video": "https://vimeo.com/1236195028",
+            "poster": "",
+            "title": "",
+            "tag": ""
+          },
+          {
+            "video": "https://vimeo.com/1236194864",
+            "poster": "",
+            "title": "",
+            "tag": ""
+          },
+          {
+            "video": "https://vimeo.com/1236195590",
+            "poster": "",
+            "title": "",
+            "tag": ""
+          },
+          {
+            "video": "https://vimeo.com/1236195821",
+            "poster": "",
+            "title": "",
+            "tag": ""
+          }
+        ],
+        "format": "9:16 hochkant (Reels)",
+        "layout": "Akkordeon (Fokus)",
+        "others": "laufen stumm weiter",
+        "sound": true,
+        "allBtn": true,
+        "height": 1000,
+        "accent": "#ff6a4d",
+        "width": "Rahmen",
+        "bg": "transparent",
+        "textScale": 1,
+        "textScaleMobile": 0,
+        "title_de": "fistball euro 2026"
       }
     }
-  ]
+  ],
+  "title_de": "Fistball-Euro 2026"
 }

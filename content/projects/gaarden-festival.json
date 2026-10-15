@@ -1,7 +1,7 @@
 {
   "title": "Gården Festival 2026",
   "card": {
-    "image": "",
+    "image": "media/dsc03767-wiederhergestellt.jpg_0005_dsc01075.webp",
     "vimeo": "",
     "ratio": "16/9",
     "group": 1,
@@ -99,29 +99,50 @@
       }
     },
     {
-      "type": "timelinePlayer",
+      "type": "videoWall",
       "props": {
-        "kicker": "",
         "title": "",
-        "text": "",
-        "headAlign": "mitte",
-        "hideTexts": false,
-        "projectName": "Showreel – Timeline 1",
-        "items": [],
-        "titles": [],
-        "format": "16:9",
-        "mode": "von allein",
-        "scrollLength": 2.5,
-        "speed": 1,
-        "loop": true,
-        "grade": true,
-        "wipe": true,
-        "showPool": true,
-        "showNodes": true,
-        "kenBurns": true,
-        "accent": "#ff4b3a",
-        "width": 1120,
-        "fps": 25,
+        "items": [
+          {
+            "video": "https://vimeo.com/1236194560",
+            "poster": "",
+            "title": "",
+            "tag": ""
+          },
+          {
+            "video": "https://vimeo.com/1236195028",
+            "poster": "",
+            "title": "",
+            "tag": ""
+          },
+          {
+            "video": "https://vimeo.com/1236194864",
+            "poster": "",
+            "title": "",
+            "tag": ""
+          },
+          {
+            "video": "https://vimeo.com/1236195590",
+            "poster": "",
+            "title": "",
+            "tag": ""
+          },
+          {
+            "video": "https://vimeo.com/1236195821",
+            "poster": "",
+            "title": "",
+            "tag": ""
+          }
+        ],
+        "format": "9:16 hochkant (Reels)",
+        "layout": "Akkordeon (Fokus)",
+        "others": "laufen stumm weiter",
+        "sound": true,
+        "allBtn": true,
+        "height": 620,
+        "accent": "#ff6a4d",
+        "width": "Rahmen",
+        "bg": "dunkel",
         "textScale": 1,
         "textScaleMobile": 0
       }
