@@ -1,0 +1,131 @@
+{
+  "title": "Gården Festival 2026",
+  "card": {
+    "image": "",
+    "vimeo": "",
+    "ratio": "16/9",
+    "group": 1,
+    "category": "video",
+    "stills": [],
+    "imageMobile": ""
+  },
+  "blocks": [
+    {
+      "type": "spacer",
+      "props": {
+        "size": 40
+      }
+    },
+    {
+      "type": "elasticReel",
+      "props": {
+        "source": "eigene Bilder",
+        "items": [
+          {
+            "image": "media/dsc03767-wiederhergestellt.jpg_0000_ethereal-blue-and-amber-stage-performance-4.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03767-wiederhergestellt.jpg_0001_intense-concert-performance-in-haze-4.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03767-wiederhergestellt.jpg_0003_cinematic-greenlit-dj-booth-5.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03767-wiederhergestellt.jpg_0004_pixelated-gesture-at-a-night-festival-4.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03767-wiederhergestellt.jpg_0005_dsc01075-4.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03767-wiederhergestellt.jpg_0006_dsc01064-4.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          },
+          {
+            "image": "media/dsc03767-wiederhergestellt.jpg_0007_indie-band-under-amber-and-blue-lights-4.webp",
+            "imageMobile": "",
+            "title": "",
+            "subtitle": "",
+            "link": ""
+          }
+        ],
+        "format": "16:9",
+        "height": 560,
+        "heightMobile": 640,
+        "bg": "transparent",
+        "barWidth": 160,
+        "barHeight": 0.7,
+        "gap": 10,
+        "radius": 10,
+        "magnify": 1.4,
+        "lift": 1.15,
+        "influence": 220,
+        "align": "mitte",
+        "openSize": 0.72,
+        "elasticity": 0.35,
+        "blur": 0.5,
+        "dim": 0.45,
+        "shadow": 0.35,
+        "autoplay": "sweep",
+        "speed": 1.4,
+        "interval": 4,
+        "wheel": false,
+        "captions": true,
+        "labels": true,
+        "textScale": 1,
+        "textScaleMobile": 0
+      }
+    },
+    {
+      "type": "timelinePlayer",
+      "props": {
+        "kicker": "",
+        "title": "",
+        "text": "",
+        "headAlign": "mitte",
+        "hideTexts": false,
+        "projectName": "Showreel – Timeline 1",
+        "items": [],
+        "titles": [],
+        "format": "16:9",
+        "mode": "von allein",
+        "scrollLength": 2.5,
+        "speed": 1,
+        "loop": true,
+        "grade": true,
+        "wipe": true,
+        "showPool": true,
+        "showNodes": true,
+        "kenBurns": true,
+        "accent": "#ff4b3a",
+        "width": 1120,
+        "fps": 25,
+        "textScale": 1,
+        "textScaleMobile": 0
+      }
+    }
+  ],
+  "title_de": "Gården Festival 2026"
+}

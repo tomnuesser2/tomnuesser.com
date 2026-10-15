@@ -1,0 +1,19 @@
+{
+  "title": "Fistball-Euro 2026",
+  "card": {
+    "image": "",
+    "vimeo": "",
+    "ratio": "16/9",
+    "group": 1,
+    "category": "video",
+    "stills": []
+  },
+  "blocks": [
+    {
+      "type": "spacer",
+      "props": {
+        "size": 40
+      }
+    }
+  ]
+}
