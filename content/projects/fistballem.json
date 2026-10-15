@@ -6,7 +6,8 @@
     "ratio": "16/9",
     "group": 1,
     "category": "video",
-    "stills": []
+    "stills": [],
+    "hidden": true
   },
   "blocks": [
     {
@@ -46,7 +47,7 @@
           }
         ],
         "format": "9:16 hochkant (Reels)",
-        "layout": "Akkordeon (Fokus)",
+        "layout": "Fächer",
         "others": "laufen stumm weiter",
         "sound": true,
         "allBtn": true,
