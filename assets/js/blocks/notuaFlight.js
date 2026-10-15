@@ -506,6 +506,25 @@ function mount(root, OPT) {
   new IntersectionObserver((es) => { if (es[0].isIntersecting) { if (!running) { running = true; resize(); requestAnimationFrame(draw); } } else { running = false; } }, { rootMargin: SMALL ? '70% 0px' : '10%' }).observe(stage);
   const onScroll = () => { const r = track.getBoundingClientRect(); prog0 = clamp(-r.top / Math.max(1, r.height - stage.offsetHeight)); };
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  // Automatischer Weiterflug: Hat man einmal angefangen zu scrollen, fliegt die Kamera langsam von selbst weiter (Richtung des letzten Scrolls),
+  // damit man sich jede Station in Ruhe ansehen kann. Berührt/scrollt man, hat man sofort wieder die Kontrolle; nach kurzer Ruhe läuft es weiter.
+  if (o.autoplay !== false && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    let dir = 0, lastUser = 0, mine = false, raf = 0, lt = 0, acc = 0, lastY = scrollY;
+    const user = () => { lastUser = performance.now(); };
+    ['touchstart', 'touchmove', 'wheel', 'keydown', 'pointerdown'].forEach((ev) => addEventListener(ev, user, { passive: true }));
+    const pinned = () => { const r = track.getBoundingClientRect(); return r.top <= 2 && r.bottom >= innerHeight - 2 && prog0 > .002 && prog0 < .997; };
+    const loop = (t) => {
+      raf = 0; if (!pinned() || !dir) { dir = 0; lt = 0; return; }
+      const dt = lt ? Math.min(.1, (t - lt) / 1000) : 0; lt = t;
+      if (t - lastUser > 1300 && !document.hidden) {
+        const r = track.getBoundingClientRect(), total = Math.max(1, r.height - stage.offsetHeight), sp = total / TOT / Math.max(1.5, Number(o.autoSec) || 5);
+        acc += dir * sp * dt; const whole = acc < 0 ? Math.ceil(acc) : Math.floor(acc);
+        if (whole) { acc -= whole; mine = true; scrollBy(0, whole); lastY = scrollY; mine = false; }
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    addEventListener('scroll', () => { const y = scrollY, d = y - lastY; lastY = y; if (mine || !d) return; dir = d > 0 ? 1 : -1; lastUser = performance.now(); if (!raf && pinned()) { lt = 0; raf = requestAnimationFrame(loop); } }, { passive: true });
+  }
 }
 
 // Einflug-Richtungen: jede Karte kommt aus einer anderen Ecke (weit hinten, klein) und gleitet auf ihre Position
@@ -524,6 +543,8 @@ export default {
     { name: 'projectUrl', label: 'Button 2: Ziel (Projektname, oder „#next“ = direkt zum nächsten Abschnitt darunter springen)', type: 'text', default: 'notua' },
     { name: 'sub', label: 'Kleine Zeile unter den Buttons (am Ende)', type: 'text', default: 'web · desktop · android', de: 'Web · Desktop · Android' },
     { name: 'hint', label: 'Hinweis „scroll“', type: 'text', default: 'scroll to fly', de: 'scrollen und fliegen' },
+    { name: 'autoplay', label: 'Flug läuft nach dem ersten Anscrollen langsam von selbst weiter (Berühren/Scrollen übernimmt, danach läuft er weiter)', type: 'checkbox', default: true },
+    { name: 'autoSec', label: 'Automatischer Flug: Sekunden pro Station (größer = langsamer)', type: 'number', default: 5 },
     { name: 'logo', label: 'NOTUA-Logo (Bild)', type: 'image', default: 'media/notua-logo.png' },
     { name: 'featureText', label: 'Stationen: Titel | Beschreibung (eine Zeile je Station, Reihenfolge: Notes, Tables, Tasks, Widgets, Boards, Your look)', type: 'textarea', default: DEF.featureText, de: 'Notizen | Halte Ideen fest, sobald sie auftauchen – Skripte, Shot-Notizen, Gedanken. Alles liegt auf einer endlosen Fläche.\nTabellen | Szenenübersicht, Budget, Zeitplan – übersichtlich in Zellen.\nAufgaben | Hak ab, was erledigt ist, und behalte den Rest im Blick.\nWidgets | Pinne Bilder, YouTube-Videos und Spotify-Playlists direkt neben deine Ideen.\nBoards | Boards in Boards – jedes Projekt bekommt seinen eigenen Raum.\nDein Look | Mach es zu deinem: Farbwelt, hell oder dunkel, Ecken, Schatten, Rahmen und Schrift. Dann behalte den Look.' },
     { name: 'notes', label: 'Notes-Karte: Text (eine Zeile pro Zeile; wird getippt, 1. Zeile = Titel)', type: 'textarea', default: DEF.notes, de: 'Skript-Intro\n– Hook in 3 Sek.\n– Szene 1: Werkstatt\n– Szene 2: Interview' },
