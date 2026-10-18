@@ -9,7 +9,10 @@
         "title_de": "digitaler & visueller künstler",
         "title": "digital and visual artist",
         "carSize": 1.45,
-        "carSpread": 0.95
+        "carSpread": 0.95,
+        "carY": -35,
+        "nameY": 20,
+        "titleY": -65
       }
     },
     {
