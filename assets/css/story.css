@@ -1165,3 +1165,5 @@ body.is-nbend, body.is-nbend .app, body.is-nbend main { background: var(--nb-end
 html.is-fill, html.is-fill body { overflow: hidden; overscroll-behavior: none; }
 html.is-fill .site-footer { display: none; }
 .ar.is-fill { margin: 0; }
+
+.fl__bg { position: absolute; z-index: -1; pointer-events: none; will-change: transform; display: none; }

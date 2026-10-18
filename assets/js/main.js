@@ -1,5 +1,6 @@
 import './core/mobileimg.js';
 import { videoCfg, imgFor } from './core/media.js';
+import './core/quality.js';
 import { h, svg, prefersReducedMotion } from './core/dom.js';
 import { renderBlocks } from './core/registry.js';
 import { localize, getLang, setLang, ui } from './core/i18n.js';

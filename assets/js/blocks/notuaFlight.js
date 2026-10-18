@@ -1,4 +1,5 @@
 import { getLang } from '../core/i18n.js';
+import { Q as QUAL, onQuality } from '../core/quality.js';
 const DE = { Notes: 'Notizen', Image: 'Bild', Columns: 'Spalten', Tasks: 'Aufgaben', Table: 'Tabelle', Connect: 'Verbinden', Idea: 'Idee', Doing: 'In Arbeit', Shoot: 'Dreh', Cut: 'Schnitt', Grade: 'Grading', 'Color world': 'Farbwelt', Mode: 'Modus', Light: 'Hell', Dark: 'Dunkel', Corners: 'Ecken', Shadow: 'Schatten', Border: 'Rahmen', Font: 'Schrift', Background: 'Hintergrund', grid: 'Raster', lines: 'Linien', paper: 'Papier', default: 'Standard', serif: 'Serif', mono: 'Mono', 'Keep look': 'Look behalten', '✓ Look kept': '✓ Look behalten', 'sub-board': 'Unter-Board', '+ New': '+ Neu' };
 const trN = (t) => (getLang() === 'de' && DE[t]) || t;
 // NOTUA-Flug: 3D-Flug durch Boards der eigenen App (reines WebGL). Die Karten werden live im NOTUA-Look mit Canvas 2D gezeichnet
@@ -347,7 +348,7 @@ function stageBg(TH, bg) {
 }
 function mount(root, OPT) {
   /* Hintergrund mit dem direkt folgenden NOTUA-Board teilen (gleiche Punkte, gleiche Bewegung) */
-  let lastPos = '';
+  let lastPos = '', bgTile = 0, bgX = 0, bgY = 0, pgv = 0;
   const syncNext = (force) => {
     const nb = root.nextElementSibling; if (!nb || !nb.classList.contains('nb')) return;
     const sk = lookSig.split('|')[4];
@@ -357,9 +358,9 @@ function mount(root, OPT) {
       lastPos = '';
       if (PORT) nb.style.setProperty('--fl-pos', `0px ${(-stage.offsetHeight).toFixed(0)}px`);
     }
-    const pos = stage.style.backgroundPosition; if (!pos || pos === lastPos) return; lastPos = pos;
-    const m = pos.match(/(-?[\d.]+)px\s+(-?[\d.]+)px/); if (!m) return;
-    nb.style.setProperty('--fl-pos', `${m[1]}px ${(parseFloat(m[2]) - stage.offsetHeight).toFixed(1)}px`);
+    if (!bgTile && !force) return; if (pgv < .8 && !force) return;   // Das Board ist erst kurz vor dem Ende im Bild – eine Variable am Board neu zu setzen lässt dessen ganzen Inhalt neu berechnen, also nur dann
+    const pos = bgX.toFixed(1) + ',' + bgY.toFixed(1); if (pos === lastPos) return; lastPos = pos;
+    nb.style.setProperty('--fl-pos', `${bgX.toFixed(1)}px ${(bgY - stage.offsetHeight).toFixed(1)}px`);
   };
   const o = OPT; const D = {};
   PLAN = mkPlan(o.lookRandom === true || o.lookRandom === 'true'); WP = mkWP();
@@ -397,6 +398,7 @@ function mount(root, OPT) {
   const dockKeys = [...new Set(STATIONS.map(x => x.dock).filter(Boolean))];
   const dockBtns = dockKeys.map(k => DOCK.find(d => d[0] === k)).filter(Boolean).map(([key, label, svgH]) => { const b = el('button', 'fl__tool'); b.type = 'button'; b.dataset.k = key; b.innerHTML = svgH + `<span>${trN(label)}</span>`; b.setAttribute('aria-label', trN(label)); dock.append(b); return b; });
   const stage = el('div', 'fl__stage');
+  const bgl = el('div', 'fl__bg'); stage.append(bgl);   // Punktraster auf eigener Ebene: wird nur verschoben (Grafikkarte) statt jedes Bild neu gemalt
     stage.append(canvas, el('div', 'fl__vig'), hud, hint, dock, bar);
   const track = el('div', 'fl__track'); track.append(stage); track.style.setProperty('--n', N + 1 + PL); root.append(track);
 
@@ -411,7 +413,9 @@ function mount(root, OPT) {
     const rs = root.style; rs.setProperty('--coral', TH.accent); rs.setProperty('--ink', TH.ink); rs.setProperty('--mute', TH.muted); rs.setProperty('--surf', TH.surface); rs.setProperty('--surf2', TH.surface2); rs.setProperty('--bd', LK.bc); rs.setProperty('--accs', TH.accentSoft);
     rs.setProperty('--rad', Math.min(26, 4 + S.r * .7) + 'px'); rs.setProperty('--bw', (LK.bw ? Math.max(1, LK.bw / 2) : 0) + 'px'); rs.setProperty('--shd', LK.shA ? `0 10px 30px -10px rgba(24,28,35,${Math.min(.5, LK.shA * 1.7)})` : 'none');
     rs.background = TH.bg; rs.color = TH.ink; rs.fontFamily = FONT;
-    const bgKey = [S.pal, S.dark, S.bg].join('|'); if (bgKey !== curBg) { curBg = bgKey; stage.style.background = stageBg(TH, S.bg); }
+    const bgKey = [S.pal, S.dark, S.bg].join('|'); if (bgKey !== curBg) { curBg = bgKey; const tile = { grid: 22, lines: 22, cross: 26, paper: 160 }[S.bg];
+      if (!tile) { stage.style.background = stageBg(TH, S.bg); bgl.style.display = 'none'; bgTile = 0; }
+      else { stage.style.background = TH.bg; bgTile = tile; bgl.style.cssText = `display:block;inset:-${tile}px;background:${stageBg(TH, S.bg).slice(0, -(TH.bg.length + 2))}`; bgl.style.transform = `translate3d(${(((bgX % tile) + tile) % tile).toFixed(1)}px,${(((bgY % tile) + tile) % tile).toFixed(1)}px,0)`; } }
     syncNext(true);
     coral = hexRgb(TH.accent); ver++; document.querySelector('.site-header')?.classList.toggle('over-fl-dark', !!S.dark);
   };
@@ -439,8 +443,8 @@ function mount(root, OPT) {
   logo.onload = () => { const t = makeTex(prepLogo(logo)); planes.forEach(pl => { if (pl.logo) { pl.tex = t; pl.ratio = 1; } }); if (LG) tintLogo(); }; logo.src = o.logo || 'media/notua-logo.png';
 
   const SMALL = matchMedia('(max-width: 899px)').matches; let lastPaint = 0, lastP = -1, lastMv = 0; let W = 1, Hh = 1, prog0 = 0, prevP = 0, vel = 0, gv = 0, px = 0, py = 0, tpx = 0, tpy = 0, active = -1, running = false, aT0 = 0; const t0 = performance.now();
-  const resize = () => { const dpr = Math.min(devicePixelRatio || 1, SMALL ? 1.25 : 2); W = canvas.clientWidth; Hh = canvas.clientHeight; canvas.width = Math.max(1, Math.round(W * dpr)); canvas.height = Math.max(1, Math.round(Hh * dpr)); };
-  addEventListener('resize', resize);
+  const resize = () => { const dpr = Math.max(.5, Math.min(devicePixelRatio || 1, SMALL ? 1.25 : 1.75) * QUAL.scale); W = canvas.clientWidth; Hh = canvas.clientHeight; canvas.width = Math.max(1, Math.round(W * dpr)); canvas.height = Math.max(1, Math.round(Hh * dpr)); };
+  addEventListener('resize', resize); onQuality(() => { if (running) resize(); });
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) { stage.addEventListener('pointermove', (e) => { tpx = e.clientX / innerWidth * 2 - 1; tpy = e.clientY / innerHeight * 2 - 1; }); }
   const setActive = (i, now) => {
     if (i === active) return; const prev = active; active = i; aT0 = now; stage.dataset.st = String(i); const s = STATIONS[i];
@@ -471,7 +475,7 @@ function mount(root, OPT) {
     gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
     gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     const [f, lu] = fromProg(prog0); const asp = W / Hh, camZ = 3.0 - f * SP, camX = Math.sin(f * 1.1) * (narrow() ? .1 : .35), camY = Math.cos(f * .8) * .1;
-    if (!SMALL && lookSig.split('|')[4] !== 'plain') stage.style.backgroundPosition = `${(-prog0 * TOT * 40 - px * 18).toFixed(1)}px ${(prog0 * TOT * 90 - py * 14).toFixed(1)}px`;
+    if (!SMALL && bgTile) { bgX = -prog0 * TOT * 40 - px * 18; bgY = prog0 * TOT * 90 - py * 14; bgl.style.transform = `translate3d(${(((bgX % bgTile) + bgTile) % bgTile).toFixed(1)}px,${(((bgY % bgTile) + bgTile) % bgTile).toFixed(1)}px,0)`; }
     if (!SMALL) syncNext(false);
     const VP = M.mul(M.persp(.96, asp, .1, 40), M.mul(M.mul(M.rx(py * .05), M.ry(px * .09)), M.tr(-camX, -camY, -camZ)));
     // Verbindungslinien zwischen den Karten (wie die Verbinder in NOTUA)
@@ -504,7 +508,7 @@ function mount(root, OPT) {
     hud.style.setProperty('--gl', '0'); bar.style.transform = `scaleX(${prog0.toFixed(4)})`; hint.style.opacity = prog0 < .03 ? '1' : '0';
   };
   new IntersectionObserver((es) => { if (es[0].isIntersecting) { if (!running) { running = true; resize(); requestAnimationFrame(draw); } } else { running = false; } }, { rootMargin: SMALL ? '70% 0px' : '10%' }).observe(stage);
-  const onScroll = () => { const r = track.getBoundingClientRect(); prog0 = clamp(-r.top / Math.max(1, r.height - stage.offsetHeight)); };
+  const onScroll = () => { const r = track.getBoundingClientRect(); prog0 = pgv = clamp(-r.top / Math.max(1, r.height - stage.offsetHeight)); };
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
   // Automatischer Weiterflug: Hat man einmal angefangen zu scrollen, fliegt die Kamera langsam von selbst weiter (Richtung des letzten Scrolls),
   // damit man sich jede Station in Ruhe ansehen kann. Berührt/scrollt man, hat man sofort wieder die Kontrolle; nach kurzer Ruhe läuft es weiter.
