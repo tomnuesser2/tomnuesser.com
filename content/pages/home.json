@@ -7,7 +7,9 @@
         "cards": 6,
         "mobileCount": 6,
         "title_de": "digitaler & visueller künstler",
-        "title": "digital and visual artist"
+        "title": "digital and visual artist",
+        "carSize": 1.45,
+        "carSpread": 0.95
       }
     },
     {
