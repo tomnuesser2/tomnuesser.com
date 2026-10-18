@@ -139,6 +139,8 @@ export function carousel3d(root, items, o = {}) {
     if (e.pointerType === 'mouse') { S.pointer.in = true; const r = root.getBoundingClientRect(); S.pointer.x = clamp((e.clientX - r.left) / r.width * 2 - 1, -1, 1); S.pointer.y = clamp((e.clientY - r.top) / r.height * 2 - 1, -1, 1); }
     const p = S.press; if (!p || p.id !== e.pointerId) { wake(); return; }
     const d = e.clientX - p.x, cross = e.clientY - p.y;
+    // Maus/Stift: überwiegend senkrechtes Ziehen scrollt die SEITE (auf Touch macht das der Browser selbst) – gedrückt halten blockiert das Scrollen nie
+    if (!p.moved && e.pointerType !== 'touch' && (p.vs || (Math.abs(cross) > DRAG * 2 && Math.abs(cross) > Math.abs(d) * 1.2))) { window.scrollBy(0, (p.ly ?? p.y) - e.clientY); p.ly = e.clientY; p.vs = true; S.suppress = true; return; }
     if (!p.moved) {
       if (Math.abs(d) < DRAG) return;
       if (Math.abs(cross) > Math.abs(d) * 1.2 && e.pointerType !== 'mouse') { S.press = null; return; }

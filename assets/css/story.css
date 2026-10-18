@@ -514,9 +514,11 @@
 /* PC-Intro mit 3D-Karussell: Karussell nimmt die Höhe ein, Titel darunter */
 @media (min-width: 900px) {
   .hero--car { height: calc(100svh - var(--header-h)); min-height: 480px; }
-  .hero--car .hero__cards { flex: none; height: clamp(260px, calc(56svh * var(--cs, 1)), 86svh); margin-top: auto; }   /* Karussell + Titel als Gruppe mittig zwischen Kopf und "Scroll" */
+  .hero--car .hero__cards { flex: none; height: clamp(240px, calc(44svh * var(--cs, 1)), 78svh); margin-top: auto; overflow: visible; }   /* Karussell + Titel als Gruppe mittig zwischen Kopf und "Scroll" */
   .hero--car .hn--d, .hero--car .hero__roles { flex: none; }
+  .hero--car { overflow-x: clip; overflow-y: visible; }
   .hero--car .hero__cards { translate: 0 var(--car-y, 0px); }
+  .hero--car .hero__cards .cc { overflow: visible; }
   .hero--car .hn--d { translate: 0 var(--name-y, 0px); position: relative; z-index: 3; }
   .hero--car .hero__roles { translate: 0 var(--title-y, 0px); }
   .hero--car .hero__cue { padding-top: clamp(6px, 1.2svh, 14px); padding-bottom: calc(clamp(26px, 5svh, 52px) + env(safe-area-inset-bottom)); }
