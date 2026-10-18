@@ -124,10 +124,40 @@ export function snapInfo() {
   let list = []; try { list = snapTargets(); } catch { /* weg */ }
   return { on: snapOn, why: snapWhy, coarse: coarse(), ios: IOS, y: Math.round(scrollY), vh: innerHeight, fingers, touched, snapping, held, dir: dirLast, gestY: Math.round(gestY), flick: flickG, relY: Math.round(relY), stops: list.length, list: list.slice(0, 12).join(','), ...stat };
 }
+
+/* ---------- Handy, ZUM VERGLEICH: Einrasten über den Browser (CSS scroll-snap) – nur mit ?native in der Adresse ----------
+   Richtlinie (Apple/Google): Scrollen bleibt nativ – Schwung, Gummiband und Bremskurve macht das Betriebssystem auf dem Grafikprozessor, ohne dass JavaScript
+   mitrechnet. Wir melden dem Browser nur WO angehalten wird: Abschnittsanfänge und die Hero-Karten (kleine unsichtbare Marken). Danach gilt:
+   kräftiger Wisch → rollt aus und bremst weich an der nächsten Marke (scroll-snap-stop: always = keine wird übersprungen), der nächste Wisch ist völlig normal.
+   Abschnitte, die höher als der Bildschirm sind (klebende Szenen), bleiben frei scrollbar. Ohne Browser-Unterstützung läuft die Script-Variante darunter. */
+const nativeOK = () => { try { return new URLSearchParams(location.search).has('native') && CSS.supports('scroll-snap-stop', 'always') && CSS.supports('scroll-snap-type', 'y mandatory'); } catch { return false; } };
+function startNative() {
+  const de = document.documentElement; de.classList.add('snap-native');
+  let box = null, sig = '';
+  const sync = () => {
+    if (!isHome()) { if (box) box.replaceChildren(); sig = ''; return; }
+    const zones = []; for (const z of stopFns) { if (!z.settle) continue; try { const a = (z.fn() || []).map(Math.round).sort((x, y) => x - y); if (a.length >= 2) zones.push(a); } catch { /* weg */ } }
+    const blocks = [...document.querySelectorAll('.page[data-page="home"] > [data-bi]')], marks = [];
+    for (const b of blocks) {
+      const top = b.getBoundingClientRect().top + scrollY, bot = top + b.offsetHeight, inside = zones.some((a) => a[0] >= top - 4 && a[a.length - 1] <= bot + 4);
+      if (inside) { b.setAttribute('data-snapfree', ''); } else b.removeAttribute('data-snapfree');
+    }
+    for (const a of zones) for (const v of a) marks.push(v);
+    const key = marks.join(',') + '|' + blocks.length + '|' + document.documentElement.scrollHeight; if (key === sig) return; sig = key;
+    if (!box) { box = document.createElement('div'); box.id = 'snapmarks'; box.setAttribute('aria-hidden', 'true'); document.body.append(box); }
+    box.replaceChildren(...marks.map((v) => { const i = document.createElement('i'); i.style.top = v + 'px'; return i; }));
+  };
+  let t = 0; const later = () => { clearTimeout(t); t = setTimeout(sync, 120); };
+  addEventListener('resize', later, { passive: true }); addEventListener('load', later); document.fonts && document.fonts.ready.then(later);
+  [300, 900, 2000, 4000].forEach((ms) => setTimeout(sync, ms)); setInterval(() => { if (document.documentElement.scrollHeight + '' !== sig.split('|')[2]) sync(); }, 1500);
+  try { new MutationObserver(later).observe(document.querySelector('main') || document.body, { childList: true }); } catch { /* egal */ }
+  sync();
+}
 export function initSnapStop() {
   if (snapOn) return;
   if (!coarse()) { snapWhy = 'kein Touch (pointer: coarse = false)'; return; }
   if (prefersReducedMotion()) { snapWhy = 'Bewegung reduzieren ist am Gerät an'; return; }
+  if (nativeOK()) { snapOn = true; snapWhy = 'nativ (CSS scroll-snap)'; startNative(); return; }
   snapOn = true; snapWhy = 'ok'; lastY = scrollY;
   addEventListener('touchstart', (e) => { fingers = e.touches.length; touched = true; pinY = null; if (snapping) { snapping = false; cancelAnimationFrame(glideRaf); } if (fingers === 1) { gestY = scrollY; gestT = performance.now(); samples = []; } }, { passive: true });
   addEventListener('touchmove', (e) => { const t = e.touches[0]; if (t) { samples.push([t.clientY, performance.now()]); if (samples.length > 8) samples.shift(); } }, { passive: true });
@@ -137,7 +167,7 @@ export function initSnapStop() {
       relY = scrollY; const now = performance.now(), last = samples[samples.length - 1], old = samples.find((q) => last && last[1] - q[1] <= 120);
       // Fingergeschwindigkeit beim Loslassen: schneller Wisch (Flick) = Schwung folgt
       const v = last && old && last[1] > old[1] && now - last[1] < 120 ? Math.abs(last[0] - old[0]) / (last[1] - old[1]) : 0; flickG = v > .6; stat.v = Math.round(v * 100) / 100;
-      if (v >= .25 && !held && isHome()) { const sv = last[0] < old[0] ? v : -v; takeOver(sv); }   // Finger geht hoch (Inhalt nach oben): Scroll nach unten
+      if (v >= .5 && !held && isHome()) { const sv = last[0] < old[0] ? v : -v; takeOver(sv); }   // Finger geht hoch (Inhalt nach oben): Scroll nach unten
     }
   }, { passive: true });
   addEventListener('touchcancel', () => { fingers = 0; relY = scrollY; flickG = false; }, { passive: true });

@@ -16,6 +16,8 @@ export default {
     { name: 'cue', label: 'Hinweis unten', type: 'text', default: 'scroll', de: 'scrollen' },
     { name: 'showName', label: 'Projektname oben im Karussell zeigen (ganz dezent, mit Knopf; darunter optional der kleine Text, den du pro Projekt eingibst)', type: 'checkbox', default: true },
     { name: 'nameBtn', label: 'Text auf dem Knopf', type: 'text', default: 'view project', de: 'Projekt ansehen' },
+    { name: 'carSize', label: '🖥 Karussell am Computer: Größe der Bilder (Schieber, 1 = Standard)', type: 'range', min: .5, max: 3, step: .05, default: 1.8 },
+    { name: 'carSpread', label: '🖥 Karussell am Computer: Breite – wie weit es nach links/rechts an den Rand reicht (Schieber, 1 = Standard)', type: 'range', min: .3, max: 2.5, step: .05, default: 1.5 },
     { name: 'cards', label: 'Anzahl Karten (aus den ersten Projekten)', type: 'number', default: 4 },
     { name: 'mobileCount', label: 'Handy: Anzahl Vollbild-Projekte, falls keine Projekte markiert sind (Markierung: im Projekt „Im Handy-Intro zeigen“)', type: 'number', default: 4 },
   ],
@@ -43,10 +45,10 @@ export default {
       h('a', { class: 'hero__cue', href: 'home#work', 'data-link': '' }, p.cue || 'scroll', h('i', { 'aria-hidden': 'true' }, '↓')));
     // PC: statt des Kartenfächers das 3D-Karussell (querformatige Karten, groß, ziehbar, dreht langsam von selbst)
     if (matchMedia('(min-width: 900px)').matches && !still() && n >= 2) {
-      const box = el.querySelector('.hero__cards'); el.classList.add('hero--car'); box.replaceChildren();
+      const box = el.querySelector('.hero__cards'); el.classList.add('hero--car'); el.style.setProperty('--cs', (1 + ((Number(p.carSize) || 1.8) - 1) * .3).toFixed(3)); box.replaceChildren();
       const all = (idx.order || []).map(sl => ({ slug: sl, ...idx.projects[sl] })).filter(x => x.image && !x.hidden);
       const labD = nameLabel(p, all); if (labD) { labD.el.classList.add('hn--d'); box.before(labD.el); }
-      (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => el.isConnected && (carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { size: (r) => ({ w: Math.min(r.width * .46, r.height * 1.1 * 1.6), aspect: 1.6 }), fitAngle: 108, swerve: dirIn, onChange: (i) => labD && labD.set(i) }), swerveIn(box))));
+      (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => el.isConnected && (carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { spread: Number(p.carSpread) || 1.5, zoom: Number(p.carSize) || 1.4, size: (r) => ({ w: Math.min(r.width * .46, r.height * 1.1 * 1.6), aspect: 1.6 }), fitAngle: 108, swerve: dirIn, onChange: (i) => labD && labD.set(i) }), swerveIn(box))));
     }
     if (still() || !p.cycle) { lineEls.forEach(r => r.classList.add('is-on')); if (still()) return el; }
     if (p.cycle) { let a = 0; const cycle = () => { lineEls.forEach((r, i) => r.classList.toggle('is-on', i === a)); a = (a + 1) % lineEls.length; };

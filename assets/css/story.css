@@ -514,7 +514,7 @@
 /* PC-Intro mit 3D-Karussell: Karussell nimmt die Höhe ein, Titel darunter */
 @media (min-width: 900px) {
   .hero--car { height: calc(100svh - var(--header-h)); min-height: 480px; }
-  .hero--car .hero__cards { flex: none; height: clamp(260px, 56svh, 600px); margin-top: auto; }   /* Karussell + Titel als Gruppe mittig zwischen Kopf und "Scroll" */
+  .hero--car .hero__cards { flex: none; height: clamp(260px, calc(56svh * var(--cs, 1)), 86svh); margin-top: auto; }   /* Karussell + Titel als Gruppe mittig zwischen Kopf und "Scroll" */
   .hero--car .hn--d, .hero--car .hero__roles { flex: none; }
   .hero--car .hero__cue { padding-top: clamp(6px, 1.2svh, 14px); padding-bottom: calc(clamp(26px, 5svh, 52px) + env(safe-area-inset-bottom)); }
   .hero--car .hero__roles { margin-top: clamp(10px, 2.4svh, 28px); }

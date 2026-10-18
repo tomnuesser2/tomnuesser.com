@@ -35,7 +35,7 @@ export function carousel3d(root, items, o = {}) {
     const w = Math.round(sz.w), hh = Math.round(sz.w / clamp(sz.aspect, .2, 5));
     if (w === cardW && hh === cardH && cards.length) return true;
     cardW = w; cardH = hh;
-    const n = Math.max(count, 3), pitch = cardW + O.gap, chord = pitch / (2 * Math.sin(Math.PI / n)), arc = (n * pitch) / (2 * Math.PI);
+    const gap = O.gap + ((Number(O.spread) || 1) - 1) * cardW * .55, n = Math.max(count, 3), pitch = cardW + Math.max(-cardW * .5, gap), chord = pitch / (2 * Math.sin(Math.PI / n)), arc = (n * pitch) / (2 * Math.PI);
     radius = Math.max(chord + (arc - chord) * O.curve, cardW * .6);
     const bend = radius / O.curve;
     tiles = Array.from({ length: TILES }, (_, i) => {
@@ -71,8 +71,8 @@ export function carousel3d(root, items, o = {}) {
       if (p[2] >= P * .95) continue;
       const k = P / (P - p[2]); minX = Math.min(minX, p[0] * k); maxX = Math.max(maxX, p[0] * k); minY = Math.min(minY, p[1] * k); maxY = Math.max(maxY, p[1] * k);
     }
-    const fit = Math.min(1, O.fitAngle ? 9e9 : width / Math.max(maxX - minX, 1), height / Math.max(maxY - minY, 1));
-    S.fit = fit; S.shift = -((minY + maxY) / 2) * fit; S.drop = (rect.height / fit) * .55 + cardH;
+    let fit = Math.min(1, O.fitAngle ? 9e9 : width / Math.max(maxX - minX, 1), height / Math.max(maxY - minY, 1));
+    S.fit = fit = fit * (Number(O.zoom) || 1); S.shift = -((minY + maxY) / 2) * fit; S.drop = (rect.height / fit) * .55 + cardH;
     stage.style.perspective = P + 'px'; stage.style.transform = `translate3d(0, ${S.shift}px, 0) scale(${fit})`;
   };
 
