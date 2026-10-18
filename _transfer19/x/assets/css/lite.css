@@ -1,0 +1,6 @@
+/* Handy-Schonung: teure Effekte weg, die auf Telefonen ruckeln (Körnung mit Überblendung, Weichzeichner-Flächen, Dauer-Ebenen). Nur Touch / schmale Bildschirme. */
+@media (max-width: 899px), (pointer: coarse) {
+  .fx-grain .media-frame::after { display: none; }
+  .palette, .pill, .cmp__tag, .dv__vol, .media-snd { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .fs__grain { display: none; }
+}

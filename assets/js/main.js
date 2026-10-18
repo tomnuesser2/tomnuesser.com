@@ -1,3 +1,4 @@
+import './core/mobileimg.js';
 import { videoCfg, imgFor } from './core/media.js';
 import { h, svg, prefersReducedMotion } from './core/dom.js';
 import { renderBlocks } from './core/registry.js';

@@ -111,6 +111,15 @@ function takeOver(sv) {
   stat.strong++; stat.last = `${why} ${Math.round(y)}→${Math.round(target)} v${v0.toFixed(2)}`;
   touched = false; flingTo(target, sv);
 }
+// Für den PC (Mausrad/Touchpad/Tastatur): Haltepunkte der Startseite + Hero-Zonen (dort läuft die Animation immer bis zur nächsten Karte zu Ende)
+export function snapModel() {
+  if (!isHome()) return null;
+  const max = Math.max(0, document.documentElement.scrollHeight - innerHeight), zones = [];
+  for (const z of stopFns) { if (!z.settle) continue; try { const a = (z.fn() || []).map(Math.round).sort((x, y) => x - y); if (a.length >= 2) zones.push(a); } catch { /* weg */ } }
+  const raw = [0, ...snapTargets().map((v) => Math.min(max, Math.max(0, v)))].sort((x, y) => x - y), min = innerHeight * .15, stops = [];
+  for (const v of raw) if (!stops.length || v - stops[stops.length - 1] > min) stops.push(v);
+  return { stops, zones, max };
+}
 export function snapInfo() {
   let list = []; try { list = snapTargets(); } catch { /* weg */ }
   return { on: snapOn, why: snapWhy, coarse: coarse(), ios: IOS, y: Math.round(scrollY), vh: innerHeight, fingers, touched, snapping, held, dir: dirLast, gestY: Math.round(gestY), flick: flickG, relY: Math.round(relY), stops: list.length, list: list.slice(0, 12).join(','), ...stat };
