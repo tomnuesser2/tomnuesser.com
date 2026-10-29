@@ -73,7 +73,9 @@ export function carousel3d(root, items, o = {}) {
       const k = P / (P - p[2]); minX = Math.min(minX, p[0] * k); maxX = Math.max(maxX, p[0] * k); minY = Math.min(minY, p[1] * k); maxY = Math.max(maxY, p[1] * k);
     }
     let fit = Math.min(1, O.fitAngle ? 9e9 : width / Math.max(maxX - minX, 1), height / Math.max(maxY - minY, 1));
-    S.fit = fit = fit * (Number(O.zoom) || 1); S.shift = -((minY + maxY) / 2) * fit; S.drop = (rect.height / fit) * .32 + cardH * .55;
+    fit = fit * (Number(O.zoom) || 1);
+    if (O.contain) fit = Math.min(fit, (rect.height * .98) / Math.max(maxY - minY, 1));   // darf nie größer werden als die ihm zugewiesene Fläche → überlappt nichts
+    S.fit = fit; S.shift = -((minY + maxY) / 2) * fit; S.drop = (rect.height / fit) * .32 + cardH * .55;
     stage.style.perspective = PR + 'px'; stage.style.transform = `translate3d(0, ${S.shift}px, 0) scale(${fit})`;
   };
 

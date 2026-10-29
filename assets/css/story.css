@@ -520,14 +520,13 @@
   .hero--car { overflow-x: clip; overflow-y: visible; }
   .hero--car .hero__cards { translate: 0 var(--car-y, 0px); }
   .hero--car .hero__cards .cc { overflow: visible; }
-  .hero--car .hero__cards { clip-path: inset(-18% -60vw -14% -60vw); }   /* Karten dürfen an den Rändern ausschwingen, fliegen beim Einflug aber nicht über Namen/Kopfzeile */
+  .hero--car .hero__cards { clip-path: inset(-2% -60vw -2% -60vw); }   /* Karten dürfen an den Rändern ausschwingen, fliegen beim Einflug aber nicht über Namen/Kopfzeile */
   .hero--car .hn--d { translate: 0 var(--name-y, 0px); position: relative; z-index: 3; }
   .hero--car .hero__roles { translate: 0 var(--title-y, 0px); }
-  .hero--car .hero__roles { position: relative; z-index: 6; pointer-events: none; text-shadow: 0 0 .1em #fff, 0 0 .22em rgba(255,255,255,.85); }   /* Titel liegt immer ÜBER dem Karussell, mit weichem hellen Hof damit er auf Bildern lesbar bleibt */
   .hero--car .hero__cue { padding-top: clamp(6px, 1.2svh, 14px); padding-bottom: calc(clamp(26px, 5svh, 52px) + env(safe-area-inset-bottom)); }
   .hero--car .hero__roles { margin-top: clamp(10px, 2.4svh, 28px); font-size: min(clamp(40px, 4.6vw, 72px), max(30px, 9.5svh)); }   /* Überschrift wächst nie über die Fensterhöhe hinaus */
   .hero--car .hero__roles.is-s { font-size: min(clamp(22px, 2.2vw, 34px), 5.5svh); } .hero--car .hero__roles.is-m { font-size: min(clamp(30px, 3.4vw, 52px), 7.5svh); } .hero--car .hero__roles.is-xl { font-size: min(clamp(56px, 7vw, 112px), 14svh); }
-  .hero--car .hero__cards { height: clamp(240px, min(calc(44svh * var(--cs, 1)), calc(40vw * var(--cs, 1))), 78svh); }
+  .hero--car .hero__cards { flex: 1 1 0; height: auto; min-height: 180px; margin-top: 8px; }   /* nimmt genau den Platz zwischen Projektname und Titel – das Karussell passt sich an (kleineres Fenster = kleineres Karussell) */
 }
 
 /* Projekt-Kopf: Ausrichtung links / mitte / rechts */
