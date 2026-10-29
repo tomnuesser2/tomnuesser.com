@@ -23,6 +23,8 @@
       "group": 1,
       "hidden": false,
       "featured": true,
+      "showcase": false,
+      "clips": [],
       "summary": "",
       "anim": "expand",
       "roles": "",
@@ -44,6 +46,34 @@
       "group": 1,
       "hidden": true,
       "featured": false,
+      "showcase": false,
+      "clips": [
+        {
+          "vimeo": "https://vimeo.com/1236194560",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236195028",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236194864",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236195590",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236195821",
+          "kind": "phone",
+          "title": ""
+        }
+      ],
       "summary": "",
       "anim": "expand",
       "roles": "",
@@ -65,6 +95,34 @@
       "group": 1,
       "hidden": false,
       "featured": false,
+      "showcase": true,
+      "clips": [
+        {
+          "vimeo": "https://vimeo.com/1236194560",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236195028",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236194864",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236195590",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236195821",
+          "kind": "phone",
+          "title": ""
+        }
+      ],
       "summary": "",
       "anim": "expand",
       "roles": "",
@@ -86,6 +144,13 @@
       "group": 1,
       "hidden": false,
       "featured": true,
+      "showcase": true,
+      "clips": [
+        {
+          "vimeo": "https://vimeo.com/1207034763",
+          "kind": "laptop"
+        }
+      ],
       "summary": "",
       "anim": "gallery",
       "roles": "",
@@ -107,6 +172,8 @@
       "group": 2,
       "hidden": false,
       "featured": true,
+      "showcase": false,
+      "clips": [],
       "summary": "Words fill in black while you scroll – a text-first project teaser for stories that need a few sentences more than a picture can give.",
       "anim": "words",
       "roles": "brand film, editing, sound",
@@ -131,6 +198,8 @@
       "group": 2,
       "hidden": true,
       "featured": false,
+      "showcase": false,
+      "clips": [],
       "summary": "The picture decodes from a coarse mosaic into full resolution.",
       "anim": "pixel",
       "roles": "web design, development",
@@ -155,6 +224,8 @@
       "group": 1,
       "hidden": false,
       "featured": true,
+      "showcase": false,
+      "clips": [],
       "summary": "",
       "anim": "expand",
       "roles": "",

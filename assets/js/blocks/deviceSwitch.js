@@ -26,12 +26,20 @@ export default {
     { name: 'ctaText', label: 'Großer Button unten: Text (leer = kein Button)', type: 'text', default: 'my recent work', de: 'meine aktuellen Arbeiten' },
     { name: 'ctaLink', label: 'Großer Button unten: Ziel (Seite, z. B. projects)', type: 'text', default: 'projects' },
     { name: 'auto', label: 'Automatisch durchschalten', type: 'checkbox', default: true },
+    { name: 'autoProjects', label: 'Projekte automatisch einbinden (alle Projekte mit „In Short-form + Long-form zeigen“ – deren Vimeo-Videos; hochkant → Smartphone, quer → Laptop)', type: 'checkbox', default: true },
+    { name: 'clipSecs', label: 'Sekunden pro automatischem Video, bevor es weiterwechselt (3–6, immer stumm)', type: 'range', min: 3, max: 6, step: .5, default: 5 },
   ],
-  render(p0) {
+  render(p0, ctx) {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
     const norm = (i) => (isEmbedUrl(i.src) && !i.vimeo ? { ...i, vimeo: i.src, src: '' } : i);
     const ok = (i) => i.src || parseVimeo(i.vimeo);
     const items = { phone: (p.shortItems || []).map(norm).filter(ok), laptop: (p.longItems || []).map(norm).filter(ok) };
+    // Automatisch aus den Projekten (Schalter pro Projekt im Admin): Vimeo-Clips, stumm, je 3–6 s
+    if (p.autoProjects !== false && ctx && ctx.content && ctx.content.index) {
+      const seen = new Set(), idx = ctx.content.index, clip = Math.min(6, Math.max(3, Number(p.clipSecs) || 5));
+      for (const slug of idx.order || []) { const pr = idx.projects[slug]; if (!pr || !pr.showcase) continue;
+        for (const c of pr.clips || []) if (parseVimeo(c.vimeo) && !seen.has(c.vimeo)) seen.add(c.vimeo), items[c.kind === 'phone' ? 'phone' : 'laptop'].push({ vimeo: c.vimeo, src: '', title: pr.title || slug, text: c.title || pr.roles || pr.summary || '', duration: clip, clip }); }
+    }
     const S = { phone: { cur: 0, shots: [], el: null }, laptop: { cur: 0, shots: [], el: null } };
     let front = items[p.front] && items[p.front].length ? p.front : (items.phone.length ? 'phone' : 'laptop'), timer, raf, visible = false;
 
@@ -93,10 +101,15 @@ export default {
         vmH = (e) => {
           if (e.source !== ifr.contentWindow) return; let d = e.data; try { if (typeof d === 'string') d = JSON.parse(d); } catch { return; }
           if (d.event === 'ready') { got = true; clearTimeout(timer); post({ method: 'addEventListener', value: 'finish' }); post({ method: 'addEventListener', value: 'playProgress' }); post({ method: 'setMuted', value: true }); }
-          else if (d.event === 'playProgress') { got = true; fill(m, Math.min(1, (d.data && d.data.percent) || 0)); }
+          else if (d.event === 'playProgress') { got = true; if (!it.clip) fill(m, Math.min(1, (d.data && d.data.percent) || 0)); }
           else if (d.event === 'finish') { if (list.length > 1) next(); }
         };
         addEventListener('message', vmH);
+        if (it.clip && list.length > 1) {   // automatischer Clip: genau 3–6 s laufen lassen, eigener Fortschrittsbalken, dann weiter
+          const dur = it.clip * 1000, t0 = performance.now(); clearTimeout(timer);
+          const tk = (t) => { if (front !== m) return; const f = Math.min(1, (t - t0) / dur); fill(m, f); if (f >= 1) next(); else raf = requestAnimationFrame(tk); };
+          raf = requestAnimationFrame(tk);
+        }
         timer = setTimeout(() => { if (!got && list.length > 1) next(); }, Math.max(4, Number(it.duration) || 20) * 1000);
       } else if (v) {
         v.currentTime = 0; v.play().catch(() => {});

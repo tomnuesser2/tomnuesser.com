@@ -7,7 +7,8 @@
     "group": 1,
     "category": "video",
     "stills": [],
-    "imageMobile": ""
+    "imageMobile": "",
+    "showcase": true
   },
   "blocks": [
     {

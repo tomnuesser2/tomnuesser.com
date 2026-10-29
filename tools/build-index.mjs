@@ -15,8 +15,12 @@ export async function buildIndex(root) {
   for (const s of slugs) {
     const p = JSON.parse(await fs.readFile(path.join(dir, `${s}.json`), 'utf8'));
     const c = p.card || {};
+    // Vimeo-Videos des Projekts für den Smartphone/Laptop-Block (Startseite): Karten-Video + alle Reel-Wand-Videos; hochkant → Smartphone, quer → Laptop
+    const clips = [], isV = (u) => /vimeo\.com\//i.test(String(u || ''));
+    if (isV(c.vimeo)) clips.push({ vimeo: c.vimeo, kind: c.ratio === '9/16' ? 'phone' : 'laptop' });
+    for (const b of p.blocks || []) if (b && b.type === 'videoWall') { const kind = String((b.props || {}).format || '').startsWith('9:16') ? 'phone' : 'laptop'; for (const it of (b.props || {}).items || []) if (isV(it && it.video)) clips.push({ vimeo: it.video, kind, title: it.title || '' }); }
     projects[s] = {
-      title: p.title || s, title_de: p.title_de || '', summary_de: c.summary_de || '', heroText: c.heroText || '', heroText_de: c.heroText_de || '', roles_de: c.roles_de || '', image: c.image || '', imageMobile: c.imageMobile || '', vimeo: c.vimeo || '', ratio: c.ratio || '16/9', group: c.group ?? 1, hidden: !!c.hidden, featured: !!c.featured,
+      title: p.title || s, title_de: p.title_de || '', summary_de: c.summary_de || '', heroText: c.heroText || '', heroText_de: c.heroText_de || '', roles_de: c.roles_de || '', image: c.image || '', imageMobile: c.imageMobile || '', vimeo: c.vimeo || '', ratio: c.ratio || '16/9', group: c.group ?? 1, hidden: !!c.hidden, featured: !!c.featured, showcase: !!c.showcase, clips,
       summary: c.summary || '', anim: c.anim || 'expand', roles: c.roles || '', category: c.category || 'video', cam: c.cam || '',
       stills: (c.stills || []).map(x => (typeof x === 'string' ? x : x?.src)).filter(Boolean),
     };

@@ -1182,7 +1182,19 @@ html.is-fill .site-footer { display: none; }
   .dd[data-front="phone"] .dd__pscreen { border-radius: calc(var(--W) * .057); }
   .dd[data-front="phone"] .dd__bars { top: calc(var(--W) * .06); }
   .dd[data-front="phone"] .dd__island { top: calc(var(--W) * .038); height: calc(var(--W) * .016); }
-  .dd__h { font-size: clamp(38px, 4.2vw, 64px); }
-  .dd__p { font-size: 16px; }
-  .dd__copy { max-width: 380px; }
+  .dd { max-width: 1480px; }
+  .dd__stage { gap: 4vw; }
+  .dd__copy { max-width: min(540px, 40vw); }
+  .dd__k { font-size: 15px; letter-spacing: .04em; }
+  .dd__h { font-size: clamp(56px, 6.4vw, 104px); line-height: .98; letter-spacing: -.04em; }
+  .dd__p { margin-top: 14px; font-size: clamp(18px, 1.5vw, 24px); line-height: 1.5; color: #222; }
+  .dd__item { margin-top: 26px; padding-top: 20px; min-height: 96px; }
+  .dd__it { font-size: clamp(20px, 1.7vw, 28px); } .dd__ix { margin-top: 6px; font-size: clamp(16px, 1.25vw, 20px); line-height: 1.5; color: #333; }
+  .dd__sw { width: 44px; height: 24px; }
+}
+@media (max-width: 899px) {
+  .dd__k { font-size: 13px; }
+  .dd__h { font-size: clamp(42px, 13vw, 60px); line-height: 1; }
+  .dd__p { font-size: 17px; line-height: 1.45; color: #222; }
+  .dd__it { font-size: 18px; } .dd__ix { font-size: 15px; color: #333; }
 }

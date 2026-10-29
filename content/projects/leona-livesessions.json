@@ -10,7 +10,8 @@
     "featured": true,
     "hidden": false,
     "anim": "gallery",
-    "imageMobile": "media/dsc03461-2.webp"
+    "imageMobile": "media/dsc03461-2.webp",
+    "showcase": true
   },
   "blocks": [
     {
