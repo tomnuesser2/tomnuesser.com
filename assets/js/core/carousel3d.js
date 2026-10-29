@@ -64,7 +64,7 @@ export function carousel3d(root, items, o = {}) {
 
   const measure = () => {
     const rect = root.getBoundingClientRect(); if (!rect.width || !rect.height) return;
-    const width = rect.width * .94, height = rect.height * .92, P = O.perspective;
+    const width = rect.width * .94, height = rect.height * .92, P = O.perspective, PR = Math.max(P, cardW * 2.8);   // Größe wird mit der Standard-Perspektive berechnet, GEZEICHNET mit flacherer (wächst mit der Kartenbreite): große Karten werden beim Drehen nicht zum verzerrten Trapez
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     const corners = [[-cardW / 2, -cardH / 2], [cardW / 2, -cardH / 2], [-cardW / 2, cardH / 2], [cardW / 2, cardH / 2]];
     for (let a = -(O.fitAngle || 180); a <= (O.fitAngle || 180); a += 7.5) for (const [cx, cy] of corners) {
@@ -74,7 +74,7 @@ export function carousel3d(root, items, o = {}) {
     }
     let fit = Math.min(1, O.fitAngle ? 9e9 : width / Math.max(maxX - minX, 1), height / Math.max(maxY - minY, 1));
     S.fit = fit = fit * (Number(O.zoom) || 1); S.shift = -((minY + maxY) / 2) * fit; S.drop = (rect.height / fit) * .32 + cardH * .55;
-    stage.style.perspective = P + 'px'; stage.style.transform = `translate3d(0, ${S.shift}px, 0) scale(${fit})`;
+    stage.style.perspective = PR + 'px'; stage.style.transform = `translate3d(0, ${S.shift}px, 0) scale(${fit})`;
   };
 
   const nearest = (a) => Math.round(a / step) * step;
