@@ -56,13 +56,13 @@ function css() {
   if (cssDone || document.getElementById('vw-css')) return; cssDone = true;
   const s = document.createElement('style'); s.id = 'vw-css';
   s.textContent = `
-.vw{position:relative;width:min(100% - 2*var(--gutter,20px),1500px);margin:clamp(24px,6vw,72px) auto;color:#fff;--vwh:720px;--vwg:3;--acc:#ff6a4d;--ar:9/16;--arn:.5625}
+.vw{position:relative;width:min(100% - 2*var(--gutter,20px),1500px);margin:calc(var(--header-h,76px) * .5 + 8px) auto clamp(16px,3vw,40px);color:#fff;--vwh:620px;--vwg:3;--acc:#ff6a4d;--ar:9/16;--arn:.5625;scroll-margin-top:calc(var(--header-h,76px) + 14px)}
 .vw--land{--ar:16/9;--arn:1.7778}
 .vw--full{width:100%}
 .vw__stagebg{border-radius:22px;padding:clamp(14px,2.4vw,30px);background:#0b0b0c;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
 .vw--light .vw__stagebg{background:#f1f1ee;box-shadow:inset 0 0 0 1px rgba(0,0,0,.07);color:#111}
 .vw--clear .vw__stagebg{background:transparent;box-shadow:none;padding-left:0;padding-right:0}
-.vw__head{margin:0 0 clamp(12px,2vw,22px);font-size:clamp(20px,3vw,34px);font-weight:500;letter-spacing:-.02em}
+.vw__head{position:relative;z-index:60;margin:0 0 clamp(12px,2vw,22px);font-size:clamp(20px,3vw,34px);font-weight:500;letter-spacing:-.02em}
 .vw__row{display:flex;gap:10px;height:var(--vwh);align-items:stretch}
 .vw__c{position:relative;flex:1 1 0;min-width:0;border-radius:16px;overflow:hidden;background:#17181b;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent;isolation:isolate;
   transition:flex-grow .75s cubic-bezier(.2,.8,.2,1),filter .5s ease,transform .6s cubic-bezier(.2,.8,.2,1),translate .8s cubic-bezier(.2,.8,.2,1),opacity .7s ease;opacity:0;translate:0 34px}
@@ -93,7 +93,7 @@ function css() {
 .vw__all button:hover{opacity:1;background:var(--acc);border-color:var(--acc);color:#fff}
 .vw__all svg{width:14px;height:14px;fill:currentColor}
 /* Fächer */
-.vw--fan .vw__row{position:relative;display:block;perspective:1600px}
+.vw--fan .vw__row{position:relative;display:block;perspective:1600px;margin:34px 0 26px}
 .vw--fan .vw__c{position:absolute;left:50%;top:50%;height:100%;aspect-ratio:var(--ar);width:auto;flex:none;margin-left:calc(var(--vwh)*var(--arn)*-.5);margin-top:calc(var(--vwh)*-.5);
   transform:translateX(calc(var(--k)*var(--spread)*1px)) translateY(calc(var(--k)*var(--k)*26px)) rotate(calc(var(--k)*7deg)) scale(.86);transform-origin:50% 120%;z-index:calc(20 - var(--abs))}
 .vw--fan .vw__c.is-focus{transform:translateX(calc(var(--k)*var(--spread)*1px)) translateY(-14px) rotate(0) scale(1);z-index:40}
@@ -101,19 +101,17 @@ function css() {
 /* Raster */
 .vw--grid .vw__row{height:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(150px,18vw,230px),1fr));justify-content:center}
 .vw--grid .vw__c{aspect-ratio:var(--ar);flex:none}
-.vw--land.vw--grid .vw__row{grid-template-columns:repeat(auto-fit,minmax(clamp(240px,30vw,460px),1fr))}
+.vw--land.vw--grid .vw__row{grid-template-columns:repeat(auto-fit,minmax(clamp(180px,22vw,320px),1fr))}
 .vw--grid .vw__c.is-focus{transform:scale(1.03);z-index:2}
-/* Smartphone: 2 Spalten, Antippen = groß */
+/* Fächer: nur die Fokus-Karte zeigt Knöpfe/Text */
+.vw--fan .vw__c:not(.is-focus) .vw__btns{display:none}
+.vw--fan .vw__c:not(.is-focus) .vw__cap{opacity:0}
+/* Smartphone: immer Fächer, Antippen = groß */
 @media (max-width:759px){
-  .vw__row{height:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .vw__c,.vw--fan .vw__c,.vw--acc .vw__c{position:relative;left:auto;top:auto;margin:0;max-width:none;width:auto;height:auto;aspect-ratio:var(--ar);flex:none;transform:none;translate:none;filter:none!important;opacity:1}
-  .vw--land .vw__row{grid-template-columns:1fr}
-  .vw--fan .vw__row{perspective:none}
-  .vw .vw__c.is-focus{grid-column:1/-1;aspect-ratio:9/14;z-index:1}
-  .vw--land .vw__c.is-focus{aspect-ratio:16/9}
-  .vw--acc .vw__c:not(.is-focus) .vw__cap{opacity:1;transform:none}
-  .vw--acc .vw__c:not(.is-focus) .vw__btns{display:flex}
-  .vw__c:not(.is-focus) .vw__cap{font-size:12px}
+  .vw{margin:20px auto}
+  .vw__stagebg{padding:12px 6px 14px;border-radius:18px}
+  .vw__head{margin-bottom:6px;padding-left:8px}
+  .vw--fan .vw__c:not(.is-focus){transform:translateX(calc(var(--k)*var(--spread)*1px)) translateY(calc(var(--k)*var(--k)*18px)) rotate(calc(var(--k)*6deg)) scale(.74)}
   .vw__btns{opacity:1}
 }
 @media (prefers-reduced-motion:reduce){.vw__c{transition:none!important;opacity:1;translate:none}}
@@ -132,17 +130,18 @@ export default {
     { name: 'others', label: 'Die anderen Videos, wenn eines im Fokus ist', type: 'select', options: OTHERS, default: OTHERS[0] },
     { name: 'sound', label: 'Fokus-Video bekommt Ton (nach Antippen/Klick)', type: 'checkbox', default: true },
     { name: 'allBtn', label: 'Knopf „alle pausieren / abspielen“ unter der Wand', type: 'checkbox', default: true },
-    { name: 'height', label: 'Höhe am PC in px (bei Querformat automatisch niedriger)', type: 'number', default: 720 },
+    { name: 'height', label: 'Maximale Höhe in px (wird automatisch an den Bildschirm angepasst, bei Querformat niedriger)', type: 'number', default: 620 },
     { name: 'accent', label: 'Akzentfarbe (Rahmen/Knöpfe)', type: 'text', default: '#ff6a4d' },
     { name: 'width', label: 'Breite', type: 'select', options: ['Rahmen', 'volle Breite'], default: 'Rahmen' },
     { name: 'bg', label: 'Hintergrund', type: 'select', options: ['dunkel', 'hell', 'transparent'], default: 'dunkel' },
   ],
   render(p0) {
     css();
-    const p = { format: FORMATS[0], layout: LAYOUTS[0], others: OTHERS[0], sound: true, allBtn: true, height: 720, accent: '#ff6a4d', width: 'Rahmen', bg: 'dunkel', ...p0 };
+    const p = { format: FORMATS[0], layout: LAYOUTS[0], others: OTHERS[0], sound: true, allBtn: true, height: 620, accent: '#ff6a4d', width: 'Rahmen', bg: 'dunkel', ...p0 };
     const items = (p.items || []).filter((i) => i && String(i.video || '').trim()).slice(0, 8);
-    const land = p.format === FORMATS[1], ar = land ? 16 / 9 : 9 / 16, H0 = Math.round(num(p.height, 720) * (land ? .56 : 1));
-    const mode = p.layout === LAYOUTS[1] ? 'fan' : p.layout === LAYOUTS[2] ? 'grid' : 'acc';
+    const land = p.format === FORMATS[1], ar = land ? 16 / 9 : 9 / 16, H0 = Math.round(num(p.height, 620) * (land ? .56 : 1));
+    const baseMode = p.layout === LAYOUTS[1] ? 'fan' : p.layout === LAYOUTS[2] ? 'grid' : 'acc', mq = matchMedia('(max-width:759px)');
+    const modeNow = () => (mq.matches ? 'fan' : baseMode); let mode = modeNow();
     const el = h('div', { class: `vw vw--${mode}${land ? ' vw--land' : ''}${p.bg === 'hell' ? ' vw--light' : p.bg === 'transparent' ? ' vw--clear' : ''}${p.width === 'volle Breite' ? ' vw--full' : ''}${matchMedia('(hover: none)').matches ? ' vw--touch' : ''}`, style: { '--vwh': H0 + 'px', '--acc': p.accent || '#ff6a4d' } });
     const bg = h('div', { class: 'vw__stagebg' }); el.append(bg);
     if (p.title) bg.append(h('h2', { class: 'vw__head' }, p.title));
@@ -189,14 +188,21 @@ export default {
     }
     // Größen: im Akkordeon ist die Fokus-Karte genau 9:16 breit, die anderen teilen sich den Rest als Streifen
     const layout = () => {
+      const W = row.clientWidth, mobile = mq.matches; if (W < 10) return;
+      let H = mobile ? Math.min(H0, Math.round(innerHeight * .62), Math.round(W * (land ? .74 : .64) / ar)) : Math.min(H0, Math.max(240, innerHeight - 300));
+      H = Math.max(120, H); el.style.setProperty('--vwh', H + 'px');
       if (mode === 'acc') {
-        const W = row.clientWidth, H = row.clientHeight, gap = 10; if (W < 10 || innerWidth < 760) return;
-        const target = Math.min(W - (N - 1) * 70 - (N - 1) * gap, H * ar), unit = Math.max(40, (W - (N - 1) * gap - target) / Math.max(1, N - 1));
+        const gap = 10, target = Math.min(W - (N - 1) * 70 - (N - 1) * gap, H * ar), unit = Math.max(40, (W - (N - 1) * gap - target) / Math.max(1, N - 1));
         el.style.setProperty('--vwg', (N === 1 ? 1 : Math.max(1, target / unit)).toFixed(3));
       } else if (mode === 'fan') {
-        const W = row.clientWidth, cw = H0 * ar; el.style.setProperty('--spread', Math.max(24, Math.min(cw * .62, (W - cw) / Math.max(1, N - 1) / 2 * 1.9)).toFixed(1));
+        const cw = H * ar; el.style.setProperty('--spread', Math.max(mobile ? 20 : 24, Math.min(cw * .62, (W - cw) / Math.max(1, N - 1) / 2 * 1.9)).toFixed(1));
       }
     };
+    mq.addEventListener?.('change', () => {
+      const m = modeNow(); if (m === mode) return;
+      el.classList.remove('vw--' + mode); mode = m; el.classList.add('vw--' + mode);
+      el.style.removeProperty('--vwg'); el.style.removeProperty('--spread'); setFocus(mode === 'fan' ? Math.floor((N - 1) / 2) : 0);
+    });
     new ResizeObserver(layout).observe(row);
     // Sichtbarkeit: nur Videos im Bild laufen; nahe Videos werden schon vorgeladen
     const io = new IntersectionObserver((es) => { for (const e of es) { const s = cards.find((x) => x.c === e.target); if (!s) continue; s.vis = e.isIntersecting; if (e.isIntersecting && !s.loaded) { s.loaded = true; s.pl.load(); } sync(s); } }, { threshold: 0.25, rootMargin: '120px' });

@@ -57,7 +57,9 @@ export default {
         } catch (e) { console.warn('Laptop3D:', e); gp = null; }
       }
     }
-    const copyItem = h('div', { class: 'dv__item' }, h('h3', { class: 'dv__it' }), h('p', { class: 'dv__ix' }));
+    // Alle Einträge liegen übereinander in EINER Gitterzelle: der Textblock ist immer so hoch wie der längste Text – beim Wechsel springt nichts mehr
+    const itemEls = items.map((it) => h('div', { class: 'dv__item' }, h('h3', { class: 'dv__it' }, it.title || ''), h('p', { class: 'dv__ix' }, it.text || '')));
+    const copyItem = h('div', { class: 'dv__items' }, itemEls);
     const dots = h('div', { class: 'dv__dots' }, items.map((_, i) => h('span', {}, String(i + 1).padStart(2, '0'))));
     const copy = h('div', { class: 'dv__copy' }, p.kicker ? h('p', { class: 'dv__k' }, p.kicker) : null, h('h2', { class: 'dv__h' }, p.title || ''),
       p.text ? h('p', { class: 'dv__p' }, p.text) : null, copyItem, items.length > 1 ? dots : null,
@@ -86,9 +88,8 @@ export default {
     const setCur = (i) => {
       if (i === cur) return; cur = i;
       screens.forEach((s, k) => { s.classList.toggle('is-on', k === i); s.classList.toggle('is-past', k < i); const v = s.querySelector('video'); if (v) { if (k === i) v.play?.().catch(() => {}); else v.pause?.(); } });
-      copyItem.classList.remove('is-in'); void copyItem.offsetWidth;
-      copyItem.querySelector('.dv__it').textContent = items[i]?.title || ''; copyItem.querySelector('.dv__ix').textContent = items[i]?.text || '';
-      copyItem.classList.add('is-in'); dots.childNodes.forEach((d, k) => d.classList.toggle('is-on', k === i));
+      itemEls.forEach((e, k) => { e.classList.toggle('is-in', k === i); e.setAttribute('aria-hidden', k === i ? 'false' : 'true'); });
+      dots.childNodes.forEach((d, k) => d.classList.toggle('is-on', k === i));
       const u = el.querySelector('.dv__url'); if (u && items[i]) u.textContent = items[i].url || items[i].title || ''; applyVol();
     };
     setCur(0);
@@ -97,11 +98,9 @@ export default {
     const fit = () => {
       copy.style.zoom = ''; stage.classList.remove('dv--fix');
       if (!mq.matches || !stage.isConnected || !stage.clientHeight) return;
-      stage.classList.add('dv--fix'); const keep = cur; let worst = 1;
+      stage.classList.add('dv--fix');
       const over = () => copy.getBoundingClientRect().bottom > stage.getBoundingClientRect().bottom - 10;
-      items.forEach((it, k) => { copyItem.querySelector('.dv__it').textContent = it.title || ''; copyItem.querySelector('.dv__ix').textContent = it.text || ''; let z = 1; copy.style.zoom = ''; while (z > .75 && over()) { z -= .04; copy.style.zoom = z.toFixed(2); } worst = Math.min(worst, z); });
-      copy.style.zoom = ''; copyItem.querySelector('.dv__it').textContent = items[keep]?.title || ''; copyItem.querySelector('.dv__ix').textContent = items[keep]?.text || '';
-      if (worst < 1) copy.style.zoom = worst.toFixed(2);
+      let z = 1; while (z > .75 && over()) { z -= .04; copy.style.zoom = z.toFixed(2); }
       if (over()) stage.classList.remove('dv--fix');
     };
     requestAnimationFrame(() => requestAnimationFrame(fit)); addEventListener('resize', fit); setTimeout(fit, 600); document.fonts?.ready?.then(fit);

@@ -107,6 +107,20 @@ export default {
     const fly = [];
     const nFly = clamp(Math.round(num(p.flyCards, 9)), 0, 24);
     const seeds0 = (Array.isArray(p.cards) && p.cards.length ? p.cards : (DE ? SEEDS_DE : SEEDS_EN));
+    // Handy: Das Board ist nur ~370 px breit. Die Positionen in % vom Computer passen dort nicht (Karten wären winzig und abgeschnitten).
+    // Deshalb werden die Karten hier automatisch in zwei Spalten gepackt (Tabellen/Bilder über die volle Breite).
+    const narrow = innerWidth < 600;
+    const packNarrow = (list) => {
+      const col = [14, 14], H = 480, out = [], nl = (x) => lines(x).length;
+      list.forEach((s) => {
+        const t = s.type || 'note'; const hpx = t === 'note' ? 100 : t === 'tasks' ? 44 + 26 * Math.max(2, nl(s.text)) : t === 'column' ? 40 + 34 * Math.max(1, nl(s.text)) : t === 'table' ? 44 + 30 * Math.max(3, nl(s.text)) : 130;
+        const full = t === 'table' || (t === 'image' && num(s.w, 22) > 40);
+        if (full) { const y = Math.max(col[0], col[1]); out.push({ ...s, x: 3, y: (y / H) * 100, w: 94 }); col[0] = col[1] = y + hpx + 10; }
+        else { const c = col[0] <= col[1] ? 0 : 1; out.push({ ...s, x: c ? 52 : 3, y: (col[c] / H) * 100, w: 45 }); col[c] += hpx + 10; }
+      });
+      return out;
+    };
+    const seeds1 = narrow ? packNarrow(seeds0) : seeds0;
     const space = h('div', { class: 'nb__space' });
     for (let i = 0; i < nFly; i++) {
       const s = seeds0[i % seeds0.length] || {}, type = s.type || 'note';
@@ -131,7 +145,14 @@ export default {
     /* ---- Karten-Modell ---- */
     let bw = 1000, bh = 600, zTop = 10;
     const cards = [];
-    const mkTitle = (c, ph) => { const inp = h('input', { class: 'nb__ct', type: 'text', value: c.title || '', placeholder: ph, spellcheck: 'false' }); inp.addEventListener('input', () => { c.title = inp.value; c.touched = true; }); inp.addEventListener('pointerdown', (e) => e.stopPropagation()); return inp; };
+    const mkTitle = (c, ph) => { const inp = h('input', { class: 'nb__ct', type: 'text', value: c.title || '', placeholder: ph, spellcheck: 'false' }); inp.addEventListener('input', () => { c.title = inp.value; c.touched = true; }); inp.addEventListener('pointerdown', (e) => {
+      e.stopPropagation(); if (e.pointerType === 'mouse') return;
+      // Touch: Das Titelfeld füllt fast die ganze Kopfzeile. Tippen = Text bearbeiten, Wischen = Karte verschieben (sonst ließe sich die Karte am Handy kaum anfassen)
+      const sx = e.clientX, sy = e.clientY, id = e.pointerId, head = c.el && c.el.querySelector('.nb__ch');
+      const off = () => { removeEventListener('pointermove', mv, true); removeEventListener('pointerup', off, true); removeEventListener('pointercancel', off, true); };
+      const mv = (ev) => { if (ev.pointerId !== id || Math.hypot(ev.clientX - sx, ev.clientY - sy) < 8) return; off(); inp.blur(); if (head) startDrag({ clientX: sx, clientY: sy, pointerId: id, currentTarget: head, preventDefault() {}, button: 0 }, c); };
+      addEventListener('pointermove', mv, true); addEventListener('pointerup', off, true); addEventListener('pointercancel', off, true);
+    }); return inp; };
     const editable = (c, cls, html, key) => { const d = h('div', { class: cls, contenteditable: 'true', spellcheck: 'false' }); d.textContent = html; d.addEventListener('input', () => { c.touched = true; if (key) c[key] = d.textContent; }); return d; };
 
     function build(c) {
@@ -204,12 +225,12 @@ export default {
       if (type === 'table') { const rs = lines(s.text).map(l => l.split(/[,|;]\s*/)); c.rows = rs.length ? rs : [['', '', ''], ['', '', '']]; while (c.rows.length < 3) c.rows.push(Array(c.rows[0].length).fill('')); c.full = JSON.parse(JSON.stringify(c.rows)); }
       c.fullText = c.text; return c;
     };
-    const addSeeds = (instant) => { seeds0.forEach((s, i) => { const c = seedCard(s, i); cards.push(c); build(c); if (instant) { c.el.style.opacity = '1'; c.el.style.transform = 'none'; c.seedP = 1; } else c.el.style.opacity = '0'; }); };
+    const addSeeds = (instant) => { seeds1.forEach((s, i) => { const c = seedCard(s, i); cards.push(c); build(c); if (instant) { c.el.style.opacity = '1'; c.el.style.transform = 'none'; c.seedP = 1; } else c.el.style.opacity = '0'; }); };
     addSeeds(false);
     resetB.addEventListener('click', () => { cards.splice(0).forEach(c => c.el.remove()); sel = null; addSeeds(true); });
     dock.addEventListener('click', (e) => {
       const b = e.target.closest('.nb__db'); if (!b || !live) return; const k = b.dataset.k;
-      const c = { type: k, fx: .22 + Math.random() * .4, fy: .2 + Math.random() * .35, fw: DEF_W[k], fh: k === 'note' ? .18 : k === 'image' ? .3 : 0, title: '', text: '', items: k === 'tasks' ? [{ t: '', done: false }, { t: '', done: false }] : k === 'column' ? [{ t: '' }] : undefined, touched: true };
+      const c = { type: k, fx: .22 + Math.random() * .4, fy: .2 + Math.random() * .35, fw: narrow ? Math.max(DEF_W[k], .46) : DEF_W[k], fh: k === 'note' ? .18 : k === 'image' ? .3 : 0, title: '', text: '', items: k === 'tasks' ? [{ t: '', done: false }, { t: '', done: false }] : k === 'column' ? [{ t: '' }] : undefined, touched: true };
       c.fx = Math.min(c.fx, .98 - c.fw); cards.push(c); const el = build(c); el.classList.add('is-new'); requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('is-new'))); select(c);
       if (k === 'note') c.bodyEl.focus(); else if (k === 'image') { pickFor = c; file.click(); } else { const f = el.querySelector('.nb__ct'); if (f) f.focus(); }
     });

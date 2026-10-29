@@ -38,14 +38,16 @@ export const carousel3dBlock = {
     SOURCE, { name: 'items', label: 'Bilder', type: 'list', itemFields: ITEM, default: [] }, HEIGHT,
     { name: 'format', label: 'Kartenformat', type: 'select', options: ['automatisch', 'hochkant', 'quer'], default: 'automatisch' },
     { name: 'speed', label: 'Drehgeschwindigkeit (0 = steht)', type: 'number', default: 14 },
+    { name: 'cardScale', label: 'Größe der Bilder (Schieber, 1 = Standard)', type: 'range', min: .5, max: 2, step: .05, default: 1 },
+    { name: 'spread', label: 'Breite – wie weit das Karussell nach links/rechts reicht (Schieber, 1 = Standard)', type: 'range', min: .3, max: 2.5, step: .05, default: 1 },
   ],
   render(p0, ctx) {
-    const p = { source: 'eigene Bilder', height: 560, format: 'automatisch', speed: 14, ...p0 };
-    const items = getItems(p, ctx); const el = wrapEl('b-gal--3d', p);
+    const p = { source: 'eigene Bilder', height: 560, format: 'automatisch', speed: 14, cardScale: 1, spread: 1, ...p0 };
+    const items = getItems(p, ctx); const el = wrapEl('b-gal--3d', p); const cs = Number(p.cardScale) || 1;
     if (items.length < 3) { el.append(h('p', { class: 'b-gal__empty' }, 'Mindestens 3 Bilder hinzufügen.')); return el; }
     const tall = (r) => p.format === 'hochkant' || (p.format !== 'quer' && r.width < 700);
     whenSized(el, () => carousel3d(el, items, { speed: still() ? 0 : Number(p.speed) || 0, reduced: still(), onFront: goto, fitAngle: 100, light: matchMedia('(max-width: 899px)').matches,
-      size: (r) => tall(r) ? { w: Math.min(r.width * .6, r.height * .8 * .5625), aspect: .5625 } : { w: Math.min(r.width * .6, r.height * .8 * 16 / 9), aspect: 16 / 9 } }));
+      size: (r) => tall(r) ? { w: Math.min(r.width * .6, r.height * .8 * .5625), aspect: .5625 } : { w: Math.min(r.width * .6, r.height * .8 * 16 / 9), aspect: 16 / 9 }, spread: Number(p.spread) || 1, zoom: cs }));
     return el;
   },
 };

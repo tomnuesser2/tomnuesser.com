@@ -519,7 +519,6 @@
   .hero--car { overflow-x: clip; overflow-y: visible; }
   .hero--car .hero__cards { translate: 0 var(--car-y, 0px); }
   .hero--car .hero__cards .cc { overflow: visible; }
-  .hero--car .hero__cards { clip-path: inset(-18% -60vw -14% -60vw); }   /* Karten dürfen an den Rändern ausschwingen, fliegen beim Einflug aber nicht über Namen/Kopfzeile */
   .hero--car .hn--d { translate: 0 var(--name-y, 0px); position: relative; z-index: 3; }
   .hero--car .hero__roles { translate: 0 var(--title-y, 0px); }
   .hero--car .hero__cue { padding-top: clamp(6px, 1.2svh, 14px); padding-bottom: calc(clamp(26px, 5svh, 52px) + env(safe-area-inset-bottom)); }

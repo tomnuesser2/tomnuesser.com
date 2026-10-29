@@ -1,0 +1,191 @@
+import { h } from '../core/dom.js';
+import { carousel3d } from '../core/carousel3d.js';
+import { flexCarousel } from '../core/flexCarousel.js';
+import { still, clamp } from '../core/scrollhub.js';
+import { getLang } from '../core/i18n.js';
+import { imgFor } from '../core/media.js';
+
+// Galerie-Elemente für Projektseiten (und überall sonst): 3D-Karussell, Flex-Karussell, Accordion, Vorher/Nachher.
+const ITEM = [
+  { name: 'image', label: '💻 Bild (Computer)', type: 'image' },
+  { name: 'imageMobile', label: '📱 Bild für Smartphone (leer = wie Computer)', type: 'image' },
+  { name: 'title', label: 'Titel (optional)', type: 'text' },
+  { name: 'subtitle', label: 'Untertitel (optional)', type: 'text' },
+  { name: 'link', label: 'Link beim Antippen (optional, z. B. ein Projekt-Name)', type: 'text' },
+];
+const SOURCE = { name: 'source', label: 'Inhalt', type: 'select', options: ['eigene Bilder', 'alle Projekte'], default: 'eigene Bilder' };
+const HEIGHT = { name: 'height', label: 'Höhe am PC in px (am Handy passt sie sich an)', type: 'number', default: 560 };
+
+function getItems(p, ctx) {
+  if (p.source === 'alle Projekte') {
+    const idx = ctx.content.index;
+    return (idx.order || []).map(s => ({ slug: s, ...idx.projects[s] })).filter(x => x.image && !x.hidden)
+      .map(x => ({ src: imgFor(x), title: String(x.title || x.slug).replace(/\n/g, ' '), subtitle: x.roles || '', href: x.slug }));
+  }
+  return (p.items || []).filter(i => i.image).map(i => ({ src: imgFor(i), title: i.title || '', subtitle: i.subtitle || '', href: i.link || '' }));
+}
+const wrapEl = (cls, p, extra = {}) => {
+  const el = h('div', { class: `b-gal ${cls}${p.bg === 'dunkel' ? ' b-gal--dark' : ''}`, style: { '--gh': `${Number(p.height) || 560}px`, ...extra } });
+  return el;
+};
+const goto = (it) => { if (!it.href) return; const a = document.createElement('a'); a.href = it.href; a.setAttribute('data-link', ''); a.hidden = true; document.body.append(a); a.click(); a.remove(); };
+// Elemente starten erst, wenn sie im Bild sind (spart Leistung, WebGL braucht eine Größe)
+const whenSized = (el, fn) => { const ro = new ResizeObserver(() => { if (el.clientWidth > 10 && el.clientHeight > 10) { ro.disconnect(); fn(); } }); ro.observe(el); };
+
+export const carousel3dBlock = {
+  type: 'carousel3d', label: '3D-Karussell (überlappende Karten)',
+  fields: [
+    SOURCE, { name: 'items', label: 'Bilder', type: 'list', itemFields: ITEM, default: [] }, HEIGHT,
+    { name: 'format', label: 'Kartenformat', type: 'select', options: ['automatisch', 'hochkant', 'quer'], default: 'automatisch' },
+    { name: 'speed', label: 'Drehgeschwindigkeit (0 = steht)', type: 'number', default: 14 },
+    { name: 'cardScale', label: 'Größe der Bilder (Schieber, 1 = Standard)', type: 'range', min: .5, max: 2, step: .05, default: 1 },
+    { name: 'spread', label: 'Breite – wie weit das Karussell nach links/rechts reicht (Schieber, 1 = Standard)', type: 'range', min: .3, max: 2.5, step: .05, default: 1 },
+  ],
+  render(p0, ctx) {
+    const p = { source: 'eigene Bilder', height: 560, format: 'automatisch', speed: 14, cardScale: 1, spread: 1, ...p0 };
+    const items = getItems(p, ctx); const el = wrapEl('b-gal--3d', p); const cs = Number(p.cardScale) || 1;
+    if (items.length < 3) { el.append(h('p', { class: 'b-gal__empty' }, 'Mindestens 3 Bilder hinzufügen.')); return el; }
+    const tall = (r) => p.format === 'hochkant' || (p.format !== 'quer' && r.width < 700);
+    whenSized(el, () => carousel3d(el, items, { speed: still() ? 0 : Number(p.speed) || 0, reduced: still(), onFront: goto, fitAngle: 100, light: matchMedia('(max-width: 899px)').matches,
+      size: (r) => tall(r) ? { w: Math.min(r.width * .6, r.height * .8 * .5625), aspect: .5625 } : { w: Math.min(r.width * .6, r.height * .8 * 16 / 9), aspect: 16 / 9 }, spread: Number(p.spread) || 1, zoom: cs }));
+    return el;
+  },
+};
+
+export const flexBlock = {
+  type: 'flexCarousel', label: 'Flex-Karussell (Bilderreihe mit Knick, WebGL)',
+  fields: [
+    SOURCE, { name: 'items', label: 'Bilder', type: 'list', itemFields: ITEM, default: [] }, HEIGHT,
+    { name: 'preset', label: 'Form der Linse', type: 'select', options: ['liquid', 'ribbon', 'vortex', 'arch'], default: 'liquid' },
+    { name: 'fit', label: 'Kartenform', type: 'select', options: ['natural', 'portrait', 'square', 'landscape'], default: 'landscape' },
+    { name: 'captions', label: 'Titel und Zähler zeigen', type: 'checkbox', default: true },
+    { name: 'autoplay', label: 'Automatisch weiterblättern', type: 'checkbox', default: false },
+  ],
+  render(p0, ctx) {
+    const p = { source: 'eigene Bilder', height: 560, preset: 'liquid', fit: 'landscape', captions: true, autoplay: false, ...p0 };
+    const items = getItems(p, ctx); const el = wrapEl('b-gal--flex', p);
+    if (items.length < 2) { el.append(h('p', { class: 'b-gal__empty' }, 'Mindestens 2 Bilder hinzufügen.')); return el; }
+    whenSized(el, () => {
+      const narrow = el.clientWidth < 700;
+      const ch = p.captions ? .8 : (narrow ? .92 : .9);
+      // Handy: Karte ca. 3/4 der Breite → links und rechts schauen die Nachbarbilder heraus
+      const fitV = narrow && p.fit !== 'natural' ? Math.max(.6, Math.min(1.7, (el.clientWidth * .76) / (ch * el.clientHeight))) : p.fit;
+      const c = flexCarousel(el, items, { preset: p.preset, fit: fitV, cardHeight: ch, maxW: narrow ? el.clientWidth * .78 : 0, gap: narrow ? 8 : 14, radius: 10, captions: !!p.captions, autoplay: !!p.autoplay, onSelect: goto });
+      if (!c) { el.classList.add('is-nogl'); items.forEach(i => el.append(h('img', { src: i.src, alt: i.title || '', loading: 'lazy' }))); }
+    });
+    return el;
+  },
+};
+
+export const accordionBlock = {
+  type: 'accordion', label: 'Accordion-Galerie (Bilder klappen auf)',
+  fields: [
+    SOURCE, { name: 'items', label: 'Bilder', type: 'list', itemFields: ITEM, default: [] },
+    { name: 'height', label: 'Höhe in px', type: 'number', default: 460 },
+    { name: 'open', label: 'Zuerst geöffnetes Bild (Nummer, 1 = erstes)', type: 'number', default: 3 },
+    { name: 'trigger', label: 'Öffnen bei', type: 'select', options: ['hover', 'click'], default: 'hover' },
+    { name: 'grayscale', label: 'Geschlossene Bilder in Schwarz-Weiß', type: 'checkbox', default: true },
+    { name: 'tilt', label: 'Kippwinkel der geschlossenen Bilder (Grad)', type: 'number', default: 8 },
+  ],
+  render(p0, ctx) {
+    const p = { source: 'eigene Bilder', height: 460, open: 3, trigger: 'hover', grayscale: true, tilt: 8, ...p0 };
+    const items = getItems(p, ctx); const n = items.length;
+    const el = h('div', { class: 'ag', role: 'list' });
+    if (n < 2) { el.append(h('p', { class: 'b-gal__empty' }, 'Mindestens 2 Bilder hinzufügen.')); return el; }
+    let active = clamp(Math.round(Number(p.open) || 1) - 1, 0, n - 1);
+    const panels = items.map((it, i) => {
+      const img = h('img', { src: it.src, alt: it.title || '', draggable: 'false', loading: 'lazy' });
+      const media = h('span', { class: 'ag__media' }, img);
+      const label = h('span', { class: 'ag__label', 'aria-hidden': 'true' }, h('span', { class: 'ag__bar' }), h('span', { class: 'ag__text' }, it.title || '', it.subtitle ? h('em', {}, it.subtitle) : null));
+      const a = h(it.href ? 'a' : 'div', { class: 'ag__panel', role: 'listitem', tabindex: '0', 'aria-label': it.title || '', ...(it.href ? { href: it.href, 'data-link': '' } : {}) }, h('span', { class: 'ag__frame' }, media, h('span', { class: 'ag__overlay' })), label);
+      a.addEventListener('pointerenter', (e) => { if (p.trigger === 'hover' && e.pointerType === 'mouse') set(i); });
+      a.addEventListener('focus', () => set(i));
+      a.addEventListener('click', (e) => { if (i !== active) { e.preventDefault(); set(i); } else if (!it.href) e.preventDefault(); });
+      a.addEventListener('keydown', (e) => { const k = e.key; if (k === 'ArrowRight' || k === 'ArrowDown') { e.preventDefault(); set((i + 1) % n, true); } else if (k === 'ArrowLeft' || k === 'ArrowUp') { e.preventDefault(); set((i - 1 + n) % n, true); } });
+      return { a, media };
+    });
+    el.append(...panels.map(x => x.a));
+    const R = .52, grow = (R * (n - 1)) / (1 - R);
+    const layout = () => {
+      const vertical = el.clientWidth < 520; el.classList.toggle('ag--v', vertical);
+      el.style.height = (vertical ? Math.round(Math.max(Number(p.height) || 460, 120 * n)) : Number(p.height) || 460) + 'px';
+      const total = vertical ? el.clientHeight : el.clientWidth, size = Math.max(140, (total - 10 * (n - 1)) * R * 1.22);
+      el.style.setProperty('--ag-size', size + 'px');
+      panels.forEach(({ a, media }, i) => {
+        const on = i === active, rot = on ? 0 : i < active ? p.tilt : -p.tilt, shift = clamp(active - i, -1.5, 1.5) * .5 * size * .06;
+        a.style.flexGrow = on ? grow : 1; a.classList.toggle('is-on', on);
+        a.style.transform = vertical || still() ? '' : (`rotate${vertical ? 'X' : 'Y'}(${vertical ? -rot : rot}deg)`);
+        media.style.setProperty('--sx', (on ? 0 : shift).toFixed(1) + 'px');
+        media.style.setProperty('--gray', p.grayscale ? (on ? 0 : 1) : 0); media.style.setProperty('--dim', on ? 0 : .35);
+      });
+    };
+    function set(i) { if (i === active) return; active = i; layout(); }
+    new ResizeObserver(layout).observe(el); layout();
+    return el;
+  },
+};
+
+export const compareBlock = {
+  type: 'compare', label: 'Vorher / Nachher (z. B. Color Grading)',
+  fields: [
+    { name: 'before', label: '💻 Computer: Vorher-Bild', type: 'image', default: '' },
+    { name: 'after', label: '💻 Computer: Nachher-Bild', type: 'image', default: '' },
+    { name: 'ratio', label: '💻 Computer: Seitenverhältnis (z. B. 16/9)', type: 'text', default: '16/9' },
+    { name: 'orientation', label: '💻 Computer: Trennlinie', type: 'select', options: ['senkrecht', 'waagerecht'], default: 'senkrecht' },
+    { name: 'beforeMobile', label: '📱 Handy: Vorher-Bild (leer = wie Computer)', type: 'image', default: '' },
+    { name: 'afterMobile', label: '📱 Handy: Nachher-Bild (leer = wie Computer)', type: 'image', default: '' },
+    { name: 'ratioMobile', label: '📱 Handy: Seitenverhältnis (z. B. 9/16 oder 4/5; leer = wie Computer)', type: 'text', default: '' },
+    { name: 'orientationMobile', label: '📱 Handy: Trennlinie', type: 'select', options: ['wie Computer', 'senkrecht', 'waagerecht'], default: 'wie Computer' },
+    { name: 'labelBefore', label: 'Beschriftung links', type: 'text', default: 'before', de: 'Vorher' },
+    { name: 'labelAfter', label: 'Beschriftung rechts', type: 'text', default: 'after', de: 'Nachher' },
+    { name: 'start', label: 'Startposition in % (0–100)', type: 'number', default: 50 },
+    { name: 'radius', label: 'Rundung', type: 'select', options: ['sm', 'xl', 'none'], default: 'sm' },
+    { name: 'caption', label: 'Bildunterschrift (optional)', type: 'text', default: '' },
+  ],
+  render(p0) {
+    const p = { labelBefore: 'before', labelAfter: 'after', ratio: '16/9', start: 50, orientation: 'senkrecht', radius: 'sm', ...p0 };
+    const build = (bef, aft, ratio, vertical, cls) => {
+      const el = h('figure', { class: `cmp cmp--${p.radius} ${vertical ? 'cmp--h' : ''} ${cls}`, style: { aspectRatio: String(ratio || '16/9').replace(/\s+/g, '') } });
+      if (!bef || !aft) { el.append(h('p', { class: 'b-gal__empty' }, 'Vorher- und Nachher-Bild auswählen.')); return el; }
+      const handle = h('button', { class: 'cmp__handle', type: 'button', role: 'slider', 'aria-label': `${p.labelBefore} / ${p.labelAfter}`, 'aria-valuemin': '0', 'aria-valuemax': '100' }, h('i', {}));
+      el.append(h('img', { class: 'cmp__img', src: aft, alt: p.labelAfter, draggable: 'false', decoding: 'async' }),
+        h('div', { class: 'cmp__before' }, h('img', { class: 'cmp__img', src: bef, alt: p.labelBefore, draggable: 'false', decoding: 'async' })),
+        h('span', { class: 'cmp__tag cmp__tag--a' }, p.labelBefore), h('span', { class: 'cmp__tag cmp__tag--b' }, p.labelAfter), handle,
+        p.caption ? h('figcaption', { class: 'cmp__cap' }, p.caption) : null);
+      let v = clamp(Number(p.start) / 100 || .5), drag = false;
+      const apply = () => { el.style.setProperty('--v', (v * 100).toFixed(2) + '%'); handle.setAttribute('aria-valuenow', String(Math.round(v * 100))); };
+      const at = (e) => { const r = el.getBoundingClientRect(); v = clamp(vertical ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width, .0, 1); apply(); };
+      // Maus: sofort greifen. Finger: nur wenn der Griff berührt wird (senkrecht) bzw. erst nach klar waagerechter Bewegung – so lässt sich die Seite über dem Bild ganz normal scrollen
+      let pend = null;
+      const begin = (e) => { drag = true; el.classList.add('is-drag'); try { el.setPointerCapture(e.pointerId); } catch { /* egal */ } };
+      el.addEventListener('pointerdown', (e) => {
+        if (e.button) return;
+        if (e.pointerType === 'mouse') { begin(e); at(e); return; }
+        if (vertical) { if (e.target.closest && e.target.closest('.cmp__handle')) { begin(e); at(e); } return; }
+        pend = { x: e.clientX, y: e.clientY, id: e.pointerId };
+      });
+      el.addEventListener('pointermove', (e) => {
+        if (drag) { at(e); return; }
+        if (!pend || e.pointerId !== pend.id) return;
+        const dx = Math.abs(e.clientX - pend.x), dy = Math.abs(e.clientY - pend.y);
+        if (dy > 8 && dy > dx * .7) { pend = null; return; }
+        if (dx > 10 && dx > dy * 1.4) { pend = null; begin(e); at(e); }
+      });
+      const end = () => { drag = false; pend = null; el.classList.remove('is-drag'); }; el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+      el.addEventListener('keydown', (e) => { const d = { ArrowLeft: -.04, ArrowDown: -.04, ArrowRight: .04, ArrowUp: .04 }[e.key]; if (d) { e.preventDefault(); v = clamp(v + d); apply(); } });
+      apply();
+      return el;
+    };
+    const vPc = p.orientation === 'waagerecht';
+    const pc = build(p.before, p.after, p.ratio, vPc, 'cmp-pc');
+    const hasMob = !!(p.beforeMobile || p.afterMobile || String(p.ratioMobile || '').trim() || (p.orientationMobile && p.orientationMobile !== 'wie Computer'));
+    if (!hasMob) return pc;
+    const vMob = !p.orientationMobile || p.orientationMobile === 'wie Computer' ? vPc : p.orientationMobile === 'waagerecht';
+    const mob = build(p.beforeMobile || p.before, p.afterMobile || p.after, String(p.ratioMobile || '').trim() || p.ratio, vMob, 'cmp-mob');
+    return h('div', { class: 'cmp-pair' }, pc, mob);
+  },
+};
+// Hintergrund: weiß (Standard) oder dunkel
+const BG = { name: 'bg', label: 'Hintergrund', type: 'select', options: ['weiß', 'dunkel'], default: 'weiß' };
+for (const b of [carousel3dBlock, flexBlock, accordionBlock, compareBlock]) if (!b.fields.some(f => f.name === 'bg')) b.fields.push(BG);
+export default [carousel3dBlock, flexBlock, accordionBlock, compareBlock];

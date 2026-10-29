@@ -1,0 +1,22 @@
+/* Handy-Schonung: teure Effekte weg, die auf Telefonen ruckeln (Körnung mit Überblendung, Weichzeichner-Flächen, Dauer-Ebenen). Nur Touch / schmale Bildschirme. */
+@media (max-width: 899px), (pointer: coarse) {
+  .fx-grain .media-frame::after { display: none; }
+  .palette, .pill, .cmp__tag, .dv__vol, .media-snd { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .fs__grain { display: none; }
+}
+
+/* Nativer Snap (Handy): Browser bremst weich an Abschnitten/Hero-Karten, Schwung und Bremskurve übernimmt das Betriebssystem. */
+html.snap-native { scroll-snap-type: y mandatory; overscroll-behavior-y: none; }
+html.snap-native .page[data-page="home"] > [data-bi]:not([data-snapfree]) { scroll-snap-align: start; scroll-snap-stop: always; }
+#snapmarks { position: absolute; left: 0; top: 0; width: 1px; height: 0; pointer-events: none; opacity: 0; }
+#snapmarks i { position: absolute; left: 0; width: 1px; height: 1px; scroll-snap-align: start; scroll-snap-stop: always; }
+/* Langes Drücken auf Bildern/Karten darf das Scrollen nie blockieren (kein Kontextmenü, keine Auswahl, kein Bild-Ziehen) */
+.cc, .cc *, .hm, .hm *, .fc, .fc * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; }
+
+/* Sparstufe des Frame-Wächters (core/quality.js): sieht fast gleich aus, malt aber deutlich weniger */
+html[data-fx="lite"] .fx-grain .media-frame::after, html[data-fx="lite"] .fs__grain { display: none; }
+html[data-fx="lite"] .nb__c, html[data-fx="lite"] .nb__c.is-sel, html[data-fx="lite"] .nb__fc, html[data-fx="lite"] .nt__c, html[data-fx="lite"] .nb__win { box-shadow: 0 2px 8px rgba(0,0,0,.14); }
+html[data-fx="lite"] .nb__c.is-drag { box-shadow: 0 6px 14px rgba(0,0,0,.2); }
+html[data-fx="lite"] .fl__dock, html[data-fx="lite"] .nb__dock, html[data-fx="lite"] .nb__zb { box-shadow: 0 2px 8px rgba(0,0,0,.14); }
+html[data-fx="lite"] .fl__title::before, html[data-fx="lite"] .fl__title::after { display: none; }
+html[data-fx="lite"] * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }

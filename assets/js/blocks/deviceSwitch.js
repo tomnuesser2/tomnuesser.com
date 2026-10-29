@@ -43,11 +43,15 @@ export default {
       h('div', { class: 'dd__lid' }, h('div', { class: 'dd__lscreen' }, lScr, h('div', { class: 'dd__player' }, h('b', {}, '▶'), lTitle, h('span', { class: 'dd__tl' }, lBar)))), h('div', { class: 'dd__base' }));
     S.phone.el = pScr; S.laptop.el = lScr;
     const dev = h('div', { class: 'dd__dev' }, laptop, phone);
-    const k = h('p', { class: 'dd__k' }, p.kicker), gT = h('h2', { class: 'dd__h' }), gX = h('p', { class: 'dd__p' });
-    const iT = h('h3', { class: 'dd__it' }), iX = h('p', { class: 'dd__ix' }), item = h('div', { class: 'dd__item' }, iT, iX);
+    const k = h('p', { class: 'dd__k' }, p.kicker);
+    // Alle Texte (beide Geräte, alle Einträge) liegen übereinander in je EINER Gitterzelle: Der Textblock ist immer so hoch wie der längste Text,
+    // beim Weiterschalten springt oder wächst nichts mehr (kein Ruckeln der ganzen Bühne)
+    const headEl = { phone: h('div', { class: 'dd__hd' }, h('h2', { class: 'dd__h' }, p.shortTitle || ''), h('p', { class: 'dd__p' }, p.shortText || '')), laptop: h('div', { class: 'dd__hd' }, h('h2', { class: 'dd__h' }, p.longTitle || ''), h('p', { class: 'dd__p' }, p.longText || '')) };
+    const itemEl = { phone: items.phone.map(it => h('div', { class: 'dd__item' }, h('h3', { class: 'dd__it' }, it.title || ''), h('p', { class: 'dd__ix' }, it.text || ''))), laptop: items.laptop.map(it => h('div', { class: 'dd__item' }, h('h3', { class: 'dd__it' }, it.title || ''), h('p', { class: 'dd__ix' }, it.text || ''))) };
+    const heads = h('div', { class: 'dd__heads' }, headEl.phone, headEl.laptop), item = h('div', { class: 'dd__items' }, itemEl.phone, itemEl.laptop);
     const sw = ['phone', 'laptop'].map(m => h('button', { type: 'button', class: 'dd__sw', 'data-m': m, 'aria-label': m === 'phone' ? p.shortTitle : p.longTitle }, h('i', {})));
     const cta = p.ctaText ? h('a', { class: 'cta dd__cta', href: p.ctaLink || 'projects', 'data-link': '', 'data-magnetic': '1' }, h('span', {}, p.ctaText), h('i', { 'aria-hidden': 'true' }, '→')) : null;
-    const el = h('section', { class: 'dd', id: p.id }, h('div', { class: 'dd__sticky' }, h('div', { class: 'dd__stage' }, dev, h('div', { class: 'dd__copy' }, k, h('div', { class: 'dd__dots' }, sw), gT, gX, item)), cta));
+    const el = h('section', { class: 'dd', id: p.id }, h('div', { class: 'dd__sticky' }, h('div', { class: 'dd__stage' }, dev, h('div', { class: 'dd__copy' }, k, h('div', { class: 'dd__dots' }, sw), heads, item)), cta));
 
     // Screens aufbauen
     for (const m of ['phone', 'laptop']) {
@@ -71,7 +75,7 @@ export default {
       if (m === 'phone') [...bars.children].forEach((b, n) => { b.firstChild.style.transform = `scaleX(${n < st.cur ? 1 : 0})`; });
       else lBar.style.transform = 'scaleX(0)';
       lTitle.textContent = items.laptop[S.laptop.cur] ? items.laptop[S.laptop.cur].title || '' : '';
-      if (m === front) { const it = list[st.cur]; iT.textContent = it.title || ''; iX.textContent = it.text || ''; item.classList.remove('is-in'); void item.offsetWidth; item.classList.add('is-in'); if (play) run(); }
+      if (m === front) { itemEl.phone.forEach(e => e.classList.remove('is-in')); itemEl.laptop.forEach(e => e.classList.remove('is-in')); itemEl[m][st.cur]?.classList.add('is-in'); if (play) run(); }
     };
     // Fortschritt: Video = eigene Länge, Bild = Dauer
     const run = () => {
@@ -107,7 +111,7 @@ export default {
     const setFront = (m) => {
       if (!items[m].length && items[m === 'phone' ? 'laptop' : 'phone'].length) return;
       front = m; el.dataset.front = m; sw.forEach(s => s.classList.toggle('is-on', s.dataset.m === m));
-      gT.textContent = m === 'phone' ? p.shortTitle : p.longTitle; gX.textContent = m === 'phone' ? p.shortText : p.longText;
+      headEl.phone.classList.toggle('is-on', m === 'phone'); headEl.laptop.classList.toggle('is-on', m === 'laptop');
       ['phone', 'laptop'].forEach(x => { if (x !== m) { S[x].shots.forEach(s => { const v = s.querySelector('video'); if (v) { v.pause(); } s.querySelector('.dd__vm')?.replaceChildren(); }); } });
       show(m, S[m].cur);
     };
@@ -122,16 +126,8 @@ export default {
       if (!mqM.matches || !el.isConnected || !sticky.clientHeight) return;
       const cs = getComputedStyle(sticky), avail = sticky.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
       const need = () => dev.parentElement.offsetHeight + (cta ? cta.offsetHeight + parseFloat(cs.rowGap || cs.gap || 14) : 0);
-      let W = dev.offsetWidth; const keepF = front, saved = [iT.textContent, iX.textContent, gT.textContent, gX.textContent]; let minW = W;
-      for (const m of ['phone', 'laptop']) {
-        gT.textContent = m === 'phone' ? p.shortTitle : p.longTitle; gX.textContent = m === 'phone' ? p.shortText : p.longText;
-        for (const it of items[m].length ? items[m] : [{}]) {
-          iT.textContent = it.title || ''; iX.textContent = it.text || ''; let w = W; el.style.setProperty('--W', w + 'px');
-          while (need() > avail && w > 130) { w -= 8; el.style.setProperty('--W', w + 'px'); }
-          minW = Math.min(minW, w);
-        }
-      }
-      [iT.textContent, iX.textContent, gT.textContent, gX.textContent] = saved; el.style.setProperty('--W', minW + 'px');
+      let w = dev.offsetWidth; el.style.setProperty('--W', w + 'px');
+      while (need() > avail && w > 130) { w -= 8; el.style.setProperty('--W', w + 'px'); }
     };
     requestAnimationFrame(() => requestAnimationFrame(fit)); addEventListener('resize', fit); setTimeout(fit, 700); document.fonts?.ready?.then(fit);
     el.dataset.front = front; setFront(front); show(front === 'phone' ? 'laptop' : 'phone', 0, false);
