@@ -1171,3 +1171,18 @@ html.is-fill .site-footer { display: none; }
 .ar.is-fill { margin: 0; }
 
 .fl__bg { position: absolute; z-index: -1; pointer-events: none; will-change: transform; display: none; }
+
+/* ===== 9:16 im Fokus: Das Smartphone (Vertical Content) steht vorn und ist deutlich größer als der Laptop ===== */
+.dd[data-front="phone"] .dd__phone { transform: translate(-16%, -6%) scale(1.38); }
+@media (min-width: 900px) {
+  .dd { --W: min(50vw, 720px); }
+  .dd__dev > .dd__phone { transition: transform .9s var(--ease), filter .6s, opacity .6s, width .9s var(--ease), right .9s var(--ease); }
+  .dd[data-front="phone"] .dd__dev > .dd__phone { width: min(calc(var(--W) * .52), calc(74dvh * 9 / 19)); right: 2%; bottom: -10%; border-radius: calc(var(--W) * .075); padding: calc(var(--W) * .02); transform: none; }
+  .dd[data-front="phone"] .dd__laptop { transform: translate(-6%, -6%) scale(.82); }
+  .dd[data-front="phone"] .dd__pscreen { border-radius: calc(var(--W) * .057); }
+  .dd[data-front="phone"] .dd__bars { top: calc(var(--W) * .06); }
+  .dd[data-front="phone"] .dd__island { top: calc(var(--W) * .038); height: calc(var(--W) * .016); }
+  .dd__h { font-size: clamp(38px, 4.2vw, 64px); }
+  .dd__p { font-size: 16px; }
+  .dd__copy { max-width: 380px; }
+}
