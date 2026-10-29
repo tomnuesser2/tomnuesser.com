@@ -196,7 +196,7 @@ export default {
           gp.draw({ pad: PAD, open: pz.open, rz: pz.rz, rx: pz.rx + dr.rx - hy * 4 * (1 - ovk) + Math.sin(t * .5) * 1.2 * idle, ry: pz.ry + dr.ry + hx * 11 * (1 - ovk) + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle, y: Math.sin(t * .9) * .008 * idle, fit: pz.fit,
             mix: to >= 0 ? ease(clamp(mixv)) : 0, intro: clamp((pz.open - .3) / .45), time: t, light: 1, scroll: clamp((L.fr - .08) / .84), chrome: p.chrome !== false });
           if (L.i !== lastIdx) { lastIdx = L.i; applySound(); }
-          { const ap = statik || (oc > .985 && to < 0 && ovAlpha > .02); updOverlay(statik || (ap && calm > .22), ap); }
+          { const ap = statik || (oc > .985 && to < 0 && ovAlpha > .02); updOverlay(statik || ap, ap); /* Video läuft auch weiter, während man den Laptop mit Maus/Finger dreht */ }
           if (!started) { started = true; el.classList.add('is-gl'); }
           return;
         }
@@ -204,7 +204,7 @@ export default {
         gp.draw({ pad: PAD, open: o, rx: lerp(80, 11, o) - hy * 4 * (1 - ovk) + Math.sin(t * .5) * 1.2 * idle, ry: dir * (50 * Math.pow(1 - o, 1.7) * clamp(o * 6) - o * 15) + hx * 11 * (1 - ovk) + (L.p - .5) * 8 * idle + Math.sin(t * .4) * 1.6 * idle,
           y: Math.sin(t * .9) * .008 * idle, fit: 1.1 - .24 * Math.sin(Math.PI * o), mix: to >= 0 ? ease(clamp(mixv)) : 0, intro: clamp((o - .3) / .45), time: t, light: 1, scroll: clamp((L.fr - .08) / .84), chrome: p.chrome !== false });
         if (L.i !== lastIdx) { lastIdx = L.i; applySound(); }
-        { const ap = o > .985 && to < 0; updOverlay(ap && calm > .22, ap); }
+        { const ap = o > .985 && to < 0; updOverlay(ap, ap); }
         if (!started) { started = true; el.classList.add('is-gl'); }
       });
     }

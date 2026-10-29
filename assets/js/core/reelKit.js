@@ -17,7 +17,7 @@ export const ITEM = [
   { name: 'subtitle', label: 'Untertitel (optional)', type: 'text' },
   { name: 'link', label: 'Link beim Anklicken (optional, z. B. ein Projekt-Name)', type: 'text' },
 ];
-export const SOURCE = { name: 'source', label: 'Inhalt', type: 'select', options: ['eigene Bilder', 'alle Projekte'], default: 'eigene Bilder' };
+export const SOURCE = { name: 'source', label: 'Inhalt', type: 'select', options: ['eigene Bilder', 'alle Projekte', 'alle Video-Projekte'], default: 'eigene Bilder' };
 export const ITEMS = { name: 'items', label: 'Bilder / Videos', type: 'list', itemFields: ITEM, default: [] };
 export const AUTO = 'automatisch (PC 16:9 · Handy 9:16)';
 export const FORMAT = (def = AUTO) => ({ name: 'format', label: 'Format der Bilder/Videos', type: 'select', options: [AUTO, '16:9', '9:16', '1:1', '4:5', '4:3', '3:2'], default: def });
@@ -38,9 +38,9 @@ export function aspectOf(format, pcAuto = 16 / 9, mobAuto = 9 / 16) {
 export const heightOf = (p, pc, mob) => num(mobileView() ? p.heightMobile : p.height, mobileView() ? mob : pc);
 
 export function getItems(p, ctx) {
-  if (p.source === 'alle Projekte') {
-    const idx = ctx.content.index;
-    return (idx.order || []).map(s => ({ slug: s, ...idx.projects[s] })).filter(x => x.image && !x.hidden)
+  if (p.source === 'alle Projekte' || p.source === 'alle Video-Projekte') {
+    const idx = ctx.content.index, onlyVideo = p.source === 'alle Video-Projekte';
+    return (idx.order || []).map(s => ({ slug: s, ...idx.projects[s] })).filter(x => x.image && !x.hidden && (!onlyVideo || (x.category || 'video') === 'video'))
       .map(x => ({ src: imgFor(x), srcAlt: x.image, title: String(x.title || x.slug).replace(/\n/g, ' '), subtitle: x.roles || '', href: x.slug, ratio: x.ratio || '' }));
   }
   return (p.items || []).filter(i => i.image || i.imageMobile).map(i => ({

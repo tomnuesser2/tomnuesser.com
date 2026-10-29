@@ -1172,16 +1172,8 @@ html.is-fill .site-footer { display: none; }
 
 .fl__bg { position: absolute; z-index: -1; pointer-events: none; will-change: transform; display: none; }
 
-/* ===== 9:16 im Fokus: Das Smartphone (Vertical Content) steht vorn und ist deutlich größer als der Laptop ===== */
-.dd[data-front="phone"] .dd__phone { transform: translate(-16%, -6%) scale(1.38); }
+/* ===== 9:16 im Fokus: größere, kräftigere Texte (Geräte in Originalgröße) ===== */
 @media (min-width: 900px) {
-  .dd { --W: min(50vw, 720px); }
-  .dd__dev > .dd__phone { transition: transform .9s var(--ease), filter .6s, opacity .6s, width .9s var(--ease), right .9s var(--ease); }
-  .dd[data-front="phone"] .dd__dev > .dd__phone { width: min(calc(var(--W) * .52), calc(74dvh * 9 / 19)); right: 2%; bottom: -10%; border-radius: calc(var(--W) * .075); padding: calc(var(--W) * .02); transform: none; }
-  .dd[data-front="phone"] .dd__laptop { transform: translate(-6%, -6%) scale(.82); }
-  .dd[data-front="phone"] .dd__pscreen { border-radius: calc(var(--W) * .057); }
-  .dd[data-front="phone"] .dd__bars { top: calc(var(--W) * .06); }
-  .dd[data-front="phone"] .dd__island { top: calc(var(--W) * .038); height: calc(var(--W) * .016); }
   .dd { max-width: 1480px; }
   .dd__stage { gap: 4vw; }
   .dd__copy { max-width: min(540px, 40vw); }
@@ -1198,3 +1190,127 @@ html.is-fill .site-footer { display: none; }
   .dd__p { font-size: 17px; line-height: 1.45; color: #222; }
   .dd__it { font-size: 18px; } .dd__ix { font-size: 15px; color: #333; }
 }
+
+/* Handy-Intro: Überschrift und „scroll“ stehen in EINER Spalte am unteren Bildschirmrand – „scroll“ immer ganz unten, Überschrift immer direkt darüber, nie übereinander */
+.hm__foot { position: absolute; left: 0; right: 0; bottom: calc(100px + var(--uh) + env(safe-area-inset-bottom)); display: flex; flex-direction: column; align-items: stretch; gap: 20px; pointer-events: none; }
+.hm__foot .hm__title { position: static; margin: 0 var(--gutter, 20px); }
+.hm__foot .hm__cue { position: static; flex: none; }
+
+/* PC-Start: „scrollen“ klebt immer ganz unten am Bildschirmrand; die Überschrift liegt darüber, ist nicht anklickbar (nichts kollidiert mit ihr) und das Karussell bekommt den Platz dazwischen */
+@media (min-width: 900px) {
+  .hero--car { position: relative; padding-bottom: 104px; }
+  .hero--car .hero__cue { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: 0 0 calc(18px + env(safe-area-inset-bottom)); }
+  .hero--car .hero__roles { position: relative; z-index: 6; pointer-events: none; }
+}
+
+/* ===== Short-form + Long-form: Smartphone (hochkant) und Laptop nebeneinander, leicht schräg in 3D (nicht ziehbar), dazwischen zwei große runde Pfeile.
+   Alle 10–15 s tauschen die beiden die Plätze im Rampenlicht (Pfeile drehen), das vordere Gerät spielt seine Videos stumm ab ===== */
+.dd { --W: min(46vw, 260px); }
+@media (min-width: 900px) { .dd { --W: min(31vw, 500px); } }
+@media (max-width: 899px) { .dd { --W: clamp(120px, calc((100dvh - 560px) / .86), min(46vw, 260px)); } }
+.dd .dd__dev { width: calc(var(--W) * 1.8); height: calc(var(--W) * .98); perspective: 1500px; }
+@media (min-width: 900px) { .dd .dd__dev { height: calc(var(--W) * .98); } }
+.dd .dd__dev > button { top: 50%; }
+.dd .dd__dev > .dd__phone { left: calc(var(--W) * .07); right: auto; bottom: auto; width: calc(var(--W) * .38); border-radius: calc(var(--W) * .072); padding: calc(var(--W) * .018); transform: translateY(-50%) rotateY(20deg) rotateZ(-1deg); transform-origin: 50% 50%; z-index: 1; }
+.dd .dd__dev > .dd__laptop { left: auto; right: calc(var(--W) * .02); width: calc(var(--W) * .86); transform: translateY(-50%) rotateY(-20deg) rotateX(3deg); transform-origin: 50% 50%; z-index: 1; }
+.dd .dd__pscreen { border-radius: calc(var(--W) * .058); }
+.dd .dd__island { top: calc(var(--W) * .036); height: calc(var(--W) * .015); }
+.dd .dd__bars { top: calc(var(--W) * .06); }
+.dd .dd__dev { transform-style: preserve-3d; }
+.dd .dd__dev > .dd__phone, .dd .dd__dev > .dd__laptop { transition: transform 1.1s var(--ease), filter 1.1s var(--ease); }
+/* Aktives Gerät: groß und vorne im Raum; das andere: kleiner und weiter hinten, weiterhin in 3D */
+.dd[data-front="phone"] .dd__phone { transform: translateY(-50%) translateZ(70px) rotateY(12deg) rotateZ(-1deg) scale(1.12); filter: none; z-index: 3; }
+.dd[data-front="phone"] .dd__laptop { transform: translateY(-50%) translateZ(-170px) rotateY(-30deg) rotateX(3deg) scale(.7); filter: brightness(.84) saturate(.85); z-index: 1; }
+.dd[data-front="laptop"] .dd__laptop { transform: translateY(-50%) translateZ(70px) rotateY(-12deg) rotateX(3deg) scale(1.08); filter: none; z-index: 3; }
+.dd[data-front="laptop"] .dd__phone { transform: translateY(-50%) translateZ(-170px) rotateY(30deg) rotateZ(-1deg) scale(.7); filter: brightness(.84) saturate(.85); z-index: 1; }
+/* Pfeile: zwei runde, glänzende 3D-Tasten (iPhone-Look: Glas, Kante, Schatten), im Raum zwischen den Geräten */
+.dd .dd__dev > .dd__swap { left: calc(var(--W) * .685); width: calc(var(--W) * .3); height: calc(var(--W) * .72); margin: calc(var(--W) * -.36) 0 0 calc(var(--W) * -.15); padding: 0; background: none; border: 0; color: #fff; z-index: 4; transform-style: preserve-3d; transform: translateZ(110px) rotateY(-10deg); }
+.dd__arr { position: absolute; left: 0; width: 100%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; transform-style: preserve-3d;
+  background: radial-gradient(120% 120% at 30% 18%, #5b5f68 0%, #1c1e23 48%, #0a0b0d 100%);
+  box-shadow: inset 0 2px 3px rgba(255,255,255,.55), inset 0 -4px 8px rgba(0,0,0,.65), 0 1px 0 #3a3d44, 0 2px 0 #2a2c31, 0 3px 0 #1d1f23, 0 4px 0 #131417, 0 5px 0 #0c0d0f, 0 18px 26px rgba(0,0,0,.35), 0 6px 10px rgba(0,0,0,.3); }
+.dd__arr::before { content: ""; position: absolute; left: 10%; right: 10%; top: 4%; height: 46%; border-radius: 50% 50% 46% 46% / 70% 70% 30% 30%; background: linear-gradient(180deg, rgba(255,255,255,.38), rgba(255,255,255,0)); pointer-events: none; }
+.dd__arr--a { top: 0; transform: translateZ(26px) rotateX(10deg) rotateY(-14deg); }
+.dd__arr--b { bottom: 0; transform: translateZ(-6px) rotateX(-10deg) rotateY(-14deg); }
+.dd__arr svg { width: 62%; height: 62%; display: block; overflow: visible; transition: transform 1s var(--ease); filter: drop-shadow(0 1px 1px rgba(0,0,0,.6)); }
+.dd[data-front="laptop"] .dd__arr svg { transform: rotate(180deg); }
+.dd__swap:hover .dd__arr { filter: brightness(1.15); }
+@media (max-width: 899px) { .dd .dd__dev > .dd__phone, .dd .dd__dev > .dd__laptop { transition-duration: .8s; } }
+.dd .dd__dev { margin-left: calc(var(--W) * .1); }
+.dd .dd__dev > .dd__swap { width: calc(var(--W) * .26); margin-left: calc(var(--W) * -.13); }
+/* Pfeile: reine Metallpfeile ohne Kreis (gebogen, abgerundete Kanten, wandernder Glanz) */
+.dd .dd__dev > .dd__swap { width: calc(var(--W) * .34); margin-left: calc(var(--W) * -.17); }
+.dd__arr { aspect-ratio: 124 / 84; border-radius: 0; background: none; box-shadow: none; filter: drop-shadow(0 12px 10px rgba(0,0,0,.28)); }
+.dd__arr::before { display: none; }
+.dd__arr svg { width: 100%; height: 100%; filter: none; transform: none; }
+.dd[data-front="laptop"] .dd__arr svg { transform: none; }
+.dd__arr--b svg { transform: rotate(180deg); }
+.dd[data-front="laptop"] .dd__arr--a svg { transform: scaleX(-1); }
+.dd[data-front="laptop"] .dd__arr--b svg { transform: rotate(180deg) scaleX(-1); }
+.dd__swap:hover .dd__arr { filter: drop-shadow(0 12px 10px rgba(0,0,0,.28)) brightness(1.12); }
+
+/* ===== 3D-Modus (WebGL): echte Gehäuse wie bei den 3D-Mockups, Bildschirminhalt liegt per matrix3d passgenau darüber ===== */
+.dd--gl { --W: min(28vw, 450px); }
+@media (max-width: 899px) { .dd--gl { --W: clamp(120px, calc((100dvh - 560px) / .86), min(46vw, 260px)); } }
+.dd--gl .dd__dev { width: calc(var(--W) * 2); height: calc(var(--W) * 1.04); margin-left: 0; transform-style: flat; perspective: none; }
+.dd--gl .dd__dev > .dd__phone, .dd--gl .dd__dev > .dd__laptop { top: 50%; bottom: auto; padding: 0; background: none; border-radius: 0; box-shadow: none; transform: translateY(-50%); transform-origin: 50% 50%; transition: filter .9s var(--ease); }
+.dd--gl .dd__dev > .dd__phone { left: 0; right: auto; width: calc(var(--W) * .62); height: calc(var(--W) * 1.04); }
+.dd--gl .dd__dev > .dd__laptop { right: 0; left: auto; width: calc(var(--W) * 1.08); height: calc(var(--W) * .94); }
+.dd--gl .dd__cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+.dd--gl .dd__ov { position: absolute; left: 0; top: 0; transform-origin: 0 0; overflow: hidden; background: #000; opacity: 0; pointer-events: none; contain: layout paint; }
+.dd--gl .dd__ov--p { border-radius: 10% / 4.3%; }
+.dd--gl .dd__ov--l { border-radius: 6px; }
+.dd--gl .dd__ov--p .dd__bars { top: 4.2%; left: 9%; right: 9%; gap: 5px; }
+.dd--gl .dd__ov--p .dd__bars i { height: 4px; }
+.dd--gl .dd__ov--l .dd__player { font-size: 26px; padding: 50px 30px 22px; gap: 24px; }
+.dd--gl .dd__ov--l .dd__tl { height: 7px; }
+.dd--gl[data-front="phone"] .dd__phone { transform: translateY(-50%); filter: none; z-index: 3; }
+.dd--gl[data-front="phone"] .dd__laptop { transform: translateY(-50%); filter: brightness(.88) saturate(.85); z-index: 1; }
+.dd--gl[data-front="laptop"] .dd__laptop { transform: translateY(-50%); filter: none; z-index: 3; }
+.dd--gl[data-front="laptop"] .dd__phone { transform: translateY(-50%); filter: brightness(.88) saturate(.85); z-index: 1; }
+.dd--gl .dd__dev > .dd__swap { left: calc(var(--W) * .8); width: calc(var(--W) * .3); margin-left: calc(var(--W) * -.15); }
+@media (max-width: 899px) { .dd--gl { --W: clamp(110px, calc((100dvh - 560px) / .86), min(41vw, 220px)); } .dd--gl .dd__dev { max-width: 100%; } }
+.dd__arr { filter: drop-shadow(0 8px 7px rgba(0,0,0,.22)); }
+.dd__swap:hover .dd__arr { filter: drop-shadow(0 8px 7px rgba(0,0,0,.22)) brightness(1.08); }
+/* Standlinie + Bodenschatten + weicher Hintergrundschimmer (Apple-Look) */
+.dd--gl .dd__dev > .dd__phone, .dd--gl .dd__dev > .dd__laptop { transform: none; }
+.dd--gl[data-front] .dd__phone, .dd--gl[data-front] .dd__laptop { transform: none; }
+.dd--gl .dd__fs { position: absolute; left: 0; top: 0; height: calc(var(--W) * .07); margin-top: calc(var(--W) * -.035); border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), rgba(0,0,0,.18) 55%, transparent 100%); filter: blur(5px); pointer-events: none; z-index: 0; }
+.dd--gl .dd__dev::before { content: ""; position: absolute; left: -6%; right: -6%; top: 10%; bottom: -8%; background: radial-gradient(ellipse at 50% 55%, rgba(0,0,0,.055), transparent 68%); pointer-events: none; z-index: 0; }
+.dd__arr svg, .dd__arr--b svg, .dd[data-front="laptop"] .dd__arr--a svg, .dd[data-front="laptop"] .dd__arr--b svg { transform: none; }
+.dd__swap.is-pulse .dd__arr { animation: ddpulse .9s var(--ease); }
+@keyframes ddpulse { 0% { scale: 1; } 40% { scale: .86; } 100% { scale: 1; } }
+
+/* ===== Umschalter statt Pfeile: Apple-Kapsel (Handy 9:16 / Laptop 16:9) mit gleitendem Schieber und Fortschrittsfaden ===== */
+.dd .dd__dev > .dd__tg { position: absolute; left: 50%; top: auto; bottom: calc(var(--W) * -.17); transform: translateX(-50%); display: inline-grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px; background: rgba(120,120,128,.14); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: inset 0 0 0 .5px rgba(0,0,0,.05); z-index: 6; margin: 0; width: auto; height: auto; }
+.dd__tgt { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.12), 0 4px 14px rgba(0,0,0,.1); transition: transform .55s var(--ease); overflow: hidden; }
+.dd__tg[data-m="laptop"] .dd__tgt { transform: translateX(100%); }
+.dd__tgp { position: absolute; left: 14%; right: 14%; bottom: 3px; height: 2px; border-radius: 2px; background: #1d1d1f; transform: scaleX(0); transform-origin: left; opacity: .55; }
+@keyframes ddprog { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.dd__tgb { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 24px; min-width: 112px; border: 0; background: none; border-radius: 999px; font: 600 14px/1 var(--mono, ui-monospace, monospace); letter-spacing: .01em; color: #6e6e73; cursor: pointer; transition: color .35s; -webkit-tap-highlight-color: transparent; }
+.dd__tgb.is-on { color: #1d1d1f; }
+.dd__tgi { display: block; width: 18px; height: 18px; } .dd__tgi svg { display: block; width: 100%; height: 100%; }
+.dd--gl .dd__dev { margin-bottom: calc(var(--W) * .2); }
+@media (max-width: 899px) { .dd__tgb { padding: 9px 16px; min-width: 92px; font-size: 13px; } }
+.dd .dd__arr, .dd .dd__swap { display: none; }
+.dd--gl .dd__dev { height: calc(var(--W) * 1.2); }
+.dd--gl .dd__dev > .dd__phone { width: calc(var(--W) * .7); height: calc(var(--W) * 1.2); }
+.dd--gl .dd__dev > .dd__laptop { width: calc(var(--W) * 1.2); height: calc(var(--W) * 1.05); }
+.dd--gl .dd__dev > .dd__tg { bottom: calc(var(--W) * -.15); }
+/* Laptop ca. 1,6-fach so groß wie das Handy */
+.dd--gl { --W: min(21vw, 340px); }
+@media (max-width: 899px) { .dd--gl { --W: clamp(70px, calc((100dvh - 560px) / 1.3), min(34vw, 150px)); } }
+.dd--gl .dd__dev { width: calc(var(--W) * 2.6); height: calc(var(--W) * 1.7); }
+.dd--gl .dd__dev > .dd__phone { width: calc(var(--W) * .85); height: calc(var(--W) * 1.45); }
+.dd--gl .dd__dev > .dd__laptop { width: calc(var(--W) * 1.92); height: calc(var(--W) * 1.68); }
+.dd--gl .dd__dev > .dd__tg { bottom: calc(var(--W) * -.22); }
+.dd--gl .dd__dev { margin-bottom: calc(var(--W) * .28); }
+@media (max-width: 899px) { .dd--gl .dd__dev { margin-bottom: calc(var(--W) * .2); } .dd--gl .dd__dev > .dd__tg { bottom: calc(var(--W) * -.2); } }
+@media (max-width: 899px) { .dd--gl { --W: clamp(70px, calc((100dvh - 600px) / 1.3), min(30vw, 130px)); } }
+/* größere Zeichenflächen (nichts wird beim Flug abgeschnitten), beide Geräte mittig verankert */
+.dd--gl .dd__dev > .dd__phone { left: calc(50% - var(--W) * .53125); right: auto; width: calc(var(--W) * 1.0625); height: calc(var(--W) * 1.8125); }
+.dd--gl .dd__dev > .dd__laptop { left: calc(50% - var(--W) * 1.2); right: auto; width: calc(var(--W) * 2.4); height: calc(var(--W) * 2.1); }
+/* Fortschritt: ganz dünner Faden separat unter dem Umschalter */
+.dd__tgl { position: absolute; left: 14%; right: 14%; top: calc(100% + 10px); height: 1.5px; border-radius: 2px; background: rgba(120,120,128,.2); overflow: hidden; pointer-events: none; }
+.dd .dd__tgl .dd__tgp { position: absolute; left: 0; right: 0; top: 0; bottom: auto; height: 100%; opacity: 1; background: #1d1d1f; transform-origin: left; }
+/* Die Bewegung kommt komplett aus dem Skript: keine CSS-Übergänge, die jedem Bild hinterherlaufen und am Ende nachruckeln */
+.dd--gl .dd__dev > .dd__phone, .dd--gl .dd__dev > .dd__laptop { transition: none !important; will-change: transform; }

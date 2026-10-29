@@ -9,18 +9,13 @@
   "nav": [
     {
       "label": "videography",
-      "href": "home#video",
+      "href": "videography",
       "label_de": "videography"
     },
     {
       "label": "notua",
       "href": "home#notua",
       "label_de": "notua"
-    },
-    {
-      "label": "creative",
-      "href": "home#design",
-      "label_de": "creative"
     },
     {
       "label": "contact",

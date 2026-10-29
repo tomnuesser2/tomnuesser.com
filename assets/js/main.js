@@ -110,7 +110,7 @@ function spy() {
   let cur = null; const lim = innerHeight * .45;
   for (const [a, el] of spyMap) if (el && el.getBoundingClientRect().top < lim) cur = a;
   // Übersichtsseiten (z. B. /videography) markieren ihren Menüpunkt
-  if (!cur) { const pg = document.querySelector('.page')?.dataset.page, id = { videography: 'video', design: 'design' }[pg]; if (id) cur = links.find((a) => (a.getAttribute('href') || '').endsWith('#' + id)) || null; }
+  if (!cur) { const pg = document.querySelector('.page')?.dataset.page, id = { videography: 'video', design: 'design' }[pg]; if (id) cur = links.find((a) => (a.getAttribute('href') || '').endsWith('#' + id)) || null; if (!cur && pg) cur = links.find((a) => a.getAttribute('href') === pg) || null; }
   const ch = cur && cur.getAttribute('href'); for (const a of links) a.classList.toggle('is-active', !!ch && a.getAttribute('href') === ch);
 }
 // Beschriftungen des unteren Menüs: genaue Breite messen, damit nichts aus der Pille rutscht

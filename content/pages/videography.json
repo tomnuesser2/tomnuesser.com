@@ -21,7 +21,7 @@
     {
       "type": "albumRail",
       "props": {
-        "source": "alle Projekte",
+        "source": "alle Video-Projekte",
         "items": [],
         "format": "1:1",
         "height": 620,

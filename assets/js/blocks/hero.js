@@ -128,7 +128,7 @@ function mobileHero(p, ctx) {
     const a = h('a', { class: 'hm__shot', href: f.slug, 'data-link': '', 'aria-label': name(f) }, inn);
     return { a, inn, iw: inn.firstChild, cap };
   });
-  const stage = h('div', { class: 'hm__stage' }, carEl, labM ? labM.el : null, title, cue, shots.map(s => s.a));
+  const stage = h('div', { class: 'hm__stage' }, carEl, labM ? labM.el : null, h('div', { class: 'hm__foot' }, title, cue), shots.map(s => s.a));
   const OFF = .2, T = 0.8 + OFF + 1 + .6 + (N - 1) * 1.6 + .25;                 // Länge der Animation in "Einheiten"
   const el = h('section', { class: 'hm' + (labM ? ' hm--lab' : ''), 'aria-label': p.title || '', style: { '--len': (T * .5).toFixed(2) } }, h('div', { class: 'hm__track' }, stage));
   if (still()) { el.classList.add('is-still'); return el; }
@@ -152,10 +152,10 @@ function mobileHero(p, ctx) {
     const z = ease(clamp((u - 1) / 1)), rot = clamp((u - .04) / .96);
     // Phase 1: Das Karussell dreht per Scroll auf die erste Karte und zoomt dabei heran. Phase 2: diese Karte wächst auf Vollbild.
     if (car) { if (u > .02) car.scrub(rot); else car.release(); }
-    carEl.style.transform = `scale(${(1 + .2 * ease(clamp(u / 1))).toFixed(4)})`; carEl.style.opacity = (1 - clamp((u - 1) / .3)).toFixed(3);
+    carEl.style.transform = `scale(${(1 + .1 * ease(clamp(u / 1))).toFixed(4)})`; carEl.style.opacity = (1 - clamp((u - 1) / .3)).toFixed(3);
     carEl.style.display = z >= 1 ? 'none' : ''; if (labM) { labM.el.style.opacity = carEl.style.opacity; labM.el.style.visibility = z >= 1 ? 'hidden' : ''; labM.el.style.pointerEvents = u > .02 ? 'none' : ''; } carEl.style.pointerEvents = u > .02 ? 'none' : '';
     const dk = z > .12; if (dk !== stage.classList.contains('is-dark')) { stage.classList.toggle('is-dark', dk); dispatchEvent(new Event('tn-dark')); }
-    const tOp = 1 - clamp((u - .15) / .55); title.style.opacity = tOp.toFixed(3); title.style.transform = `translateY(${(-(1 - tOp) * 26).toFixed(1)}px)`; cue.style.opacity = (1 - clamp(u / .25)).toFixed(3);
+    const tOp = 1 - clamp(u / .22); title.style.opacity = tOp.toFixed(3); title.style.transform = `translateY(${(-(1 - tOp) * 26).toFixed(1)}px)`; cue.style.opacity = (1 - clamp(u / .25)).toFixed(3);
     title.style.visibility = cue.style.visibility = tOp <= 0 ? 'hidden' : 'visible';
     shots.forEach((s, i) => {
       const start = i === 0 ? 1 : 2.6 + (i - 1) * 1.6, e = ease(clamp((u - start) / 1));

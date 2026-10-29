@@ -144,7 +144,14 @@ export function createPhone(canvas, { tint = [.32, .32, .34], back = [.2, .2, .2
   const setSlot = (i, el) => { const s = slots[i]; s.el = el; s.vid = el instanceof HTMLVideoElement; s.ready = false; const go = () => { s.ready = upload(s, el); }; if (s.vid) { el.addEventListener('loadeddata', go, { once: true }); if (el.readyState >= 2) go(); } else if (el.complete && el.naturalWidth) go(); else el.addEventListener('load', go, { once: true }); };
   gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL); gl.clearColor(0, 0, 0, 0);
   canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onLost && onLost(); });
+  let last = null;
   const api = {
+    screenQuad(inset = 0) {
+      if (!last) return null; const { proj, view, model } = last, mv = mul(proj, mul(view, model)), sx = W / 2 - SCRI - inset, sy = H / 2 - SCRI - inset, z = T / 2 + .002;
+      const pts = [[-sx, sy], [sx, sy], [sx, -sy], [-sx, -sy]].map(([x, y]) => { const X = mv[0] * x + mv[4] * y + mv[8] * z + mv[12], Y = mv[1] * x + mv[5] * y + mv[9] * z + mv[13], Wc = mv[3] * x + mv[7] * y + mv[11] * z + mv[15]; return [X / Wc * .5 + .5, 1 - (Y / Wc * .5 + .5)]; });
+      let ar = 0; for (let i = 0; i < 4; i++) { const a = pts[i], b = pts[(i + 1) % 4]; ar += a[0] * b[1] - b[0] * a[1]; }
+      return { pts, aspect: sx / sy, facing: ar };
+    },
     setSlot, ready: (i) => !!slots[i].ready,
     // st: {rx,ry,rz (Grad), y, scale, mix, intro, time, light, w, h, dpr, fit(0..1)}
     draw(st) {
@@ -154,7 +161,7 @@ export function createPhone(canvas, { tint = [.32, .32, .34], back = [.2, .2, .2
       const dist = Math.max(ext[1] / (2 * tn * st.fit), ext[0] / (2 * tn * asp * st.fit)) + .6;
       const proj = persp(fov, asp, .5, 20), view = trans(0, 0, -dist);
       const model = mul(trans(0, st.y || 0, 0), mul(rotX((st.rx || 0) * Math.PI / 180), mul(rotY((st.ry || 0) * Math.PI / 180), rotZ((st.rz || 0) * Math.PI / 180))));
-      const mvp = mul(proj, mul(view, model));
+      const mvp = mul(proj, mul(view, model)); last = { proj, view, model };
       gl.uniformMatrix4fv(U.uMVP, false, mvp); gl.uniformMatrix4fv(U.uModel, false, model);
       gl.uniformMatrix3fv(U.uNrm, false, new Float32Array([model[0], model[1], model[2], model[4], model[5], model[6], model[8], model[9], model[10]]));
       gl.uniform3f(U.uEye, 0, 0, dist); gl.uniform1f(U.uTime, st.time || 0); gl.uniform1f(U.uIntro, st.intro == null ? 1 : st.intro); gl.uniform1f(U.uMix, st.mix || 0); gl.uniform1f(U.uLight, st.light == null ? 1 : st.light);
