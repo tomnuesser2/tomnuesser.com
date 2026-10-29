@@ -440,7 +440,8 @@
 .hm__cue { position: absolute; left: 0; right: 0; bottom: calc(100px + var(--uh) + env(safe-area-inset-bottom)); margin: 0; text-align: center; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
 .hm__cue i { display: block; font-style: normal; margin-top: 4px; animation: hmCue 1.6s ease-in-out infinite; }
 @keyframes hmCue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
-.hm__shot { position: absolute; inset: 0; display: block; color: #fff; background: #000; will-change: clip-path; }
+.hm__shot { position: absolute; inset: 0; display: block; color: #fff; background: #000; will-change: transform; transform-origin: 0 0; overflow: hidden; contain: layout paint; }
+.hm__in { position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; }
 .hm__img { position: absolute; inset: 0; will-change: transform; }
 .hm__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; will-change: transform; }
 .hm__shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.2) 36%, rgba(0,0,0,0) 60%); pointer-events: none; }
@@ -523,7 +524,9 @@
   .hero--car .hn--d { translate: 0 var(--name-y, 0px); position: relative; z-index: 3; }
   .hero--car .hero__roles { translate: 0 var(--title-y, 0px); }
   .hero--car .hero__cue { padding-top: clamp(6px, 1.2svh, 14px); padding-bottom: calc(clamp(26px, 5svh, 52px) + env(safe-area-inset-bottom)); }
-  .hero--car .hero__roles { margin-top: clamp(10px, 2.4svh, 28px); }
+  .hero--car .hero__roles { margin-top: clamp(10px, 2.4svh, 28px); font-size: min(clamp(40px, 4.6vw, 72px), max(30px, 9.5svh)); }   /* Überschrift wächst nie über die Fensterhöhe hinaus */
+  .hero--car .hero__roles.is-s { font-size: min(clamp(22px, 2.2vw, 34px), 5.5svh); } .hero--car .hero__roles.is-m { font-size: min(clamp(30px, 3.4vw, 52px), 7.5svh); } .hero--car .hero__roles.is-xl { font-size: min(clamp(56px, 7vw, 112px), 14svh); }
+  .hero--car .hero__cards { height: clamp(240px, min(calc(44svh * var(--cs, 1)), calc(40vw * var(--cs, 1))), 78svh); }
 }
 
 /* Projekt-Kopf: Ausrichtung links / mitte / rechts */

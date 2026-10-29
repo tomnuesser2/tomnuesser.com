@@ -124,8 +124,9 @@ function mobileHero(p, ctx) {
   const shots = feat.map((f, i) => {
     const img = h('img', { src: f.imageMobile || f.image, alt: '', decoding: 'async' });
     const cap = h('div', { class: 'hm__cap' }, h('span', { class: 'hm__n' }, `${String(i + 1).padStart(2, '0')} / ${String(N).padStart(2, '0')}`), h('strong', { class: 'hm__t' }, name(f)), f.roles ? h('em', { class: 'hm__r' }, f.roles) : null);
-    const a = h('a', { class: 'hm__shot', href: f.slug, 'data-link': '', 'aria-label': name(f) }, h('div', { class: 'hm__img' }, img), h('i', { class: 'hm__shade' }), cap);
-    return { a, img: a.firstChild, cap };
+    const inn = h('div', { class: 'hm__in' }, h('div', { class: 'hm__img' }, img), h('i', { class: 'hm__shade' }), cap);
+    const a = h('a', { class: 'hm__shot', href: f.slug, 'data-link': '', 'aria-label': name(f) }, inn);
+    return { a, inn, iw: inn.firstChild, cap };
   });
   const stage = h('div', { class: 'hm__stage' }, carEl, labM ? labM.el : null, title, cue, shots.map(s => s.a));
   const OFF = .2, T = 0.8 + OFF + 1 + .6 + (N - 1) * 1.6 + .25;                 // Länge der Animation in "Einheiten"
@@ -158,16 +159,16 @@ function mobileHero(p, ctx) {
     title.style.visibility = cue.style.visibility = tOp <= 0 ? 'hidden' : 'visible';
     shots.forEach((s, i) => {
       const start = i === 0 ? 1 : 2.6 + (i - 1) * 1.6, e = ease(clamp((u - start) / 1));
-      if (i === 0) {
-        const k = 1 - e, rad = 10 * k;
-        s.a.style.clipPath = e >= 1 ? 'none' : `inset(${(R.t * k).toFixed(1)}px ${(R.r * k).toFixed(1)}px ${(R.b * k).toFixed(1)}px ${(R.l * k).toFixed(1)}px round ${rad.toFixed(1)}px)`;
-        s.a.style.opacity = clamp(e * 4).toFixed(3);
-      } else { s.a.style.clipPath = e >= 1 ? 'none' : `inset(${((1 - e) * 100).toFixed(2)}% 0 0 0)`; s.a.style.opacity = '1'; }
-      s.a.style.visibility = (i === 0 ? e > 0 : e > 0) ? 'visible' : 'hidden';
-      s.img.style.transform = `scale(${(lerp(i === 0 ? 1.35 : 1.25, 1, e)).toFixed(4)})`;
+      // Aufdecken rein per Transform (kein clip-path → kein Neuzeichnen des Vollbild-Bildes pro Frame, läuft auf der GPU)
+      let bx = 0, by = 0, bw = W, bh = H, rad = 0;
+      if (i === 0) { const k = 1 - e; bx = R.l * k; by = R.t * k; bw = W - (R.l + R.r) * k; bh = H - (R.t + R.b) * k; rad = 10 * k; s.a.style.opacity = clamp(e * 4).toFixed(3); }
+      else { by = (1 - e) * H; bh = H - by; s.a.style.opacity = '1'; }
+      const full = e >= 1, tf = full ? '' : `translate3d(${bx.toFixed(1)}px,${by.toFixed(1)}px,0) scale(${(bw / W).toFixed(4)},${(bh / H).toFixed(4)})`;
+      if (tf !== s.tf) { s.tf = tf; s.a.style.transform = tf; s.inn.style.transform = full ? '' : `scale(${(W / bw).toFixed(4)},${(H / bh).toFixed(4)}) translate3d(${(-bx).toFixed(1)}px,${(-by).toFixed(1)}px,0)`; s.a.style.borderRadius = rad > .2 ? `${(rad * W / bw).toFixed(2)}px / ${(rad * H / bh).toFixed(2)}px` : ''; }
+      s.a.style.visibility = e > 0 ? 'visible' : 'hidden';
       // Bildschiebung des vorherigen Bildes, wenn das nächste kommt
       const nstart = 2.6 + i * 1.6, ne = i < N - 1 ? ease(clamp((u - nstart) / 1)) : 0;
-      s.a.firstChild.style.transform = `translateY(${(-ne * 7).toFixed(2)}%)`;
+      s.iw.style.transform = `translateY(${(-ne * 7).toFixed(2)}%)`;
       s.cap.style.opacity = (clamp((e - .55) / .3) * (1 - clamp(ne / .3))).toFixed(3);
       s.cap.style.transform = `translateY(${((1 - clamp((e - .55) / .3)) * 18).toFixed(1)}px)`;
     });
