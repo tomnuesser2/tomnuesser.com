@@ -92,12 +92,14 @@ function css() {
 .vw__all button{font:600 13px system-ui;border:1px solid currentColor;background:transparent;color:inherit;border-radius:99px;padding:9px 16px;cursor:pointer;display:flex;gap:8px;align-items:center;opacity:.85}
 .vw__all button:hover{opacity:1;background:var(--acc);border-color:var(--acc);color:#fff}
 .vw__all svg{width:14px;height:14px;fill:currentColor}
-/* Fächer */
-.vw--fan .vw__row{position:relative;display:block;perspective:1600px;margin:34px 0 26px}
+/* Fächer: breit über die ganze Fläche, gewölbt (Mitte vorn, außen nach hinten gekippt) */
+.vw--fan .vw__row{position:relative;display:block;perspective:1800px;perspective-origin:50% 40%;margin:30px 0 22px}
 .vw--fan .vw__c{position:absolute;left:50%;top:50%;height:100%;aspect-ratio:var(--ar);width:auto;flex:none;margin-left:calc(var(--vwh)*var(--arn)*-.5);margin-top:calc(var(--vwh)*-.5);
-  transform:translateX(calc(var(--k)*var(--spread)*1px)) translateY(calc(var(--k)*var(--k)*26px)) rotate(calc(var(--k)*7deg)) scale(.86);transform-origin:50% 120%;z-index:calc(20 - var(--abs))}
-.vw--fan .vw__c.is-focus{transform:translateX(calc(var(--k)*var(--spread)*1px)) translateY(-14px) rotate(0) scale(1);z-index:40}
-.vw--fan .vw__c:not(.is-focus){filter:brightness(.75)}
+  box-shadow:0 30px 50px -26px rgba(0,0,0,.75);transform-origin:50% 100%;
+  transform:translateX(calc(var(--k)*var(--spread)*1px)) translateY(calc(var(--k)*var(--k)*34px)) rotateY(calc(var(--k)*-16deg)) rotate(calc(var(--k)*4.5deg)) scale(calc(.9 - var(--ak)*.07));z-index:calc(20 - var(--abs))}
+.vw--fan .vw__c.is-focus{transform:translateX(calc(var(--k)*var(--spread)*1px)) translateY(-20px) rotateY(0) rotate(0) scale(1.05);z-index:40;box-shadow:0 40px 70px -28px rgba(0,0,0,.85)}
+.vw--fan .vw__c:not(.is-focus){filter:brightness(.72) saturate(.85)}
+.vw--fan .vw__c:not(.is-focus):hover{filter:brightness(.92)}
 /* Raster */
 .vw--grid .vw__row{height:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(150px,18vw,230px),1fr));justify-content:center}
 .vw--grid .vw__c{aspect-ratio:var(--ar);flex:none}
@@ -111,9 +113,19 @@ function css() {
   .vw{margin:20px auto}
   .vw__stagebg{padding:12px 6px 14px;border-radius:18px}
   .vw__head{margin-bottom:6px;padding-left:8px}
-  .vw--fan .vw__c:not(.is-focus){transform:translateX(calc(var(--k)*var(--spread)*1px)) translateY(calc(var(--k)*var(--k)*18px)) rotate(calc(var(--k)*6deg)) scale(.74)}
   .vw__btns{opacity:1}
 }
+/* Smartphone: Wisch-Karussell – Karten rasten in der Mitte ein, Nachbarn schauen an den Seiten heraus, Punkte zeigen die Position */
+.vw__dots{display:none}
+.vw--rail .vw__row{display:flex;gap:12px;height:auto;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;padding:8px calc(50% - var(--cwm,220px)/2) 30px;margin:0 -6px;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;align-items:center}
+.vw--rail .vw__row::-webkit-scrollbar{display:none}
+.vw--rail .vw__c{flex:none;width:var(--cwm,220px);height:var(--vwh);min-width:0;scroll-snap-align:center;scroll-snap-stop:always;transform:scale(.9);filter:brightness(.62);box-shadow:0 18px 30px -18px rgba(0,0,0,.8)}
+.vw--rail .vw__c.is-focus{transform:scale(1);filter:none}
+.vw--rail .vw__c:not(.is-focus) .vw__btns{display:none}
+.vw--rail .vw__c:not(.is-focus) .vw__cap{opacity:0}
+.vw--rail .vw__dots{display:flex;justify-content:center;gap:7px;margin-top:-10px;padding-bottom:4px}
+.vw__dots i{width:7px;height:7px;border-radius:50%;background:var(--acc);opacity:.3;cursor:pointer;transition:opacity .25s,transform .25s,width .25s}
+.vw__dots i.on{opacity:1;width:20px;border-radius:99px;background:var(--acc)}
 @media (prefers-reduced-motion:reduce){.vw__c{transition:none!important;opacity:1;translate:none}}
 `;
   document.head.append(s);
@@ -141,7 +153,7 @@ export default {
     const items = (p.items || []).filter((i) => i && String(i.video || '').trim()).slice(0, 8);
     const land = p.format === FORMATS[1], ar = land ? 16 / 9 : 9 / 16, H0 = Math.round(num(p.height, 620) * (land ? .56 : 1));
     const baseMode = p.layout === LAYOUTS[1] ? 'fan' : p.layout === LAYOUTS[2] ? 'grid' : 'acc', mq = matchMedia('(max-width:759px)');
-    const modeNow = () => (mq.matches ? 'fan' : baseMode); let mode = modeNow();
+    const modeNow = () => (mq.matches ? 'rail' : baseMode); let mode = modeNow();
     const el = h('div', { class: `vw vw--${mode}${land ? ' vw--land' : ''}${p.bg === 'hell' ? ' vw--light' : p.bg === 'transparent' ? ' vw--clear' : ''}${p.width === 'volle Breite' ? ' vw--full' : ''}${matchMedia('(hover: none)').matches ? ' vw--touch' : ''}`, style: { '--vwh': H0 + 'px', '--acc': p.accent || '#ff6a4d' } });
     const bg = h('div', { class: 'vw__stagebg' }); el.append(bg);
     if (p.title) bg.append(h('h2', { class: 'vw__head' }, p.title));
@@ -154,12 +166,14 @@ export default {
       const k = N === 1 ? 0 : (i / (N - 1)) * 2 - 1;
       const poster = it.poster ? h('img', { class: 'vw__poster', src: it.poster, alt: '', loading: 'lazy', decoding: 'async' }) : null;
       const bPlay = h('button', { class: 'vw__b', type: 'button', 'aria-label': 'Pause / Abspielen', html: ICO.pause }), bSnd = p.sound !== false ? h('button', { class: 'vw__b', type: 'button', 'aria-label': 'Ton an/aus', html: ICO.mute }) : null;
-      const c = h('div', { class: 'vw__c', role: 'button', tabindex: '0', 'aria-label': it.title || `Video ${i + 1}`, style: { '--i': i, '--k': k.toFixed(3), '--abs': Math.round(Math.abs(k) * 10) } },
+      const c = h('div', { class: 'vw__c', role: 'button', tabindex: '0', 'aria-label': it.title || `Video ${i + 1}`, style: { '--i': i, '--k': k.toFixed(3), '--ak': Math.abs(k).toFixed(3), '--abs': Math.round(Math.abs(k) * 10) } },
         pl.el, poster, h('i', { class: 'vw__shade' }), it.tag ? h('span', { class: 'vw__tag' }, it.tag) : null, it.title ? h('span', { class: 'vw__cap' }, it.title) : null, h('div', { class: 'vw__btns' }, bPlay, bSnd));
       const S = { c, pl, i, vis: false, paused: false, muted: true, bPlay, bSnd, loaded: false };
       return S;
     });
     row.append(...cards.map((s) => s.c));
+    const dots = h('div', { class: 'vw__dots', 'aria-hidden': 'true' }, cards.map((s) => { const d = h('i'); d.addEventListener('click', () => toRail(s.i)); return d; })); if (N > 1) bg.append(dots);
+    const toRail = (i) => { const c = cards[i].c; row.scrollTo({ left: c.offsetLeft - (row.clientWidth - c.offsetWidth) / 2, behavior: still() ? 'auto' : 'smooth' }); };
     const sync = (s) => {
       const run = !reduced && s.vis && !s.paused && !allPaused && !(others && focus != null && s.i !== focus);
       if (s.vis && !s.loaded) { s.loaded = true; s.pl.load(); }
@@ -171,11 +185,11 @@ export default {
       if (s.bSnd) s.bSnd.innerHTML = s.muted ? ICO.mute : ICO.snd;
     };
     const syncAll = () => cards.forEach(sync);
-    const setFocus = (i) => { focus = i; cards.forEach((s) => s.c.classList.toggle('is-focus', s.i === i)); layout(); syncAll(); };
+    const setFocus = (i) => { focus = i; cards.forEach((s) => s.c.classList.toggle('is-focus', s.i === i)); [...dots.children].forEach((d, j) => d.classList.toggle('on', j === i)); layout(); syncAll(); };
     cards.forEach((s) => {
       s.c.addEventListener('click', (e) => {
         if (e.target.closest('.vw__btns')) return;
-        if (s.i !== focus) { userSound = true; setFocus(s.i); } else { s.paused = !s.paused; sync(s); }
+        if (s.i !== focus) { userSound = true; setFocus(s.i); if (mode === 'rail') toRail(s.i); } else { s.paused = !s.paused; sync(s); }
       });
       s.c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); s.c.click(); } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = (s.i + (e.key === 'ArrowRight' ? 1 : N - 1)) % N; cards[n].c.focus(); } });
       s.bPlay.addEventListener('click', (e) => { e.stopPropagation(); s.paused = !s.paused; allPaused = false; sync(s); });
@@ -189,13 +203,13 @@ export default {
     // Größen: im Akkordeon ist die Fokus-Karte genau 9:16 breit, die anderen teilen sich den Rest als Streifen
     const layout = () => {
       const W = row.clientWidth, mobile = mq.matches; if (W < 10) return;
-      let H = mobile ? Math.min(H0, Math.round(innerHeight * .62), Math.round(W * (land ? .74 : .64) / ar)) : Math.min(H0, Math.max(240, innerHeight - 300));
-      H = Math.max(120, H); el.style.setProperty('--vwh', H + 'px');
+      let H = mobile ? Math.min(H0, Math.round(innerHeight * .68), Math.round(W * (land ? .88 : .7) / ar)) : Math.min(H0, Math.max(240, innerHeight - 300));
+      H = Math.max(120, H); el.style.setProperty('--vwh', H + 'px'); el.style.setProperty('--cwm', Math.round(H * ar) + 'px');
       if (mode === 'acc') {
         const gap = 10, target = Math.min(W - (N - 1) * 70 - (N - 1) * gap, H * ar), unit = Math.max(40, (W - (N - 1) * gap - target) / Math.max(1, N - 1));
         el.style.setProperty('--vwg', (N === 1 ? 1 : Math.max(1, target / unit)).toFixed(3));
       } else if (mode === 'fan') {
-        const cw = H * ar; el.style.setProperty('--spread', Math.max(mobile ? 20 : 24, Math.min(cw * .62, (W - cw) / Math.max(1, N - 1) / 2 * 1.9)).toFixed(1));
+        const cw = H * ar, reach = W / 2 - cw * .47 - 8, byGap = cw * 1.06 * (N - 1) / 2; el.style.setProperty('--spread', Math.max(24, Math.min(reach, byGap)).toFixed(1));
       }
     };
     mq.addEventListener?.('change', () => {
@@ -204,12 +218,14 @@ export default {
       el.style.removeProperty('--vwg'); el.style.removeProperty('--spread'); setFocus(mode === 'fan' ? Math.floor((N - 1) / 2) : 0);
     });
     new ResizeObserver(layout).observe(row);
+    // Rail (Handy): Die Karte in der Mitte ist im Fokus – sie spielt, die anderen laufen gedimmt weiter
+    let railT = 0; row.addEventListener('scroll', () => { if (mode !== 'rail' || railT) return; railT = requestAnimationFrame(() => { railT = 0; const mid = row.scrollLeft + row.clientWidth / 2; let best = 0, bd = 1e9; cards.forEach((s) => { const d = Math.abs(s.c.offsetLeft + s.c.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = s.i; } }); if (best !== focus) setFocus(best); }); }, { passive: true });
     // Sichtbarkeit: nur Videos im Bild laufen; nahe Videos werden schon vorgeladen
     const io = new IntersectionObserver((es) => { for (const e of es) { const s = cards.find((x) => x.c === e.target); if (!s) continue; s.vis = e.isIntersecting; if (e.isIntersecting && !s.loaded) { s.loaded = true; s.pl.load(); } sync(s); } }, { threshold: 0.25, rootMargin: '120px' });
     cards.forEach((s) => io.observe(s.c));
     const inObs = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { el.classList.add('is-in'); inObs.disconnect(); } }, { threshold: 0.12 });
     inObs.observe(el);
-    cards[focus].c.classList.add('is-focus'); requestAnimationFrame(() => { layout(); syncAll(); }); setTimeout(() => el.classList.add('is-ready'), 1600);
+    cards[focus].c.classList.add('is-focus'); dots.children[focus]?.classList.add('on'); requestAnimationFrame(() => { layout(); syncAll(); }); setTimeout(() => el.classList.add('is-ready'), 1600);
     document.addEventListener('visibilitychange', () => { if (document.hidden) cards.forEach((s) => s.pl.pause()); else syncAll(); });
     return el;
   },

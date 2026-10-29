@@ -348,11 +348,12 @@ function stageBg(TH, bg) {
 }
 function mount(root, OPT) {
   /* Hintergrund mit dem direkt folgenden NOTUA-Board teilen (gleiche Punkte, gleiche Bewegung) */
-  let lastPos = '', bgTile = 0, bgX = 0, bgY = 0, pgv = 0;
+  let lastPos = '', bgTile = 0, bgX = 0, bgY = 0, pgv = 0, nbKey = '';
   const syncNext = (force) => {
     const nb = root.nextElementSibling; if (!nb || !nb.classList.contains('nb')) return;
     const sk = lookSig.split('|')[4];
     if (force) {
+      const nk = [TH.bg, TH.dot, sk].join('|'); if (nk === nbKey) return; nbKey = nk;   // Nur wenn sich Farbe/Raster wirklich ändern: jede Variable am Board lässt dessen ganzen Inhalt neu berechnen
       nb.style.setProperty('--nb-bg', TH.bg); nb.style.setProperty('--nb-dot', TH.dot);
       nb.style.setProperty('--fl-img', !/^(grid|lines|cross|paper)$/.test(sk) ? 'none' : stageBg(TH, sk).slice(0, -(TH.bg.length + 2)));
       lastPos = '';
@@ -468,6 +469,8 @@ function mount(root, OPT) {
   function cardPos(i) { const wN = narrow(); if (i === 0) return wN ? [0, .34] : [.62, 0]; if (i === N) return wN ? [0, .34] : [.62, 0]; if (i === lookIdx) return wN ? [0, .02] : [.62, 0]; return [wN ? (i % 2 ? .1 : -.1) : (.85 + (i % 2 ? .12 : -.05)), wN ? .08 : Math.sin(i * 2) * .12]; }
   const draw = (now) => {
     if (!running) return; requestAnimationFrame(draw);
+    // Ganz am Ende des Flugs (Board übernimmt): nichts mehr zeichnen, Canvas einmal leeren
+    if (prog0 >= .998) { if (!draw.done) { draw.done = true; gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); } return; } draw.done = false;
     // Handy: steht der Scroll still, nur noch in großen Abständen neu zeichnen (spart Akku/Ruckler)
     if (SMALL) { if (prog0 !== lastP) { lastP = prog0; lastMv = now; } else if (now - lastMv > 220 && now - lastPaint < 140 && !D.dirtyImg) return; }
     const t = (now - t0) / 1000; px += (tpx - px) * .06; py += (tpy - py) * .06;
@@ -504,8 +507,8 @@ function mount(root, OPT) {
     const lookT = Math.abs(f - lookIdx) < .01 ? (active === lookIdx ? lu * 10 : -1) : (f > lookIdx ? 99 : -1); applyState(lookState(lookT)); if (LG && LG.acc !== TH.accent) tintLogo();
     if (cvs[active] && active === near && Math.abs(f - active) < .6 && now - lastPaint > (SMALL ? (vel > .06 ? 400 : 140) : 33)) { lastPaint = now; paint(active, active === lookIdx ? lookT : (now - aT0) / 1000); pver[active] = ver; upload(active); }
     if (D.dirtyImg) { D.dirtyImg = false; ver++; }
-    for (let i = 0; i < STATIONS.length; i++) if (cvs[i] && i !== active && pver[i] !== ver && Math.abs(f - i) < 2.6) { paint(i, 99); upload(i); pver[i] = ver; if (SMALL) break; }   // Handy: höchstens eine Karte pro Bild, kein Ruckler beim Einstieg
-    hud.style.setProperty('--gl', '0'); bar.style.transform = `scaleX(${prog0.toFixed(4)})`; hint.style.opacity = prog0 < .03 ? '1' : '0';
+    for (let i = 0; i < STATIONS.length; i++) if (cvs[i] && i !== active && pver[i] !== ver && Math.abs(f - i) < 2.6) { paint(i, 99); upload(i); pver[i] = ver; break; }   // Handy: höchstens eine Karte pro Bild, kein Ruckler beim Einstieg
+    if (!draw.hg) { draw.hg = 1; hud.style.setProperty('--gl', '0'); } const bs = `scaleX(${prog0.toFixed(3)})`; if (bs !== draw.bs) { draw.bs = bs; bar.style.transform = bs; } const ho = prog0 < .03 ? '1' : '0'; if (ho !== draw.ho) { draw.ho = ho; hint.style.opacity = ho; }
   };
   new IntersectionObserver((es) => { if (es[0].isIntersecting) { if (!running) { running = true; resize(); requestAnimationFrame(draw); } } else { running = false; } }, { rootMargin: SMALL ? '70% 0px' : '10%' }).observe(stage);
   const onScroll = () => { const r = track.getBoundingClientRect(); prog0 = pgv = clamp(-r.top / Math.max(1, r.height - stage.offsetHeight)); };

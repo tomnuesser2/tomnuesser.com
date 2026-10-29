@@ -51,7 +51,7 @@ export default {
       const box = el.querySelector('.hero__cards'); el.classList.add('hero--car'); { const sh = (q, v) => { v = Number(v) || 0; if (v) el.style.setProperty(q, v + 'px'); }; sh('--car-y', p.carY); sh('--name-y', p.nameY); sh('--title-y', p.titleY); } el.style.setProperty('--cs', (1 + ((Number(p.carSize) || 1.6) - 1) * .3).toFixed(3)); box.replaceChildren();
       const all = (idx.order || []).map(sl => ({ slug: sl, ...idx.projects[sl] })).filter(x => x.image && !x.hidden);
       const labD = nameLabel(p, all); if (labD) { labD.el.classList.add('hn--d'); box.before(labD.el); }
-      (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => el.isConnected && (carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { spread: Number(p.carSpread) || 1.5, zoom: Number(p.carSize) || 1.4, size: (r) => ({ w: Math.min(r.width * .46, r.height * 1.1 * 1.6), aspect: 1.6 }), fitAngle: 108, swerve: dirIn, onChange: (i) => labD && labD.set(i) }), swerveIn(box))));
+      (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => el.isConnected && (carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { spread: Number(p.carSpread) || 1.5, zoom: Number(p.carSize) || 1.4, size: (r) => ({ w: Math.min(r.width * .46, r.height * 1.1 * 1.6), aspect: 1.6 }), fitAngle: 108, swerve: dirIn, onChange: (i) => labD && labD.set(i) }), fadeIn(box))));
     }
     if (still() || !p.cycle) { lineEls.forEach(r => r.classList.add('is-on')); if (still()) return el; }
     if (p.cycle) { let a = 0; const cycle = () => { lineEls.forEach((r, i) => r.classList.toggle('is-on', i === a)); a = (a + 1) % lineEls.length; };
@@ -83,9 +83,14 @@ function nameLabel(p, items) {
 // 3) Die weiteren ausgewählten Projekte schieben sich nacheinander als Vollbild darüber – alles gesteuert durch das Scrollen.
 // Einflug des Karussells: kommt aus einer zufälligen Richtung hereingeschwungen, dreht dabei und landet in der Mitte
 const dirIn = Math.random() < .5 ? 1 : -1;
+function fadeIn(el) {
+  if (!el || !el.animate || still()) return;
+  el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 700, easing: 'ease-out', fill: 'backwards' });   // nur Opacity: läuft auf dem Compositor, kein Re-Raster der 3D-Karten
+}
 function swerveIn(el) {
-  if (!el || !el.animate || still()) return; const a = Math.random() * Math.PI * 2, x = Math.cos(a) * 52, y = Math.sin(a) * 26 + 6;
-  el.animate([{ transform: `translate(${x}vw, ${y}vh) rotate(${dirIn * 14}deg) scale(.55)`, opacity: 0, filter: 'blur(14px)' }, { opacity: 1, filter: 'blur(0)', offset: .35 }, { transform: 'none', opacity: 1, filter: 'blur(0)' }], { duration: 1150, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
+  // Einflug von OBEN mit Einblenden (kein Weichzeichner: der ist auf großen 3D-Flächen teuer); die Drehung macht das Karussell selbst
+  if (!el || !el.animate || still()) return;
+  el.animate([{ transform: `translateY(-24vh) rotate(${dirIn * 5}deg) scale(.9)`, opacity: 0 }, { opacity: 1, offset: .5 }, { transform: 'none', opacity: 1 }], { duration: 1250, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
 }
 // Text in Wörter und Buchstaben zerlegen (für den Einflug-Effekt beim Seitenstart)
 function splitChars(el, base = 0) {
