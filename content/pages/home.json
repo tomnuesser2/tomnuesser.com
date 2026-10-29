@@ -8,11 +8,11 @@
         "mobileCount": 6,
         "title_de": "digitaler & visueller künstler",
         "title": "digital and visual artist",
-        "carSize": 1.45,
+        "carSize": 1.25,
         "carSpread": 0.95,
-        "carY": -35,
-        "nameY": 20,
-        "titleY": -65
+        "carY": 45,
+        "nameY": 45,
+        "titleY": 55
       }
     },
     {
