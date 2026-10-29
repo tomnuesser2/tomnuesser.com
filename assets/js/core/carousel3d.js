@@ -5,8 +5,9 @@
 //   opts.size(rect) -> { w, aspect }   Kartenbreite und Seitenverhältnis (Breite/Höhe) abhängig von der Fläche
 //   opts.onChange(index), opts.onFront(item, index) wird beim Tippen auf die vordere Karte gerufen (sonst: Navigation per Link)
 import { h } from './dom.js';
+import { Q as QUAL, onQuality } from './quality.js';
 
-const TILES_MAX = 8, OVERLAP = 2.5, DRAG = 5, SPRING = 118, SETTLE = 9, RAD = Math.PI / 180;
+const TILES_MAX = 8, OVERLAP = 2.5, DRAG = 5, SPRING = 118, SETTLE = 16, RAD = Math.PI / 180;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const wrap = (d) => ((((d + 180) % 360) + 360) % 360) - 180;
 const easeOut = (t) => 1 - Math.pow(1 - t, 4);
@@ -18,7 +19,7 @@ const rotY = (p, d) => { const r = d * RAD, c = Math.cos(r), s = Math.sin(r); re
 export function carousel3d(root, items, o = {}) {
   const O = { gap: 36, tilt: 3, curve: .46, perspective: 1040, speed: 14, momentum: .6, parallax: .3, stretch: .5, depthFade: .55, innerShade: .6, radius: 12, intro: true, reduced: false, ...o };
   const count = items.length, step = 360 / count;
-  const TILES = O.light ? 5 : TILES_MAX;
+  let TILES = O.light ? 5 : TILES_MAX;
   root.classList.add('cc');
   root.style.setProperty('--cc-radius', O.radius + 'px');
   root.style.setProperty('--cc-inner', (1 - clamp(O.innerShade, 0, 1)).toFixed(3));
@@ -35,7 +36,7 @@ export function carousel3d(root, items, o = {}) {
     const w = Math.round(sz.w), hh = Math.round(sz.w / clamp(sz.aspect, .2, 5));
     if (w === cardW && hh === cardH && cards.length) return true;
     cardW = w; cardH = hh;
-    const n = Math.max(count, 3), pitch = cardW + O.gap, chord = pitch / (2 * Math.sin(Math.PI / n)), arc = (n * pitch) / (2 * Math.PI);
+    const gap = O.gap + ((Number(O.spread) || 1) - 1) * cardW * .55, n = Math.max(count, 3), pitch = cardW + Math.max(-cardW * .5, gap), chord = pitch / (2 * Math.sin(Math.PI / n)), arc = (n * pitch) / (2 * Math.PI);
     radius = Math.max(chord + (arc - chord) * O.curve, cardW * .6);
     const bend = radius / O.curve;
     tiles = Array.from({ length: TILES }, (_, i) => {
@@ -71,8 +72,8 @@ export function carousel3d(root, items, o = {}) {
       if (p[2] >= P * .95) continue;
       const k = P / (P - p[2]); minX = Math.min(minX, p[0] * k); maxX = Math.max(maxX, p[0] * k); minY = Math.min(minY, p[1] * k); maxY = Math.max(maxY, p[1] * k);
     }
-    const fit = Math.min(1, O.fitAngle ? 9e9 : width / Math.max(maxX - minX, 1), height / Math.max(maxY - minY, 1));
-    S.fit = fit; S.shift = -((minY + maxY) / 2) * fit; S.drop = (rect.height / fit) * .55 + cardH;
+    let fit = Math.min(1, O.fitAngle ? 9e9 : width / Math.max(maxX - minX, 1), height / Math.max(maxY - minY, 1));
+    S.fit = fit = fit * (Number(O.zoom) || 1); S.shift = -((minY + maxY) / 2) * fit; S.drop = (rect.height / fit) * .32 + cardH * .55;
     stage.style.perspective = P + 'px'; stage.style.transform = `translate3d(0, ${S.shift}px, 0) scale(${fit})`;
   };
 
@@ -95,7 +96,7 @@ export function carousel3d(root, items, o = {}) {
       if (Math.abs(S.target - S.angle) < .004 && Math.abs(S.vel) < .03) { S.angle = S.target; S.vel = 0; S.target = null; }
       busy = true;
     } else {
-      const tau = .18 + O.momentum * 1.5;
+      const tau = .22 + O.momentum * 1.9;
       S.vel += (cruise - S.vel) * (1 - Math.exp(-dt / tau)); S.angle += S.vel * dt;
       if (cruise === 0 && Math.abs(S.vel) < SETTLE) S.target = nearest(S.angle);
       busy = busy || cruise !== 0 || Math.abs(S.vel) > .01 || S.target !== null;
@@ -112,10 +113,9 @@ export function carousel3d(root, items, o = {}) {
     ring.style.transform = `rotateY(${S.angle}deg)`;
     cards.forEach((c, i) => {
       const base = i * step, lift = introMod(el, base);
-      c.style.transform = `rotateY(${base}deg) translateZ(${R}px)` + (lift ? ` translateY(${lift}px)` : '');
+      const tf = `rotateY(${base}deg) translateZ(${R}px)` + (lift ? ` translateY(${-lift}px)` : ''); if (tf !== c.__tf) { c.__tf = tf; c.style.transform = tf; }
       const facing = Math.cos(wrap(base + S.angle) * RAD);
-      c.style.setProperty('--cc-depth', (O.depthFade * Math.pow((1 - facing) / 2, 1.25)).toFixed(3));
-      c.style.zIndex = '';
+      const dp = (O.depthFade * Math.pow((1 - facing) / 2, 1.25)).toFixed(2); if (dp !== c.__dp) { c.__dp = dp; c.style.setProperty('--cc-depth', dp); }
     });
     const idx = ((Math.round(-S.angle / step) % count) + count) % count || 0;
     if (idx !== active) { active = idx; O.onChange && O.onChange(idx); }
@@ -128,6 +128,7 @@ export function carousel3d(root, items, o = {}) {
   };
   const wake = () => { if (!raf && visible && !document.hidden && !dead) raf = requestAnimationFrame(frame); };
 
+  const offQ = onQuality(() => { if (QUAL.lite && !O.light) { O.light = true; TILES = 5; cardW = -1; if (build()) { measure(); render(performance.now()); } wake(); } });
   const ro = new ResizeObserver(() => { if (build()) { measure(); render(performance.now()); } wake(); });
   const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) wake(); else { cancelAnimationFrame(raf); raf = 0; S.last = 0; } });
   const onVis = () => { if (document.hidden) { cancelAnimationFrame(raf); raf = 0; S.last = 0; } else wake(); };
@@ -139,6 +140,8 @@ export function carousel3d(root, items, o = {}) {
     if (e.pointerType === 'mouse') { S.pointer.in = true; const r = root.getBoundingClientRect(); S.pointer.x = clamp((e.clientX - r.left) / r.width * 2 - 1, -1, 1); S.pointer.y = clamp((e.clientY - r.top) / r.height * 2 - 1, -1, 1); }
     const p = S.press; if (!p || p.id !== e.pointerId) { wake(); return; }
     const d = e.clientX - p.x, cross = e.clientY - p.y;
+    // Maus/Stift: überwiegend senkrechtes Ziehen scrollt die SEITE (auf Touch macht das der Browser selbst) – gedrückt halten blockiert das Scrollen nie
+    if (!p.moved && e.pointerType !== 'touch' && (p.vs || (Math.abs(cross) > DRAG * 2 && Math.abs(cross) > Math.abs(d) * 1.2))) { window.scrollBy(0, (p.ly ?? p.y) - e.clientY); p.ly = e.clientY; p.vs = true; S.suppress = true; return; }
     if (!p.moved) {
       if (Math.abs(d) < DRAG) return;
       if (Math.abs(cross) > Math.abs(d) * 1.2 && e.pointerType !== 'mouse') { S.press = null; return; }
@@ -152,11 +155,12 @@ export function carousel3d(root, items, o = {}) {
   const up = (e) => {
     const p = S.press; if (!p || p.id !== e.pointerId) return; S.press = null; if (!p.moved) return;
     S.drag = false; root.classList.remove('is-dragging'); S.suppress = true;
-    const f = p.samples[0], l = p.samples[p.samples.length - 1], span = (l.t - f.t) / 1000, v = span > .008 ? clamp((l.a - f.a) / span, -1400, 1400) : 0;
+    const f = p.samples[0], l = p.samples[p.samples.length - 1], span = (l.t - f.t) / 1000, v = span > .008 ? clamp((l.a - f.a) / span, -2600, 2600) : 0;
     S.vel = v; if (Math.abs(v) > 60) S.dir = Math.sign(v);
     // Wischen: Schwung mitnehmen und auf die nächste Karte einrasten (kleine Drags springen nicht mehr zurück)
-    S.target = nearest(S.angle + clamp(v * .2, -step * 1.5, step * 1.5));
-    S.hold = performance.now() + 2200; wake();
+    // Freies Auslaufen: Der Schwung bleibt (je schneller gewischt, desto länger dreht es), nimmt weich ab und rastet erst ganz zum Schluss auf die nächste Karte ein
+    S.target = Math.abs(v) < 40 ? nearest(S.angle) : null;
+    S.hold = performance.now() + 1200 + Math.min(2500, Math.abs(v) * 2.2); wake();
   };
   const focus = (i) => { let t = -i * step; t += 360 * Math.round((S.angle - t) / 360); S.target = t; S.hold = performance.now() + 2800; wake(); };
   const click = (e) => {
@@ -185,6 +189,6 @@ export function carousel3d(root, items, o = {}) {
     focus: (i) => { S.paused = true; focus(i); },
     pause: (on) => { S.paused = !!on; if (!on) S.hold = 0; wake(); },
     get index() { return active; },
-    destroy() { dead = true; cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); root.removeEventListener('click', click, true); root.removeEventListener('wheel', wheel); },
+    destroy() { dead = true; offQ(); cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); root.removeEventListener('click', click, true); root.removeEventListener('wheel', wheel); },
   };
 }
