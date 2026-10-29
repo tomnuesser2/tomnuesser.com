@@ -10,8 +10,8 @@
         "title": "digital and visual artist",
         "carSize": 1.25,
         "carSpread": 0.95,
-        "carY": 45,
-        "nameY": 45,
+        "carY": 5,
+        "nameY": 5,
         "titleY": 55
       }
     },

@@ -145,7 +145,8 @@
         "bg": "dunkel",
         "textScale": 1,
         "textScaleMobile": 0
-      }
+      },
+      "hidden": true
     }
   ],
   "title_de": "Gården Festival 2026"
