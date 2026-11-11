@@ -199,7 +199,7 @@
         },
         "scrollBtn": "scroll",
         "scrollBtn_de": "scrollen",
-        "scrollFly": true
+        "scrollFly": false
       }
     }
   ],

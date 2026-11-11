@@ -120,7 +120,17 @@ export function mediaEl(p = {}) {
     // Abspielen beim Hinscrollen: ab gut der Hälfte sichtbar läuft es (und meldet das, damit z. B. die Reel-Wand darüber pausiert),
     // unter einem Drittel sichtbar → Pause (und die anderen laufen wieder).
     let wantPlay = false;
-    function applyPlay() { if (!ifr) return; if (v.yt) send({ event: 'command', func: wantPlay ? 'playVideo' : 'pauseVideo', args: [] }); else send({ method: wantPlay ? 'play' : 'pause' }); }
+    let playing = false, retry = 0, tries = 0;
+    function applyPlay() { if (!ifr) return; if (v.yt) send({ event: 'command', func: wantPlay ? 'playVideo' : 'pauseVideo', args: [] }); else send({ method: wantPlay ? 'play' : 'pause' });
+      // Der Player ist oft noch nicht bereit → so lange nachfassen, bis er wirklich läuft (max. ~20 s)
+      clearTimeout(retry); if (!wantPlay) tries = 0; if (wantPlay && !playing && tries++ < 20) retry = setTimeout(() => { if (wantPlay && !playing) { if (!v.yt) send({ method: 'setMuted', value: !on }); applyPlay(); } }, 1000); }
+    if (p.viewPlay && !v.yt) addEventListener('message', (e) => {
+      if (!ifr || e.source !== ifr.contentWindow) return; let d = e.data; try { if (typeof d === 'string') d = JSON.parse(d); } catch { return; }
+      if (!d) return;
+      if (d.event === 'ready') { ['play', 'pause', 'playProgress'].forEach(ev => send({ method: 'addEventListener', value: ev })); applyVol(); applyPlay(); }
+      else if (d.event === 'play' || d.event === 'playProgress') { playing = true; if (!wantPlay) applyPlay(); }
+      else if (d.event === 'pause') { playing = false; if (wantPlay) applyPlay(); }
+    });
     if (p.viewPlay && 'IntersectionObserver' in window) {
       new IntersectionObserver((es) => es.forEach((e) => {
         const r = e.intersectionRatio;

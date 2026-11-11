@@ -182,7 +182,7 @@ export default {
           vsEl.style.opacity = vq ? String(Math.min(1, ovAlpha)) : '0'; vsEl.style.pointerEvents = vq ? 'auto' : 'none';
         }
       };
-      ticker(cv, (dt, t) => {
+      ticker(stage, (dt, t) => { // auf die Bühne hören, nicht auf die Zeichenfläche: Startet der Laptop außerhalb des Bildes, lief sonst die Animation nie los
         if (!cv.width) return;
         if (dt > .034) { if (++slow > 25 && rq > .55) { rq *= .8; slow = 0; resize(); } } else if (slow > 0) slow--;
         const k = Math.min(1, dt * 6), tgt = statik ? 1 : A ? L.a : clamp(L.p / .26); if (A && !statik) { const stp = Math.min(dt, .25) / Math.max(.6, Number(A.dur) || 4.5); oc = tgt > oc ? Math.min(tgt, oc + stp) : Math.max(tgt, oc - stp); } else oc += (tgt - oc) * Math.min(1, dt * 7);
