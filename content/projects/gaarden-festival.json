@@ -137,7 +137,8 @@
         "linkUrl": "",
         "textScale": 1.1,
         "textScaleMobile": 0
-      }
+      },
+      "hidden": true
     },
     {
       "type": "laptop3d",
