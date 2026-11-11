@@ -8,6 +8,61 @@
     "category": "video",
     "stills": []
   },
-  "blocks": [],
+  "blocks": [
+    {
+      "type": "videoWall",
+      "props": {
+        "title": "fistball euro 2026",
+        "text": "Over a three-day live event, I delivered fast-paced social media coverage as a videographer and editor. Filming and cutting multiple vertical Reels on-site, the content captured the raw event energy and generated over 90,000 organic views.",
+        "items": [
+          {
+            "video": "https://vimeo.com/1236195821?fl=ip&fe=ec",
+            "poster": "",
+            "title": ""
+          },
+          {
+            "video": "https://vimeo.com/1236194560?fl=ip&fe=ec",
+            "poster": "",
+            "title": ""
+          },
+          {
+            "video": "https://vimeo.com/1236195028?fl=ip&fe=ec",
+            "poster": "",
+            "title": ""
+          },
+          {
+            "video": "https://vimeo.com/1236194864?fl=ip&fe=ec",
+            "poster": "",
+            "title": ""
+          },
+          {
+            "video": "https://vimeo.com/1236195590?fl=ip&fe=ec",
+            "poster": "",
+            "title": ""
+          }
+        ],
+        "format": "9:16 hochkant (Reels)",
+        "sound": true,
+        "textScale": 1,
+        "textScaleMobile": 0,
+        "title_de": "fistball euro 2026",
+        "text_de": "Drei Tage Live-Content-Production vor Ort: Als Videograf und Editor habe ich das Event begleitet und mehrere dynamische Reels in Echtzeit gedreht sowie geschnitten. Das Ergebnis: Authentischer Social-Media-Content mit über 90.000 Aufrufen auf dem Account."
+      }
+    },
+    {
+      "type": "media",
+      "props": {
+        "vimeo": "https://vimeo.com/1246027209",
+        "src": "",
+        "srcMobile": "",
+        "poster": "auto",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "",
+        "hud": "",
+        "cam": ""
+      }
+    }
+  ],
   "title_de": "31312312312"
 }

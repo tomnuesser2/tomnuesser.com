@@ -47,7 +47,33 @@
       "hidden": false,
       "featured": false,
       "showcase": false,
-      "clips": [],
+      "clips": [
+        {
+          "vimeo": "https://vimeo.com/1236195821?fl=ip&fe=ec",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236194560?fl=ip&fe=ec",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236195028?fl=ip&fe=ec",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236194864?fl=ip&fe=ec",
+          "kind": "phone",
+          "title": ""
+        },
+        {
+          "vimeo": "https://vimeo.com/1236195590?fl=ip&fe=ec",
+          "kind": "phone",
+          "title": ""
+        }
+      ],
       "summary": "",
       "anim": "expand",
       "roles": "",
