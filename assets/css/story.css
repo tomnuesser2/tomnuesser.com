@@ -1441,3 +1441,16 @@ html.is-fill .site-footer { display: none; }
   .rw--land .rw__c { flex-basis: 84vw; }
   .rw--land .rw__row { padding-inline: calc(50% - 42vw); }
 }
+
+/* Reel-Wand: Pfeile + Punkte unter der Reihe (nur wenn sie sich seitlich wischen lässt, z. B. auf dem Handy) */
+.rw__nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: calc(var(--rw-gap) * -.4); }
+.rw__nav[hidden] { display: none; }
+.rw__ar { width: 42px; height: 42px; flex: none; border-radius: 50%; border: 1px solid rgba(0,0,0,.12); background: rgba(255,255,255,.8); color: var(--ink, #111); display: grid; place-items: center; cursor: pointer; transition: transform .25s, opacity .25s, background .25s; -webkit-tap-highlight-color: transparent; }
+.rw__ar:active { transform: scale(.92); }
+.rw__ar:disabled { opacity: .3; cursor: default; }
+.rw__ar span { width: 9px; height: 9px; border-left: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; }
+.rw__ar--p span { transform: rotate(45deg); margin-left: 3px; }
+.rw__ar--n span { transform: rotate(-135deg); margin-right: 3px; }
+.rw__dots { display: flex; align-items: center; gap: 7px; }
+.rw__dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(0,0,0,.18); cursor: pointer; transition: background .3s, transform .3s; }
+.rw__dots i.is-on { background: var(--ink, #111); transform: scale(1.25); }

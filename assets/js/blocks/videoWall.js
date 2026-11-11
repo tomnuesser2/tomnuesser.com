@@ -87,9 +87,27 @@ export default {
     if (p.sound !== false) cards.forEach((c, i) => c.card.addEventListener('click', () => setSound(i)));
 
     const row = h('div', { class: 'rw__row' + (items.length > 5 ? ' is-more' : '') }, cards.map(c => c.card));
+    // Pfeile unten: nur sichtbar, wenn sich die Reihe seitlich weiterwischen lässt (Handy, oder mehr als 5 Videos)
+    const arw = (d, lab) => h('button', { type: 'button', class: `rw__ar rw__ar--${d > 0 ? 'n' : 'p'}`, 'aria-label': lab }, h('span', { 'aria-hidden': 'true' }));
+    const prev = arw(-1, 'Vorheriges Video'), next = arw(1, 'Nächstes Video');
+    const dots = h('div', { class: 'rw__dots' }, cards.map(() => h('i')));
+    const nav = h('div', { class: 'rw__nav' }, prev, dots, next);
+    // aktuelle Karte = die, deren Mitte der Mitte der Reihe am nächsten ist
+    const curIdx = () => { const mid = row.scrollLeft + row.clientWidth / 2; let best = 0, bd = Infinity; cards.forEach((c, i) => { const m = c.card.offsetLeft + c.card.offsetWidth / 2, d = Math.abs(m - mid); if (d < bd) { bd = d; best = i; } }); return best; };
+    const goTo = (i) => { const c = cards[Math.max(0, Math.min(cards.length - 1, i))].card; row.scrollTo({ left: c.offsetLeft + c.offsetWidth / 2 - row.clientWidth / 2, behavior: 'smooth' }); };
+    prev.addEventListener('click', () => goTo(curIdx() - 1));
+    next.addEventListener('click', () => goTo(curIdx() + 1));
+    [...dots.children].forEach((d, i) => d.addEventListener('click', () => goTo(i)));
+    const syncNav = () => {
+      const scrollable = row.scrollWidth > row.clientWidth + 4; nav.hidden = !scrollable; if (!scrollable) return;
+      const i = curIdx(); [...dots.children].forEach((d, k) => d.classList.toggle('is-on', k === i));
+      prev.disabled = i <= 0; next.disabled = i >= cards.length - 1;
+    };
+    let navRaf = 0; row.addEventListener('scroll', () => { if (!navRaf) navRaf = requestAnimationFrame(() => { navRaf = 0; syncNav(); }); }, { passive: true });
+    addEventListener('resize', syncNav, { passive: true });
     const el = h('section', { class: 'rw' + (land ? ' rw--land' : ''), id: p.id, style: { '--rw-n': String(Math.min(5, items.length)) } },
       p.title ? h('h2', { class: 'rw__h' }, p.title) : null,
-      row,
+      row, nav,
       p.text ? h('p', { class: 'rw__p' }, p.text) : null);
 
     // Nur sichtbare Videos laufen (spart Akku und Datenvolumen); Ton geht aus, sobald das Video aus dem Bild ist
@@ -103,7 +121,8 @@ export default {
     } else cards.forEach(c => { c.pl.load(); c.pl.play(); });
 
     // Handy: wischbare Reihe startet mit der mittleren Karte in der Mitte – symmetrisch
-    requestAnimationFrame(() => { if (row.scrollWidth > row.clientWidth + 4) { const mid = cards[Math.floor((cards.length - 1) / 2)].card; row.scrollLeft = mid.offsetLeft + mid.offsetWidth / 2 - row.clientWidth / 2; } });
+    requestAnimationFrame(() => { if (row.scrollWidth > row.clientWidth + 4) { const mid = cards[Math.floor((cards.length - 1) / 2)].card; row.scrollLeft = mid.offsetLeft + mid.offsetWidth / 2 - row.clientWidth / 2; } syncNav(); });
+    setTimeout(syncNav, 600);
     return el;
   },
 };
