@@ -177,7 +177,7 @@
 .kn.is-still .kn__w { opacity: 1 !important; }
 
 /* --- NOTUA-Flug (eigene App) --- */
-.fl { --bg: #E7EAEE; --coral: #FF6B57; --ink: #1B2027; --mute: #5C6570; --g: 22px; background: #E7EAEE; color: #1B2027; margin: var(--group-gap) 0 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; }
+.fl { --bg: #E0E0E0; --coral: #2B2D33; --ink: #242428; --mute: #64646E; --g: 22px; background: #E0E0E0; color: #242428; margin: var(--group-gap) 0 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; }
 .fl__track { position: relative; height: calc(100svh + var(--n) * 78svh); }
 @media (max-width: 899px) { .fl__track { height: calc(100svh + var(--n) * 58svh); } }
 .fl__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
@@ -242,10 +242,10 @@
 
 .fl__hud { bottom: calc(104px + env(safe-area-inset-bottom)); }
 .fl__hint { top: auto; bottom: calc(100px + env(safe-area-inset-bottom)); }
-.fl__dock { position: absolute; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; gap: 2px; padding: 6px; background: #fff; border: 1px solid #D7DBE1; border-radius: 11px; box-shadow: 0 10px 30px -10px rgba(24,28,35,.28); max-width: calc(100vw - 20px); }
-.fl__tool { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 40px; padding: 8px 6px 7px; border: 0; background: none; border-radius: 8px; color: #5C6570; font: inherit; font-size: 11px; line-height: 1.1; cursor: pointer; transition: background .16s, color .16s, transform .12s; }
+.fl__dock { position: absolute; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; gap: 2px; padding: 6px; background: #fff; border: 1px solid #CECECF; border-radius: 11px; box-shadow: 0 10px 30px -10px rgba(24,28,35,.28); max-width: calc(100vw - 20px); }
+.fl__tool { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 40px; padding: 8px 6px 7px; border: 0; background: none; border-radius: 8px; color: #64646E; font: inherit; font-size: 11px; line-height: 1.1; cursor: pointer; transition: background .16s, color .16s, transform .12s; }
 .fl__tool span { display: none; }
-.fl__tool:hover { background: #F0F2F5; color: #1B2027; } .fl__tool.is-on { background: #FFE3DD; color: #FF6B57; }
+.fl__tool:hover { background: #E8E8E8; color: #242428; } .fl__tool.is-on { background: #D1DBFA; color: #2B2D33; }
 .fl__tool:active { transform: scale(.94); }
 @media (min-width: 900px) { .fl__tool { min-width: 58px; padding: 7px 8px 6px; } .fl__tool span { display: block; } .fl__hud { bottom: auto; top: 50%; transform: translateY(-50%); } .fl__hint { bottom: 96px; } }
 .fl__cta { color: #fff; } .fl__title::before { color: #ff3d6e; } .fl__title::after { color: #1fb6ff; }
@@ -395,13 +395,13 @@
 .fl__vig { background: radial-gradient(120% 90% at 50% 45%, transparent 70%, rgba(24,28,35,.08)); }
 
 /* NOTUA Look-Finder-Station: Panel + Theme-Variablen (--surf, --bd, --rad …) */
-.fl { color: var(--ink, #1B2027); transition: background-color .5s; }
-.fl__text, .fl__sub { color: var(--mute, #5C6570); }
-.fl__dock { background: var(--surf, #fff); border: var(--bw, 1px) solid var(--bd, #D7DBE1); border-radius: var(--rad, 11px); box-shadow: var(--shd, 0 10px 30px -10px rgba(24,28,35,.28)); transition: background-color .5s, border-radius .5s; }
-.fl__tool { color: var(--mute, #5C6570); border-radius: calc(var(--rad, 11px) * .7); }
-.fl__tool:hover { background: var(--surf2, #F0F2F5); color: var(--ink, #1B2027); } .fl__tool.is-on { background: var(--accs, #FFE3DD); color: var(--coral, #FF6B57); }
-.fl__cta { background: var(--coral, #FF6B57); }
-.fl__bar { background: var(--coral, #FF6B57); }
+.fl { color: var(--ink, #242428); transition: background-color .5s; }
+.fl__text, .fl__sub { color: var(--mute, #64646E); }
+.fl__dock { background: var(--surf, #fff); border: var(--bw, 1px) solid var(--bd, #CECECF); border-radius: var(--rad, 11px); box-shadow: var(--shd, 0 10px 30px -10px rgba(24,28,35,.28)); transition: background-color .5s, border-radius .5s; }
+.fl__tool { color: var(--mute, #64646E); border-radius: calc(var(--rad, 11px) * .7); }
+.fl__tool:hover { background: var(--surf2, #E8E8E8); color: var(--ink, #242428); } .fl__tool.is-on { background: var(--accs, #D1DBFA); color: var(--coral, #2B2D33); }
+.fl__cta { background: var(--coral, #2B2D33); }
+.fl__bar { background: var(--coral, #2B2D33); }
 .fl__hud.is-look { opacity: 1; }
 @media (max-width: 899px) { .fl__hud.is-look { display: none; } }
 
@@ -802,14 +802,14 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
   .tp__pgb { padding: 4px 7px; min-width: 0; } .tp__pages { justify-content: space-between; } .tp__stage { gap: 20px; } }
 
 /* ======================= NOTUA-Board (Flug ins Board, dann zum Ausprobieren) */
-.nb { --nb-bg: #E7EAEE; --nb-dot: #C6CCD4; --nb-sf: #fff; --nb-sf2: #F0F2F5; --nb-ink: #1B2027; --nb-mu: #5C6570; --nb-fa: #8A9099; --nb-bd: #D7DBE1; --nb-sh: rgba(24,28,35,.14); --nb-shl: rgba(24,28,35,.22); position: relative; width: 100%; margin: clamp(24px, 5vw, 64px) 0; color: inherit; }
-.nb--dark { --nb-bg: #14171C; --nb-dot: #262B33; --nb-sf: #1E222A; --nb-sf2: #191C22; --nb-ink: #ECEEF2; --nb-mu: #9AA3AF; --nb-fa: #6B7480; --nb-bd: #2C3038; --nb-sh: rgba(0,0,0,.45); --nb-shl: rgba(0,0,0,.6); }
+.nb { --nb-bg: #E0E0E0; --nb-dot: #C1C1C2; --nb-sf: #EDEDED; --nb-sf2: #E8E8E8; --nb-ink: #242428; --nb-mu: #64646E; --nb-fa: #9797A0; --nb-bd: #CECECF; --nb-sh: rgba(24,28,35,.14); --nb-shl: rgba(24,28,35,.22); position: relative; width: 100%; margin: clamp(24px, 5vw, 64px) 0; color: inherit; }
+.nb--dark { --nb-bg: #13161A; --nb-dot: #232932; --nb-sf: #1D2229; --nb-sf2: #171A20; --nb-ink: #E5E9F0; --nb-mu: #95A4BB; --nb-fa: #65738B; --nb-bd: #1F242C; --nb-sh: rgba(0,0,0,.45); --nb-shl: rgba(0,0,0,.6); }
 .nb__track { position: relative; height: calc(100svh * (1 + var(--nb-len, 2.6))); }
 .nb--static .nb__track { height: auto; }
 .nb__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; overflow: clip; perspective: 1500px; perspective-origin: 50% 46%; }
 .nb--static .nb__sticky { position: relative; height: calc(100svh - 40px); min-height: 520px; }
 .nb__space { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
-.nb__dots { position: absolute; inset: -40%; background-image: radial-gradient(circle, var(--nb-dot, #C6CCD4) 1.6px, transparent 1.9px); background-size: 34px 34px; pointer-events: none; will-change: transform, opacity; -webkit-mask-image: radial-gradient(circle at 50% 50%, #000, transparent 62%); mask-image: radial-gradient(circle at 50% 50%, #000, transparent 62%); }
+.nb__dots { position: absolute; inset: -40%; background-image: radial-gradient(circle, var(--nb-dot, #C1C1C2) 1.6px, transparent 1.9px); background-size: 34px 34px; pointer-events: none; will-change: transform, opacity; -webkit-mask-image: radial-gradient(circle at 50% 50%, #000, transparent 62%); mask-image: radial-gradient(circle at 50% 50%, #000, transparent 62%); }
 .nb__head { position: absolute; left: 50%; top: 9svh; width: min(720px, 100% - 32px); text-align: center; pointer-events: none; z-index: 5; will-change: transform, opacity, filter; transform: translate(-50%, 0); }
 .nb__k { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .55; margin: 0 0 8px; }
 .nb__h { font-size: clamp(30px, 5vw, 60px); line-height: 1.04; font-weight: 700; letter-spacing: -.025em; margin: 0 0 12px; }
@@ -817,10 +817,10 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 /* Fliegende Karten */
 .nb__fc { position: absolute; left: 50%; top: 50%; width: 230px; background: var(--nb-sf); color: var(--nb-ink); border: 1.5px solid var(--nb-bd); border-radius: 10px; box-shadow: 0 14px 40px -12px var(--nb-shl); padding: 8px 12px 14px; opacity: 0; will-change: transform, opacity; font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
 .nb__fh { display: flex; align-items: center; gap: 6px; height: 22px; color: var(--nb-fa); font-size: 12px; } .nb__fh b { font-weight: 600; color: var(--nb-mu); }
-.nb__fn p, .nb__fl p { margin: 3px 0; font-size: 13.5px; font-weight: 600; line-height: 1.4; } .nb__fl p::before { content: ""; display: inline-block; width: 11px; height: 11px; margin-right: 8px; border: 1.6px solid var(--nb-fa); border-radius: 3px; vertical-align: -1px; } .nb__fl p.d { opacity: .5; text-decoration: line-through; } .nb__fl p.d::before { background: var(--nb-ac, #FF6B57); border-color: var(--nb-ac, #FF6B57); }
+.nb__fn p, .nb__fl p { margin: 3px 0; font-size: 13.5px; font-weight: 600; line-height: 1.4; } .nb__fl p::before { content: ""; display: inline-block; width: 11px; height: 11px; margin-right: 8px; border: 1.6px solid var(--nb-fa); border-radius: 3px; vertical-align: -1px; } .nb__fl p.d { opacity: .5; text-decoration: line-through; } .nb__fl p.d::before { background: var(--nb-ac, #2B2D33); border-color: var(--nb-ac, #2B2D33); }
 .nb__ft { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--nb-bd); } .nb__ft i { height: 22px; border: 1px solid var(--nb-bd); margin: -1px 0 0 -1px; }
 .nb__fc img { width: 100%; height: 110px; object-fit: cover; border-radius: 6px; display: block; }
-.nb { --nb-ac: #FF6B57; }
+.nb { --nb-ac: #2B2D33; }
 /* Fenster */
 .nb__win { position: absolute; left: 50%; top: 50%; width: min(var(--nb-w, 1240px), 100% - 24px); height: calc(100svh * var(--nb-h, .8)); max-height: 820px; border-radius: 16px; overflow: hidden; overflow: clip; background: var(--nb-bg); color: var(--nb-ink); box-shadow: 0 50px 120px -30px rgba(10,14,20,.55), 0 0 0 1px rgba(0,0,0,.08); display: flex; flex-direction: column; opacity: 0; transform: translate(-50%, -50%); pointer-events: none; will-change: transform, opacity; font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; transform-style: flat; }
 .nb--static .nb__win { opacity: 1; }
@@ -913,7 +913,7 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 }
 
 /* ======================= NOTUA kurz (Startseite) */
-.nt { --nt-bg: #E7EAEE; --nt-dot: #C6CCD4; --nt-ink: #1B2027; --nt-ac: #FF6B57; --nt-sf: #fff; --nt-bd: #D7DBE1; --nt-mu: #5C6570; position: relative; margin: 0; color: var(--nt-ink); font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+.nt { --nt-bg: #E0E0E0; --nt-dot: #C1C1C2; --nt-ink: #242428; --nt-ac: #2B2D33; --nt-sf: #EDEDED; --nt-bd: #CECECF; --nt-mu: #64646E; position: relative; margin: 0; color: var(--nt-ink); font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
 .nt__track { position: relative; height: calc(100dvh * (1 + var(--nt-len, 1.1))); }
 .nt.is-still .nt__track { height: auto; }
 .nt__stage { position: sticky; top: 0; height: 100dvh; overflow: hidden; background: var(--nt-bg); display: grid; place-items: center; }
@@ -930,11 +930,11 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
 .nt__sub { font-size: 12px; letter-spacing: .08em; color: var(--nt-mu); margin: 0; text-transform: lowercase; }
 .nt__c { position: absolute; z-index: 2; width: clamp(150px, 17vw, 240px); background: var(--nt-sf); border: 1.5px solid var(--nt-bd); border-radius: 10px; box-shadow: 0 14px 36px -14px rgba(24,28,35,.28); padding: 6px 12px 12px; font-size: clamp(11px, 1vw, 13.5px); will-change: transform, opacity; }
 .nt__c--note { left: 6%; top: 18%; } .nt__c--tasks { right: 6%; top: 15%; } .nt__c--table { left: 8%; bottom: 14%; } .nt__c--boards { right: 8%; bottom: 17%; }
-.nt__h { display: flex; align-items: center; gap: 6px; height: 22px; color: #8A9099; } .nt__h i { width: 11px; height: 9px; border: 1.5px solid currentColor; border-radius: 2px; } .nt__h b { font-weight: 700; color: var(--nt-mu); font-size: .9em; }
+.nt__h { display: flex; align-items: center; gap: 6px; height: 22px; color: #9797A0; } .nt__h i { width: 11px; height: 9px; border: 1.5px solid currentColor; border-radius: 2px; } .nt__h b { font-weight: 700; color: var(--nt-mu); font-size: .9em; }
 .nt__nb p { margin: 3px 0; font-weight: 600; line-height: 1.4; }
-.nt__tl p { display: flex; align-items: center; gap: 8px; margin: 4px 0; font-weight: 600; } .nt__tl i { flex: none; width: 11px; height: 11px; border: 1.6px solid #8A9099; border-radius: 3px; } .nt__tl .is-done { opacity: .55; text-decoration: line-through; } .nt__tl .is-done i { background: var(--nt-ac); border-color: var(--nt-ac); }
+.nt__tl p { display: flex; align-items: center; gap: 8px; margin: 4px 0; font-weight: 600; } .nt__tl i { flex: none; width: 11px; height: 11px; border: 1.6px solid #9797A0; border-radius: 3px; } .nt__tl .is-done { opacity: .55; text-decoration: line-through; } .nt__tl .is-done i { background: var(--nt-ac); border-color: var(--nt-ac); }
 .nt__tb { border-collapse: collapse; width: 100%; } .nt__tb td { border: 1px solid var(--nt-bd); padding: 5px 7px; font-weight: 500; }
-.nt__bd { display: grid; gap: 5px; } .nt__bd span { display: flex; align-items: center; gap: 8px; background: #F0F2F5; border: 1px solid var(--nt-bd); border-radius: 7px; padding: 6px 9px; font-weight: 600; } .nt__bd i { width: 9px; height: 9px; border-radius: 3px; background: var(--nt-ac); }
+.nt__bd { display: grid; gap: 5px; } .nt__bd span { display: flex; align-items: center; gap: 8px; background: #E8E8E8; border: 1px solid var(--nt-bd); border-radius: 7px; padding: 6px 9px; font-weight: 600; } .nt__bd i { width: 9px; height: 9px; border-radius: 3px; background: var(--nt-ac); }
 @media (max-width: 899px) {
   .nt__c { width: 40vw; padding: 5px 9px 9px; font-size: 11px; }
   .nt__c--note { left: 4%; top: calc(var(--header-h, 60px) + 6px); } .nt__c--tasks { right: 4%; top: calc(var(--header-h, 60px) + 20px); } .nt__c--table { left: 4%; bottom: 96px; } .nt__c--boards { right: 4%; bottom: 112px; }
@@ -1078,7 +1078,7 @@ a, button, [role="button"], summary, label, .pc__plane, .pcs__t { touch-action: 
 .fl:has(+ .nb) .fl__stage { overflow: clip; overflow-clip-margin: 60px; }
 .fl:has(+ .nb) { position: relative; z-index: 1; }
 /* NOTUA: kleine dünne Linie an der Kante Flug → Board */
-.fl + .nb::after { content: ''; position: absolute; left: 50%; top: 0; width: min(180px, 30%); height: 1px; transform: translateX(-50%); background: var(--nb-bd, #D7DBE1); opacity: .9; z-index: 2; pointer-events: none; }
+.fl + .nb::after { content: ''; position: absolute; left: 50%; top: 0; width: min(180px, 30%); height: 1px; transform: translateX(-50%); background: var(--nb-bd, #CECECF); opacity: .9; z-index: 2; pointer-events: none; }
 /* NOTUA-Board: Pfeil „Probier es selbst aus" direkt nach dem Anflug */
 .nb__ar { transition: opacity .45s ease; }
 .nb__art { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 4px; white-space: nowrap; padding: 6px 12px; border-radius: 999px; background: var(--nb-ac); color: #fff; font: 600 13px/1 system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; box-shadow: 0 6px 16px -6px rgba(0,0,0,.35); }
@@ -1136,13 +1136,13 @@ body.is-nbend { padding-bottom: 0; }
 @media (max-width: 899px) { .dv:has(.dv__vs) .dv__laptop { margin-bottom: 44px; } }
 
 /* NOTUA-Board: kleiner Button zum Losfliegen */
-.nb__fly { margin-top: 18px; padding: 9px 18px; border-radius: 999px; border: 1.5px solid var(--nb-ink, #1B2027); background: transparent; color: var(--nb-ink, #1B2027); font: 600 13px/1 system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; cursor: pointer; transition: opacity .3s, background .2s, color .2s; pointer-events: auto; }
-.nb__fly:hover { background: var(--nb-ink, #1B2027); color: var(--nb-bg, #fff); }
+.nb__fly { margin-top: 18px; padding: 9px 18px; border-radius: 999px; border: 1.5px solid var(--nb-ink, #242428); background: transparent; color: var(--nb-ink, #242428); font: 600 13px/1 system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; cursor: pointer; transition: opacity .3s, background .2s, color .2s; pointer-events: auto; }
+.nb__fly:hover { background: var(--nb-ink, #242428); color: var(--nb-bg, #fff); }
 /* Seite endet mit dem NOTUA-Board: unten keinen weißen Streifen, der Hintergrund läuft bis zum Ende durch */
 body.is-nbend .nb:not(.nb--static) { background: var(--nb-bg); margin-bottom: 0; }
 body.is-nbend .fl + .nb::before { -webkit-mask-image: none; mask-image: none; }
 body.is-nbend .page > .nb:last-child { margin-bottom: 0; }
-body.is-nbend, body.is-nbend .app, body.is-nbend main { background: var(--nb-end, #E7EAEE); }
+body.is-nbend, body.is-nbend .app, body.is-nbend main { background: var(--nb-end, #E0E0E0); }
 /* Handy: teure Unschärfe-Effekte in den Szenen aus (flüssigeres Scrollen) */
 @media (pointer: coarse) { :is(.dv, .fl, .nb, .nt) * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; } .dv__vs { background: rgba(20,20,24,.72); } }
 
@@ -1314,3 +1314,25 @@ html.is-fill .site-footer { display: none; }
 .dd .dd__tgl .dd__tgp { position: absolute; left: 0; right: 0; top: 0; bottom: auto; height: 100%; opacity: 1; background: #1d1d1f; transform-origin: left; }
 /* Die Bewegung kommt komplett aus dem Skript: keine CSS-Übergänge, die jedem Bild hinterherlaufen und am Ende nachruckeln */
 .dd--gl .dd__dev > .dd__phone, .dd--gl .dd__dev > .dd__laptop { transition: none !important; will-change: transform; }
+/* Handy: Geräte größer, Text kleiner – ausgewogenes Verhältnis */
+@media (max-width: 899px) {
+  .dd--gl { --W: clamp(80px, calc((100dvh - 470px) / 1.3), min(37vw, 150px)); }
+  .dd .dd__k { font-size: 11.5px; }
+  .dd .dd__dots { margin: 8px 0 6px; }
+  .dd .dd__h { font-size: clamp(30px, 9.4vw, 40px); line-height: 1; }
+  .dd .dd__p { margin-top: 6px; font-size: 14.5px; line-height: 1.42; }
+  .dd .dd__item { margin-top: 10px; padding-top: 8px; min-height: 0; }
+  .dd .dd__it { font-size: 15.5px; }
+  .dd .dd__ix { margin-top: 2px; font-size: 13px; line-height: 1.4; }
+  .dd--gl .dd__dev { margin-bottom: calc(var(--W) * .12); }
+  .dd--gl .dd__dev > .dd__tg { bottom: calc(var(--W) * -.15); }
+  .dd__stage { gap: 14px; }
+}
+.dd--gl .dd__dev > .dd__tg { top: calc(100% + 2px); bottom: auto; }
+.dd--gl .dd__dev { margin-bottom: 66px; }
+@media (max-width: 899px) {
+  .dd--gl { --W: clamp(80px, calc((100dvh - 500px) / 1.3), min(33.5vw, 136px)); }
+  .dd--gl .dd__dev { margin-bottom: 62px; }
+  .dd--gl .dd__dev > .dd__tg { bottom: auto; top: calc(100% + 2px); }
+}
+@media (max-width: 899px) { .dd--gl { --W: clamp(80px, calc((100dvh - 500px) / 1.3), min(31vw, 128px)); } }

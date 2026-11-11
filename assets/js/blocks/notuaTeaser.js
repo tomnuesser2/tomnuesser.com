@@ -25,10 +25,10 @@ export default {
     { name: 'boards', label: 'Boards-Karte: Namen (mit | trennen)', type: 'text', default: 'Shoot 2026 | Clients | Ideas', de: 'Shoot 2026 | Kunden | Ideen' },
     { name: 'introDur', label: 'Dauer der Animation in Sekunden (läuft automatisch ab)', type: 'number', default: 2.8 },
     { name: 'scrollLength', label: 'Länge des Scrolls (in Bildschirmen, 0.5 = kurz)', type: 'number', default: .5 },
-    { name: 'cBg', label: 'Look: Hintergrund (Hex)', type: 'text', default: '#E7EAEE' },
-    { name: 'cDot', label: 'Look: Punktraster (Hex)', type: 'text', default: '#C6CCD4' },
-    { name: 'cInk', label: 'Look: Text (Hex)', type: 'text', default: '#1B2027' },
-    { name: 'cAccent', label: 'Look: Akzentfarbe (Hex)', type: 'text', default: '#FF6B57' },
+    { name: 'cBg', label: 'Look: Hintergrund (Hex)', type: 'text', default: '#E0E0E0' },
+    { name: 'cDot', label: 'Look: Punktraster (Hex)', type: 'text', default: '#C1C1C2' },
+    { name: 'cInk', label: 'Look: Text (Hex)', type: 'text', default: '#242428' },
+    { name: 'cAccent', label: 'Look: Akzentfarbe (Hex)', type: 'text', default: '#2B2D33' },
   ],
   render(p0) {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };

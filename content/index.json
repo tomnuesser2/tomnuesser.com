@@ -44,7 +44,7 @@
       "vimeo": "",
       "ratio": "16/9",
       "group": 1,
-      "hidden": true,
+      "hidden": false,
       "featured": false,
       "showcase": false,
       "clips": [
@@ -96,33 +96,7 @@
       "hidden": false,
       "featured": false,
       "showcase": true,
-      "clips": [
-        {
-          "vimeo": "https://vimeo.com/1236194560",
-          "kind": "phone",
-          "title": ""
-        },
-        {
-          "vimeo": "https://vimeo.com/1236195028",
-          "kind": "phone",
-          "title": ""
-        },
-        {
-          "vimeo": "https://vimeo.com/1236194864",
-          "kind": "phone",
-          "title": ""
-        },
-        {
-          "vimeo": "https://vimeo.com/1236195590",
-          "kind": "phone",
-          "title": ""
-        },
-        {
-          "vimeo": "https://vimeo.com/1236195821",
-          "kind": "phone",
-          "title": ""
-        }
-      ],
+      "clips": [],
       "summary": "",
       "anim": "expand",
       "roles": "",
@@ -186,7 +160,7 @@
     },
     "project-9": {
       "title": "Project 9 – pixel",
-      "title_de": "Projekt 9 – Pixel",
+      "title_de": "",
       "summary_de": "Das Bild entschlüsselt sich aus einem groben Mosaik in volle Auflösung.",
       "heroText": "",
       "heroText_de": "",

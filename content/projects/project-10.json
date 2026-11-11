@@ -119,6 +119,20 @@
         "tilt": 6,
         "bg": "weiß"
       }
+    },
+    {
+      "type": "media",
+      "props": {
+        "vimeo": "https://vimeo.com/1207027781",
+        "src": "https://vimeo.com/1207027781",
+        "srcMobile": "",
+        "poster": "auto",
+        "ratio": "16/9",
+        "radius": "sm",
+        "alt": "",
+        "hud": "true",
+        "cam": ""
+      }
     }
   ],
   "title_de": "QRUE Collective x Kulturwerkstatt Kühlhaus"

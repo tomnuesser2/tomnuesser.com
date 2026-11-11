@@ -54,7 +54,7 @@ export default {
     { name: 'boardName', label: 'Name des Boards oben in der Leiste', type: 'text', default: 'Untitled board', de: 'Unbenanntes Board' },
     { name: 'url', label: 'Adresse in der Browserleiste (leer = Leiste aus)', type: 'text', default: 'notua.site' },
     { name: 'theme', label: 'Look des Boards', type: 'select', options: ['hell', 'dunkel'], default: 'hell' },
-    { name: 'accent', label: 'Akzentfarbe (Hex)', type: 'text', default: '#FF6B57' },
+    { name: 'accent', label: 'Akzentfarbe (Hex)', type: 'text', default: '#2B2D33' },
     { name: 'cards', label: 'Karten, die im Board erscheinen (Position und Breite in % des Boards)', type: 'list', default: SEEDS_EN, de: SEEDS_DE, itemFields: [
       { name: 'type', label: 'Art', type: 'select', options: ['note', 'tasks', 'table', 'column', 'image'], default: 'note' },
       { name: 'title', label: 'Titel (nicht bei Notiz)', type: 'text' },
@@ -79,9 +79,9 @@ export default {
   ],
   render(p0) {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
-    const live0 = p.interactive !== false, ac = /^#?[0-9a-f]{6}$/i.test(String(p.accent || '').trim()) ? '#' + String(p.accent).trim().replace('#', '') : '#FF6B57';
+    const live0 = p.interactive !== false, ac = /^#?[0-9a-f]{6}$/i.test(String(p.accent || '').trim()) ? '#' + String(p.accent).trim().replace('#', '') : '#2B2D33';
     const endUrl0 = String(p.endUrl == null ? 'https://notua.site/' : p.endUrl).trim();
-    const root = h('div', { class: `nb${p.theme === 'dunkel' ? ' nb--dark' : ''}`, style: { '--nb-ac': ac, '--nb-len': String(Math.max(.5, num(p.scrollLength, 1.2)) + (endUrl0 ? Math.max(.6, num(p.outroLength, 1.6)) : 0)), '--nb-w': Math.max(480, num(p.width, 1240)) + 'px', '--nb-h': clamp(num(p.height, .8), .5, .95) } });
+    const root = h('div', { class: `nb${p.theme === 'dunkel' ? ' nb--dark' : ''}`, style: { '--nb-ac': (p.theme === 'dunkel' && /^#?2b2d33$/i.test(ac) ? '#9AA8DA' : ac), '--nb-len': String(Math.max(.5, num(p.scrollLength, 1.2)) + (endUrl0 ? Math.max(.6, num(p.outroLength, 1.6)) : 0)), '--nb-w': Math.max(480, num(p.width, 1240)) + 'px', '--nb-h': clamp(num(p.height, .8), .5, .95) } });
     const static0 = still();
     if (static0) root.classList.add('nb--static');
 

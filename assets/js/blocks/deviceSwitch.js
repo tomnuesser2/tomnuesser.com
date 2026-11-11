@@ -129,6 +129,7 @@ export default {
     devMount();
     bars.replaceChildren(...items.phone.map(() => h('i', {}, h('b', {}))));
 
+    let curMs = 0;   // bereits abgelaufene Zeit des aktuellen Eintrags – beim Weiterscrollen (Block kurz aus dem Bild) läuft er weiter statt neu zu starten
     const clearT = () => { clearTimeout(timer); cancelAnimationFrame(raf); if (vmH) { removeEventListener('message', vmH); vmH = null; } };
     let vmH = null;
     const fill = (m, f) => { if (m === 'laptop') lBar.style.transform = `scaleX(${f})`; else { const b = bars.children[S.phone.cur]; if (b) b.firstChild.style.transform = `scaleX(${f})`; } };
@@ -138,6 +139,7 @@ export default {
       st.shots.forEach((s, n) => { s.classList.toggle('is-on', n === st.cur); const v = s.querySelector('video'); if (v && n !== st.cur) { v.pause(); } const vf = s.querySelector('.dd__vm'); if (vf && n !== st.cur) vf.replaceChildren(); });
       if (m === 'phone') [...bars.children].forEach((b, n) => { b.firstChild.style.transform = `scaleX(${n < st.cur ? 1 : 0})`; });
       else lBar.style.transform = 'scaleX(0)';
+      curMs = 0;
       lTitle.textContent = items.laptop[S.laptop.cur] ? items.laptop[S.laptop.cur].title || '' : '';
       if (m === front) { itemEl.phone.forEach(e => e.classList.remove('is-in')); itemEl.laptop.forEach(e => e.classList.remove('is-in')); itemEl[m][st.cur]?.classList.add('is-in'); if (play) run(); }
     };
@@ -148,7 +150,7 @@ export default {
       const next = () => { if (!visible || front !== m) return; if (list.length > 1 || v) show(m, st.cur + 1); };
       if (vm) {
         // Vimeo: stumm, automatisch, ohne Bedienelemente; weiter zum nächsten Eintrag, sobald das Video zu Ende ist
-        const host = shot.querySelector('.dd__vm'); host.replaceChildren();
+        const host = shot.querySelector('.dd__vm'); host.replaceChildren(); curMs = 0;
         const q = new URLSearchParams({ autoplay: '1', muted: '1', controls: '0', api: '1', playsinline: '1', dnt: '1', autopause: '0', title: '0', byline: '0', portrait: '0', loop: list.length === 1 ? '1' : '0' }); if (vm.hash) q.set('h', vm.hash);
         const ifr = h('iframe', { src: `https://player.vimeo.com/video/${vm.id}?${q}`, allow: 'autoplay; fullscreen', tabindex: '-1', 'aria-hidden': 'true', title: it.title || 'Video', class: 'dd__vf' });
         host.append(ifr); fill(m, 0);
@@ -162,18 +164,18 @@ export default {
         };
         addEventListener('message', vmH);
         if (it.clip && list.length > 1) {   // automatischer Clip: genau 3–6 s laufen lassen, eigener Fortschrittsbalken, dann weiter
-          const dur = it.clip * 1000, t0 = performance.now(); clearTimeout(timer);
-          const tk = (t) => { if (front !== m) return; const f = Math.min(1, (t - t0) / dur); fill(m, f); if (f >= 1) next(); else raf = requestAnimationFrame(tk); };
+          const dur = it.clip * 1000, t0 = performance.now() - curMs; clearTimeout(timer);
+          const tk = (t) => { if (front !== m) return; curMs = t - t0; const f = Math.min(1, curMs / dur); fill(m, f); if (f >= 1) next(); else raf = requestAnimationFrame(tk); };
           raf = requestAnimationFrame(tk);
         }
         timer = setTimeout(() => { if (!got && list.length > 1) next(); }, Math.max(4, Number(it.duration) || 20) * 1000);
       } else if (v) {
-        v.currentTime = 0; v.play().catch(() => {});
-        const tick = () => { if (front !== m) return; const d = v.duration || 0; if (d) fill(m, Math.min(1, v.currentTime / d)); if (v.ended || (d && v.currentTime >= d - .05)) { if (list.length > 1) next(); else { v.currentTime = 0; v.play().catch(() => {}); } } raf = requestAnimationFrame(tick); };
+        if (!curMs) v.currentTime = 0; v.play().catch(() => {});
+        const tick = () => { if (front !== m) return; const d = v.duration || 0; curMs = Math.max(1, v.currentTime * 1000); if (d) fill(m, Math.min(1, v.currentTime / d)); if (v.ended || (d && v.currentTime >= d - .05)) { if (list.length > 1) next(); else { v.currentTime = 0; v.play().catch(() => {}); } } raf = requestAnimationFrame(tick); };
         raf = requestAnimationFrame(tick);
       } else if (p.auto && !still() && list.length > 1) {
-        const dur = Math.max(1.5, Number(it.duration) || 4) * 1000, t0 = performance.now();
-        const tick = (t) => { if (front !== m) return; const f = Math.min(1, (t - t0) / dur); fill(m, f); if (f >= 1) next(); else raf = requestAnimationFrame(tick); };
+        const dur = Math.max(1.5, Number(it.duration) || 4) * 1000, t0 = performance.now() - curMs;
+        const tick = (t) => { if (front !== m) return; curMs = t - t0; const f = Math.min(1, curMs / dur); fill(m, f); if (f >= 1) next(); else raf = requestAnimationFrame(tick); };
         raf = requestAnimationFrame(tick);
       }
     };
@@ -205,7 +207,13 @@ export default {
     };
     requestAnimationFrame(() => requestAnimationFrame(fit)); addEventListener('resize', fit); setTimeout(fit, 700); document.fonts?.ready?.then(fit);
     el.dataset.front = front; swapBtn.dataset.m = front; setFront(front); show(front === 'phone' ? 'laptop' : 'phone', 0, false);
-    if ('IntersectionObserver' in window) new IntersectionObserver((es) => { es.forEach(e => { visible = e.isIntersecting; if (visible) { run(); armSwap(); } else { clearT(); clearTimeout(swapT); ['phone', 'laptop'].forEach(x => S[x].shots.forEach(s => s.querySelector('video')?.pause())); } }); }, { threshold: .2 }).observe(el);
+    // Sichtbarkeit mit Verzögerung: kurzes Vorbeiscrollen (Block für einen Moment aus dem Bild) stoppt nichts und setzt keinen Timer zurück
+    let hideT = 0;
+    const hide = () => { visible = false; clearT(); clearTimeout(swapT); ['phone', 'laptop'].forEach(x => S[x].shots.forEach(s => s.querySelector('video')?.pause())); };
+    if ('IntersectionObserver' in window) new IntersectionObserver((es) => { es.forEach(e => {
+      if (e.isIntersecting) { clearTimeout(hideT); hideT = 0; if (!visible) { visible = true; run(); armSwap(); } }
+      else if (!hideT) hideT = setTimeout(() => { hideT = 0; hide(); }, 3000);
+    }); }, { threshold: .05 }).observe(el);
     else { visible = true; run(); }
     return el;
   },

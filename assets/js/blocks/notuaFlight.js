@@ -15,7 +15,7 @@ const FONTS = {
 let FONT = FONTS.default;
 // Look (wie im Look-Finder der App): Ecken, Schatten, Rahmen, Hintergrund
 const LK = { rk: 1, shA: .20, shB: 26, shY: 8, bw: 2, bc: null, bg: 'grid' };
-let TH = { bg: '#E7EAEE', dot: '#C6CCD4', surface: '#FFFFFF', surface2: '#F0F2F5', ink: '#1B2027', muted: '#5C6570', faint: '#8A9099', border: '#D7DBE1', accent: '#FF6B57', accentSoft: '#FFE3DD' };
+let TH = { bg: '#E0E0E0', dot: '#C1C1C2', surface: '#EDEDED', surface2: '#E8E8E8', ink: '#242428', muted: '#64646E', faint: '#9797A0', border: '#CECECF', accent: '#2B2D33', accentSoft: '#D1DBFA' };
 const DEF = {
   notes: 'Script intro\n– Hook in 3 sec\n– Scene 1: workshop\n– Scene 2: interview',
   list: 'Shot list\n1. Wide shot\n2. Close-up\n3. Hands detail\n4. Reverse shot',
@@ -94,7 +94,7 @@ function dColumns(c, t, D) {
 }
 function dImages(c, t, D) {
   base(c, 60, 60, 760, 470); const T = t % 8, imgs = D.imgs || [], n = Math.max(imgs.length, 4) > 4 ? 4 : Math.max(imgs.length, 4);
-  const pal = [['#ff9a76', '#ff6b57'], ['#2b3a67', '#6a8cff'], ['#f6d365', '#fda085'], ['#1f2937', '#4b5563']];
+  const pal = [['#ff9a76', '#2B2D33'], ['#2b3a67', '#6a8cff'], ['#f6d365', '#fda085'], ['#1f2937', '#4b5563']];
   for (let i = 0; i < n; i++) { const x = 90 + (i % 2) * 360, y = 90 + Math.floor(i / 2) * 215, w = 340, h = 200, p = seg(T, .4 + i * .8, .6); if (p <= 0) continue;
     c.save(); c.globalAlpha = p; const s = 1.25 - .25 * p, cx = x + w / 2, cy = y + h / 2 - (1 - p) * 40; c.translate(cx, cy); c.rotate((1 - p) * (i % 2 ? .08 : -.08)); c.scale(s, s); c.translate(-cx, -cy - 0 + (y + h / 2 - cy) * 0);
     c.shadowColor = 'rgba(24,28,35,.28)'; c.shadowBlur = 18 * p; c.shadowOffsetY = 6; c.fillStyle = '#fff'; rr(c, x - 6, y - 6, w + 12, h + 12, 8); c.fill(); c.shadowColor = 'transparent';
@@ -113,7 +113,7 @@ function dWidget(c, t, D) {
 }
 function dBoards(c, t, D) {
   base(c, 60, 60, 760, 470); const T = t % 9.5, open = seg(T, 1.5, 1.3), close = seg(T, 6.6, 1.3), k = open - close;
-  const names = lines(D.boards.replace(/\|/g, '\n')).slice(0, 3), subs = lines(D.subBoards.replace(/\|/g, '\n')).slice(0, 3), cols = ['#ffe3dd', '#dfe9ff', '#e4f3e1'];
+  const names = lines(D.boards.replace(/\|/g, '\n')).slice(0, 3), subs = lines(D.subBoards.replace(/\|/g, '\n')).slice(0, 3), cols = ['#D1DBFA', '#dfe9ff', '#e4f3e1'];
   c.save(); rr(c, 61, 61, 758, 468, 10); c.clip();
   // Breadcrumb
   const crumb = k > .5 ? `${D.boardsTitle}  ›  ${names[0] || ''}` : D.boardsTitle; ICO.folder(c, 100, 98); txt(c, crumb, 150, 112, 36, TH.ink, 700);
@@ -165,7 +165,7 @@ function dWidgets(c, t, D) {
   base(c, 60, 60, 760, 470); const T = t % 9, im = D.imgs || [];
   const drop = (a) => seg(T, a, .6), place = (p, x, y, w, h, draw) => { if (p <= 0) return; c.save(); c.globalAlpha = p; const cx = x + w / 2, cy = y + h / 2 - (1 - p) * 36; c.translate(cx, cy); const k = 1.12 - .12 * p; c.scale(k, k); c.translate(-cx, -(y + h / 2)); c.shadowColor = 'rgba(24,28,35,.30)'; c.shadowBlur = 20 * p; c.shadowOffsetY = 8; c.fillStyle = TH.surface; rr(c, x, y, w, h, 12); c.fill(); c.shadowColor = 'transparent'; draw(); c.restore(); };
   // 1 Bild-Widget
-  place(drop(.3), 96, 112, 252, 306, () => { cover(c, im[0], 108, 124, 228, 238, 8, ['#ff9a76', '#ff6b57']); txt(c, D.wImgText, 112, 386, 22, TH.ink, 600); txt(c, 'Image', 112, 408, 16, TH.faint); });
+  place(drop(.3), 96, 112, 252, 306, () => { cover(c, im[0], 108, 124, 228, 238, 8, ['#ff9a76', '#2B2D33']); txt(c, D.wImgText, 112, 386, 22, TH.ink, 600); txt(c, 'Image', 112, 408, 16, TH.faint); });
   // 2 YouTube
   place(drop(.9), 376, 104, 404, 236, () => {
     cover(c, im[1], 386, 114, 384, 190, 8, ['#1a2233', '#3a2230']); c.fillStyle = '#ff0033'; rr(c, 538, 180, 80, 56, 14); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.moveTo(568, 195); c.lineTo(568, 221); c.lineTo(592, 208); c.closePath(); c.fill();
@@ -568,11 +568,11 @@ export default {
     { name: 'boards', label: 'Boards-Karte: Namen der Boards (mit | trennen, max. 3)', type: 'text', default: DEF.boards, de: 'Shoot 2026 | Kunden | Ideen' },
     { name: 'subBoards', label: 'Boards-Karte: Unter-Boards im ersten Board (mit | trennen)', type: 'text', default: DEF.subBoards, de: 'Tag 1 | Tag 2 | B-Roll' },
     { name: 'lookRandom', label: 'Look-Finder am Ende: zufällige Farben/Schrift/Rundung (aus = immer das Standard-Farbschema)', type: 'checkbox', default: false },
-    { name: 'cBg', label: 'Basis-Look: Hintergrund (Hex)', type: 'text', default: '#E7EAEE' },
-    { name: 'cDot', label: 'Basis-Look: Punktraster (Hex)', type: 'text', default: '#C6CCD4' },
-    { name: 'cSurface', label: 'Basis-Look: Karten (Hex)', type: 'text', default: '#FFFFFF' },
-    { name: 'cInk', label: 'Basis-Look: Text (Hex)', type: 'text', default: '#1B2027' },
-    { name: 'cAccent', label: 'Basis-Look: Akzentfarbe (Hex)', type: 'text', default: '#FF6B57' },
+    { name: 'cBg', label: 'Basis-Look: Hintergrund (Hex)', type: 'text', default: '#E0E0E0' },
+    { name: 'cDot', label: 'Basis-Look: Punktraster (Hex)', type: 'text', default: '#C1C1C2' },
+    { name: 'cSurface', label: 'Basis-Look: Karten (Hex)', type: 'text', default: '#EDEDED' },
+    { name: 'cInk', label: 'Basis-Look: Text (Hex)', type: 'text', default: '#242428' },
+    { name: 'cAccent', label: 'Basis-Look: Akzentfarbe (Hex)', type: 'text', default: '#2B2D33' },
   ],
   render(p0) {
     const p = { ...Object.fromEntries(this.fields.filter(f => f.default !== undefined).map(f => [f.name, f.default])), ...p0 };
