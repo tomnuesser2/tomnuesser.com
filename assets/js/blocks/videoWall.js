@@ -56,12 +56,12 @@ function css() {
   if (cssDone || document.getElementById('vw-css')) return; cssDone = true;
   const s = document.createElement('style'); s.id = 'vw-css';
   s.textContent = `
-.vw{position:relative;width:min(100% - 2*var(--gutter,20px),1500px);margin:calc(var(--header-h,76px) * .5 + 8px) auto clamp(16px,3vw,40px);color:#fff;--vwh:620px;--vwg:3;--acc:#ff6a4d;--ar:9/16;--arn:.5625;scroll-margin-top:calc(var(--header-h,76px) + 14px)}
+.vw{position:relative;width:min(100% - 2*var(--gutter,20px),1500px);margin:max(0px,calc(var(--header-h,76px) * .5 + 8px + var(--vwy,0px))) auto clamp(16px,3vw,40px);color:#fff;--vwh:620px;--vwg:3;--acc:#ff6a4d;--ar:9/16;--arn:.5625;scroll-margin-top:calc(var(--header-h,76px) + 14px)}
 .vw--land{--ar:16/9;--arn:1.7778}
 .vw--full{width:100%}
 .vw__stagebg{border-radius:22px;padding:clamp(14px,2.4vw,30px);background:#0b0b0c;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
 .vw--light .vw__stagebg{background:#f1f1ee;box-shadow:inset 0 0 0 1px rgba(0,0,0,.07);color:#111}
-.vw--clear .vw__stagebg{background:transparent;box-shadow:none;padding-left:0;padding-right:0}
+.vw--clear .vw__stagebg{background:transparent;box-shadow:none;padding-left:0;padding-right:0;color:var(--ink,#111)}
 .vw__head{position:relative;z-index:60;margin:0 0 clamp(12px,2vw,22px);font-size:clamp(20px,3vw,34px);font-weight:500;letter-spacing:-.02em}
 .vw__row{display:flex;gap:10px;height:var(--vwh);align-items:stretch}
 .vw__c{position:relative;flex:1 1 0;min-width:0;border-radius:16px;overflow:hidden;background:#17181b;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent;isolation:isolate;
@@ -94,7 +94,7 @@ function css() {
 .vw__all svg{width:14px;height:14px;fill:currentColor}
 /* Fächer: breit über die ganze Fläche, gewölbt (Mitte vorn, außen nach hinten gekippt) */
 .vw--fan .vw__row{position:relative;display:block;perspective:1800px;perspective-origin:50% 40%;margin:30px 0 22px}
-.vw--fan .vw__c{position:absolute;left:50%;top:50%;height:100%;aspect-ratio:var(--ar);width:auto;flex:none;margin-left:calc(var(--vwh)*var(--arn)*-.5);margin-top:calc(var(--vwh)*-.5);
+.vw--fan .vw__c{position:absolute;left:50%;top:50%;height:100%;aspect-ratio:var(--ar);width:auto;flex:none;margin-left:calc(var(--vwh)*var(--arn)*-.5);margin-top:calc(var(--vwh)*-.5 + var(--vwoff,0px));
   box-shadow:0 30px 50px -26px rgba(0,0,0,.75);transform-origin:50% 100%;
   transform:translateX(calc(var(--k)*var(--spread)*1px)) translateY(calc(var(--k)*var(--k)*34px)) rotateY(calc(var(--k)*-16deg)) rotate(calc(var(--k)*4.5deg)) scale(calc(.9 - var(--ak)*.07));z-index:calc(20 - var(--abs))}
 .vw--fan .vw__c.is-focus{transform:translateX(calc(var(--k)*var(--spread)*1px)) translateY(-20px) rotateY(0) rotate(0) scale(1.05);z-index:40;box-shadow:0 40px 70px -28px rgba(0,0,0,.85)}
@@ -144,17 +144,19 @@ export default {
     { name: 'allBtn', label: 'Knopf „alle pausieren / abspielen“ unter der Wand', type: 'checkbox', default: true },
     { name: 'height', label: 'Maximale Höhe in px (wird automatisch an den Bildschirm angepasst, bei Querformat niedriger)', type: 'number', default: 620 },
     { name: 'accent', label: 'Akzentfarbe (Rahmen/Knöpfe)', type: 'text', default: '#ff6a4d' },
+    { name: 'startY', label: 'Starthöhe: wie weit oben die Wand beginnt (Schieber, Pixel – minus = höher, plus = tiefer; Handy bleibt unverändert)', type: 'range', min: -200, max: 300, step: 5, default: 0 },
     { name: 'width', label: 'Breite', type: 'select', options: ['Rahmen', 'volle Breite'], default: 'Rahmen' },
     { name: 'bg', label: 'Hintergrund', type: 'select', options: ['dunkel', 'hell', 'transparent'], default: 'dunkel' },
   ],
   render(p0) {
     css();
-    const p = { format: FORMATS[0], layout: LAYOUTS[0], others: OTHERS[0], sound: true, allBtn: true, height: 620, accent: '#ff6a4d', width: 'Rahmen', bg: 'dunkel', ...p0 };
+    const p = { startY: 0, format: FORMATS[0], layout: LAYOUTS[0], others: OTHERS[0], sound: true, allBtn: true, height: 620, accent: '#ff6a4d', width: 'Rahmen', bg: 'dunkel', ...p0 };
     const items = (p.items || []).filter((i) => i && String(i.video || '').trim()).slice(0, 8);
     const land = p.format === FORMATS[1], ar = land ? 16 / 9 : 9 / 16, H0 = Math.round(num(p.height, 620) * (land ? .56 : 1));
     const baseMode = p.layout === LAYOUTS[1] ? 'fan' : p.layout === LAYOUTS[2] ? 'grid' : 'acc', mq = matchMedia('(max-width:759px)');
     const modeNow = () => (mq.matches ? 'rail' : baseMode); let mode = modeNow();
     const el = h('div', { class: `vw vw--${mode}${land ? ' vw--land' : ''}${p.bg === 'hell' ? ' vw--light' : p.bg === 'transparent' ? ' vw--clear' : ''}${p.width === 'volle Breite' ? ' vw--full' : ''}${matchMedia('(hover: none)').matches ? ' vw--touch' : ''}`, style: { '--vwh': H0 + 'px', '--acc': p.accent || '#ff6a4d' } });
+    if (Number(p.startY)) el.style.setProperty('--vwy', Number(p.startY) + 'px');
     const bg = h('div', { class: 'vw__stagebg' }); el.append(bg);
     if (p.title) bg.append(h('h2', { class: 'vw__head' }, p.title));
     if (!items.length) { bg.append(h('p', { class: 'vw__head', style: { fontSize: '15px', opacity: .7 } }, 'Reel-Wand: noch keine Videos – im Admin unter „Videos“ auf „+ Mehrere Videos auf einmal hochladen“ klicken.')); return el; }
@@ -200,11 +202,47 @@ export default {
       b.addEventListener('click', () => { allPaused = !allPaused; if (!allPaused) cards.forEach((s) => (s.paused = false)); upd(); syncAll(); }); upd();
       bg.append(h('div', { class: 'vw__all' }, b));
     }
+    // Oberste und unterste sichtbare Kante der Wand (Karten sind gedreht/versetzt und ragen über die Reihe hinaus).
+    const edges = () => {
+      const rb = row.getBoundingClientRect(); let t = rb.top, b2 = rb.bottom;
+      for (const c of row.children) { const r = c.getBoundingClientRect(); if (r.height < 10) continue; t = Math.min(t, r.top); b2 = Math.max(b2, r.bottom); }
+      const all = el.querySelector('.vw__all'); if (all) b2 = Math.max(b2, all.getBoundingClientRect().bottom);
+      return { t, b: b2 };
+    };
+    const headBottom = () => { const hd = el.querySelector('.vw__head'); return hd ? hd.getBoundingClientRect().bottom : el.getBoundingClientRect().top; };
     // Größen: im Akkordeon ist die Fokus-Karte genau 9:16 breit, die anderen teilen sich den Rest als Streifen
+    let lastH = 0, curMg = 0;
     const layout = () => {
       const W = row.clientWidth, mobile = mq.matches; if (W < 10) return;
-      let H = mobile ? Math.min(H0, Math.round(innerHeight * .68), Math.round(W * (land ? .88 : .7) / ar)) : Math.min(H0, Math.max(240, innerHeight - 300));
-      H = Math.max(120, H); el.style.setProperty('--vwh', H + 'px'); el.style.setProperty('--cwm', Math.round(H * ar) + 'px');
+      let H;
+      if (mobile) H = Math.min(H0, Math.round(innerHeight * .68), Math.round(W * (land ? .88 : .7) / ar));
+      else {
+        // Am Computer passt die Wand immer genau auf EINEN Bildschirm: Die Höhe wird so lange nachgerechnet, bis unten
+        // nichts mehr abgeschnitten ist und oben keine Karte die Überschrift überdeckt. (Nur beim Ändern der Fenstergröße.)
+        const wantBot = innerHeight - 26;
+        H = lastH || Math.min(H0, Math.round(innerHeight * .62));
+        let off = curMg > 0 ? curMg : 0;
+        for (let n = 0; n < 5; n++) {
+          el.style.setProperty('--vwh', Math.max(120, H) + 'px');
+          el.style.setProperty('--cwm', Math.round(Math.max(120, H) * ar) + 'px');
+          el.style.setProperty('--vwoff', off + 'px');
+          const e = edges(), hb = headBottom() + 6;
+          off = Math.max(0, off + Math.round(hb - e.t));                      // Fächer unter die Überschrift schieben
+          const top = Math.max(e.t, hb), vis = e.b - top;
+          if (vis < 40) break;
+          const next = Math.min(H0, Math.max(240, Math.round(H * (wantBot - top) / vis)));
+          const done = Math.abs(next - H) <= 2;
+          H = next; if (done) break;
+        }
+        // Letzter Durchgang: die zuletzt berechnete Höhe wirklich setzen und den Versatz dazu nachziehen.
+        H = Math.max(120, H);
+        el.style.setProperty('--vwh', H + 'px'); el.style.setProperty('--cwm', Math.round(H * ar) + 'px');
+        el.style.setProperty('--vwoff', off + 'px');
+        { const e = edges(), hb = headBottom() + 6; off = Math.max(0, off + Math.round(hb - e.t)); el.style.setProperty('--vwoff', off + 'px'); }
+        curMg = off; lastH = H;
+      }
+      H = Math.max(120, H);
+      if (mq.matches && Math.abs(H - lastH) > 2) { lastH = H; el.style.setProperty('--vwh', H + 'px'); el.style.setProperty('--cwm', Math.round(H * ar) + 'px'); }
       if (mode === 'acc') {
         const gap = 10, target = Math.min(W - (N - 1) * 70 - (N - 1) * gap, H * ar), unit = Math.max(40, (W - (N - 1) * gap - target) / Math.max(1, N - 1));
         el.style.setProperty('--vwg', (N === 1 ? 1 : Math.max(1, target / unit)).toFixed(3));
@@ -214,10 +252,12 @@ export default {
     };
     mq.addEventListener?.('change', () => {
       const m = modeNow(); if (m === mode) return;
-      el.classList.remove('vw--' + mode); mode = m; el.classList.add('vw--' + mode);
+      el.classList.remove('vw--' + mode); mode = m; el.classList.add('vw--' + mode); curMg = -1; lastH = 0;
       el.style.removeProperty('--vwg'); el.style.removeProperty('--spread'); setFocus(mode === 'fan' ? Math.floor((N - 1) / 2) : 0);
     });
     new ResizeObserver(layout).observe(row);
+    // Nach der Einfahr-Animation einmal neu messen: vorher stehen die Karten noch versetzt und der Überstand wäre falsch.
+    [500, 1400].forEach((ms) => setTimeout(() => { curMg = -1; lastH = 0; layout(); }, ms));
     // Rail (Handy): Die Karte in der Mitte ist im Fokus – sie spielt, die anderen laufen gedimmt weiter
     let railT = 0; row.addEventListener('scroll', () => { if (mode !== 'rail' || railT) return; railT = requestAnimationFrame(() => { railT = 0; const mid = row.scrollLeft + row.clientWidth / 2; let best = 0, bd = 1e9; cards.forEach((s) => { const d = Math.abs(s.c.offsetLeft + s.c.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = s.i; } }); if (best !== focus) setFocus(best); }); }, { passive: true });
     // Sichtbarkeit: nur Videos im Bild laufen; nahe Videos werden schon vorgeladen

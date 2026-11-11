@@ -23,6 +23,7 @@ import notuaFlight from '../blocks/notuaFlight.js';
 import notuaBoard from '../blocks/notuaBoard.js';
 import notuaTeaser from '../blocks/notuaTeaser.js';
 import deviceSwitch from '../blocks/deviceSwitch.js';
+import videoFormats from '../blocks/videoFormats.js';
 import projectHead from '../blocks/projectHead.js';
 import projectText from '../blocks/projectText.js';
 import projectNext from '../blocks/projectNext.js';
@@ -38,7 +39,7 @@ import galleryBlocks from '../blocks/gallery.js';
 import laptop3d from '../blocks/laptop3d.js';
 import videoWall from '../blocks/videoWall.js';
 
-export const blocks = [hero, chapter, statement, services, device, flythrough, notuaTeaser, notuaFlight, notuaBoard, deviceSwitch, projectHead, projectText, projectNext, kinetic, spacer, heading, text, media, mediaStack, projectGrid, contactForm, socials, impressum, reelGallery, albumRail, phone3d, laptop3d, elasticReel, parallaxCarousel, spinShutter, frameScrub, timelinePlayer, ...galleryBlocks, videoWall];
+export const blocks = [hero, chapter, statement, services, device, flythrough, notuaTeaser, notuaFlight, notuaBoard, deviceSwitch, videoFormats, projectHead, projectText, projectNext, kinetic, spacer, heading, text, media, mediaStack, projectGrid, contactForm, socials, impressum, reelGallery, albumRail, phone3d, laptop3d, elasticReel, parallaxCarousel, spinShutter, frameScrub, timelinePlayer, ...galleryBlocks, videoWall];
 
 // Globaler Textgrößen-Regler: jeder Block mit Text bekommt einen Schieber „Textgröße“ (zoomt nur die Textelemente).
 const NO_TEXT = new Set(['spacer', 'media', 'mediaStack', 'reelGallery', 'frameScrub']);

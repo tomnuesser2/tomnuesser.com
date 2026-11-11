@@ -14,7 +14,7 @@
   --gutter: 20px;       /* Textseiten */
   --gutter-media: 27px; /* Bildstapel */
   --stack-gap: 4px;
-  --group-gap: 88px;
+  --group-gap: 60px;
   --radius-sm: 12px;
   --radius-xl: min(22vw, 150px);
   --radius-btn: 16px;
@@ -55,7 +55,7 @@ h1, h2, h3, p { margin: 0; }
 :focus-visible { outline: 2px solid #000; outline-offset: 3px; border-radius: 4px; }
 
 @media (min-width: 900px) {
-  :root { --gutter: 48px; --gutter-media: 48px; --stack-gap: 6px; --group-gap: 140px; --header-h: 84px; --radius-sm: 16px; }
+  :root { --gutter: 48px; --gutter-media: 48px; --stack-gap: 6px; --group-gap: 104px; --header-h: 84px; --radius-sm: 16px; }
   body { font-size: 17px; }
 }
 

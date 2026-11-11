@@ -73,7 +73,8 @@ function renderIndex(p, ctx) {
   const el = h('section', { class: 'wi', id: p.id, style: { '--n': n } }, h('div', { class: 'wi__track' }, stage), wm);
   let cur = -1;
   const setCur = (i) => {
-    if (i === cur) return; cur = i; const pr = list[i];
+    if (i === cur) return; const pr = list[i]; if (!pr) return;   // leere Liste (z. B. alle Projekte des Bereichs versteckt): nichts zu zeigen
+    cur = i;
     imgs.forEach((m, k) => m.classList.toggle('is-on', k === i)); rows.forEach((r, k) => r.classList.toggle('is-on', k === i));
     pane.href = pr.slug; meta.querySelector('.wi__cta').href = pr.slug;
     meta.querySelector('.wi__roles').textContent = String(pr.roles || '').split(',').map(s => s.trim()).filter(Boolean).join(' · ');

@@ -24,7 +24,7 @@ export default {
     { name: 'boardsTitle', label: 'Boards-Karte: Titel', type: 'text', default: 'Boards', de: 'Boards' },
     { name: 'boards', label: 'Boards-Karte: Namen (mit | trennen)', type: 'text', default: 'Shoot 2026 | Clients | Ideas', de: 'Shoot 2026 | Kunden | Ideen' },
     { name: 'introDur', label: 'Dauer der Animation in Sekunden (läuft automatisch ab)', type: 'number', default: 2.8 },
-    { name: 'scrollLength', label: 'Länge des Scrolls (in Bildschirmen, 0.5 = kurz)', type: 'number', default: .5 },
+    { name: 'scrollLength', label: 'Länge des Scrolls (in Bildschirmen, 0.2 = kurz)', type: 'number', default: .2 },
     { name: 'cBg', label: 'Look: Hintergrund (Hex)', type: 'text', default: '#E0E0E0' },
     { name: 'cDot', label: 'Look: Punktraster (Hex)', type: 'text', default: '#C1C1C2' },
     { name: 'cInk', label: 'Look: Text (Hex)', type: 'text', default: '#242428' },
@@ -48,7 +48,7 @@ export default {
     const btns = h('div', { class: 'nt__btns' }, b1, b2), sub = p.sub ? h('p', { class: 'nt__sub' }, p.sub) : null;
     const copy = h('div', { class: 'nt__copy' }, logo, t, x, btns, sub);
     const stage = h('div', { class: 'nt__stage' }, h('div', { class: 'nt__grid' }), cards, copy);
-    const len = Math.max(.3, Number(p.scrollLength) || .5);
+    const len = Math.max(.1, Number(p.scrollLength) || .2);
     const el = h('section', { class: 'nt', id: p.id, style: { '--nt-len': String(len), '--nt-bg': p.cBg, '--nt-dot': p.cDot, '--nt-ink': p.cInk, '--nt-ac': p.cAccent } }, h('div', { class: 'nt__track' }, stage));
     // Startlagen der vier Karten (Richtung, aus der sie hereinfliegen, und Schräglage)
     const FROM = [[-70, -40, -9], [70, -50, 8], [-60, 55, 7], [65, 50, -8]];

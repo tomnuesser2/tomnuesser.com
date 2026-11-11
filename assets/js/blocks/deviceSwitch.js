@@ -23,6 +23,7 @@ export default {
     { name: 'front', label: 'Wer startet vorne?', type: 'select', options: ['phone', 'laptop'], default: 'phone' },
     { name: 'shortTitle', label: 'Name Smartphone', type: 'text', default: 'Short-form', de: 'Short-Form' },
     { name: 'shortText', label: 'Kurztext Smartphone', type: 'text', default: 'Vertical stories for Reels, Shorts & ads.', de: 'Hochkant-Stories für Reels, Shorts & Ads.' },
+    { name: 'pickVimeo', label: 'Videos aus anderen Seiten/Projekten übernehmen (nur Vimeo)', type: 'vimeoPick', lists: { phone: 'shortItems', laptop: 'longItems' } },
     { name: 'shortItems', label: 'Smartphone-Einträge (Hochformat; Reihenfolge = Ablauf)', type: 'list', itemFields: LIST },
     { name: 'longTitle', label: 'Name Laptop', type: 'text', default: 'Long-form', de: 'Long-Form' },
     { name: 'longText', label: 'Kurztext Laptop', type: 'text', default: 'Live sessions & event films in full length.', de: 'Live-Sessions & Eventfilme in voller Länge.' },
@@ -49,9 +50,11 @@ export default {
     const S = { phone: { cur: 0, shots: [], el: null }, laptop: { cur: 0, shots: [], el: null } };
     let el0 = false, flyHook = null, front = items[p.front] && items[p.front].length ? p.front : (items.phone.length ? 'phone' : 'laptop'), timer, raf, visible = false;
 
+    // Fortschritts-Anzeigen (Story-Striche oben im Handy, Player-Leiste unten im Laptop) werden weiter mitgerechnet,
+    // aber NICHT mehr angezeigt: Die Knoten bleiben absichtlich ohne Elternteil, damit der Bildschirm sauber bleibt.
     const bars = h('div', { class: 'dd__bars' });
     const pScr = h('div', { class: 'dd__scr' });
-    const phone = h('button', { type: 'button', class: 'dd__phone', 'aria-label': p.shortTitle }, h('div', { class: 'dd__pscreen' }, pScr, bars), h('span', { class: 'dd__island' }));
+    const phone = h('button', { type: 'button', class: 'dd__phone', 'aria-label': p.shortTitle }, h('div', { class: 'dd__pscreen' }, pScr), h('span', { class: 'dd__island' }));
     const lScr = h('div', { class: 'dd__scr' }), lBar = h('i', { class: 'dd__pb' }), lTitle = h('span', { class: 'dd__lt' });
     const playerEl = h('div', { class: 'dd__player' }, h('b', {}, '▶'), lTitle, h('span', { class: 'dd__tl' }, lBar));
     const laptop = h('button', { type: 'button', class: 'dd__laptop', 'aria-label': p.longTitle },
@@ -80,7 +83,7 @@ export default {
       const cvP = h('canvas', { class: 'dd__cv', 'aria-hidden': 'true' }), cvL = h('canvas', { class: 'dd__cv', 'aria-hidden': 'true' });
       const gP = createPhone(cvP, { tint: [.2, .195, .19], back: [.085, .083, .08] }), gL = gP && createLaptop(cvL, { tint: LAP_FIN['space schwarz'] });
       if (gP && gL) {
-        const ovP = h('div', { class: 'dd__ov dd__ov--p' }, pScr, bars), ovL = h('div', { class: 'dd__ov dd__ov--l' }, lScr, playerEl);
+        const ovP = h('div', { class: 'dd__ov dd__ov--p' }, pScr), ovL = h('div', { class: 'dd__ov dd__ov--l' }, lScr);
         phone.replaceChildren(cvP, ovP); laptop.replaceChildren(cvL, ovL); el0 = true;
         gl3 = { gP, gL, cvP, cvL, ovP, ovL, shP: h('i', { class: 'dd__fs' }), shL: h('i', { class: 'dd__fs' }) };
       }

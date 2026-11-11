@@ -231,16 +231,6 @@ async function render() {
     const end = !!(lastNb && lastNb.querySelector('.nb__go'));
     if (end) { while (lastNb.nextSibling) lastNb.nextSibling.remove(); }
     document.body.classList.toggle('is-nbend', end); }
-  // Projektseiten: der erste Abschnitt zeigt einen „Scroll"-Hinweis (verschwindet beim ersten Scrollen); der NOTUA-Flug hat einen eigenen
-  if (state.index?.projects?.[target]) {
-    const first = frag.firstElementChild; const blk = first && first.classList.contains('b-spacer') ? null : first;
-    if (blk && !blk.classList.contains('fl') && !prefersReducedMotion()) {
-      const cue = h('div', { class: 'scue', 'aria-hidden': 'true' }, h('span', {}, getLang() === 'de' ? 'Scrollen' : 'Scroll'), h('i', {}));
-      frag.append(cue);
-      const lap = frag.querySelector('.dv'); // gibt es einen Laptop/Geräte-Abschnitt, bleibt der Hinweis, bis dieser ins Bild kommt
-      const off = () => { if (!cue.isConnected) { removeEventListener('scroll', off); return; } const gone = lap && lap !== blk ? lap.getBoundingClientRect().top < innerHeight * .5 : scrollY > 30; cue.classList.toggle('is-off', gone); if (gone && !lap) removeEventListener('scroll', off); }; addEventListener('scroll', off, { passive: true });
-    }
-  }
   setMeta((getLang() === 'de' && page.title_de) || page.title);
   window.scrollTo(0, 0);
   state.els.header.classList.remove('is-hidden');

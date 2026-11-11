@@ -129,7 +129,11 @@ function mobileHero(p, ctx) {
     return { a, inn, iw: inn.firstChild, cap };
   });
   const stage = h('div', { class: 'hm__stage' }, carEl, labM ? labM.el : null, h('div', { class: 'hm__foot' }, title, cue), shots.map(s => s.a));
-  const OFF = .2, T = 0.8 + OFF + 1 + .6 + (N - 1) * 1.6 + .25;                 // Länge der Animation in "Einheiten"
+  // Scroll-Strecke der Startseite in "Einheiten" (1 Einheit = eine Aufdeck-Bewegung).
+  // GAP = Abstand von Bild zu Bild. Er liegt nur knapp über REV, damit beim Scrollen fast immer etwas in Bewegung ist
+  // und nicht lange nichts passiert; C1 = Start des zweiten Bildes (erstes Bild deckt von 1 bis 1+REV auf).
+  const REV = 1, GAP = 1.15, C1 = 1 + REV + (GAP - REV), TAIL = 0;
+  const T = C1 + (N - 1) * GAP + TAIL;
   const el = h('section', { class: 'hm' + (labM ? ' hm--lab' : ''), 'aria-label': p.title || '', style: { '--len': (T * .5).toFixed(2) } }, h('div', { class: 'hm__track' }, stage));
   if (still()) { el.classList.add('is-still'); return el; }
 
@@ -158,17 +162,17 @@ function mobileHero(p, ctx) {
     const tOp = 1 - clamp(u / .22); title.style.opacity = tOp.toFixed(3); title.style.transform = `translateY(${(-(1 - tOp) * 26).toFixed(1)}px)`; cue.style.opacity = (1 - clamp(u / .25)).toFixed(3);
     title.style.visibility = cue.style.visibility = tOp <= 0 ? 'hidden' : 'visible';
     shots.forEach((s, i) => {
-      const start = i === 0 ? 1 : 2.6 + (i - 1) * 1.6, e = ease(clamp((u - start) / 1));
+      const start = i === 0 ? 1 : C1 + (i - 1) * GAP, e = ease(clamp((u - start) / REV));
       // Aufdecken rein per Transform (kein clip-path → kein Neuzeichnen des Vollbild-Bildes pro Frame, läuft auf der GPU)
       let bx = 0, by = 0, bw = W, bh = H, rad = 0;
       if (i === 0) { const k = 1 - e; bx = R.l * k; by = R.t * k; bw = W - (R.l + R.r) * k; bh = H - (R.t + R.b) * k; rad = 10 * k; s.a.style.opacity = clamp(e * 12).toFixed(3); }
       else { by = (1 - e) * H; bh = H - by; s.a.style.opacity = '1'; }
       const full = e >= 1, tf = full ? '' : `translate3d(${bx.toFixed(1)}px,${by.toFixed(1)}px,0) scale(${(bw / W).toFixed(4)},${(bh / H).toFixed(4)})`;
       if (tf !== s.tf) { s.tf = tf; s.a.style.transform = tf; s.inn.style.transform = full ? '' : `scale(${(W / bw).toFixed(4)},${(H / bh).toFixed(4)}) translate3d(${(-bx).toFixed(1)}px,${(-by).toFixed(1)}px,0)`; s.a.style.borderRadius = rad > .2 ? `${(rad * W / bw).toFixed(2)}px / ${(rad * H / bh).toFixed(2)}px` : ''; }
-      const nstart0 = 2.6 + i * 1.6, covered = i < N - 1 && u > nstart0 + 1.02;   // vom nächsten Bild komplett verdeckt → ausblenden (weniger Vollbild-Ebenen im Speicher)
+      const nstart0 = C1 + i * GAP, covered = i < N - 1 && u > nstart0 + REV * 1.02;   // vom nächsten Bild komplett verdeckt → ausblenden (weniger Vollbild-Ebenen im Speicher)
       s.a.style.visibility = e > 0 && !covered ? 'visible' : 'hidden';
       // Bildschiebung des vorherigen Bildes, wenn das nächste kommt
-      const nstart = 2.6 + i * 1.6, ne = i < N - 1 ? ease(clamp((u - nstart) / 1)) : 0;
+      const nstart = C1 + i * GAP, ne = i < N - 1 ? ease(clamp((u - nstart) / REV)) : 0;
       s.iw.style.transform = `translateY(${(-ne * 7).toFixed(2)}%)`;
       s.cap.style.opacity = (clamp((e - .55) / .3) * (1 - clamp(ne / .3))).toFixed(3);
       s.cap.style.transform = `translateY(${((1 - clamp((e - .55) / .3)) * 18).toFixed(1)}px)`;
@@ -176,7 +180,7 @@ function mobileHero(p, ctx) {
   };
   addEventListener('resize', () => { R = null; kick(); }, { passive: true });
   // Handy: Die Animation läuft nach dem Loslassen zu Ende und hält an jeder Vollbild-Karte an (Karussell → Karte 1 → Karte 2 …)
-  { const trk = el.querySelector('.hm__track'), uStops = [0, 2]; for (let i = 1; i < N; i++) uStops.push(3.6 + (i - 1) * 1.6);
+  { const trk = el.querySelector('.hm__track'), uStops = [0, 1 + REV]; for (let i = 1; i < N; i++) uStops.push(C1 + (i - 1) * GAP + REV);
     registerStops(() => { if (!el.isConnected || !trk.offsetParent) return []; const top = trk.getBoundingClientRect().top + scrollY, run = trk.offsetHeight - stage.offsetHeight; return run > 50 ? uStops.map((u) => top + (u / T) * run) : []; }, true); }
   track(el.querySelector('.hm__track'), (r) => { apply(trackProgress(r, stage.offsetHeight) * T); });
   apply(0);

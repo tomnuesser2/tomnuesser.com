@@ -125,7 +125,8 @@
         "ctaText_de": "aktuelle projekte",
         "textScale": 1
       },
-      "id": "video"
+      "id": "video",
+      "hidden": true
     },
     {
       "type": "chapter",

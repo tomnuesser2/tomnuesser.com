@@ -24,8 +24,9 @@ export function parseVimeo(input) {
 }
 
 const thumbCache = new Map();
-export async function vimeoThumb(v) {
-  if (v.yt) return `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`;
+// Fragt Vimeo einmal pro Video nach Vorschaubild, Titel und Seitenverhältnis (hoch/quer). Das Ergebnis wird gemerkt.
+export async function vimeoInfo(v) {
+  if (v.yt) return { thumb: `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`, title: '', width: 16, height: 9 };
   const key = v.id + v.hash;
   if (thumbCache.has(key)) return thumbCache.get(key);
   const p = (async () => {
@@ -34,12 +35,16 @@ export async function vimeoThumb(v) {
       const r = await fetch(`https://vimeo.com/api/oembed.json?width=1280&url=${encodeURIComponent(url)}`);
       if (!r.ok) return null;
       const j = await r.json();
-      return (j.thumbnail_url || '').replace(/_\d+(x\d+)?(\.\w+)?$/, '_1280$2') || j.thumbnail_url || null;
+      const thumb = (j.thumbnail_url || '').replace(/_\d+(x\d+)?(\.\w+)?$/, '_1280$2') || j.thumbnail_url || null;
+      return { thumb, title: j.title || '', width: Number(j.width) || 0, height: Number(j.height) || 0 };
     } catch { return null; }
   })();
   thumbCache.set(key, p);
   return p;
 }
+export async function vimeoThumb(v) { const i = await vimeoInfo(v); return i ? i.thumb : null; }
+// hoch = 9:16 (Handy), quer = 16:9 (Laptop); ohne Angabe von Vimeo gilt quer
+export const vimeoIsPortrait = (info) => !!(info && info.width && info.height && info.height > info.width);
 
 // Ton-Einstellung der Besucher-Seite (kommt aus content/site.json → video; im Admin unter „Einstellungen“)
 export const videoCfg = { volume: 40, button: true };

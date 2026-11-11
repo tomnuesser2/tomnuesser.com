@@ -125,12 +125,12 @@ export function snapInfo() {
   return { on: snapOn, why: snapWhy, coarse: coarse(), ios: IOS, y: Math.round(scrollY), vh: innerHeight, fingers, touched, snapping, held, dir: dirLast, gestY: Math.round(gestY), flick: flickG, relY: Math.round(relY), stops: list.length, list: list.slice(0, 12).join(','), ...stat };
 }
 
-/* ---------- Handy, ZUM VERGLEICH: Einrasten über den Browser (CSS scroll-snap) – nur mit ?native in der Adresse ----------
+/* ---------- Handy, ZUM VERGLEICH: Einrasten über den Browser (CSS scroll-snap) – jetzt STANDARD auf Touch-Geräten; die alte Skript-Variante nur noch mit ?script in der Adresse ----------
    Richtlinie (Apple/Google): Scrollen bleibt nativ – Schwung, Gummiband und Bremskurve macht das Betriebssystem auf dem Grafikprozessor, ohne dass JavaScript
    mitrechnet. Wir melden dem Browser nur WO angehalten wird: Abschnittsanfänge und die Hero-Karten (kleine unsichtbare Marken). Danach gilt:
    kräftiger Wisch → rollt aus und bremst weich an der nächsten Marke (scroll-snap-stop: always = keine wird übersprungen), der nächste Wisch ist völlig normal.
    Abschnitte, die höher als der Bildschirm sind (klebende Szenen), bleiben frei scrollbar. Ohne Browser-Unterstützung läuft die Script-Variante darunter. */
-const nativeOK = () => { try { return new URLSearchParams(location.search).has('native') && CSS.supports('scroll-snap-stop', 'always') && CSS.supports('scroll-snap-type', 'y mandatory'); } catch { return false; } };
+const nativeOK = () => { try { return !new URLSearchParams(location.search).has('script') && CSS.supports('scroll-snap-stop', 'always') && CSS.supports('scroll-snap-type', 'y mandatory'); } catch { return false; } };
 function startNative() {
   const de = document.documentElement; de.classList.add('snap-native');
   let box = null, sig = '';
@@ -138,9 +138,14 @@ function startNative() {
     if (!isHome()) { if (box) box.replaceChildren(); sig = ''; return; }
     const zones = []; for (const z of stopFns) { if (!z.settle) continue; try { const a = (z.fn() || []).map(Math.round).sort((x, y) => x - y); if (a.length >= 2) zones.push(a); } catch { /* weg */ } }
     const blocks = [...document.querySelectorAll('.page[data-page="home"] > [data-bi]')], marks = [];
+    // Zwei Haltepunkte dicht hintereinander (z. B. Kapitel-Überschrift + der Abschnitt direkt darunter) ergeben einen
+    // fast wirkungslosen zweiten Wisch. Der zweite entfällt deshalb – die Überschrift bleibt dabei sichtbar.
+    const near = innerHeight * .25;
+    const tops = zones.flat().sort((a, b) => a - b);
     for (const b of blocks) {
       const top = b.getBoundingClientRect().top + scrollY, bot = top + b.offsetHeight, inside = zones.some((a) => a[0] >= top - 4 && a[a.length - 1] <= bot + 4);
-      if (inside) { b.setAttribute('data-snapfree', ''); } else b.removeAttribute('data-snapfree');
+      const crowd = tops.length && top - tops[tops.length - 1] < near;
+      if (inside || crowd) { b.setAttribute('data-snapfree', ''); } else { b.removeAttribute('data-snapfree'); tops.push(top); }
     }
     for (const a of zones) for (const v of a) marks.push(v);
     const key = marks.join(',') + '|' + blocks.length + '|' + document.documentElement.scrollHeight; if (key === sig) return; sig = key;
