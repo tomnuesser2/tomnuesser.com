@@ -198,9 +198,11 @@
           }
         },
         "scrollBtn": "scroll",
-        "scrollBtn_de": "scrollen"
+        "scrollBtn_de": "scrollen",
+        "scrollFly": true
       }
     }
   ],
-  "title_de": "Norder147 x Canim3Denim - Upcycling Workshop"
+  "title_de": "Norder147 x Canim3Denim - Upcycling Workshop",
+  "hideFooter": true
 }

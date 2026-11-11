@@ -126,7 +126,8 @@
             "title": "filming for qrue collective and festival artists",
             "url": "",
             "text": "As part of the media coverage for Gården Festival in Tydal, Eggebek, I produced photo and video content for multiple artists and performances throughout the festival. My main focus was creating dynamic festival content for Qrue Collective, while also filming live performances by MALM and Leona, alongside capturing photography and videography for the Danish artists AFSKUM and Søn.\n\nWorking in a fast-paced festival environment, I documented live performances, backstage moments, and the overall atmosphere of the event. The goal was to create authentic, cinematic content that reflected the energy of the festival and there artists.",
-            "title_de": ""
+            "title_de": "Videografie für das Qrue Collective und weitere Festival-Artists.",
+            "text_de": "ür das Gården Festival in Tydal, Eggebek, war ich für die visuelle Begleitung mehrerer Acts und Performances verantwortlich. Neben dem Hauptfokus – dynamischem Event-Content für das Qrue Collective – habe ich die Live-Sets von MALM und Leona videografisch begleitet sowie Foto- und Videocontent für die dänischen Bands AFSKUM und Søn produziert.\n\nMitten im schnellen Festivalgeschehen entstanden so Aufnahmen von Live-Performances, Backstage-Einblicken und der einzigartigen Stimmung vor Ort. Das Ziel: Authentischer, cineastischer Content, der die Energie des Events und der Artists auf den Punkt bringt."
           }
         ],
         "chrome": false,
@@ -135,6 +136,82 @@
         "linkText": "",
         "linkUrl": "",
         "textScale": 1.1,
+        "textScaleMobile": 0
+      }
+    },
+    {
+      "type": "laptop3d",
+      "props": {
+        "side": "left",
+        "scrollBtn": "",
+        "textAlign": "links",
+        "kicker": "",
+        "title": "",
+        "text": "",
+        "titleSize": 1,
+        "titleSizeMobile": 0,
+        "textSize": 1,
+        "textSizeMobile": 0,
+        "items": [
+          {
+            "src": "https://vimeo.com/1207050247",
+            "title": "",
+            "url": "",
+            "text": "As part of the media coverage for Gården Festival in Tydal, Eggebek, I produced photo and video content for multiple artists and performances throughout the festival. My main focus was creating dynamic festival content for Qrue Collective, while also filming live performances by MALM and Leona, alongside capturing photography and videography for the Danish artists AFSKUM and Søn.\n\nWorking in a fast-paced festival environment, I documented live performances, backstage moments, and the overall atmosphere of the event. The goal was to create authentic, cinematic content that reflected the energy of the festival and there artists.",
+            "text_de": "As part of the media coverage for Gården Festival in Tydal, Eggebek, I produced photo and video content for multiple artists and performances throughout the festival. My main focus was creating dynamic festival content for Qrue Collective, while also filming live performances by MALM and Leona, alongside capturing photography and videography for the Danish artists AFSKUM and Søn.\n\nWorking in a fast-paced festival environment, I documented live performances, backstage moments, and the overall atmosphere of the event. The goal was to create authentic, cinematic content that reflected the energy of the festival and there artists."
+          }
+        ],
+        "chrome": false,
+        "linkText": "",
+        "linkUrl": "",
+        "finish": "mitternacht",
+        "frameColor": "",
+        "logo": "media/notua-logo.png",
+        "drag": true,
+        "soundUi": true,
+        "anim": "",
+        "animMobile": {
+          "span": 0.45,
+          "dur": 2.5,
+          "acc": 2.6,
+          "ease": 5.1,
+          "pre": 0.85,
+          "textAt": 0.42,
+          "mid": false,
+          "hold": 0.12,
+          "fi": 0,
+          "fo": 0,
+          "s": {
+            "x": 1,
+            "y": 92.5,
+            "ry": 145,
+            "rx": 80,
+            "rz": 0,
+            "open": 0,
+            "fit": 0.9
+          },
+          "m": {
+            "t": 0.45,
+            "x": 10,
+            "y": -4,
+            "ry": -38,
+            "rx": 38,
+            "rz": 0,
+            "open": 0.55,
+            "fit": 0.8
+          },
+          "e": {
+            "x": 0,
+            "y": 0,
+            "ry": 12,
+            "rx": 12,
+            "rz": 0,
+            "open": 1,
+            "fit": 0.86
+          }
+        },
+        "scale": 1,
+        "textScale": 1,
         "textScaleMobile": 0
       }
     }

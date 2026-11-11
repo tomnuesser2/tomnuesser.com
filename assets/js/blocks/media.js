@@ -18,6 +18,6 @@ export default {
   label: 'Bild / Video (Vimeo oder YouTube)',
   fields: mediaFields,
   render(p) {
-    return h('div', { class: 'b-stack-wrap' }, mediaEl(p));
+    return h('div', { class: 'b-stack-wrap' }, mediaEl({ ...p, viewPlay: true }));   // startet erst, wenn man hinscrollt; andere Videos pausieren dann
   },
 };

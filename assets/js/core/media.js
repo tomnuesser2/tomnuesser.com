@@ -87,7 +87,9 @@ export function mediaEl(p = {}) {
     // Besucher können den Ton per Knopf an/aus schalten – die Lautstärke ist fest (Admin → Einstellungen → Video-Ton).
     const canSnd = p.sound !== false && videoCfg.button !== false && Number(videoCfg.volume) > 0;
     const q = new URLSearchParams(v.yt ? { autoplay: '1', mute: '1', loop: '1', playlist: v.id, controls: '0', rel: '0', playsinline: '1', modestbranding: '1', disablekb: '1', iv_load_policy: '3', enablejsapi: '1' }
-      : { ...(canSnd || p.ext ? { controls: '0', api: '1' } : { background: '1' }), autoplay: '1', loop: '1', muted: '1', autopause: '0', title: '0', byline: '0', portrait: '0', dnt: '1', playsinline: '1' });
+      : { ...(canSnd || p.ext || p.viewPlay ? { controls: '0', api: '1' } : { background: '1' }), autoplay: '1', loop: '1', muted: '1', autopause: '0', title: '0', byline: '0', portrait: '0', dnt: '1', playsinline: '1' });
+    // viewPlay: erst abspielen, wenn das Video gut zu sehen ist (nicht schon beim Vorladen) – von vorn, ohne Autostart
+    if (p.viewPlay) q.set('autoplay', '0');
     if (v.hash) q.set('h', v.hash);
     let started = false, ifr = null, on = false;
     const send = (o) => { try { ifr.contentWindow.postMessage(v.yt ? JSON.stringify(o) : JSON.stringify(o), v.yt ? 'https://www.youtube-nocookie.com' : 'https://player.vimeo.com'); } catch { /* weg */ } };
@@ -111,10 +113,21 @@ export function mediaEl(p = {}) {
         src: v.yt ? `https://www.youtube-nocookie.com/embed/${v.id}?${q}` : `https://player.vimeo.com/video/${v.id}?${q}`, allow: 'autoplay; fullscreen; picture-in-picture', tabindex: '-1', 'aria-hidden': 'true',
         title: p.alt || 'Video', loading: 'lazy', referrerpolicy: 'strict-origin-when-cross-origin', class: 'media-embed',
       });
-      ifr.addEventListener('load', () => { setTimeout(applyVol, 400); setTimeout(applyVol, 1500); });
+      ifr.addEventListener('load', () => { setTimeout(applyVol, 400); setTimeout(applyVol, 1500); if (p.viewPlay) [300, 900, 2000].forEach(ms => setTimeout(applyPlay, ms)); });
       inner.append(ifr);
     };
     if ('IntersectionObserver' in window) { const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)) { io.disconnect(); start(); } }, { rootMargin: '200px' }); io.observe(frame); } else start();
+    // Abspielen beim Hinscrollen: ab gut der Hälfte sichtbar läuft es (und meldet das, damit z. B. die Reel-Wand darüber pausiert),
+    // unter einem Drittel sichtbar → Pause (und die anderen laufen wieder).
+    let wantPlay = false;
+    function applyPlay() { if (!ifr) return; if (v.yt) send({ event: 'command', func: wantPlay ? 'playVideo' : 'pauseVideo', args: [] }); else send({ method: wantPlay ? 'play' : 'pause' }); }
+    if (p.viewPlay && 'IntersectionObserver' in window) {
+      new IntersectionObserver((es) => es.forEach((e) => {
+        const r = e.intersectionRatio;
+        if (r >= .55 && !wantPlay) { wantPlay = true; start(); applyPlay(); dispatchEvent(new CustomEvent('tn-video-focus', { detail: frame })); }
+        else if (r < .35 && wantPlay) { wantPlay = false; applyPlay(); if (on) setSound(false); dispatchEvent(new CustomEvent('tn-video-blur', { detail: frame })); }
+      }), { threshold: [0, .2, .35, .55, .75, 1] }).observe(frame);
+    }
   }
   return frame;
 }

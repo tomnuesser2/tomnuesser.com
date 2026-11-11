@@ -95,13 +95,36 @@ export default {
     // aktuelle Karte = die, deren Mitte der Mitte der Reihe am nächsten ist
     const curIdx = () => { const mid = row.scrollLeft + row.clientWidth / 2; let best = 0, bd = Infinity; cards.forEach((c, i) => { const m = c.card.offsetLeft + c.card.offsetWidth / 2, d = Math.abs(m - mid); if (d < bd) { bd = d; best = i; } }); return best; };
     const goTo = (i) => { const c = cards[Math.max(0, Math.min(cards.length - 1, i))].card; row.scrollTo({ left: c.offsetLeft + c.offsetWidth / 2 - row.clientWidth / 2, behavior: 'smooth' }); };
-    prev.addEventListener('click', () => goTo(curIdx() - 1));
-    next.addEventListener('click', () => goTo(curIdx() + 1));
+    // Endlos: Nach Video 5 kommt wieder Video 1 (und umgekehrt). Die Karten werden dafür nur per CSS-„order“ umsortiert –
+    // sie bleiben im DOM stehen, die Videos laden also nicht neu. Nach jedem Wisch wird die Mitte unbemerkt neu gesetzt.
+    const n = cards.length; let shift = 0;
+    const loop = () => n >= 3 && row.scrollWidth > row.clientWidth + 4;
+    const vpos = (i) => (((i - shift) % n) + n) % n;
+    const byV = (v) => cards.find((_, i) => vpos(i) === (((v % n) + n) % n));
+    const applyOrder = () => cards.forEach((c, i) => { c.card.style.order = String(vpos(i)); });
+    const stepW = () => cards[0].card.offsetWidth + (parseFloat(getComputedStyle(row).columnGap) || 0);
+    const recentre = () => {
+      if (!loop()) return;
+      const i = curIdx(), d = vpos(i) - Math.floor(n / 2); if (!d) return;
+      shift += d; applyOrder();
+      // genau dieselbe Karte wieder in die Mitte setzen (unabhängig davon, ob der Browser beim Umsortieren selbst nachrastet)
+      const c = cards[i].card; row.scrollLeft = c.offsetLeft + c.offsetWidth / 2 - row.clientWidth / 2;
+    };
+    const goRel = (dir) => {
+      if (!loop()) return goTo(curIdx() + dir);
+      const c = byV(vpos(curIdx()) + dir).card; row.scrollTo({ left: c.offsetLeft + c.offsetWidth / 2 - row.clientWidth / 2, behavior: 'smooth' });
+    };
+    prev.addEventListener('click', () => goRel(-1));
+    next.addEventListener('click', () => goRel(1));
+    // erst umsortieren, wenn die Reihe wirklich steht (sonst würde eine laufende Wisch-/Pfeil-Bewegung unterbrochen)
+    { let endT = 0, lastX = -1; const settle = () => { const x = row.scrollLeft; if (Math.abs(x - lastX) > .5) { lastX = x; endT = setTimeout(settle, 120); return; } recentre(); };
+      const end = () => { clearTimeout(endT); lastX = row.scrollLeft; endT = setTimeout(settle, 220); };
+      row.addEventListener('scroll', end, { passive: true }); }
     [...dots.children].forEach((d, i) => d.addEventListener('click', () => goTo(i)));
     const syncNav = () => {
       const scrollable = row.scrollWidth > row.clientWidth + 4; nav.hidden = !scrollable; if (!scrollable) return;
       const i = curIdx(); [...dots.children].forEach((d, k) => d.classList.toggle('is-on', k === i));
-      prev.disabled = i <= 0; next.disabled = i >= cards.length - 1;
+      prev.disabled = !loop() && i <= 0; next.disabled = !loop() && i >= cards.length - 1;
     };
     let navRaf = 0; row.addEventListener('scroll', () => { if (!navRaf) navRaf = requestAnimationFrame(() => { navRaf = 0; syncNav(); }); }, { passive: true });
     addEventListener('resize', syncNav, { passive: true });
@@ -111,16 +134,24 @@ export default {
       p.text ? h('p', { class: 'rw__p' }, p.text) : null);
 
     // Nur sichtbare Videos laufen (spart Akku und Datenvolumen); Ton geht aus, sobald das Video aus dem Bild ist
+    // Läuft gerade weiter unten ein großes Video (Block „Bild / Video“), pausieren die Reels – danach laufen die sichtbaren weiter
+    let held = false;
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((es) => es.forEach(e => {
         const c = cards.find(x => x.card === e.target); if (!c) return;
-        if (e.isIntersecting) { c.pl.load(); c.pl.play(); }
+        c.vis = e.isIntersecting;
+        if (e.isIntersecting) { c.pl.load(); if (!held) c.pl.play(); }
         else { c.pl.pause(); if (cards.indexOf(c) === soundOn) setSound(soundOn); }
       }), { threshold: .2, rootMargin: '0px 200px 0px 200px' });
       cards.forEach(c => io.observe(c.card));
-    } else cards.forEach(c => { c.pl.load(); c.pl.play(); });
+    } else cards.forEach(c => { c.vis = true; c.pl.load(); c.pl.play(); });
+    const onFocus = (e) => { if (!el.isConnected) return off(); if (el.contains(e.detail)) return; held = true; if (soundOn >= 0) setSound(soundOn); cards.forEach(c => c.pl.pause()); };
+    const onBlur = () => { if (!el.isConnected) return off(); held = false; cards.forEach(c => { if (c.vis) c.pl.play(); }); };
+    const off = () => { removeEventListener('tn-video-focus', onFocus); removeEventListener('tn-video-blur', onBlur); };
+    addEventListener('tn-video-focus', onFocus); addEventListener('tn-video-blur', onBlur);
 
     // Handy: wischbare Reihe startet mit der mittleren Karte in der Mitte – symmetrisch
+    applyOrder();
     requestAnimationFrame(() => { if (row.scrollWidth > row.clientWidth + 4) { const mid = cards[Math.floor((cards.length - 1) / 2)].card; row.scrollLeft = mid.offsetLeft + mid.offsetWidth / 2 - row.clientWidth / 2; } syncNav(); });
     setTimeout(syncNav, 600);
     return el;

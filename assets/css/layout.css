@@ -60,6 +60,7 @@ main { min-height: 100vh; padding-top: var(--header-h); }
 
 /* Intro: ohne Header/Footer, volle Höhe */
 .is-intro .site-header, .is-intro .site-footer { display: none; }
+.no-foot .site-footer { display: none; }
 .is-intro main { padding-top: 0; }
 [id] { scroll-margin-top: 70px; }
 

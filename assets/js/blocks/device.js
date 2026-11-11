@@ -18,6 +18,7 @@ export default {
   fields: [
     { name: 'kind', label: 'Gerät', type: 'select', options: ['phone', 'laptop'], default: 'phone' },
     { name: 'side', label: 'Gerät steht', type: 'select', options: ['left', 'right'], default: 'left' },
+    { name: 'scrollFly', label: 'Gerät fliegt mit dem Scrollen herein (startet, sobald der Abschnitt unten ins Bild kommt; sonst startet es erst später und läuft dann von selbst)', type: 'checkbox', default: false },
     { name: 'scrollBtn', label: '⬇ Button unten, solange das Gerät noch nicht da ist (Text, z. B. „scroll“; leer = kein Button) – Klick scrollt hin, die Animation läuft, der Button blendet aus', type: 'text', default: '' },
     { name: 'textAlign', label: 'Text-Versatz neben dem Gerät', type: 'select', options: ['links', 'mitte', 'rechts'], default: 'links' },
     { name: 'kicker', label: 'Kleine Zeile (z. B. short-form / web)', type: 'text', default: '' },
@@ -108,7 +109,7 @@ export default {
     const go = (i) => { const r = el.querySelector('.dv__track').getBoundingClientRect(); const total = r.height - stage.offsetHeight; const y = scrollY + r.top + ((clamp(i, 0, n - 1) + .5) / n) * total; scrollTo({ top: y, behavior: 'smooth' }); };
     el.addEventListener('click', (e) => { if (e.target.closest('.dv__tap--l')) go(cur - 1); else if (e.target.closest('.dv__tap--r')) go(cur + 1); });
     // ===== Laptop 3D: WebGL-Laptop wird vom Scroll gesteuert (frontal auf das Logo → aufklappen + drehen), Maus neigt ihn =====
-    const PAD = 1.5, gpOn = !!gp, L = { p: 0, fr: 0, i: 0, a: 0 }; let A = null;
+    const PAD = 1.5, gpOn = !!gp, L = { p: 0, fr: 0, i: 0, a: 0, s: 0 }, fly = !!p.scrollFly; let A = null;
     if (gpOn) {
       const cv = el.querySelector('.dv__gl'), srcEl = (k) => screens[k]?.querySelector('video, img'), statik = still();
       let shown = 0, to = -1, mixv = 0, oc = statik ? 1 : 0, hx = 0, hy = 0, tx = 0, ty = 0, started = false;
@@ -184,7 +185,7 @@ export default {
       ticker(cv, (dt, t) => {
         if (!cv.width) return;
         if (dt > .034) { if (++slow > 25 && rq > .55) { rq *= .8; slow = 0; resize(); } } else if (slow > 0) slow--;
-        const k = Math.min(1, dt * 6), tgt = statik ? 1 : A ? L.a : clamp(L.p / .26); if (A && !statik) { const stp = Math.min(dt, .1) / Math.max(.6, Number(A.dur) || 4.5); oc = tgt > oc ? Math.min(tgt, oc + stp) : Math.max(tgt, oc - stp); } else oc += (tgt - oc) * Math.min(1, dt * 7);
+        const k = Math.min(1, dt * 6), tgt = statik ? 1 : A ? L.a : clamp(L.p / .26); if (A && !statik && fly) { oc += (L.s - oc) * Math.min(1, dt * 9); if (Math.abs(L.s - oc) < .0005) oc = L.s; } else if (A && !statik) { const stp = Math.min(dt, .1) / Math.max(.6, Number(A.dur) || 4.5); oc = tgt > oc ? Math.min(tgt, oc + stp) : Math.max(tgt, oc - stp); } else oc += (tgt - oc) * Math.min(1, dt * 7);
         hx += (tx - hx) * k; hy += (ty - hy) * k;
         calm = (!dr.on && Math.abs(dr.ry) < .3 && Math.abs(dr.rx) < .3) ? calm + dt : 0; ovk += ((emb.some((e) => e && e.f) && oc > .985 ? 1 : 0) - ovk) * Math.min(1, dt * 3);
         if (!dr.on) { const sd = Math.min(dt, .05); dr.ryV += (-60 * dr.ry - 11 * dr.ryV) * sd; dr.ry += dr.ryV * sd; dr.rxV += (-60 * dr.rx - 11 * dr.rxV) * sd; dr.rx += dr.rxV * sd; if (Math.abs(dr.ry) < .02 && Math.abs(dr.ryV) < .05) { dr.ry = 0; dr.ryV = 0; } if (Math.abs(dr.rx) < .02 && Math.abs(dr.rxV) < .05) { dr.rx = 0; dr.rxV = 0; } }
@@ -245,7 +246,7 @@ export default {
       if (!goBtn) return;
       const th = vh * (gpOn && A ? (mq.matches ? Math.min(.55, clamp(Number(A.pre ?? .85))) : clamp(Number(A.pre ?? .85))) : .5);
       // sichtbar, sobald der Abschnitt unten hereinkommt; blendet weich aus, bevor das Gerät startet
-      const o = r.top > vh * 1.02 || r.bottom < vh * .5 ? 0 : clamp((r.top - th) / (vh * .18));
+      const o = r.top > vh * 1.02 || r.bottom < vh * .5 ? 0 : fly && gpOn && A ? clamp((r.top - vh * .62) / (vh * .2)) : clamp((r.top - th) / (vh * .18));
       const v = Math.round(o * 100) / 100; if (v !== goVis) { goVis = v; goBtn.style.opacity = String(v); goBtn.classList.toggle('is-on', v > .05); }
     };
     if (still()) { el.classList.add('is-still'); return el; }
@@ -255,7 +256,7 @@ export default {
       goShow(r, vh);
       setCur(i);
       el.style.setProperty('--p', p0.toFixed(4)); el.style.setProperty('--e', clamp(p0 / .12).toFixed(3));
-      if (gpOn) { L.p = p0; L.fr = fr; L.i = i; L.top = r.top; if (A) { const th = (mq.matches ? Math.min(.55, clamp(Number(A.pre ?? .85))) : clamp(Number(A.pre ?? .85))) * vh; if (r.top < th) { L.a = 1; } else if (r.top > th + .06 * vh) L.a = 0; } }
+      if (gpOn) { L.p = p0; L.fr = fr; L.i = i; L.top = r.top; if (A && fly) { /* scroll-gekoppelt: 0 sobald der Abschnitt unten hereinkommt, 1 kurz bevor er oben einrastet */ const a0 = vh * .98, a1 = vh * (mq.matches ? .02 : .08); L.s = clamp((a0 - r.top) / (a0 - a1)); L.a = L.s > 0 ? 1 : 0; } else if (A) { const th = (mq.matches ? Math.min(.55, clamp(Number(A.pre ?? .85))) : clamp(Number(A.pre ?? .85))) * vh; if (r.top < th) { L.a = 1; } else if (r.top > th + .06 * vh) L.a = 0; } }
       bars.forEach((b, k) => { b.style.transform = `scaleX(${k < i ? 1 : k === i ? fr : 0})`; });
       if (!phone && !gpOn) {
         const pg = screens[i]?.querySelector('img'); const page = el.querySelector('.dv__page');

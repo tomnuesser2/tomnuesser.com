@@ -231,6 +231,7 @@ async function render() {
     const end = !!(lastNb && lastNb.querySelector('.nb__go'));
     if (end) { while (lastNb.nextSibling) lastNb.nextSibling.remove(); }
     document.body.classList.toggle('is-nbend', end); }
+  document.body.classList.toggle('no-foot', !!page.hideFooter);
   setMeta((getLang() === 'de' && page.title_de) || page.title);
   window.scrollTo(0, 0);
   state.els.header.classList.remove('is-hidden');
