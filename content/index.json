@@ -145,7 +145,7 @@
       "ratio": "16/9",
       "group": 2,
       "hidden": false,
-      "featured": true,
+      "featured": false,
       "showcase": false,
       "clips": [],
       "summary": "Words fill in black while you scroll – a text-first project teaser for stories that need a few sentences more than a picture can give.",
