@@ -18,6 +18,7 @@ export default {
   fields: [
     { name: 'kind', label: 'Gerät', type: 'select', options: ['phone', 'laptop'], default: 'phone' },
     { name: 'side', label: 'Gerät steht', type: 'select', options: ['left', 'right'], default: 'left' },
+    { name: 'scrollBtn', label: '⬇ Button unten, solange das Gerät noch nicht da ist (Text, z. B. „scroll“; leer = kein Button) – Klick scrollt hin, die Animation läuft, der Button blendet aus', type: 'text', default: '' },
     { name: 'textAlign', label: 'Text-Versatz neben dem Gerät', type: 'select', options: ['links', 'mitte', 'rechts'], default: 'links' },
     { name: 'kicker', label: 'Kleine Zeile (z. B. short-form / web)', type: 'text', default: '' },
     { name: 'title', label: 'Überschrift', type: 'text', default: '' },
@@ -208,10 +209,50 @@ export default {
         if (!started) { started = true; el.classList.add('is-gl'); }
       });
     }
+    // Lücke zum Abschnitt davor: Die Bühne ist einen ganzen Bildschirm hoch und das Gerät steht mittig – darüber liegt also
+    // viel leere Fläche. Folgt dieser Abschnitt auf einen anderen, rückt er um diese Leerfläche nach oben (bis auf einen kleinen Rest).
+    // Die leere Bühnenfläche ist durchsichtig und klick-durchlässig, sie verdeckt also nichts vom Abschnitt davor.
+    const pullUp = () => {
+      const prev = el.previousElementSibling;
+      const first = !prev || (prev.classList.contains('b-spacer') && !prev.previousElementSibling);
+      if (first || prev.classList.contains('pc')) { el.style.marginTop = ''; el.classList.remove('dv--pulled'); return; }
+      const st = stage.getBoundingClientRect(); let top = Infinity;
+      for (const c of stage.children) { const r = c.getBoundingClientRect(); if (r.height > 4) top = Math.min(top, r.top); }
+      const empty = top - st.top, keep = innerWidth < 900 ? 24 : 40;
+      if (!Number.isFinite(empty) || empty <= keep) { el.style.marginTop = ''; el.classList.remove('dv--pulled'); return; }
+      el.style.marginTop = -Math.round(empty - keep) + 'px'; el.classList.add('dv--pulled');
+    };
+    requestAnimationFrame(pullUp); setTimeout(pullUp, 600); addEventListener('resize', pullUp, { passive: true });
+    // „scroll“-Button: steht unten am Bildschirm, solange der Abschnitt hereinkommt, aber das Gerät noch nicht eingeflogen ist.
+    // Klick → weiche Fahrt, bis die Bühne steht (das Gerät klappt auf / fliegt ein). Beim Scrollen blendet er sich von selbst aus.
+    let goBtn = null, goVis = -1, goRaf = 0;
+    if (p.scrollBtn) {
+      goBtn = h('button', { type: 'button', class: 'dv__go', 'aria-label': p.scrollBtn }, h('span', {}, p.scrollBtn), h('i', { 'aria-hidden': 'true' }, '↓'));
+      document.body.append(goBtn);
+      const stopGo = () => { cancelAnimationFrame(goRaf); goRaf = 0; ['wheel', 'touchstart', 'keydown'].forEach(ev => removeEventListener(ev, stopGo)); };
+      goBtn.addEventListener('click', () => {
+        const tr = el.querySelector('.dv__track'), y0 = scrollY, y1 = Math.max(0, tr.getBoundingClientRect().top + scrollY + 1), t0 = performance.now();
+        const T = Math.min(1600, Math.max(700, Math.abs(y1 - y0) / innerHeight * 900)), ease = (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+        stopGo(); ['wheel', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, stopGo, { passive: true }));
+        const stepGo = (now) => { const t = Math.min(1, (now - t0) / T); window.scrollTo(0, y0 + (y1 - y0) * ease(t)); goRaf = t < 1 ? requestAnimationFrame(stepGo) : (stopGo(), 0); };
+        goRaf = requestAnimationFrame(stepGo);
+      });
+      // Seite verlassen → Button wieder weg (er hängt am <body>)
+      const mo = new MutationObserver(() => { if (!el.isConnected) { goBtn.remove(); mo.disconnect(); stopGo(); } });
+      mo.observe(document.getElementById('app') || document.body, { childList: true, subtree: true });
+    }
+    const goShow = (r, vh) => {
+      if (!goBtn) return;
+      const th = vh * (gpOn && A ? (mq.matches ? Math.min(.55, clamp(Number(A.pre ?? .85))) : clamp(Number(A.pre ?? .85))) : .5);
+      // sichtbar, sobald der Abschnitt unten hereinkommt; blendet weich aus, bevor das Gerät startet
+      const o = r.top > vh * 1.02 || r.bottom < vh * .5 ? 0 : clamp((r.top - th) / (vh * .18));
+      const v = Math.round(o * 100) / 100; if (v !== goVis) { goVis = v; goBtn.style.opacity = String(v); goBtn.classList.toggle('is-on', v > .05); }
+    };
     if (still()) { el.classList.add('is-still'); return el; }
     const bars = [...el.querySelectorAll('.dv__bars b')];
     track(el.querySelector('.dv__track'), (r, vh) => {
       const p0 = trackProgress(r, stage.offsetHeight), f = p0 * n, i = Math.min(n - 1, Math.floor(f)), fr = f - i;
+      goShow(r, vh);
       setCur(i);
       el.style.setProperty('--p', p0.toFixed(4)); el.style.setProperty('--e', clamp(p0 / .12).toFixed(3));
       if (gpOn) { L.p = p0; L.fr = fr; L.i = i; L.top = r.top; if (A) { const th = (mq.matches ? Math.min(.55, clamp(Number(A.pre ?? .85))) : clamp(Number(A.pre ?? .85))) * vh; if (r.top < th) { L.a = 1; } else if (r.top > th + .06 * vh) L.a = 0; } }

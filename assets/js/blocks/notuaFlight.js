@@ -431,15 +431,15 @@ function mount(root, OPT) {
   planes.forEach((pl) => { if (cvs[pl.i]) pl.tex = makeTex(cvs[pl.i]); });
   const upload = (i) => { const pl = planes[i]; if (!pl.tex) return; gl.bindTexture(gl.TEXTURE_2D, pl.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cvs[i]); };
   const logo = new Image(); logo.crossOrigin = 'anonymous';
-  // Logo passt sich der Akzentfarbe der Oberfläche an: am Anfang Lachs, am Ende die Farbe des „NOTUA öffnen“-Buttons. Das N bleibt weiß.
+  // Logo wie das echte NOTUA-Logo: Kreis in der Akzentfarbe (Mono: #2B2D33), das N im hellen NOTUA-Blau #9AA8DA.
   let LG = null;
   const tintLogo = () => {
     if (!LG) return; const A = hexRgb(TH.accent).map(v => v * 255), d = LG.ctx.createImageData(LG.n, LG.n), o2 = d.data, b = LG.base;
-    for (let k = 0; k < b.length; k += 4) { const t = b[k + 1] / 255; o2[k] = A[0] + (255 - A[0]) * t; o2[k + 1] = A[1] + (255 - A[1]) * t; o2[k + 2] = A[2] + (255 - A[2]) * t; o2[k + 3] = b[k]; }
+    const NB = [154, 168, 218]; for (let k = 0; k < b.length; k += 4) { const t = b[k + 1] / 255; o2[k] = A[0] + (NB[0] - A[0]) * t; o2[k + 1] = A[1] + (NB[1] - A[1]) * t; o2[k + 2] = A[2] + (NB[2] - A[2]) * t; o2[k + 3] = b[k]; }
     LG.ctx.putImageData(d, 0, 0); LG.acc = TH.accent; const pl = planes.find(x => x.logo); if (pl && pl.tex) { gl.bindTexture(gl.TEXTURE_2D, pl.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, LG.cv); }
   };
   const prepLogo = (im) => { try { const n = im.naturalWidth || 512, cv = document.createElement('canvas'); cv.width = cv.height = n; const x = cv.getContext('2d'); x.drawImage(im, 0, 0, n, n); const a = x.getImageData(0, 0, n, n).data, base = new Uint8ClampedArray(a.length);
-    for (let k = 0; k < a.length; k += 4) { const l = .3 * a[k] + .59 * a[k + 1] + .11 * a[k + 2]; base[k] = a[k + 3]; base[k + 1] = Math.min(1, Math.max(0, (l - 150) / 70)) * 255; }
+    for (let k = 0; k < a.length; k += 4) { const l = .3 * a[k] + .59 * a[k + 1] + .11 * a[k + 2]; base[k] = a[k + 3]; base[k + 1] = Math.min(1, Math.max(0, (l - 100) / 50)) * 255; }   // N = hell (Logo: dunkler Kreis #2B2D33, N #9AA8DA)
     LG = { n, cv, ctx: x, base, acc: null }; tintLogo(); return cv; } catch { return im; } };
   logo.onload = () => { const t = makeTex(prepLogo(logo)); planes.forEach(pl => { if (pl.logo) { pl.tex = t; pl.ratio = 1; } }); if (LG) tintLogo(); }; logo.src = o.logo || 'media/notua-logo.png';
 

@@ -27,7 +27,7 @@ export function carousel3d(root, items, o = {}) {
   camera.append(ring); stage.append(camera); root.append(stage);
 
   const S = { angle: 0, vel: 0, target: null, dir: -1, press: null, drag: false, hover: false, pointer: { in: false, x: 0, y: 0 }, yaw: 0, pitch: 0,
-    intro: null, introDone: false, hold: 0, suppress: false, wheelT: 0, fit: 1, shift: 0, drop: 0, last: 0, paused: false };
+    intro: null, introDone: false, hold: 0, suppress: false, wheelT: 0, fit: 1, shift: 0, drop: 0, last: 0, paused: false, glide: null, sv: 0 };
   let cardW = 0, cardH = 0, radius = 0, tiles = [], cards = [], active = 0, raf = 0, visible = true, dead = false;
 
   const build = () => {
@@ -90,8 +90,18 @@ export function carousel3d(root, items, o = {}) {
     const paused = S.paused || S.hover || S.drag || now < S.hold;
     const cruise = !O.reduced && !paused && !S.intro ? O.speed * S.dir : 0;
     let busy = !!S.intro || S.drag;
+    S.sv += (Math.abs(S.vel) - S.sv) * (1 - Math.exp(-dt / .2)); if (S.sv > .5) busy = true;
     if (S.drag || S.intro) S.vel = S.drag ? S.vel : 0;
     if (S.intro && O.swerve) { const k = clamp((now - S.intro.start) / 1250, 0, 1); S.angle = O.swerve * 330 * Math.pow(1 - k, 3); } // Einflug: dreht aus einer Richtung herein und bremst sanft ab
+    else if (S.glide) {
+      // Loslassen → EINE weiche Bewegung, die mit genau der Wischgeschwindigkeit startet und exakt auf der Karte endet
+      // (kubische Hermite-Kurve: Startgeschwindigkeit = Wischtempo, Endgeschwindigkeit = 0, kein Zurückspringen)
+      const G = S.glide, u = Math.min(1, (now - G.t0) / G.T), u2 = u * u, u3 = u2 * u;
+      const a = (2 * u3 - 3 * u2 + 1) * G.a0 + (u3 - 2 * u2 + u) * G.T * G.v0 + (-2 * u3 + 3 * u2) * G.a1;
+      S.vel = dt > 0 ? (a - S.angle) / dt : 0; S.angle = a;
+      if (u >= 1) { S.angle = G.a1; S.vel = 0; S.glide = null; }
+      busy = true;
+    }
     else if (S.target !== null) {
       let rem = dt; const damp = 2 * Math.sqrt(SPRING);
       while (rem > 0) { const k = Math.min(rem, 1 / 240); S.vel += (SPRING * (S.target - S.angle) - damp * S.vel) * k; S.angle += S.vel * k; rem -= k; }
@@ -110,7 +120,7 @@ export function carousel3d(root, items, o = {}) {
     return busy;
   };
   const render = (now) => {
-    const el = S.intro ? now - S.intro.start : 0, swell = 1 + O.stretch * .12 * Math.min(1, Math.abs(S.vel) / 420), R = radius * swell;
+    const el = S.intro ? now - S.intro.start : 0, swell = 1 + O.stretch * .12 * Math.min(1, S.sv / 420), R = radius * swell;
     camera.style.transform = `translate3d(0, 0, ${-R}px) rotateX(${O.tilt + S.pitch}deg) rotateY(${S.yaw}deg)`;
     ring.style.transform = `rotateY(${S.angle}deg)`;
     cards.forEach((c, i) => {
@@ -137,7 +147,7 @@ export function carousel3d(root, items, o = {}) {
 
   // ---- Bedienung: Ziehen, Tippen, Trackpad seitwärts, Tastatur ----
   const perPx = () => (root.clientWidth > 700 ? 2.3 : 1.6) * 180 / (Math.PI * radius * S.fit);
-  const down = (e) => { S.suppress = false; if (e.button !== 0) return; S.press = { id: e.pointerId, x: e.clientX, y: e.clientY, angle: S.angle, moved: false, origin: 0, samples: [{ t: performance.now(), a: S.angle }] }; };
+  const down = (e) => { S.suppress = false; if (e.button !== 0) return; if (S.glide) { S.glide = null; S.vel = 0; } S.press = { id: e.pointerId, x: e.clientX, y: e.clientY, angle: S.angle, moved: false, origin: 0, samples: [{ t: performance.now(), a: S.angle }] }; };
   const move = (e) => {
     if (e.pointerType === 'mouse') { S.pointer.in = true; const r = root.getBoundingClientRect(); S.pointer.x = clamp((e.clientX - r.left) / r.width * 2 - 1, -1, 1); S.pointer.y = clamp((e.clientY - r.top) / r.height * 2 - 1, -1, 1); }
     const p = S.press; if (!p || p.id !== e.pointerId) { wake(); return; }
@@ -152,19 +162,32 @@ export function carousel3d(root, items, o = {}) {
     }
     S.angle = p.angle + (d - p.origin) * perPx();
     const now = performance.now(); p.samples.push({ t: now, a: S.angle }); while (p.samples.length > 2 && now - p.samples[0].t > 110) p.samples.shift();
+    { const f0 = p.samples[0], sp = (now - f0.t) / 1000; S.vel = sp > .008 ? (S.angle - f0.a) / sp : S.vel; }
     wake();
   };
   const up = (e) => {
     const p = S.press; if (!p || p.id !== e.pointerId) return; S.press = null; if (!p.moved) return;
     S.drag = false; root.classList.remove('is-dragging'); S.suppress = true;
-    const f = p.samples[0], l = p.samples[p.samples.length - 1], span = (l.t - f.t) / 1000, v = span > .008 ? clamp((l.a - f.a) / span, -2600, 2600) : 0;
-    S.vel = v; if (Math.abs(v) > 60) S.dir = Math.sign(v);
-    // Wischen: Schwung mitnehmen und auf die nächste Karte einrasten (kleine Drags springen nicht mehr zurück)
-    // Freies Auslaufen: Der Schwung bleibt (je schneller gewischt, desto länger dreht es), nimmt weich ab und rastet erst ganz zum Schluss auf die nächste Karte ein
-    S.target = Math.abs(v) < 40 ? nearest(S.angle) : null;
-    S.hold = performance.now() + 1200 + Math.min(2500, Math.abs(v) * 2.2); wake();
+    const now = performance.now();
+    // Tempo nur aus den letzten ~80 ms – und wer vor dem Loslassen angehalten hat, bekommt exakt 0 (bleibt da stehen, wo er hält)
+    const rec = p.samples.filter(q => now - q.t <= 80), l = p.samples[p.samples.length - 1];
+    let v = 0;
+    if (now - l.t < 60 && rec.length >= 2) { const f = rec[0], r = rec[rec.length - 1], span = (r.t - f.t) / 1000; v = span > .008 ? clamp((r.a - f.a) / span, -2600, 2600) : 0; }
+    if (Math.abs(v) < 30) v = 0;
+    if (Math.abs(v) > 60) S.dir = Math.sign(v);
+    // Wo würde der Schwung von allein auslaufen? Darauf die nächste Karte – und genau dort weich hinfahren
+    const tau = .26 + O.momentum * .34;
+    let a1 = nearest(S.angle + v * tau), D = a1 - S.angle;
+    // Schneller Wisch, aber die Karte liegt zu nah: eine Karte weiter in Wischrichtung (sonst müsste es abrupt bremsen)
+    for (let k = 0; k < 4 && v && Math.sign(D) === Math.sign(v) && 3 * Math.abs(D) / Math.abs(v) < .42; k++) { a1 += Math.sign(v) * step; D = a1 - S.angle; }
+    let v0 = v, T;
+    if (!v || Math.sign(D) !== Math.sign(v)) { v0 = 0; T = clamp(.38 + Math.abs(D) / step * .45, .38, .75); }   // aus dem Stand: kurzes, weiches Einrasten
+    else T = clamp(3 * D / v, .42, 1.8);                                                                    // mit Schwung: Kurve übernimmt das Wischtempo
+    if (Math.abs(D) < .01 && !v) { S.angle = a1; S.vel = 0; S.glide = null; }
+    else { S.target = null; S.glide = { a0: S.angle, a1, v0, T: T * 1000, t0: now }; S.glide.v0 = v0 / 1000; }
+    S.hold = now + T * 1000 + 3200; wake();
   };
-  const focus = (i) => { let t = -i * step; t += 360 * Math.round((S.angle - t) / 360); S.target = t; S.hold = performance.now() + 2800; wake(); };
+  const focus = (i) => { S.glide = null; let t = -i * step; t += 360 * Math.round((S.angle - t) / 360); S.target = t; S.hold = performance.now() + 2800; wake(); };
   const click = (e) => {
     const c = e.target.closest && e.target.closest('[data-cc]'); if (S.suppress) { S.suppress = false; e.preventDefault(); e.stopPropagation(); return; }
     if (!c) return; const i = Number(c.getAttribute('data-cc'));
@@ -173,7 +196,7 @@ export function carousel3d(root, items, o = {}) {
   };
   const wheel = (e) => {
     const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : 0; if (!d) return; e.preventDefault();
-    S.target = null; S.angle -= d * perPx(); S.vel = -d * perPx() * 30; S.hold = performance.now() + 1600;
+    S.target = null; S.glide = null; S.angle -= d * perPx(); S.vel = -d * perPx() * 30; S.hold = performance.now() + 1600;
     clearTimeout(S.wheelT); S.wheelT = setTimeout(() => { S.target = nearest(S.angle + S.vel * .12); wake(); }, 140); wake();
   };
   const enter = (e) => { if (e.pointerType === 'mouse') { S.hover = true; wake(); } };
@@ -185,7 +208,7 @@ export function carousel3d(root, items, o = {}) {
   build(); measure(); render(performance.now()); ro.observe(root); io.observe(root); root.setAttribute('data-ready', ''); wake();
   return {
     // Scroll-gesteuertes Drehen auf Karte 0: begin() merkt den Startwinkel, scrub(0..1) dreht, release() gibt wieder frei
-    begin() { if (S.scrub) return; S.a0 = S.angle; S.a1 = 360 * Math.round(S.angle / 360); S.scrub = true; S.target = null; S.vel = 0; S.press = null; S.drag = false; },
+    begin() { if (S.scrub) return; S.glide = null; S.a0 = S.angle; S.a1 = 360 * Math.round(S.angle / 360); S.scrub = true; S.target = null; S.vel = 0; S.press = null; S.drag = false; },
     scrub(t) { if (!S.scrub) this.begin(); const e = inOut(clamp(t, 0, 1)); S.angle = S.a0 + (S.a1 - S.a0) * e; S.vel = 0; S.target = null; render(performance.now()); wake(); },
     release() { if (!S.scrub) return; S.scrub = false; S.target = null; S.hold = 0; wake(); },
     focus: (i) => { S.paused = true; focus(i); },

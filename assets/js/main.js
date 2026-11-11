@@ -249,6 +249,8 @@ function scrollToHash(hash, smooth = true) {
   if (kt) y = kt.getBoundingClientRect().top + scrollY + .17 * Math.max(0, kt.offsetHeight - innerHeight);
   // Videografie (Short-/Long-Form): Abschnitt füllt genau den Bildschirm (Handy: klebt kurz fest) – exakt auf den Anfang springen, ohne Rand davor oder danach
   if (el.classList.contains('dd') || el.querySelector('.dd')) y = (el.classList.contains('dd') ? el : el.querySelector('.dd')).getBoundingClientRect().top + scrollY + 1;
+  // #top (Menü „videography“) = das Karussell ganz oben: immer exakt an den Seitenanfang (auf dem Handy klebt es am Bildschirm, seine Position wäre sonst 0)
+  if (hash === '#top') y = 0;
   window.scrollTo({ top: y, behavior: smooth && !prefersReducedMotion() ? 'smooth' : 'auto' });
 }
 
@@ -301,6 +303,20 @@ async function sectionJump(hash, label) {
   const target = document.getElementById(decodeURIComponent(hash.slice(1)));
   if (!target) return;
   if (prefersReducedMotion() || !document.body.animate || navigating) { scrollToHash(hash); return; }
+  // Menü (videography / notua / contact) auf der Startseite: derselbe Kreis-Übergang wie beim Seitenwechsel –
+  // der Kreis schließt sich um den Klickpunkt, darunter springt die Seite zum Abschnitt, dann öffnet er sich wieder.
+  if (document.querySelector('.iris')) {
+    navigating = true;
+    try {
+      await beforeNavigate();
+      scrollToHash(hash, false);
+      await new Promise(r => setTimeout(r, 140));
+      scrollToHash(hash, false);
+      settle(hash);
+      await afterNavigate();
+    } finally { navigating = false; }
+    return;
+  }
   navigating = true;
   const word = h('span', { class: 'jump__w' }, label || '');
   const veil = h('div', { class: 'jump' }, h('span', { class: 'jump__n' }, '→'), word);

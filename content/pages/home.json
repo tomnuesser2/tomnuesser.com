@@ -26,6 +26,91 @@
       "hidden": true
     },
     {
+      "type": "videoFormats",
+      "props": {
+        "kicker": "",
+        "title": "every format - full impact",
+        "text": "Vertical for the feed, wide for the screen – same story, right shape.",
+        "items": [
+          {
+            "vimeo": "https://vimeo.com/1207050247",
+            "src": "",
+            "title": "Gården Festival 2026",
+            "text": "",
+            "duration": 4,
+            "ratio": "16:9 quer"
+          },
+          {
+            "vimeo": "https://vimeo.com/1207050796",
+            "src": "",
+            "title": "norder147 x canim3denim",
+            "text": "",
+            "duration": 4,
+            "ratio": "16:9 quer"
+          },
+          {
+            "vimeo": "https://vimeo.com/1236194560",
+            "src": "",
+            "title": "One day left. �⚪️Final preparations are underway at BankParken in Tønder – pitch marked, stands",
+            "text": "",
+            "duration": 4,
+            "ratio": "9:16 hoch"
+          },
+          {
+            "vimeo": "https://vimeo.com/1236195028",
+            "src": "",
+            "title": "Opening ceremony vibes! �#fistball #faustball #europe #fistballeuro2026 #championship #sports #",
+            "text": "",
+            "duration": 4,
+            "ratio": "9:16 hoch"
+          },
+          {
+            "vimeo": "https://vimeo.com/1236194864",
+            "src": "",
+            "title": "Day one of the 2026 Fistball European Championship in Tønder is in the books – and it delivered.",
+            "text": "",
+            "duration": 4,
+            "ratio": "9:16 hoch"
+          },
+          {
+            "vimeo": "https://vimeo.com/1236195821",
+            "src": "",
+            "title": "WE ASKED THE PEOPLE- WHAT DOES FISTBALL MEAN TO YOUWe asked players, fans and people around the",
+            "text": "",
+            "duration": 4,
+            "ratio": "9:16 hoch"
+          },
+          {
+            "vimeo": "https://vimeo.com/1207034763",
+            "src": "",
+            "title": "Leona - Machine (festival live session)",
+            "text": "",
+            "duration": 4,
+            "ratio": "16:9 quer"
+          },
+          {
+            "vimeo": "https://vimeo.com/1207027781",
+            "src": "",
+            "title": "QRUE PLUS – One Night at Kühlhaus Flensburg",
+            "text": "",
+            "duration": 4,
+            "ratio": "16:9 quer"
+          }
+        ],
+        "pickVimeo": "",
+        "side": "links",
+        "auto": true,
+        "clipSecs": 6,
+        "ctaText": "",
+        "ctaLink": "projects",
+        "textScale": 1,
+        "textScaleMobile": 0,
+        "kicker_de": "",
+        "title_de": "Jedes Format - Volle Wirkung",
+        "text_de": "Hochkant für den Feed, quer für die Leinwand. Jede Story fordert ihr Format."
+      }
+    },
+    {
       "type": "chapter",
       "id": "video",
       "props": {

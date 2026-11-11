@@ -8,7 +8,7 @@
     "category": "video",
     "stills": [],
     "imageMobile": "",
-    "featured": true
+    "featured": false
   },
   "blocks": [
     {
@@ -196,7 +196,9 @@
             "open": 1,
             "fit": 1.12
           }
-        }
+        },
+        "scrollBtn": "scroll",
+        "scrollBtn_de": "scrollen"
       }
     }
   ],

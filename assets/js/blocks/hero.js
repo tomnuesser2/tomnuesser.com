@@ -40,7 +40,7 @@ export default {
     const lines = String(p.title || '').split('\n').map(s => s.trim()).filter(Boolean);
     const lineEls = lines.map((r) => h('span', { class: 'hero__role' }, r));
     { let k = 0; lineEls.forEach((r) => { splitChars(r, k); k += r.textContent.length; }); }
-    const el = h('section', { class: 'hero', id: p.id },
+    const el = h('section', { class: 'hero', id: p.id || 'top' },          // #top = Ziel von „videography“ im Menü
       h('div', { class: 'hero__cards' }, cards),
       h('h1', { class: `hero__roles is-${p.titleSize}` }, lineEls),
       p.subtitle ? h('p', { class: `hero__sub is-${p.subSize}` }, p.subtitle) : null,
@@ -48,7 +48,18 @@ export default {
       h('a', { class: 'hero__cue', href: 'home#work', 'data-link': '' }, p.cue || 'scroll', h('i', { 'aria-hidden': 'true' }, '↓')));
     // PC: statt des Kartenfächers das 3D-Karussell (querformatige Karten, groß, ziehbar, dreht langsam von selbst)
     if (matchMedia('(min-width: 900px)').matches && !still() && n >= 2) {
-      const box = el.querySelector('.hero__cards'); el.classList.add('hero--car'); { const sh = (q, v) => { v = Number(v) || 0; if (v) el.style.setProperty(q, v + 'px'); }; sh('--car-y', p.carY); sh('--name-y', p.nameY); sh('--title-y', p.titleY); } el.style.setProperty('--cs', (1 + ((Number(p.carSize) || 1.6) - 1) * .3).toFixed(3)); box.replaceChildren();
+      const box = el.querySelector('.hero__cards'); el.classList.add('hero--car'); { const sh = (q, v) => { v = Number(v) || 0; if (v) el.style.setProperty(q, v + 'px'); }; sh('--car-y', p.carY); sh('--name-y', p.nameY); } { // Titel-Verschiebung nach unten nur so weit, dass „scroll“ immer frei darunter steht (nie überlappt)
+        const ty = Number(p.titleY) || 0, roles = el.querySelector('.hero__roles'), cueEl = el.querySelector('.hero__cue');
+        const fitT = () => {
+          if (!ty) return;
+          if (!roles || !cueEl || innerWidth < 900 || ty < 0) { el.style.setProperty('--title-y', ty + 'px'); return; }
+          el.style.setProperty('--title-y', '0px');
+          const room = cueEl.getBoundingClientRect().top - roles.getBoundingClientRect().bottom - 14;
+          el.style.setProperty('--title-y', Math.max(0, Math.min(ty, Math.floor(room))) + 'px');
+        };
+        fitT(); requestAnimationFrame(fitT); setTimeout(fitT, 400); setTimeout(fitT, 1800);
+        addEventListener('resize', fitT, { passive: true }); try { document.fonts.ready.then(fitT); } catch { /* alt */ }
+      } el.style.setProperty('--cs', (1 + ((Number(p.carSize) || 1.6) - 1) * .3).toFixed(3)); box.replaceChildren();
       const all = (idx.order || []).map(sl => ({ slug: sl, ...idx.projects[sl] })).filter(x => x.image && !x.hidden);
       const labD = nameLabel(p, all); if (labD) { labD.el.classList.add('hn--d'); box.before(labD.el); }
       (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => el.isConnected && (carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { spread: Number(p.carSpread) || 1.5, zoom: Number(p.carSize) || 1.4, size: (r) => ({ w: Math.min(r.width * .46, r.height * 1.1 * 1.6), aspect: 1.6 }), fitAngle: 108, contain: true, swerve: dirIn, onChange: (i) => labD && labD.set(i) }), fadeIn(box))));

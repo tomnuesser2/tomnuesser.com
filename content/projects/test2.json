@@ -7,7 +7,7 @@
     "group": 1,
     "category": "code",
     "stills": [],
-    "featured": true,
+    "featured": false,
     "imageMobile": "media/notua-flyer-s-9x16-screenshot-1-.webp"
   },
   "blocks": [
@@ -39,11 +39,6 @@
         "boardsTitle": "Boards",
         "boards": "Shoot 2026 | Clients | Ideas",
         "subBoards": "Day 1 | Day 2 | B-Roll",
-        "cBg": "#E7EAEE",
-        "cDot": "#C6CCD4",
-        "cSurface": "#FFFFFF",
-        "cInk": "#1B2027",
-        "cAccent": "#FF6B57",
         "textScale": 1,
         "textScaleMobile": 1.05
       }
@@ -58,7 +53,6 @@
         "boardName": "Untitled board",
         "url": "notua.site",
         "theme": "hell",
-        "accent": "#FF6B57",
         "cards": [
           {
             "type": "note",

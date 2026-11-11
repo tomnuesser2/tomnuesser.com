@@ -2,7 +2,7 @@ import { h } from '../core/dom.js';
 import { still } from '../core/scrollhub.js';
 import { createPhone } from '../core/phoneGL.js';
 import { ticker } from '../core/reelKit.js';
-import { parseVimeo, vimeoThumb, isEmbedUrl } from '../core/media.js';
+import { parseVimeo, vimeoThumb, vimeoInfo, vimeoIsPortrait, isEmbedUrl } from '../core/media.js';
 // Videoformate in EINEM Gerät: Ein echtes 3D-Handy zeigt die Videos nacheinander. Mit den Pfeilen wechselt man durch.
 // Kommt ein Querformat-Video (16:9), dreht sich das Handy um 90° ins Querformat – wie wenn man es in der Hand kippt.
 // Das Video steckt dabei "im" Handy: Es dreht sich mit und steht am Ende aufrecht. Rechts daneben stehen Titel und Text.
@@ -13,6 +13,7 @@ const ITEM = [
   { name: 'vimeo', label: 'Vimeo-Link (z. B. https://vimeo.com/123456789) – läuft automatisch und stumm', type: 'text' },
   { name: 'src', label: 'oder Datei: Video (.mp4/.webm) oder Bild', type: 'image' },
   { name: 'ratio', label: 'Format', type: 'select', options: ['automatisch', '9:16 hoch', '16:9 quer'], default: 'automatisch' },
+  { name: 'fit', label: 'Darstellung im Handy', type: 'select', options: ['schwarze Balken', 'Vollbild (randlos, wird beschnitten)'], default: 'schwarze Balken' },
   { name: 'title', label: 'Titel (kurz)', type: 'text' },
   { name: 'text', label: 'Kurztext (ein bis zwei Zeilen)', type: 'textarea' },
   { name: 'duration', label: 'Dauer in Sekunden (nur bei Bildern)', type: 'number', default: 5 },
@@ -24,7 +25,7 @@ export default {
     { name: 'kicker', label: 'Kleine Zeile', type: 'text', default: 'formats', de: 'Formate' },
     { name: 'title', label: 'Überschrift', type: 'text', default: 'One shoot, every format.', de: 'Ein Dreh, jedes Format.' },
     { name: 'text', label: 'Text darunter', type: 'textarea', default: 'Vertical for the feed, wide for the screen – same story, right shape.', de: 'Hochkant für den Feed, quer für den großen Schirm – gleiche Geschichte, passende Form.' },
-    { name: 'items', label: 'Videos (Reihenfolge = Ablauf; hoch und quer dürfen gemischt sein)', type: 'list', itemFields: ITEM },
+    { name: 'items', label: 'Videos (werden automatisch abwechselnd sortiert: 16:9, 9:16, 16:9, 9:16 …)', type: 'list', itemFields: ITEM },
     { name: 'pickVimeo', label: 'Videos aus anderen Seiten/Projekten übernehmen (nur Vimeo)', type: 'vimeoPick', lists: { phone: 'items', laptop: 'items' }, ratioField: 'ratio', ratios: { phone: '9:16 hoch', laptop: '16:9 quer' } },
     { name: 'side', label: 'Handy steht …', type: 'select', options: ['links', 'rechts'], default: 'links' },
     { name: 'auto', label: 'Automatisch weiterschalten', type: 'checkbox', default: true },
@@ -38,8 +39,10 @@ export default {
     const items = (p.items || []).map(norm).filter(i => i.src || parseVimeo(i.vimeo));
     if (!items.length) return null;
     // 16:9 (quer) → Handy dreht sich. Alles andere bleibt hochkant. "automatisch" fragt Vimeo nach den Maßen.
-    const land = items.map(i => /16\s*:\s*9|quer/i.test(String(i.ratio || '')));
-    let cur = 0, timer = 0, raf = 0, vmH = null, visible = false, curMs = 0;
+    const fixed = (i) => (/16\s*:\s*9|quer/i.test(String(i.ratio || '')) ? true : /9\s*:\s*16|hoch/i.test(String(i.ratio || '')) ? false : null);
+    const land = items.map(i => fixed(i) ?? false);           // "automatisch": erst hochkant, Vimeo meldet gleich das echte Format
+    const cover = (i) => /voll/i.test(String(i.fit || ''));
+    let cur = 0, timer = 0, raf = 0, vmH = null, visible = false, curMs = 0, started = false;
 
     const scr = h('div', { class: 'vf__scr' });
     const shots = items.map((it, n) => {
@@ -48,10 +51,10 @@ export default {
         : v ? h('video', { src: it.src, muted: '', playsinline: '', preload: 'metadata', 'aria-hidden': 'true' })
           : h('img', { src: it.src, alt: '', decoding: 'async', loading: 'lazy' });
       if (v) { node.muted = true; node.defaultMuted = true; node.loop = items.length === 1; }
-      if (vm) vimeoThumb(vm).then(t => { if (t) node.style.background = `#000 url("${t}") center / cover no-repeat`; }).catch(() => {});
+      if (vm) vimeoThumb(vm).then(t => { if (t) node.style.background = `#000 url("${t}") center / ${cover(it) ? 'cover' : 'contain'} no-repeat`; }).catch(() => {});
       // Jedes Video sitzt in einem eigenen Rahmen. Querformat liegt im Handy quer (gedreht) – zusammen mit der Handy-Drehung steht es am Ende aufrecht.
       const rot = h('div', { class: 'vf__rot' }, node);
-      const s = h('div', { class: 'vf__shot' + (land[n] ? ' is-land' : '') }, rot);
+      const s = h('div', { class: 'vf__shot' + (land[n] ? ' is-land' : '') + (cover(it) ? ' is-cover' : '') }, rot);
       scr.append(s); return s;
     });
 
@@ -70,6 +73,35 @@ export default {
 
     const itemEl = items.map(it => h('div', { class: 'vf__item' },
       h('h3', { class: 'vf__it' }, it.title || ''), h('p', { class: 'vf__ix' }, it.text || '')));
+    // Reihenfolge immer abwechselnd: 16:9, 9:16, 16:9, 9:16 … (was übrig bleibt, kommt hinten dran)
+    const resort = () => {
+      const keep = items[cur], idx = items.map((_, n) => n), L = idx.filter(n => land[n]), P = idx.filter(n => !land[n]), perm = [];
+      while (L.length || P.length) { if (L.length) perm.push(L.shift()); if (P.length) perm.push(P.shift()); }
+      for (const a of [items, land, shots, itemEl]) { const c = perm.map(n => a[n]); a.splice(0, a.length, ...c); }
+      shots.forEach((s, n) => s.classList.toggle('is-land', land[n]));
+      cur = started ? Math.max(0, items.indexOf(keep)) : 0;
+    };
+    resort();
+    // Vollbild bei Vimeo: Der Player wird so groß gezogen, dass er die Glasfläche ganz füllt (Ränder werden abgeschnitten).
+    // Schwarze Balken (Standard): Der Player sitzt genau auf der Glasfläche, Vimeo setzt die Balken selbst.
+    const fitFrames = () => {
+      const W0 = ov.clientWidth, H0 = ov.clientHeight; if (W0 < 4 || H0 < 4) return;
+      shots.forEach((s, n) => {
+        const f = s.querySelector('.vf__vf'); if (!f) return;
+        if (!s.classList.contains('is-cover')) { f.style.width = ''; f.style.height = ''; return; }
+        const inf = items[n]._info, va = inf && inf.width && inf.height ? inf.width / inf.height : (land[n] ? 16 / 9 : 9 / 16);
+        const bw = land[n] ? H0 : W0, bh = land[n] ? W0 : H0, ba = bw / bh;
+        const w = va > ba ? bh * va : bw, hh = va > ba ? bh : bw / va;
+        f.style.width = Math.ceil(w) + 'px'; f.style.height = Math.ceil(hh) + 'px';
+      });
+    };
+    // Vimeo nach Maßen fragen: "automatisch" bekommt so sein echtes Format, Vollbild das richtige Seitenverhältnis
+    Promise.all(items.map((it) => { const vm = parseVimeo(it.vimeo); return vm ? vimeoInfo(vm).then(i => { it._info = i; }).catch(() => {}) : null; })).then(() => {
+      let changed = false;
+      items.forEach((it, n) => { if (fixed(it) === null && it._info && (it._info.width || it._info.height)) { const l = !vimeoIsPortrait(it._info); if (l !== land[n]) { land[n] = l; changed = true; } } });
+      if (changed) { resort(); show(cur, false); if (visible) run(); }
+      fitFrames();
+    });
     const badge = h('span', { class: 'vf__badge' }, '9:16');
     const cta = p.ctaText ? h('a', { class: 'cta vf__cta', href: p.ctaLink || 'projects', 'data-link': '', 'data-magnetic': '1' }, h('span', {}, p.ctaText), h('i', { 'aria-hidden': 'true' }, '→')) : null;
     const copy = h('div', { class: 'vf__copy' },
@@ -102,7 +134,7 @@ export default {
     // Fortschritt: Vimeo meldet sein Ende selbst, Dateien laufen ihre Länge, Bilder die eingestellte Dauer.
     const next1 = () => { if (visible && items.length > 1) show(cur + 1); };
     const run = () => {
-      clearT(); if (!visible) return;
+      clearT(); if (!visible) return; started = true;
       const it = items[cur], shot = shots[cur], vm = parseVimeo(it.vimeo), v = shot.querySelector('video');
       const clip = Math.max(3, Math.min(10, num(p.clipSecs, 6))) * 1000;
       const byClock = (ms) => { const t0 = performance.now() - curMs; const tk = (t) => { curMs = t - t0; const f = Math.min(1, curMs / ms); fill(f); if (f >= 1) next1(); else raf = requestAnimationFrame(tk); }; raf = requestAnimationFrame(tk); };
@@ -111,7 +143,7 @@ export default {
         const q = new URLSearchParams({ autoplay: '1', muted: '1', controls: '0', api: '1', playsinline: '1', dnt: '1', autopause: '0', title: '0', byline: '0', portrait: '0', loop: items.length === 1 ? '1' : '0' });
         if (vm.hash) q.set('h', vm.hash);
         const ifr = h('iframe', { src: `https://player.vimeo.com/video/${vm.id}?${q}`, allow: 'autoplay; fullscreen', tabindex: '-1', 'aria-hidden': 'true', title: it.title || 'Video', class: 'vf__vf' });
-        host.append(ifr);
+        host.append(ifr); fitFrames();
         const post = (o) => { try { ifr.contentWindow.postMessage(JSON.stringify(o), 'https://player.vimeo.com'); } catch { /* weg */ } };
         let got = false;
         vmH = (e) => {
@@ -156,7 +188,7 @@ export default {
       const place = (q, W0) => {
         if (!q || q.facing <= .0005) { ov.style.opacity = '0'; return; }
         const H0 = W0 / q.aspect, cw = cv.clientWidth, ch = cv.clientHeight;
-        if (ov._w !== W0 || ov._h !== H0) { ov._w = W0; ov._h = H0; ov.style.width = W0 + 'px'; ov.style.height = H0.toFixed(1) + 'px'; el.style.setProperty('--vf-sw', W0 + 'px'); el.style.setProperty('--vf-sh', H0.toFixed(1) + 'px'); }
+        if (ov._w !== W0 || ov._h !== H0) { ov._w = W0; ov._h = H0; ov.style.width = W0 + 'px'; ov.style.height = H0.toFixed(1) + 'px'; el.style.setProperty('--vf-sw', W0 + 'px'); el.style.setProperty('--vf-sh', H0.toFixed(1) + 'px'); fitFrames(); }
         const mt = h2m([[0, 0], [W0, 0], [W0, H0], [0, H0]], q.pts.map(([x, y]) => [x * cw, y * ch]));
         if (ov._m !== mt) { ov._m = mt; ov.style.transform = mt; }
         ov.style.opacity = '1';

@@ -1337,9 +1337,11 @@ html.is-fill .site-footer { display: none; }
 .vf__rot { position: absolute; left: 50%; top: 50%; width: 100%; height: 100%; transform: translate(-50%, -50%); }
 /* Querformat liegt im Handy quer – mit der Handy-Drehung steht es am Ende aufrecht */
 .vf__shot.is-land .vf__rot { width: var(--vf-sh, 100%); height: var(--vf-sw, 100%); transform: translate(-50%, -50%) rotate(90deg); }
-.vf__rot > * { width: 100%; height: 100%; object-fit: cover; display: block; border: 0; }
-.vf__vm { width: 100%; height: 100%; background: #000; }
-.vf__vf { width: 100%; height: 100%; border: 0; display: block; pointer-events: none; }
+.vf__rot { background: #000; }
+.vf__rot > * { width: 100%; height: 100%; object-fit: contain; display: block; border: 0; background: #000; }   /* Standard: schwarze Balken */
+.vf__shot.is-cover .vf__rot > video, .vf__shot.is-cover .vf__rot > img { object-fit: cover; }                    /* Vollbild: randlos */
+.vf__vm { position: relative; width: 100%; height: 100%; overflow: hidden; background-color: #000; }
+.vf__vf { position: absolute; left: 50%; top: 50%; width: 100%; height: 100%; transform: translate(-50%, -50%); border: 0; display: block; pointer-events: none; }
 
 /* Text daneben */
 .vf__copy { min-width: 0; max-width: 460px; }
@@ -1390,4 +1392,52 @@ html.is-fill .site-footer { display: none; }
   .vf__nav { margin-top: 14px; }
   .vf__ar { width: 38px; height: 38px; }
   .vf__pl { margin-top: 10px; }
+}
+
+/* Laptop/Handy-Abschnitt, der nach oben an den vorherigen Abschnitt herangerückt wurde: leere Bühnenfläche lässt Klicks durch */
+.dv--pulled .dv__stage { pointer-events: none; } .dv--pulled .dv__stage > * { pointer-events: auto; }
+@media (max-width: 899px) { .dv--pulled .dv__track { margin-top: 0 !important; } }
+
+/* „scroll“-Button am Laptop-/Handy-Abschnitt: unten mittig, blendet beim Scrollen aus */
+.dv__go { position: fixed; left: 50%; bottom: calc(26px + env(safe-area-inset-bottom)); z-index: 70; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 18px 8px; border: 0; border-radius: 999px; background: rgba(255,255,255,.82); color: var(--ink, #111); font: inherit; font-size: 12px; letter-spacing: .08em; cursor: pointer; opacity: 0; pointer-events: none; box-shadow: 0 8px 26px rgba(0,0,0,.1); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: opacity .25s ease; -webkit-tap-highlight-color: transparent; }
+.dv__go.is-on { pointer-events: auto; }
+.dv__go i { font-style: normal; font-size: 15px; line-height: 1; animation: cue 1.5s ease-in-out infinite; }
+.dv__go:hover { background: #fff; }
+@media (max-width: 899px) { .dv__go { bottom: calc(104px + env(safe-area-inset-bottom)); } }
+
+/* Handy: Video direkt unter dem Akkordeon hat dieselbe Breite und Eckenrundung wie die Akkordeon-Streifen darüber */
+@media (max-width: 899px) {
+  .ag + .b-stack-wrap { padding-inline: var(--gutter, 20px); }
+  .ag + .b-stack-wrap .media-frame { border-radius: 16px; --rr: 16px; }
+}
+
+/* ---------- Reel-Wand (neu): Überschrift oben, 5 gleich große Reels symmetrisch in einer Reihe, Text unten – alles zentriert ---------- */
+.rw { --rw-gap: clamp(10px, 1.4vw, 20px); --rw-r: 18px; --rw-res: 330px; width: min(100% - 2 * var(--gutter, 20px), 1500px); margin: clamp(20px, 4vh, 48px) auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: clamp(18px, 3.2vh, 34px); }
+.rw__h { margin: 0; font-size: clamp(24px, 3.2vw, 46px); line-height: 1.05; letter-spacing: -.02em; max-width: 22ch; }
+.rw__p { margin: 0; max-width: 56ch; color: var(--ink-mute, #555); font-size: clamp(14px, 1.1vw, 17px); line-height: 1.5; }
+/* Breite so, dass 5 Karten nebeneinander passen UND die Reihe nie höher als der Bildschirm (minus Überschrift/Text) wird */
+.rw__row { --cw: calc((100% - (var(--rw-n) - 1) * var(--rw-gap)) / var(--rw-n)); width: min(100%, calc((100svh - var(--rw-res)) * 9 / 16 * var(--rw-n) + (var(--rw-n) - 1) * var(--rw-gap))); display: flex; justify-content: center; gap: var(--rw-gap); }
+.rw--land .rw__row { width: 100%; }
+.rw__row.is-more { width: 100%; justify-content: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 4px; }
+.rw__row.is-more::-webkit-scrollbar { display: none; }
+.rw__c { position: relative; flex: 0 0 var(--cw); aspect-ratio: 9 / 16; border: 0; padding: 0; margin: 0; border-radius: var(--rw-r); overflow: hidden; background: #111; box-shadow: 0 18px 40px -22px rgba(0,0,0,.55); scroll-snap-align: center; cursor: pointer; color: #fff; font: inherit; transform: translateZ(0); transition: transform .45s cubic-bezier(.22,1,.36,1), box-shadow .45s; -webkit-tap-highlight-color: transparent; }
+.rw--land .rw__c { aspect-ratio: 16 / 9; }
+.rw__row.is-more .rw__c { flex-basis: calc((100% - 4 * var(--rw-gap)) / 5); }
+@media (hover: hover) { .rw__c:hover { transform: translateY(-4px); box-shadow: 0 26px 50px -24px rgba(0,0,0,.6); } }
+.rw__media { position: absolute; inset: 0; overflow: hidden; background: #111 center / cover no-repeat; }
+.rw__media video { width: 100%; height: 100%; object-fit: cover; display: block; }                      /* randlos */
+.rw__media iframe { position: absolute; left: 50%; top: 50%; width: var(--rw-w, 100%); height: var(--rw-h, 100%); transform: translate(-50%, -50%); border: 0; pointer-events: none; }
+.rw__t { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2; font-size: 12px; text-align: left; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
+.rw__snd { position: absolute; right: 10px; top: 10px; z-index: 2; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: rgba(0,0,0,.42); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); opacity: .85; transition: background .25s, opacity .25s; }
+.rw__snd svg { width: 16px; height: 16px; fill: currentColor; }
+.rw__c.is-snd .rw__snd { background: rgba(255,255,255,.92); color: #111; opacity: 1; }
+@media (max-width: 899px) {
+  .rw { width: 100%; --rw-r: 16px; }
+  .rw__h, .rw__p { padding-inline: var(--gutter, 20px); }
+  /* Handy: wischbare Reihe, eine Karte in der Mitte, die Nachbarn schauen links und rechts herein */
+  .rw__row, .rw__row.is-more { width: 100%; justify-content: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 0 calc(50% - 29vw) 4px; box-sizing: border-box; }
+  .rw__row::-webkit-scrollbar { display: none; }
+  .rw__c, .rw__row.is-more .rw__c { flex: 0 0 58vw; max-height: 72svh; }
+  .rw--land .rw__c { flex-basis: 84vw; }
+  .rw--land .rw__row { padding-inline: calc(50% - 42vw); }
 }
