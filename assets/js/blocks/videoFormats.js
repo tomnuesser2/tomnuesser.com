@@ -105,10 +105,11 @@ export default {
     const badge = h('span', { class: 'vf__badge' }, '9:16');
     const cta = p.ctaText ? h('a', { class: 'cta vf__cta', href: p.ctaLink || 'projects', 'data-link': '', 'data-magnetic': '1' }, h('span', {}, p.ctaText), h('i', { 'aria-hidden': 'true' }, '→')) : null;
     const copy = h('div', { class: 'vf__copy' },
-      h('p', { class: 'vf__k' }, p.kicker || ''), badge,
+      // Nur Überschrift, Untertitel und die Pfeile – kein Videotitel/-text und kein Format-Schild (die kamen z. B. aus Vimeo und störten)
+      p.kicker ? h('p', { class: 'vf__k' }, p.kicker) : null,
       p.title ? h('h2', { class: 'vf__h' }, p.title) : null,
       p.text ? h('p', { class: 'vf__p' }, p.text) : null,
-      h('div', { class: 'vf__items' }, itemEl), nav, line, cta);
+      nav, line, cta);
 
     const el = h('section', { class: `vf vf--${p.side === 'rechts' ? 'r' : 'l'}`, id: p.id },
       h('div', { class: 'vf__sticky' }, h('div', { class: 'vf__stage' }, dev, copy)));
