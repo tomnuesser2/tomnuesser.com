@@ -323,7 +323,7 @@
       "type": "contactForm",
       "props": {
         "impressumLabel": "Impressum",
-        "impressumText": "Angaben gemäß § 5 TMG\n\nTom Nüßer\nBreedlandweg 27\n24944 Flensburg\nDeutschland\n\nUmsatzsteuer-Identifikationsnummer:\nNicht vorhanden.\n\nVerantwortlich für den Inhalt nach § 18 MStV:\nTom Nüßer\nBreedlandweg 27\n24944 Flensburg",
+        "impressumText": "Angaben gemäß § 5 TMG\n\nTom Nüßer\nToosbüystraße 16\n24937 Flensburg\nDeutschland\n\nUmsatzsteuer-Identifikationsnummer:\nNicht vorhanden.\n\nVerantwortlich für den Inhalt nach § 18 MStV:\nTom Nüßer\nBreedlandweg 27\n24944 Flensburg",
         "impressumLabel_de": "Impressum"
       }
     }
