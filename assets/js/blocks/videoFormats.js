@@ -213,7 +213,7 @@ export default {
           ry: 14 + Math.cos(t * .6) * 3.4 - 26 * air,                    // beim Wechsel kurz andrehen
           rz: rot,
           y: Math.sin(t * .85) * .022 + air * .05,                       // leichtes Schweben + kleiner Hüpfer
-          fit: (mob.matches ? .9 : .78) - air * .05, mix: 0, intro: 1, time: t, light: 1,   // Handy: Gerät füllt sein Feld fast ganz (quer passt trotzdem, das Feld ist quadratisch)
+          fit: (mob.matches ? .9 : .88) - air * .05, mix: 0, intro: 1, time: t, light: 1,   // Handy: Gerät füllt sein Feld fast ganz (quer passt trotzdem, das Feld ist quadratisch)
         });
         place(gl.screenQuad(0), 360);
         const w = cv.clientWidth; shadow.style.width = (w * .5).toFixed(0) + 'px'; shadow.style.opacity = (.5 - air * .18).toFixed(2);

@@ -1371,6 +1371,14 @@ html.is-fill .site-footer { display: none; }
 .vf__pl { height: 2px; margin-top: 14px; max-width: 220px; border-radius: 2px; background: rgba(0,0,0,.1); overflow: hidden; }
 .vf__pp { display: block; height: 100%; background: var(--ink, #111); transform: scaleX(0); transform-origin: left; }
 .vf__cta { margin-top: 26px; }
+/* PC: Handy füllt die Bildschirmhöhe, Text größer */
+@media (min-width: 900px) {
+  .vf__stage { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); max-width: min(var(--max), 1500px); }
+  .vf__dev { max-width: min(calc(100dvh - 150px), 860px); }
+  .vf__copy { max-width: 560px; }
+  .vf__h { font-size: clamp(34px, 3.8vw, 64px); }
+  .vf__p { font-size: clamp(15px, 1.15vw, 19px); }
+}
 
 /* Ohne WebGL: sauberer Rahmen statt 3D-Gerät */
 .vf--flat .vf__dev { aspect-ratio: 9 / 19.5; max-width: var(--W); }
