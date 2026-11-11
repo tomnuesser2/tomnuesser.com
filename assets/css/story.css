@@ -1455,3 +1455,19 @@ html.is-fill .site-footer { display: none; }
 .rw__dots { display: flex; align-items: center; gap: 7px; }
 .rw__dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(0,0,0,.18); cursor: pointer; transition: background .3s, transform .3s; }
 .rw__dots i.is-on { background: var(--ink, #111); transform: scale(1.25); }
+
+/* Videoformate auf dem Handy: oben ein großes Gerät (quadratisches Feld = quer passt immer ohne Abschneiden), unten der Text – die Fläche wird genutzt */
+@media (max-width: 899px) {
+  .vf { padding-inline: 0; }
+  .vf__sticky { padding: calc(64px + env(safe-area-inset-top)) var(--gutter, 20px) calc(100px + env(safe-area-inset-bottom)); align-items: stretch; }
+  .vf__stage { height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: stretch; gap: clamp(10px, 2.6dvh, 28px); }
+  .vf__dev { flex: none; width: clamp(220px, calc(100dvh - 470px), 100%); max-width: none; margin: 0 auto; }
+  .vf__copy { width: 100%; max-width: none; }
+  .vf__h { font-size: clamp(30px, 9.6vw, 42px); line-height: 1.05; margin-top: 0; }
+  .vf__p { font-size: 16px; line-height: 1.5; margin-top: 10px; max-width: none; }
+  .vf__nav { margin-top: 18px; gap: 16px; }
+  .vf__ar { width: 46px; height: 46px; }
+  .vf__dots i { width: 8px; height: 8px; }
+  .vf__pl { max-width: none; margin-top: 14px; }
+}
+@media (max-width: 899px) and (max-height: 720px) { .vf__h { font-size: 26px; } .vf__p { font-size: 14px; } .vf__nav { margin-top: 12px; } .vf__ar { width: 40px; height: 40px; } }

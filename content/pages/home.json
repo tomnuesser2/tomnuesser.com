@@ -12,7 +12,8 @@
         "carSpread": 0.95,
         "carY": 5,
         "nameY": 5,
-        "titleY": 55
+        "titleY": 55,
+        "mobileShots": false
       }
     },
     {
