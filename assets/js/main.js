@@ -231,10 +231,12 @@ async function render() {
     const end = !!(lastNb && lastNb.querySelector('.nb__go'));
     if (end) { while (lastNb.nextSibling) lastNb.nextSibling.remove(); }
     document.body.classList.toggle('is-nbend', end); }
-  document.body.classList.toggle('no-foot', !!page.hideFooter);
+  // Projektseiten: Impressum & Copyright unten standardmäßig aus (im Admin pro Projekt einschaltbar)
+  { const isProj = !!(page.card || (state.index && state.index.projects && state.index.projects[target]));
+    document.body.classList.toggle('no-foot', isProj ? page.showFooter !== true : !!page.hideFooter); }
   setMeta((getLang() === 'de' && page.title_de) || page.title);
   window.scrollTo(0, 0);
-  state.els.header.classList.remove('is-hidden');
+  state.els.header.classList.remove('is-hidden', 'over-fl-dark', 'over-dark');
   markActiveLinks();
   pageReady(els.main);
   if (loc().hash) requestAnimationFrame(() => scrollToHash(loc().hash, false));

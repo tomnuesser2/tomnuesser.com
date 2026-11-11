@@ -431,10 +431,10 @@ function mount(root, OPT) {
   planes.forEach((pl) => { if (cvs[pl.i]) pl.tex = makeTex(cvs[pl.i]); });
   const upload = (i) => { const pl = planes[i]; if (!pl.tex) return; gl.bindTexture(gl.TEXTURE_2D, pl.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cvs[i]); };
   const logo = new Image(); logo.crossOrigin = 'anonymous';
-  // Logo wie das echte NOTUA-Logo: Kreis in der Akzentfarbe (Mono: #2B2D33), das N im hellen NOTUA-Blau #9AA8DA.
+  // Logo wie das echte NOTUA-Logo: dunkler Kreis #2B2D33, das N im hellen NOTUA-Blau #9AA8DA (unabhängig vom Theme).
   let LG = null;
   const tintLogo = () => {
-    if (!LG) return; const A = hexRgb(TH.accent).map(v => v * 255), d = LG.ctx.createImageData(LG.n, LG.n), o2 = d.data, b = LG.base;
+    if (!LG) return; const A = [43, 45, 51], /* Kreis immer im echten Logo-Dunkel #2B2D33 – sonst verschwindet das N, wenn der Akzent selbst NOTUA-Blau ist (dunkles Theme) */ d = LG.ctx.createImageData(LG.n, LG.n), o2 = d.data, b = LG.base;
     const NB = [154, 168, 218]; for (let k = 0; k < b.length; k += 4) { const t = b[k + 1] / 255; o2[k] = A[0] + (NB[0] - A[0]) * t; o2[k + 1] = A[1] + (NB[1] - A[1]) * t; o2[k + 2] = A[2] + (NB[2] - A[2]) * t; o2[k + 3] = b[k]; }
     LG.ctx.putImageData(d, 0, 0); LG.acc = TH.accent; const pl = planes.find(x => x.logo); if (pl && pl.tex) { gl.bindTexture(gl.TEXTURE_2D, pl.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, LG.cv); }
   };

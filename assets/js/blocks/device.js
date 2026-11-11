@@ -18,7 +18,7 @@ export default {
   fields: [
     { name: 'kind', label: 'Gerät', type: 'select', options: ['phone', 'laptop'], default: 'phone' },
     { name: 'side', label: 'Gerät steht', type: 'select', options: ['left', 'right'], default: 'left' },
-    { name: 'scrollFly', label: 'Gerät fliegt mit dem Scrollen herein (startet, sobald der Abschnitt unten ins Bild kommt; sonst startet es erst später und läuft dann von selbst)', type: 'checkbox', default: false },
+    { name: 'scrollFly', label: 'Gerät startet, sobald der Abschnitt ins Bild kommt, und fliegt beim Hochscrollen rückwärts wieder hinaus (aus = startet erst an der eingestellten Stelle)', type: 'checkbox', default: true },
     { name: 'scrollBtn', label: '⬇ Button unten, solange das Gerät noch nicht da ist (Text, z. B. „scroll“; leer = kein Button) – Klick scrollt hin, die Animation läuft, der Button blendet aus', type: 'text', default: '' },
     { name: 'textAlign', label: 'Text-Versatz neben dem Gerät', type: 'select', options: ['links', 'mitte', 'rechts'], default: 'links' },
     { name: 'kicker', label: 'Kleine Zeile (z. B. short-form / web)', type: 'text', default: '' },
@@ -109,7 +109,7 @@ export default {
     const go = (i) => { const r = el.querySelector('.dv__track').getBoundingClientRect(); const total = r.height - stage.offsetHeight; const y = scrollY + r.top + ((clamp(i, 0, n - 1) + .5) / n) * total; scrollTo({ top: y, behavior: 'smooth' }); };
     el.addEventListener('click', (e) => { if (e.target.closest('.dv__tap--l')) go(cur - 1); else if (e.target.closest('.dv__tap--r')) go(cur + 1); });
     // ===== Laptop 3D: WebGL-Laptop wird vom Scroll gesteuert (frontal auf das Logo → aufklappen + drehen), Maus neigt ihn =====
-    const PAD = 1.5, gpOn = !!gp, L = { p: 0, fr: 0, i: 0, a: 0, s: 0 }, fly = !!p.scrollFly; let A = null;
+    const PAD = 1.5, gpOn = !!gp, L = { p: 0, fr: 0, i: 0, a: 0, s: 0 }, fly = p.scrollFly !== false; let A = null;
     if (gpOn) {
       const cv = el.querySelector('.dv__gl'), srcEl = (k) => screens[k]?.querySelector('video, img'), statik = still();
       let shown = 0, to = -1, mixv = 0, oc = statik ? 1 : 0, hx = 0, hy = 0, tx = 0, ty = 0, started = false;
@@ -185,7 +185,7 @@ export default {
       ticker(cv, (dt, t) => {
         if (!cv.width) return;
         if (dt > .034) { if (++slow > 25 && rq > .55) { rq *= .8; slow = 0; resize(); } } else if (slow > 0) slow--;
-        const k = Math.min(1, dt * 6), tgt = statik ? 1 : A ? L.a : clamp(L.p / .26); if (A && !statik && fly) { oc += (L.s - oc) * Math.min(1, dt * 9); if (Math.abs(L.s - oc) < .0005) oc = L.s; } else if (A && !statik) { const stp = Math.min(dt, .1) / Math.max(.6, Number(A.dur) || 4.5); oc = tgt > oc ? Math.min(tgt, oc + stp) : Math.max(tgt, oc - stp); } else oc += (tgt - oc) * Math.min(1, dt * 7);
+        const k = Math.min(1, dt * 6), tgt = statik ? 1 : A ? L.a : clamp(L.p / .26); if (A && !statik) { const stp = Math.min(dt, .1) / Math.max(.6, Number(A.dur) || 4.5); oc = tgt > oc ? Math.min(tgt, oc + stp) : Math.max(tgt, oc - stp); } else oc += (tgt - oc) * Math.min(1, dt * 7);
         hx += (tx - hx) * k; hy += (ty - hy) * k;
         calm = (!dr.on && Math.abs(dr.ry) < .3 && Math.abs(dr.rx) < .3) ? calm + dt : 0; ovk += ((emb.some((e) => e && e.f) && oc > .985 ? 1 : 0) - ovk) * Math.min(1, dt * 3);
         if (!dr.on) { const sd = Math.min(dt, .05); dr.ryV += (-60 * dr.ry - 11 * dr.ryV) * sd; dr.ry += dr.ryV * sd; dr.rxV += (-60 * dr.rx - 11 * dr.rxV) * sd; dr.rx += dr.rxV * sd; if (Math.abs(dr.ry) < .02 && Math.abs(dr.ryV) < .05) { dr.ry = 0; dr.ryV = 0; } if (Math.abs(dr.rx) < .02 && Math.abs(dr.rxV) < .05) { dr.rx = 0; dr.rxV = 0; } }
@@ -213,15 +213,17 @@ export default {
     // Lücke zum Abschnitt davor: Die Bühne ist einen ganzen Bildschirm hoch und das Gerät steht mittig – darüber liegt also
     // viel leere Fläche. Folgt dieser Abschnitt auf einen anderen, rückt er um diese Leerfläche nach oben (bis auf einen kleinen Rest).
     // Die leere Bühnenfläche ist durchsichtig und klick-durchlässig, sie verdeckt also nichts vom Abschnitt davor.
+    // Der Abschnitt davor liegt eine Ebene ÜBER dem hochgezogenen Gerät: Das Gerät fliegt hinter ihm hervor statt über ihn drüber
+    let over = null; const setOver = (n) => { if (over === n) return; if (over) { over.classList.remove('dv-over'); if (over.dataset.dvPos) { over.style.position = ''; delete over.dataset.dvPos; } } over = n; if (n) { n.classList.add('dv-over'); if (getComputedStyle(n).position === 'static') { n.style.position = 'relative'; n.dataset.dvPos = '1'; } } };
     const pullUp = () => {
       const prev = el.previousElementSibling;
       const first = !prev || (prev.classList.contains('b-spacer') && !prev.previousElementSibling);
-      if (first || prev.classList.contains('pc')) { el.style.marginTop = ''; el.classList.remove('dv--pulled'); return; }
+      if (first || prev.classList.contains('pc')) { el.style.marginTop = ''; el.classList.remove('dv--pulled'); setOver(null); return; }
       const st = stage.getBoundingClientRect(); let top = Infinity;
-      for (const c of stage.children) { const r = c.getBoundingClientRect(); if (r.height > 4) top = Math.min(top, r.top); }
+      for (const c of stage.children) { const r = c.getBoundingClientRect(); if (r.height > 4) top = Math.min(top, r.top); } { const g = stage.querySelector('.dv__gl'); if (g) { const r = g.getBoundingClientRect(); if (r.height > 4) top = Math.min(top, r.top + r.height * .08); } } /* 3D-Laptop: Die Zeichenfläche ist größer als der Laptop-Kasten – der gezeichnete Laptop darf nicht in den Abschnitt davor ragen */
       const empty = top - st.top, keep = innerWidth < 900 ? 24 : 40;
-      if (!Number.isFinite(empty) || empty <= keep) { el.style.marginTop = ''; el.classList.remove('dv--pulled'); return; }
-      el.style.marginTop = -Math.round(empty - keep) + 'px'; el.classList.add('dv--pulled');
+      if (!Number.isFinite(empty) || empty <= keep) { el.style.marginTop = ''; el.classList.remove('dv--pulled'); setOver(null); return; }
+      el.style.marginTop = -Math.round(empty - keep) + 'px'; el.classList.add('dv--pulled'); setOver(prev.classList.contains('b-spacer') ? null : prev);
     };
     requestAnimationFrame(pullUp); setTimeout(pullUp, 600); addEventListener('resize', pullUp, { passive: true });
     // „scroll“-Button: steht unten am Bildschirm, solange der Abschnitt hereinkommt, aber das Gerät noch nicht eingeflogen ist.
@@ -246,7 +248,7 @@ export default {
       if (!goBtn) return;
       const th = vh * (gpOn && A ? (mq.matches ? Math.min(.55, clamp(Number(A.pre ?? .85))) : clamp(Number(A.pre ?? .85))) : .5);
       // sichtbar, sobald der Abschnitt unten hereinkommt; blendet weich aus, bevor das Gerät startet
-      const o = r.top > vh * 1.02 || r.bottom < vh * .5 ? 0 : fly && gpOn && A ? clamp((r.top - vh * .62) / (vh * .2)) : clamp((r.top - th) / (vh * .18));
+      const o = r.top > vh * 1.02 || r.bottom < vh * .5 ? 0 : fly && gpOn && A ? clamp((r.top - vh * .9) / (vh * .1)) : clamp((r.top - th) / (vh * .18));
       const v = Math.round(o * 100) / 100; if (v !== goVis) { goVis = v; goBtn.style.opacity = String(v); goBtn.classList.toggle('is-on', v > .05); }
     };
     if (still()) { el.classList.add('is-still'); return el; }
@@ -256,7 +258,7 @@ export default {
       goShow(r, vh);
       setCur(i);
       el.style.setProperty('--p', p0.toFixed(4)); el.style.setProperty('--e', clamp(p0 / .12).toFixed(3));
-      if (gpOn) { L.p = p0; L.fr = fr; L.i = i; L.top = r.top; if (A && fly) { /* scroll-gekoppelt: 0 sobald der Abschnitt unten hereinkommt, 1 kurz bevor er oben einrastet */ const a0 = vh * .98, a1 = vh * (mq.matches ? .02 : .08); L.s = clamp((a0 - r.top) / (a0 - a1)); L.a = L.s > 0 ? 1 : 0; } else if (A) { const th = (mq.matches ? Math.min(.55, clamp(Number(A.pre ?? .85))) : clamp(Number(A.pre ?? .85))) * vh; if (r.top < th) { L.a = 1; } else if (r.top > th + .06 * vh) L.a = 0; } }
+      if (gpOn) { L.p = p0; L.fr = fr; L.i = i; L.top = r.top; if (A && fly) { /* startet, sobald der Abschnitt unten hereinkommt (ist er schon beim Laden im Bild: beim ersten Scrollen), läuft in seinem Tempo; beim Hochscrollen läuft er rückwärts wieder hinaus */ const dTop = r.top + scrollY; let a0 = vh * .9; if (dTop < a0 + 4) a0 = Math.max(vh * .2, dTop - 4); if (r.top < a0) L.a = 1; else if (r.top > Math.min(a0 + .04 * vh, dTop - 2)) L.a = 0; } else if (A) { const th = (mq.matches ? Math.min(.55, clamp(Number(A.pre ?? .85))) : clamp(Number(A.pre ?? .85))) * vh; if (r.top < th) { L.a = 1; } else if (r.top > th + .06 * vh) L.a = 0; } }
       bars.forEach((b, k) => { b.style.transform = `scaleX(${k < i ? 1 : k === i ? fr : 0})`; });
       if (!phone && !gpOn) {
         const pg = screens[i]?.querySelector('img'); const page = el.querySelector('.dv__page');
