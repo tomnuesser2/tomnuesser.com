@@ -185,7 +185,7 @@ export default {
       ticker(cv, (dt, t) => {
         if (!cv.width) return;
         if (dt > .034) { if (++slow > 25 && rq > .55) { rq *= .8; slow = 0; resize(); } } else if (slow > 0) slow--;
-        const k = Math.min(1, dt * 6), tgt = statik ? 1 : A ? L.a : clamp(L.p / .26); if (A && !statik) { const stp = Math.min(dt, .1) / Math.max(.6, Number(A.dur) || 4.5); oc = tgt > oc ? Math.min(tgt, oc + stp) : Math.max(tgt, oc - stp); } else oc += (tgt - oc) * Math.min(1, dt * 7);
+        const k = Math.min(1, dt * 6), tgt = statik ? 1 : A ? L.a : clamp(L.p / .26); if (A && !statik) { const stp = Math.min(dt, .25) / Math.max(.6, Number(A.dur) || 4.5); oc = tgt > oc ? Math.min(tgt, oc + stp) : Math.max(tgt, oc - stp); } else oc += (tgt - oc) * Math.min(1, dt * 7);
         hx += (tx - hx) * k; hy += (ty - hy) * k;
         calm = (!dr.on && Math.abs(dr.ry) < .3 && Math.abs(dr.rx) < .3) ? calm + dt : 0; ovk += ((emb.some((e) => e && e.f) && oc > .985 ? 1 : 0) - ovk) * Math.min(1, dt * 3);
         if (!dr.on) { const sd = Math.min(dt, .05); dr.ryV += (-60 * dr.ry - 11 * dr.ryV) * sd; dr.ry += dr.ryV * sd; dr.rxV += (-60 * dr.rx - 11 * dr.rxV) * sd; dr.rx += dr.rxV * sd; if (Math.abs(dr.ry) < .02 && Math.abs(dr.ryV) < .05) { dr.ry = 0; dr.ryV = 0; } if (Math.abs(dr.rx) < .02 && Math.abs(dr.rxV) < .05) { dr.rx = 0; dr.rxV = 0; } }
@@ -225,7 +225,8 @@ export default {
       if (!Number.isFinite(empty) || empty <= keep) { el.style.marginTop = ''; el.classList.remove('dv--pulled'); setOver(null); return; }
       el.style.marginTop = -Math.round(empty - keep) + 'px'; el.classList.add('dv--pulled'); setOver(prev.classList.contains('b-spacer') ? null : prev);
     };
-    requestAnimationFrame(pullUp); setTimeout(pullUp, 600); addEventListener('resize', pullUp, { passive: true });
+    const relayout = () => { pullUp(); };
+    requestAnimationFrame(relayout); setTimeout(relayout, 600); document.fonts?.ready?.then(relayout); addEventListener('resize', relayout, { passive: true });
     // „scroll“-Button: steht unten am Bildschirm, solange der Abschnitt hereinkommt, aber das Gerät noch nicht eingeflogen ist.
     // Klick → weiche Fahrt, bis die Bühne steht (das Gerät klappt auf / fliegt ein). Beim Scrollen blendet er sich von selbst aus.
     let goBtn = null, goVis = -1, goRaf = 0;

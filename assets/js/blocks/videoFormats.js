@@ -175,7 +175,7 @@ export default {
     // ---------- Echtes 3D-Handy (WebGL). Ohne WebGL bleibt ein sauberer CSS-Rahmen stehen. ----------
     let gl = null;
     if (!still()) {
-      try { gl = createPhone(cv, { tint: [.2, .195, .19], back: [.085, .083, .08] }); } catch (e) { console.warn('vf 3D:', e); gl = null; }
+      try { gl = createPhone(cv, { tint: [.12, .12, .13], back: [.055, .055, .06] }); /* wie das 3D-Handy (QRUE): schwarzes Finish */ } catch (e) { console.warn('vf 3D:', e); gl = null; }
     }
     if (!gl) { el.classList.add('vf--flat'); cv.remove(); shadow.remove(); }
     else {
@@ -185,11 +185,14 @@ export default {
         for (let c = 0; c < 8; c++) { let m = c; for (let r = c + 1; r < 8; r++) if (Math.abs(M[r][c]) > Math.abs(M[m][c])) m = r; [M[c], M[m]] = [M[m], M[c]]; const d = M[c][c] || 1e-9; for (let k = c; k < 9; k++) M[c][k] /= d; for (let r = 0; r < 8; r++) if (r !== c) { const f = M[r][c]; if (f) for (let k = c; k < 9; k++) M[r][k] -= f * M[c][k]; } }
         const [a, b, c2, d2, e2, f2, g2, hh2] = M.map(r => r[8]); return `matrix3d(${a},${d2},0,${g2},${b},${e2},0,${hh2},0,0,1,0,${c2},${f2},0,1)`; };
       const mob = matchMedia('(max-width: 899px)');
-      const fitCv = () => { const dpr = Math.min(devicePixelRatio || 1, mob.matches ? 1.5 : 2), w = Math.max(2, Math.round(cv.clientWidth * dpr)), hh = Math.max(2, Math.round(cv.clientHeight * dpr)); if (cv.width !== w || cv.height !== hh) { cv.width = w; cv.height = hh; } };
+      const fitCv = () => { const dpr = Math.min(Math.max(devicePixelRatio || 1, 1.5) * 1.25, 2.5, Math.sqrt(6e6 / Math.max(1, cv.clientWidth * cv.clientHeight))), /* scharf wie das 3D-Handy, mit Pixel-Budget */ w = Math.max(2, Math.round(cv.clientWidth * dpr)), hh = Math.max(2, Math.round(cv.clientHeight * dpr)); if (cv.width !== w || cv.height !== hh) { cv.width = w; cv.height = hh; } };
       const place = (q, W0) => {
         if (!q || q.facing <= .0005) { ov.style.opacity = '0'; return; }
-        const H0 = W0 / q.aspect, cw = cv.clientWidth, ch = cv.clientHeight;
-        if (ov._w !== W0 || ov._h !== H0) { ov._w = W0; ov._h = H0; ov.style.width = W0 + 'px'; ov.style.height = H0.toFixed(1) + 'px'; el.style.setProperty('--vf-sw', W0 + 'px'); el.style.setProperty('--vf-sh', H0.toFixed(1) + 'px'); fitFrames(); }
+        const cw = cv.clientWidth, ch = cv.clientHeight;
+        // Video größer als der Bildschirm einbetten (wird verkleinert → scharf); nur bei deutlicher Änderung neu setzen
+        { const [a0, a1] = q.pts, px = Math.hypot((a1[0] - a0[0]) * cw, (a1[1] - a0[1]) * ch), want = Math.max(400, Math.ceil(px * 1.5 / 40) * 40); /* größer einbetten und verkleinern = scharf */ if (!ov._w || Math.abs(want - ov._w) > 60) W0 = want; else W0 = ov._w; }
+        const H0 = W0 / q.aspect;
+        if (ov._w !== W0 || ov._h !== H0) { ov._w = W0; ov._h = H0; ov.style.width = W0 + 'px'; ov.style.height = H0.toFixed(1) + 'px'; ov.style.borderRadius = (W0 * .1007).toFixed(1) + 'px'; /* gleiche Ecken wie der 3D-Bildschirm */ el.style.setProperty('--vf-sw', W0 + 'px'); el.style.setProperty('--vf-sh', H0.toFixed(1) + 'px'); fitFrames(); }
         const mt = h2m([[0, 0], [W0, 0], [W0, H0], [0, H0]], q.pts.map(([x, y]) => [x * cw, y * ch]));
         if (ov._m !== mt) { ov._m = mt; ov.style.transform = mt; }
         ov.style.opacity = '1';

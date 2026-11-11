@@ -874,6 +874,7 @@ body.is-entered .hero__cue, body.is-entered .hm__cue { animation: entryT .7s eas
   .dv__laptop { flex: 0 1 auto; min-height: 0; }
   .dv--fix .dv__phone, .dv--fix .dv__laptop { flex: none; }
   .dv__copy { flex: 0 0 auto; }
+  .dv__laptop.dv__laptop--gl { flex: none; } /* 3D-Laptop schrumpft nie (Safari rechnete ihn sonst bei langem Text viel zu klein) */
   .wi__pane { flex: 0 1 auto; min-height: 90px; }
 }
 
