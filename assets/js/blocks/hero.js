@@ -22,6 +22,7 @@ export default {
     { name: 'nameY', label: '🖥 Projektname über dem Karussell: Höhe verschieben (Pixel)', type: 'range', min: -300, max: 300, step: 5, default: 0 },
     { name: 'titleY', label: '🖥 Titel unten („digitaler & visueller künstler“): Höhe verschieben (Pixel)', type: 'range', min: -300, max: 300, step: 5, default: 0 },
     { name: 'cards', label: 'Anzahl Karten (aus den ersten Projekten)', type: 'number', default: 4 },
+    { name: 'mobileShots', label: '📱 Handy: Nach dem Karussell die Projekte als Vollbild zeigen (aus = nur das Karussell, danach geht es direkt weiter)', type: 'checkbox', default: true },
     { name: 'mobileCount', label: 'Handy: Anzahl Vollbild-Projekte, falls keine Projekte markiert sind (Markierung: im Projekt „Im Handy-Intro zeigen“)', type: 'number', default: 4 },
   ],
   render(p0, ctx) {
@@ -132,7 +133,8 @@ function mobileHero(p, ctx) {
   const title = h('h1', { class: `hm__title is-${p.titleSize || 'l'}` }, lines.map(l => h('span', {}, l)));
   { let k = 0; [...title.children].forEach((r) => { splitChars(r, k); k += r.textContent.length; }); }
   const cue = h('p', { class: 'hm__cue' }, p.cue || 'scroll', h('i', { 'aria-hidden': 'true' }, '↓'));
-  const shots = feat.map((f, i) => {
+  const showShots = p.mobileShots !== false;                    // im Admin abschaltbar: dann nur das Karussell
+  const shots = (showShots ? feat : []).map((f, i) => {
     const img = h('img', { src: f.imageMobile || f.image, alt: '', decoding: 'async' });
     const cap = h('div', { class: 'hm__cap' }, h('span', { class: 'hm__n' }, `${String(i + 1).padStart(2, '0')} / ${String(N).padStart(2, '0')}`), h('strong', { class: 'hm__t' }, name(f)), f.roles ? h('em', { class: 'hm__r' }, f.roles) : null);
     const inn = h('div', { class: 'hm__in' }, h('div', { class: 'hm__img' }, img), h('i', { class: 'hm__shade' }), cap);
@@ -144,7 +146,7 @@ function mobileHero(p, ctx) {
   // GAP = Abstand von Bild zu Bild. Er liegt nur knapp über REV, damit beim Scrollen fast immer etwas in Bewegung ist
   // und nicht lange nichts passiert; C1 = Start des zweiten Bildes (erstes Bild deckt von 1 bis 1+REV auf).
   const REV = 1, GAP = 1.15, C1 = 1 + REV + (GAP - REV), TAIL = 0;
-  const T = C1 + (N - 1) * GAP + TAIL;
+  const T = showShots ? C1 + (N - 1) * GAP + TAIL : 0;           // ohne Vollbild-Projekte keine Scroll-Strecke
   const el = h('section', { class: 'hm' + (labM ? ' hm--lab' : ''), 'aria-label': p.title || '', style: { '--len': (T * .5).toFixed(2) } }, h('div', { class: 'hm__track' }, stage));
   if (still()) { el.classList.add('is-still'); return el; }
 

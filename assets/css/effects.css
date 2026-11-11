@@ -13,7 +13,7 @@
 .fx-reveal [data-reveal="media"].is-in { clip-path: none; }
 
 /* ---------- split text ---------- */
-.fx-split [data-split] .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .12em; margin-bottom: -.12em; }
+.fx-split [data-split] .w { display: inline-block; overflow: hidden; vertical-align: top; padding: .06em .1em .12em; margin: -.06em -.1em -.12em; }   /* Luft rundherum (ohne das Layout zu verschieben): breite Zeichen wie „&“ und Umlaute werden nicht abgeschnitten */
 .fx-split [data-split] .w > span { display: inline-block; transform: translateY(112%); transition: transform 1.1s var(--ease); transition-delay: calc(var(--wi) * 55ms); }
 .fx-split [data-split].is-in .w > span { transform: none; }
 

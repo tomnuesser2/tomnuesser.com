@@ -431,7 +431,8 @@
 .hm .hm__car { position: absolute; height: auto; left: 0; right: 0; top: calc(var(--header-h, 56px) - 34px); bottom: calc(186px + var(--hmt, 112px) + 10px + var(--uh) + env(safe-area-inset-bottom)); will-change: transform, opacity; transform-origin: 50% 50%; --cc-fade: #fff; }
 .hm__title { position: absolute; left: var(--gutter, 20px); right: var(--gutter, 20px); bottom: calc(186px + var(--uh) + env(safe-area-inset-bottom)); margin: 0; display: flex; flex-direction: column; gap: 0; font-size: calc(var(--k, 1) * clamp(38px, 11.4vw, 60px)); line-height: .98; letter-spacing: -.04em; font-weight: 700; will-change: transform, opacity; }
 .hm__title span { display: block; }
-.hm__title span:nth-child(2) { color: transparent; -webkit-text-stroke: 1.3px var(--ink, #000); }
+/* nur die 2. ZEILE ist umrandet – nicht das 2. Wort (die Wörter sind für den Einflug ebenfalls <span>; sonst traf es z. B. das „&“) */
+.hm__title > span:nth-child(2) { color: transparent; -webkit-text-stroke: 1.3px var(--ink, #000); }
 .hm__cue { position: absolute; left: 0; right: 0; bottom: calc(100px + var(--uh) + env(safe-area-inset-bottom)); margin: 0; text-align: center; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
 .hm__cue i { display: block; font-style: normal; margin-top: 4px; animation: hmCue 1.6s ease-in-out infinite; }
 @keyframes hmCue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
@@ -554,7 +555,7 @@
 .wd { display: inline-block; white-space: nowrap; }
 body.is-entering .ch { opacity: 0; transform: translateY(70%) rotate(5deg); filter: blur(10px); }
 body.is-entered .ch { animation: chIn .75s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(.2s + var(--d, 0ms)); }
-@keyframes chIn { from { opacity: 0; transform: translateY(70%) rotate(5deg); filter: blur(10px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes chIn { from { opacity: 0; transform: translateY(70%) rotate(5deg); filter: blur(10px); } to { opacity: 1; transform: none; filter: none; } }   /* filter: none am Ende – ein stehengebliebener Filter schneidet breite Zeichen wie „&“ ab */
 body.is-entering .site-header { opacity: 0; }
 .site-header { transition: opacity .7s ease .55s; }
 body.is-entering .hero__cue, body.is-entering .hm__cue, body.is-entering .hero__sub { opacity: 0; }
