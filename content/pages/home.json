@@ -30,7 +30,7 @@
       "type": "videoFormats",
       "props": {
         "kicker": "",
-        "title": "every format - full impact",
+        "title": "every format – full impact",
         "text": "Vertical for the feed, wide for the screen – same story, right shape.",
         "items": [
           {
@@ -84,7 +84,7 @@
           {
             "vimeo": "https://vimeo.com/1207034763",
             "src": "",
-            "title": "Leona - Machine (festival live session)",
+            "title": "Leona – Machine (festival live session)",
             "text": "",
             "duration": 4,
             "ratio": "16:9 quer"
@@ -107,7 +107,7 @@
         "textScale": 1,
         "textScaleMobile": 0,
         "kicker_de": "",
-        "title_de": "Jedes Format - Volle Wirkung",
+        "title_de": "Jedes Format – volle Wirkung",
         "text_de": "Hochkant für den Feed, quer für die Leinwand. Jede Story fordert ihr Format."
       }
     },

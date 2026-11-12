@@ -4,7 +4,7 @@
   --bg-soft: #fcfcfc;
   --ink: #000000;
   --ink-soft: #1c1c1c;
-  --ink-mute: #9a9a9a;
+  --ink-mute: #707070;   /* vorher #9a9a9a – jetzt gut lesbar (Kontrast > 4.5:1) */
   --line: #000000;
   --btn-bg: #000000;
   --btn-ink: #ffffff;

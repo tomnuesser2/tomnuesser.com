@@ -26,7 +26,7 @@
   "socials": [
     {
       "label": "YouTube",
-      "icon": "linkedin",
+      "icon": "youtube",
       "url": "https://www.youtube.com/@recordingsequence",
       "label_de": "Youtube"
     },
@@ -43,8 +43,8 @@
     }
   ],
   "contact": {
-    "endpoint": "",
-    "email": ""
+    "endpoint": "https://formspree.io/f/mrpqgank",
+    "email": "nuessertom@gmail.com"
   },
   "effects": {
     "reveal": true,

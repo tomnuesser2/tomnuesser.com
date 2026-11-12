@@ -32,6 +32,7 @@ export function localize(v) {
 const UI = {
   openMenu: { en: 'Open menu', de: 'Menü öffnen' }, closeMenu: { en: 'Close menu', de: 'Menü schließen' },
   main: { en: 'Main', de: 'Hauptmenü' }, home: { en: 'home', de: 'Startseite' },
+  privacy: { en: 'Privacy policy', de: 'Datenschutz' },
   pressKey: { en: 'press', de: 'drücke' }, jumpAnywhere: { en: 'to jump anywhere', de: 'um überallhin zu springen' },
   goTo: { en: 'go to…', de: 'gehe zu…' }, noResults: { en: 'no results', de: 'keine Treffer' }, palette: { en: 'Command palette', de: 'Schnellsuche' },
   notFound: { en: 'Not found', de: 'Nicht gefunden' }, notFoundText: { en: 'This page does not exist.', de: 'Diese Seite gibt es nicht.' },

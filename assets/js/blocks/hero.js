@@ -43,7 +43,7 @@ export default {
     { let k = 0; lineEls.forEach((r) => { splitChars(r, k); k += r.textContent.length; }); }
     const el = h('section', { class: 'hero', id: p.id || 'top' },          // #top = Ziel von „videography“ im Menü
       h('div', { class: 'hero__cards' }, cards),
-      h('h1', { class: `hero__roles is-${p.titleSize}` }, lineEls),
+      h('h1', { class: `hero__roles is-${p.titleSize}` }, lineEls, h('span', { class: 'sr-only' }, ' – Tom Nüßer, Videograf & digitaler Künstler in Flensburg')),   // für Google & Screenreader
       p.subtitle ? h('p', { class: `hero__sub is-${p.subSize}` }, p.subtitle) : null,
       p.text ? h('p', { class: 'hero__text' }, p.text) : null,
       h('a', { class: 'hero__cue', href: 'home#work', 'data-link': '' }, p.cue || 'scroll', h('i', { 'aria-hidden': 'true' }, '↓')));
@@ -133,7 +133,7 @@ function mobileHero(p, ctx) {
   let car = null;
   const labM = nameLabel(p, ring); if (labM) labM.el.classList.add('hn--m');
   const lines = String(p.title || '').split('\n').map(s => s.trim()).filter(Boolean);
-  const title = h('h1', { class: `hm__title is-${p.titleSize || 'l'}` }, lines.map(l => h('span', {}, l)));
+  const title = h('p', { class: `hm__title is-${p.titleSize || 'l'}`, role: 'heading', 'aria-level': '2' }, lines.map(l => h('span', {}, l)));
   { let k = 0; [...title.children].forEach((r) => { splitChars(r, k); k += r.textContent.length; }); }
   const cue = h('p', { class: 'hm__cue' }, p.cue || 'scroll', h('i', { 'aria-hidden': 'true' }, '↓'));
   const showShots = p.mobileShots !== false;                    // im Admin abschaltbar: dann nur das Karussell

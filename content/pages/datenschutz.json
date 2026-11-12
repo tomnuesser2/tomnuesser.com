@@ -1,0 +1,155 @@
+{
+  "title": "Privacy policy",
+  "title_de": "Datenschutzerklärung",
+  "showFooter": true,
+  "blocks": [
+    {
+      "type": "spacer",
+      "props": {
+        "size": 60
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "Privacy policy",
+        "text_de": "Datenschutzerklärung",
+        "level": 1,
+        "align": "left",
+        "bold": true
+      }
+    },
+    {
+      "type": "text",
+      "props": {
+        "text": "Last updated: November 2026",
+        "text_de": "Stand: November 2026"
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "1. Controller",
+        "text_de": "1. Verantwortlicher",
+        "level": 2,
+        "align": "left",
+        "bold": true
+      }
+    },
+    {
+      "type": "text",
+      "props": {
+        "text": "Tom Nüßer\nToosbüystraße 16\n24939 Flensburg\nGermany\nEmail: nuessertom@gmail.com",
+        "text_de": "Tom Nüßer\nToosbüystraße 16\n24939 Flensburg\nDeutschland\nE-Mail: nuessertom@gmail.com"
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "2. General",
+        "text_de": "2. Allgemeines",
+        "level": 2,
+        "align": "left",
+        "bold": true
+      }
+    },
+    {
+      "type": "text",
+      "props": {
+        "text": "Protecting your data matters to me. This website uses no cookies, no analytics or tracking tools and loads no external fonts. Personal data is only processed as far as necessary to run the website, play embedded videos or answer your enquiry.",
+        "text_de": "Der Schutz deiner Daten ist mir wichtig. Diese Website verwendet keine Cookies, keine Analyse- oder Tracking-Tools und lädt keine externen Schriftarten. Personenbezogene Daten werden nur verarbeitet, soweit es für den Betrieb der Website, das Abspielen eingebundener Videos oder die Beantwortung deiner Anfrage nötig ist."
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "3. Hosting (GitHub Pages)",
+        "text_de": "3. Hosting (GitHub Pages)",
+        "level": 2,
+        "align": "left",
+        "bold": true
+      }
+    },
+    {
+      "type": "text",
+      "props": {
+        "text": "This website is hosted on GitHub Pages, a service of GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. When you visit the website, GitHub processes technically necessary data such as your IP address, date and time of access and browser information (server log files) to deliver the site and ensure security. Legal basis: Art. 6(1)(f) GDPR (legitimate interest in secure and reliable provision of the website). Data may be transferred to the USA; GitHub is certified under the EU-US Data Privacy Framework. More information: https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
+        "text_de": "Diese Website wird über GitHub Pages gehostet, einen Dienst der GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. Beim Aufruf der Website verarbeitet GitHub technisch notwendige Daten wie deine IP-Adresse, Datum und Uhrzeit des Abrufs sowie Browser-Informationen (Server-Logfiles), um die Seite auszuliefern und die Sicherheit zu gewährleisten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer sicheren und zuverlässigen Bereitstellung der Website). Eine Übermittlung in die USA ist möglich; GitHub ist unter dem EU-US Data Privacy Framework zertifiziert. Weitere Informationen: https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement"
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "4. Embedded videos (Vimeo)",
+        "text_de": "4. Eingebundene Videos (Vimeo)",
+        "level": 2,
+        "align": "left",
+        "bold": true
+      }
+    },
+    {
+      "type": "text",
+      "props": {
+        "text": "This website embeds videos from Vimeo (Vimeo.com, Inc., 330 West 34th Street, 5th Floor, New York, NY 10001, USA). Videos are loaded with the “Do Not Track” parameter. When a video loads or plays, a connection to Vimeo’s servers is established, transmitting among other things your IP address and technical information about your device. Data may be transferred to the USA; Vimeo relies on the EU Standard Contractual Clauses. Legal basis: Art. 6(1)(f) GDPR (legitimate interest in presenting my work attractively). More information: https://vimeo.com/privacy",
+        "text_de": "Auf dieser Website sind Videos des Dienstes Vimeo eingebunden (Vimeo.com, Inc., 330 West 34th Street, 5th Floor, New York, NY 10001, USA). Die Videos werden mit dem Parameter „Do Not Track“ geladen. Beim Abspielen bzw. Laden eines Videos wird eine Verbindung zu Servern von Vimeo hergestellt; dabei werden u. a. deine IP-Adresse und technische Informationen über dein Gerät übertragen. Eine Übermittlung in die USA ist möglich; Vimeo stützt sich hierfür auf die EU-Standardvertragsklauseln. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer ansprechenden Darstellung meiner Arbeiten). Weitere Informationen: https://vimeo.com/privacy"
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "5. Contact (form and email)",
+        "text_de": "5. Kontakt (Formular und E-Mail)",
+        "level": 2,
+        "align": "left",
+        "bold": true
+      }
+    },
+    {
+      "type": "text",
+      "props": {
+        "text": "If you contact me via the contact form or by email, I process your details (name, email address, message) to answer your enquiry. Legal basis: Art. 6(1)(b) GDPR (pre-contractual steps) or Art. 6(1)(f) GDPR (answering general enquiries). The data is deleted once it is no longer needed and no statutory retention obligations apply. If the form is sent via a form service (Formspree, Formspree Inc., USA), your input is transmitted to that service and forwarded to me; more information: https://formspree.io/legal/privacy-policy",
+        "text_de": "Wenn du mir über das Kontaktformular oder per E-Mail schreibst, verarbeite ich deine Angaben (Name, E-Mail-Adresse, Nachricht), um deine Anfrage zu beantworten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Anbahnung eines Vertrags) bzw. Art. 6 Abs. 1 lit. f DSGVO (Beantwortung allgemeiner Anfragen). Die Daten werden gelöscht, sobald sie nicht mehr erforderlich sind und keine gesetzlichen Aufbewahrungspflichten bestehen. Wird das Formular über einen Formular-Dienst (Formspree, Formspree Inc., USA) versendet, werden die eingegebenen Daten an diesen Dienst übermittelt und von dort an mich weitergeleitet; weitere Informationen: https://formspree.io/legal/privacy-policy"
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "6. Local storage in your browser",
+        "text_de": "6. Lokale Speicherung im Browser",
+        "level": 2,
+        "align": "left",
+        "bold": true
+      }
+    },
+    {
+      "type": "text",
+      "props": {
+        "text": "Your language setting (German/English) is stored only locally in your browser (local storage) and is not transmitted to me. You can delete it at any time in your browser settings.",
+        "text_de": "Deine Spracheinstellung (Deutsch/Englisch) wird ausschließlich lokal in deinem Browser gespeichert (Local Storage) und nicht an mich übertragen. Du kannst sie jederzeit über die Einstellungen deines Browsers löschen."
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "7. Your rights",
+        "text_de": "7. Deine Rechte",
+        "level": 2,
+        "align": "left",
+        "bold": true
+      }
+    },
+    {
+      "type": "text",
+      "props": {
+        "text": "You have the right of access (Art. 15 GDPR), rectification (Art. 16), erasure (Art. 17), restriction of processing (Art. 18), data portability (Art. 20) and to object to processing based on legitimate interests (Art. 21 GDPR). Just contact me by email. You also have the right to lodge a complaint with a data protection supervisory authority, e.g. the Unabhängiges Landeszentrum für Datenschutz Schleswig-Holstein (ULD), Holstenstraße 98, 24103 Kiel, Germany.",
+        "text_de": "Du hast das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch gegen Verarbeitungen auf Grundlage berechtigter Interessen (Art. 21 DSGVO). Wende dich dafür einfach per E-Mail an mich. Außerdem hast du das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren, z. B. beim Unabhängigen Landeszentrum für Datenschutz Schleswig-Holstein (ULD), Holstenstraße 98, 24103 Kiel."
+      }
+    },
+    {
+      "type": "spacer",
+      "props": {
+        "size": 60
+      }
+    }
+  ]
+}

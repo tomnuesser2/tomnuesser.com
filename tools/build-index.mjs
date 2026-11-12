@@ -47,7 +47,7 @@ async function writeSeo(root, out) {
     const pr = out.projects[s]; let blocks = [];
     try { blocks = JSON.parse(await fs.readFile(path.join(root, 'content', 'projects', `${s}.json`), 'utf8')).blocks || []; } catch {}
     const title = `${pr.title_de || pr.title} – Tom Nüßer, Videograf Flensburg`;
-    const desc = pr.summary_de || firstText(blocks, true) || `${pr.title_de || pr.title} – Projekt von Tom Nüßer, Videograf und Designer aus Flensburg.`;
+    const desc = pr.summary_de || firstText(blocks, true) || `${pr.title_de || pr.title} – Projekt von Tom Nüßer, Videograf und digitaler Künstler aus Flensburg.`;
     const url = SITE + s, img = pr.image ? SITE + pr.image : SITE + 'assets/icons/icon-512.png';
     const html = tpl
       .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)

@@ -43,7 +43,7 @@ export default {
     const el = h('section', { class: 'cx', id: p.id },
       h('div', { class: 'cx__card', 'data-reveal': 'up' },
         h('div', { class: 'cx__l' }, h('h2', { class: 'cx__t' }, lines), h('p', { class: 'cx__p' }, p.text), form),
-        h('aside', { class: 'cx__r' }, h('h3', { class: 'cx__ih' }, p.impressumLabel || 'Impressum'), h('div', { class: 'cx__imp' }, impBody), mailto ? h('a', { class: 'cx__mail', href: `mailto:${mailto}` }, mailto) : null, socials)));
+        h('aside', { class: 'cx__r' }, h('h3', { class: 'cx__ih' }, p.impressumLabel || 'Impressum'), h('div', { class: 'cx__imp' }, impBody), h('div', { class: 'cx__links' }, mailto ? h('a', { class: 'cx__mail', href: `mailto:${mailto}` }, mailto) : null, h('a', { class: 'cx__dsl', href: 'datenschutz', 'data-link': '' }, p.privacyLabel || 'Datenschutzerklärung')), socials)));
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();

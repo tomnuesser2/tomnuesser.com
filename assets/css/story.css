@@ -1497,3 +1497,22 @@ html.is-fill .site-footer { display: none; }
 
 /* Karussell wird unter dem Eröffnungs-Vorhang schon gezeichnet, bleibt aber unsichtbar, bis der Einflug startet */
 .cc-pre { opacity: .001 !important; pointer-events: none; }
+
+/* Lesbarkeit: kleine Labels mindestens 13 px, helle Texte auf Dunkel kräftiger */
+.hero__cue, .hero__sub.is-s, .hm__n, .nt__sub, .hn__b { font-size: max(13px, 1em) !important; }
+.hero__cue, .hm__cue { font-size: 13px; }
+.cx__p { color: rgba(255,255,255,.82); } .cx .cx__imp, .cx .cx__imp p { color: rgba(255,255,255,.8); }
+.nt__x, .nt__sub { color: color-mix(in srgb, var(--nt-mu) 70%, #000); }
+.cx__dsl { display: inline-block; margin-top: 14px; font-size: 13px; color: rgba(255,255,255,.82); text-decoration: underline; text-underline-offset: 3px; }
+.cx__dsl:hover { color: #fff; }
+.site-footer__legal { font-size: 13px; margin-top: 6px; } .site-footer__legal a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* Datenschutz-Seite */
+.page[data-page="datenschutz"] .b-text, .page[data-page="datenschutz"] .b-heading { max-width: 760px; margin-inline: auto; }
+.page[data-page="datenschutz"] .b-text p { white-space: pre-line; font-size: 15px; }
+.page[data-page="datenschutz"] h2 { font-size: clamp(19px, 2vw, 24px) !important; margin-top: 18px; }
+
+/* Kontakt rechts: E-Mail und Datenschutz untereinander, schlicht als Links */
+.cx__links { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 20px; }
+.cx .cx__links .cx__mail, .cx .cx__links .cx__dsl { all: unset; cursor: pointer; font-size: 14px; color: rgba(255,255,255,.85); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(255,255,255,.35); transition: color .2s, text-decoration-color .2s; }
+.cx .cx__links .cx__mail:hover, .cx .cx__links .cx__dsl:hover { color: #fff; text-decoration-color: #fff; }

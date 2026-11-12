@@ -73,7 +73,7 @@ function buildShell() {
     h('p', { class: 'menu__meta' }, site.tagline ? h('span', {}, site.tagline) : null, site.location ? h('span', {}, `${site.location.label} · `, h('time', { class: 'menu__time' }, '--:--:--')) : null));
 
   const main = h('main', { id: 'main', tabindex: '-1' });
-  const footer = h('footer', { class: 'site-footer' }, h('p', {}, site.footer || ''), langSwitch('lang--foot'),
+  const footer = h('footer', { class: 'site-footer' }, h('p', {}, site.footer || ''), h('p', { class: 'site-footer__legal' }, h('a', { href: 'home#contact', 'data-link': '' }, 'Impressum'), ' · ', h('a', { href: 'datenschutz', 'data-link': '' }, ui('privacy'))), langSwitch('lang--foot'),
     site.effects?.palette === false ? null : h('button', { class: 'kbd-hint', type: 'button', onclick: () => window.dispatchEvent(new CustomEvent('app:palette')) }, ui('pressKey') + ' ', h('kbd', {}, '⌘K'), ' ' + ui('jumpAnywhere')));
   app.replaceChildren(header, menu, main, footer);
   Object.assign(state.els, { header, menu, main, footer, burger, close });
@@ -187,8 +187,8 @@ async function loadPage(slug) {
 
 // ---------- SEO: Titel, Beschreibung, Vorschaubild, Canonical je Seite ----------
 const SEO = {
-  de: { home: 'Tom Nüßer – Videograf & Designer in Flensburg', desc: 'Tom Nüßer – Videograf, Designer und Entwickler aus Flensburg. Eventvideos, Aftermovies, Social-Media-Reels, Live-Sessions und Websites für Unternehmen, Vereine und Künstler in Flensburg und Schleswig-Holstein.', suffix: 'Videograf Flensburg' },
-  en: { home: 'Tom Nüßer – videographer & designer in Flensburg, Germany', desc: 'Tom Nüßer – videographer, designer and developer based in Flensburg, Germany. Event films, aftermovies, social media reels, live sessions and websites.', suffix: 'videographer Flensburg' },
+  de: { home: 'Tom Nüßer – Videograf & digitaler Künstler in Flensburg', desc: 'Tom Nüßer – Videograf & digitaler Künstler aus Flensburg. Eventvideos, Aftermovies, Social-Media-Reels, Live-Sessions, Design und Websites für Unternehmen, Vereine und Künstler in Flensburg und Schleswig-Holstein.', suffix: 'Videograf Flensburg' },
+  en: { home: 'Tom Nüßer – videographer & digital artist in Flensburg, Germany', desc: 'Tom Nüßer – videographer & digital artist based in Flensburg, Germany. Event films, aftermovies, social media reels, live sessions, design and websites.', suffix: 'videographer Flensburg' },
 };
 const SITE_URL = 'https://tomnuesser.com/';
 const metaTag = (attr, key, val) => { let m = document.head.querySelector(`meta[${attr}="${key}"]`); if (!m) { m = document.createElement('meta'); m.setAttribute(attr, key); document.head.append(m); } m.setAttribute('content', val); };
