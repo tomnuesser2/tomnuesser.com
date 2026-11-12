@@ -18,6 +18,7 @@ export default {
   fields: [
     { name: 'kind', label: 'Gerät', type: 'select', options: ['phone', 'laptop'], default: 'phone' },
     { name: 'side', label: 'Gerät steht', type: 'select', options: ['left', 'right'], default: 'left' },
+    { name: 'noAnim', label: '🧍 Gerät steht schon da (keine Einflug-Animation – Laptop ist sofort aufgeklappt sichtbar)', type: 'checkbox', default: false },
     { name: 'scrollFly', label: 'Gerät startet, sobald der Abschnitt ins Bild kommt, und fliegt beim Hochscrollen rückwärts wieder hinaus (aus = startet erst an der eingestellten Stelle)', type: 'checkbox', default: true },
     { name: 'scrollBtn', label: '⬇ Button unten, solange das Gerät noch nicht da ist (Text, z. B. „scroll“; leer = kein Button) – Klick scrollt hin, die Animation läuft, der Button blendet aus', type: 'text', default: '' },
     { name: 'textAlign', label: 'Text-Versatz neben dem Gerät', type: 'select', options: ['links', 'mitte', 'rechts'], default: 'links' },
@@ -109,10 +110,10 @@ export default {
     const go = (i) => { const r = el.querySelector('.dv__track').getBoundingClientRect(); const total = r.height - stage.offsetHeight; const y = scrollY + r.top + ((clamp(i, 0, n - 1) + .5) / n) * total; scrollTo({ top: y, behavior: 'smooth' }); };
     el.addEventListener('click', (e) => { if (e.target.closest('.dv__tap--l')) go(cur - 1); else if (e.target.closest('.dv__tap--r')) go(cur + 1); });
     // ===== Laptop 3D: WebGL-Laptop wird vom Scroll gesteuert (frontal auf das Logo → aufklappen + drehen), Maus neigt ihn =====
-    const PAD = 1.5, gpOn = !!gp, L = { p: 0, fr: 0, i: 0, a: 0, s: 0 }, fly = p.scrollFly !== false; let A = null;
+    const PAD = 1.5, gpOn = !!gp, L = { p: 0, fr: 0, i: 0, a: p.noAnim ? 1 : 0, s: 0 }, fly = p.scrollFly !== false; let A = null;
     if (gpOn) {
       const cv = el.querySelector('.dv__gl'), srcEl = (k) => screens[k]?.querySelector('video, img'), statik = still();
-      let shown = 0, to = -1, mixv = 0, oc = statik ? 1 : 0, hx = 0, hy = 0, tx = 0, ty = 0, started = false;
+      let shown = 0, to = -1, mixv = 0, oc = statik || p.noAnim ? 1 : 0, hx = 0, hy = 0, tx = 0, ty = 0, started = false;
       gp.setSlot(0, srcEl(0));
       // Auflösung: mind. 2-faches Supersampling (glatte Kanten), mit Pixel-Budget; wird automatisch gesenkt, wenn das Gerät zu langsam ist
       let rq = 1, cw = 0, ch = 0, slow = 0, fast = 0;
@@ -219,9 +220,12 @@ export default {
       const prev = el.previousElementSibling;
       const first = !prev || (prev.classList.contains('b-spacer') && !prev.previousElementSibling);
       if (first || prev.classList.contains('pc')) { el.style.marginTop = ''; el.classList.remove('dv--pulled'); setOver(null); return; }
-      const st = stage.getBoundingClientRect(); let top = Infinity;
-      for (const c of stage.children) { const r = c.getBoundingClientRect(); if (r.height > 4) top = Math.min(top, r.top); } { const g = stage.querySelector('.dv__gl'); if (g) { const r = g.getBoundingClientRect(); if (r.height > 4) top = Math.min(top, r.top + r.height * .08); } } /* 3D-Laptop: Die Zeichenfläche ist größer als der Laptop-Kasten – der gezeichnete Laptop darf nicht in den Abschnitt davor ragen */
-      const empty = top - st.top, keep = innerWidth < 900 ? 24 : 40;
+      // Layout-Positionen ohne Verschiebungen messen: Der Laptop steht beim Laden noch in seiner Start-Pose (z. B. weit unten) – das darf nicht als Leerraum zählen
+      const relTop = (n) => { let y = 0; while (n && n !== stage) { y += n.offsetTop; n = n.offsetParent; } return n === stage ? y : NaN; };
+      let top = Infinity;
+      for (const c of stage.children) { if (c.offsetHeight > 4 && getComputedStyle(c).position !== 'fixed') { const y = relTop(c); if (Number.isFinite(y)) top = Math.min(top, y); } }
+      { const g = stage.querySelector('.dv__gl'); if (g && g.offsetHeight > 4) { const y = relTop(g); if (Number.isFinite(y)) top = Math.min(top, y + g.offsetHeight * .08); } } /* 3D-Laptop: Zeichenfläche ist größer als der Laptop-Kasten */
+      const empty = top, keep = innerWidth < 900 ? 24 : 40;
       if (!Number.isFinite(empty) || empty <= keep) { el.style.marginTop = ''; el.classList.remove('dv--pulled'); setOver(null); return; }
       el.style.marginTop = -Math.round(empty - keep) + 'px'; el.classList.add('dv--pulled'); setOver(prev.classList.contains('b-spacer') ? null : prev);
     };
@@ -230,7 +234,7 @@ export default {
     // „scroll“-Button: steht unten am Bildschirm, solange der Abschnitt hereinkommt, aber das Gerät noch nicht eingeflogen ist.
     // Klick → weiche Fahrt, bis die Bühne steht (das Gerät klappt auf / fliegt ein). Beim Scrollen blendet er sich von selbst aus.
     let goBtn = null, goVis = -1, goRaf = 0;
-    if (p.scrollBtn) {
+    if (p.scrollBtn && !p.noAnim) {
       goBtn = h('button', { type: 'button', class: 'dv__go', 'aria-label': p.scrollBtn }, h('span', {}, p.scrollBtn), h('i', { 'aria-hidden': 'true' }, '↓'));
       document.body.append(goBtn);
       const stopGo = () => { cancelAnimationFrame(goRaf); goRaf = 0; ['wheel', 'touchstart', 'keydown'].forEach(ev => removeEventListener(ev, stopGo)); };
@@ -259,7 +263,7 @@ export default {
       goShow(r, vh);
       setCur(i);
       el.style.setProperty('--p', p0.toFixed(4)); el.style.setProperty('--e', clamp(p0 / .12).toFixed(3));
-      if (gpOn) { L.p = p0; L.fr = fr; L.i = i; L.top = r.top; if (A && fly) { /* startet, sobald der Abschnitt unten hereinkommt (ist er schon beim Laden im Bild: beim ersten Scrollen), läuft in seinem Tempo; beim Hochscrollen läuft er rückwärts wieder hinaus */ const dTop = r.top + scrollY; let a0 = vh * .9; if (dTop < a0 + 4) a0 = Math.max(vh * .2, dTop - 4); if (r.top < a0) L.a = 1; else if (r.top > Math.min(a0 + .04 * vh, dTop - 2)) L.a = 0; } else if (A) { const th = (mq.matches ? Math.min(.55, clamp(Number(A.pre ?? .85))) : clamp(Number(A.pre ?? .85))) * vh; if (r.top < th) { L.a = 1; } else if (r.top > th + .06 * vh) L.a = 0; } }
+      if (gpOn) { L.p = p0; L.fr = fr; L.i = i; L.top = r.top; if (A && p.noAnim) { L.a = 1; } else if (A && fly) { /* startet, sobald der Abschnitt unten hereinkommt (ist er schon beim Laden im Bild: beim ersten Scrollen), läuft in seinem Tempo; beim Hochscrollen läuft er rückwärts wieder hinaus */ const dTop = r.top + scrollY; let a0 = vh * .9; if (dTop < a0 + 4) a0 = Math.max(vh * .2, dTop - 4); if (r.top < a0) L.a = 1; else if (r.top > Math.min(a0 + .04 * vh, dTop - 2)) L.a = 0; } else if (A) { const th = (mq.matches ? Math.min(.55, clamp(Number(A.pre ?? .85))) : clamp(Number(A.pre ?? .85))) * vh; if (r.top < th) { L.a = 1; } else if (r.top > th + .06 * vh) L.a = 0; } }
       bars.forEach((b, k) => { b.style.transform = `scaleX(${k < i ? 1 : k === i ? fr : 0})`; });
       if (!phone && !gpOn) {
         const pg = screens[i]?.querySelector('img'); const page = el.querySelector('.dv__page');
