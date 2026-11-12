@@ -1,5 +1,5 @@
 {
-  "title": "Project 9 – pixel",
+  "title": "Flensburg Akademie",
   "card": {
     "image": "media/board.jpg",
     "vimeo": "",
@@ -23,23 +23,6 @@
     "featured": false,
     "hidden": true
   },
-  "blocks": [
-    {
-      "type": "spacer",
-      "props": {
-        "size": 40
-      }
-    },
-    {
-      "type": "heading",
-      "props": {
-        "text": "Project 9 – pixel",
-        "level": 1,
-        "align": "center",
-        "bold": false,
-        "text_de": "Projekt 9 – Pixel"
-      }
-    }
-  ],
-  "title_de": ""
+  "blocks": [],
+  "title_de": "Flensburg Akademie"
 }

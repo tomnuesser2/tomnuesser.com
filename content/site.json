@@ -26,18 +26,20 @@
   "socials": [
     {
       "label": "YouTube",
-      "icon": "instagram",
-      "url": "https://www.youtube.com/"
+      "icon": "linkedin",
+      "url": "https://www.youtube.com/@recordingsequence",
+      "label_de": "Youtube"
     },
     {
       "label": "Instagram",
       "icon": "instagram",
-      "url": "https://www.instagram.com/"
+      "url": "https://www.instagram.com/recsequence/",
+      "label_de": "Instagram"
     },
     {
       "label": "LinkedIn",
       "icon": "linkedin",
-      "url": "https://www.linkedin.com/"
+      "url": "https://www.linkedin.com/in/tom-n%C3%BC%C3%9Fer-297870302/"
     }
   ],
   "contact": {

@@ -6,7 +6,8 @@
     "project-9",
     "123",
     "gaarden-festival",
-    "fistballem"
+    "fistballem",
+    "scheersberg"
   ],
   "projects": {
     "123": {
@@ -159,8 +160,8 @@
       ]
     },
     "project-9": {
-      "title": "Project 9 – pixel",
-      "title_de": "",
+      "title": "Flensburg Akademie",
+      "title_de": "Flensburg Akademie",
       "summary_de": "Das Bild entschlüsselt sich aus einem groben Mosaik in volle Auflösung.",
       "heroText": "",
       "heroText_de": "",
@@ -183,6 +184,29 @@
         "media/norder-1.jpg",
         "media/norder-2.jpg"
       ]
+    },
+    "scheersberg": {
+      "title": "89. Scheersbergfest",
+      "title_de": "",
+      "summary_de": "",
+      "heroText": "",
+      "heroText_de": "",
+      "roles_de": "",
+      "image": "",
+      "imageMobile": "",
+      "vimeo": "",
+      "ratio": "16/9",
+      "group": 1,
+      "hidden": false,
+      "featured": false,
+      "showcase": false,
+      "clips": [],
+      "summary": "",
+      "anim": "expand",
+      "roles": "",
+      "category": "video",
+      "cam": "",
+      "stills": []
     },
     "test2": {
       "title": "notua - most powerful creative planning app on earth",

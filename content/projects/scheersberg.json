@@ -1,0 +1,27 @@
+{
+  "title": "89. Scheersbergfest",
+  "card": {
+    "image": "",
+    "vimeo": "",
+    "ratio": "16/9",
+    "group": 1,
+    "category": "video"
+  },
+  "blocks": [
+    {
+      "type": "spacer",
+      "props": {
+        "size": 40
+      }
+    },
+    {
+      "type": "heading",
+      "props": {
+        "text": "89. Scheersbergfest",
+        "level": 1,
+        "align": "center",
+        "bold": false
+      }
+    }
+  ]
+}
