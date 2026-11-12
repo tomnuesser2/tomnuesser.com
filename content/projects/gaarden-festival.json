@@ -12,12 +12,6 @@
   },
   "blocks": [
     {
-      "type": "spacer",
-      "props": {
-        "size": 40
-      }
-    },
-    {
       "type": "elasticReel",
       "props": {
         "source": "eigene Bilder",
@@ -259,5 +253,6 @@
       }
     }
   ],
-  "title_de": "Gården Festival 2026"
+  "title_de": "Gården Festival 2026",
+  "showFooter": true
 }
