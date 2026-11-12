@@ -223,11 +223,10 @@ html { scrollbar-width: none; } html::-webkit-scrollbar { display: none; width: 
   body.is-sub .site-header .mnav.is-open .mnav__a.is-active { background: #fff; color: #000; }
 }
 
-/* Handy: im Kontakt-Bereich verschwinden Logo und DE/EN */
-@media (max-width: 899px) {
-  .site-header__logo, .lang--head { transition: opacity .35s var(--ease), visibility .35s; }
-  .site-header.at-contact .site-header__logo, .site-header.at-contact .lang--head { opacity: 0; visibility: hidden; pointer-events: none; }
-}
+/* Kontakt-Bereich: der komplette Header (Logo, DE/EN, Menü) verschwindet – Handy und PC */
+.site-header { transition: opacity .35s var(--ease), visibility .35s; }
+.site-header.at-contact { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .3s var(--ease), visibility .3s; }
+.site-header.at-contact * { pointer-events: none !important; }
 
 /* PC: DE/EN steht unter dem Logo und blendet beim ersten Scrollen aus; das Menü startet ganz rechts und fährt in die exakte Mitte */
 @media (min-width: 900px) {

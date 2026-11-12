@@ -157,7 +157,7 @@ async function morph(on) {
 }
 const dock = () => { const hd = document.querySelector('.site-header'); if (!hd) return; hd.classList.toggle('is-docked', scrollY > 70);
   const dark = [...document.querySelectorAll('.kn__stage, .hm__stage.is-dark')].some(e => { const r = e.getBoundingClientRect(); return r.top < 36 && r.bottom > 36; }); hd.classList.toggle('over-dark', dark);
-  { const c = document.getElementById('contact'); const r = c && c.getBoundingClientRect(); hd.classList.toggle('at-contact', !!r && r.top < innerHeight * .55 && r.bottom > 0); } // Kontakt: Logo und Sprachumschalter ausblenden
+  { const c = document.querySelector('.cx') || document.getElementById('contact'); const r = c && c.getBoundingClientRect(); /* #contact ist nur die schmale Kapitel-Marke – gemessen wird der ganze Kontakt-Abschnitt */ const was = hd.classList.contains('at-contact'); hd.classList.toggle('at-contact', !!r && r.bottom > innerHeight * .25 && r.top < innerHeight * (was ? .62 : .55)); } // Kontakt: der ganze Header (Logo, DE/EN, Menü) verschwindet – mit etwas Spielraum, damit er nicht kurz aufflackert
   const on = flPinned(); if (on !== flOn) { flOn = on; morph(on); } else if (on && !morphAnim.length) { hd.classList.add('mnav-off'); document.body.classList.add('fl-pinned'); } };
 addEventListener('tn-dark', () => dock());
 let spyQ = false;
