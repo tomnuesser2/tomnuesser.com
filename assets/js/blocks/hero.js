@@ -63,7 +63,10 @@ export default {
       } el.style.setProperty('--cs', (1 + ((Number(p.carSize) || 1.6) - 1) * .3).toFixed(3)); box.replaceChildren();
       const all = (idx.order || []).map(sl => ({ slug: sl, ...idx.projects[sl] })).filter(x => x.image && !x.hidden);
       const labD = nameLabel(p, all); if (labD) { labD.el.classList.add('hn--d'); box.before(labD.el); }
-      (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => el.isConnected && (carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { spread: Number(p.carSpread) || 1.5, zoom: Number(p.carSize) || 1.4, size: (r) => ({ w: Math.min(r.width * .46, r.height * 1.1 * 1.6), aspect: 1.6 }), fitAngle: 108, contain: true, swerve: dirIn, onChange: (i) => labD && labD.set(i) }), fadeIn(box))));
+      // sofort (unter dem Vorhang) aufbauen, fast unsichtbar – der Einflug startet erst, wenn der Vorhang hochgeht
+      { const enterP = window.tnEnterP || Promise.resolve(); box.classList.add('cc-pre');
+        requestAnimationFrame(() => el.isConnected && carousel3d(box, all.map(x => ({ src: x.image, href: x.slug, title: String(x.title || x.slug).replace(/\n/g, ' ') })), { spread: Number(p.carSpread) || 1.5, zoom: Number(p.carSize) || 1.4, size: (r) => ({ w: Math.min(r.width * .46, r.height * 1.1 * 1.6), aspect: 1.6 }), fitAngle: 108, contain: true, swerve: dirIn, wait: enterP, onChange: (i) => labD && labD.set(i) }));
+        enterP.then(() => requestAnimationFrame(() => { box.classList.remove('cc-pre'); fadeIn(box); })); }
     }
     if (still() || !p.cycle) { lineEls.forEach(r => r.classList.add('is-on')); if (still()) return el; }
     if (p.cycle) { let a = 0; const cycle = () => { lineEls.forEach((r, i) => r.classList.toggle('is-on', i === a)); a = (a + 1) % lineEls.length; };
@@ -163,7 +166,9 @@ function mobileHero(p, ctx) {
     const th = Math.round(title.offsetHeight); if (th && String(th) !== el.dataset.th) { el.dataset.th = String(th); el.style.setProperty('--hmt', th + 'px'); R = null; kick(); } };
   requestAnimationFrame(fitTitle); [250, 900, 2200].forEach(t => setTimeout(fitTitle, t)); document.fonts && document.fonts.ready.then(fitTitle); addEventListener('resize', fitTitle, { passive: true });
   const open = (it) => { const a = document.createElement('a'); a.href = it.href; a.setAttribute('data-link', ''); a.hidden = true; document.body.append(a); a.click(); a.remove(); };
-  (window.tnEnterP || Promise.resolve()).then(() => requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.imageMobile || x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true, swerve: dirIn, onChange: (i) => labM && labM.set(i) }); swerveIn(carEl); }));
+  { const enterP = window.tnEnterP || Promise.resolve(); carEl.classList.add('cc-pre');   // sofort unter dem Vorhang aufbauen (vorab gezeichnet), Einflug erst danach
+    requestAnimationFrame(() => { car = carousel3d(carEl, ring.map(x => ({ src: x.imageMobile || x.image, href: x.slug, title: name(x) })), { size: cardSize, onFront: open, fitAngle: 100, light: true, swerve: dirIn, wait: enterP, onChange: (i) => labM && labM.set(i) }); });
+    enterP.then(() => requestAnimationFrame(() => { carEl.classList.remove('cc-pre'); swerveIn(carEl); })); }
   const apply = (u) => {
     if (!R) measure();
     const z = ease(clamp((u - 1) / 1)), rot = clamp((u - .04) / .96);

@@ -1,5 +1,5 @@
 {
-  "title": "leona - festival live sessions",
+  "title": "leona – festival live sessions",
   "card": {
     "image": "media/still-2026-07-02-232833_4.3.1.jpg",
     "vimeo": "https://vimeo.com/1207034763",
@@ -17,10 +17,11 @@
     {
       "type": "heading",
       "props": {
-        "text": "leona - festival live sessions",
+        "text": "leona – festival live sessions",
         "level": 1,
         "align": "center",
-        "bold": false
+        "bold": false,
+        "text_de": "Leona – Festival-Live-Sessions"
       }
     },
     {
@@ -224,5 +225,5 @@
       }
     }
   ],
-  "title_de": "Leona - Festival Live-Sessions"
+  "title_de": "Leona – Festival-Live-Sessions"
 }

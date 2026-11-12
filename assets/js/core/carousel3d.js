@@ -205,6 +205,8 @@ export function carousel3d(root, items, o = {}) {
   root.addEventListener('pointerenter', enter); root.addEventListener('pointerleave', leave); root.addEventListener('click', click, true); root.addEventListener('wheel', wheel, { passive: false });
   document.addEventListener('visibilitychange', onVis);
 
+  // Schon unter dem Eröffnungs-Vorhang aufbauen und in der Start-Pose halten: Der Browser zeichnet alle Karten vorab (sonst ruckelt der erste Frame des Einflugs)
+  if (O.wait && O.intro !== false && !O.reduced) { S.intro = { start: performance.now() + 1e9 }; Promise.resolve(O.wait).then(() => { if (dead) return; S.intro = { start: performance.now() }; S.last = 0; wake(); }); }
   build(); measure(); render(performance.now()); ro.observe(root); io.observe(root); root.setAttribute('data-ready', ''); wake();
   return {
     // Scroll-gesteuertes Drehen auf Karte 0: begin() merkt den Startwinkel, scrub(0..1) dreht, release() gibt wieder frei

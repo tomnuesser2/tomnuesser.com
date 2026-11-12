@@ -9,7 +9,8 @@ export async function buildIndex(root) {
   const file = path.join(root, 'content', 'index.json');
   let old = { order: [] };
   try { old = JSON.parse(await fs.readFile(file, 'utf8')); } catch {}
-  const slugs = (await fs.readdir(dir)).filter(f => f.endsWith('.json')).map(f => f.slice(0, -5));
+  // alte, umbenannte Dateien (stehen in redirects) nicht doppelt als Projekt aufnehmen
+  const slugs = (await fs.readdir(dir)).filter(f => f.endsWith('.json')).map(f => f.slice(0, -5)).filter(s => !(old.redirects || {})[s]);
   const order = [...(old.order || []).filter(s => slugs.includes(s)), ...slugs.filter(s => !(old.order || []).includes(s)).sort()];
   const projects = {};
   for (const s of slugs) {
@@ -25,9 +26,43 @@ export async function buildIndex(root) {
       stills: (c.stills || []).map(x => (typeof x === 'string' ? x : x?.src)).filter(Boolean),
     };
   }
-  const out = { order, projects };
+  // Weiterleitungen alter Adressen (z. B. /123 → /norder147) bleiben erhalten
+  const out = { order, projects, ...(old.redirects ? { redirects: old.redirects } : {}) };
   await fs.writeFile(file, JSON.stringify(out, null, 2) + '\n');
+  await writeSeo(root, out).catch((e) => console.warn('SEO-Dateien:', e.message));
   return out;
+}
+
+// ---------- SEO: echte Seiten je Projekt (Status 200 statt 404 für Google), sitemap.xml, robots.txt ----------
+const SITE = 'https://tomnuesser.com/';
+const esc = (t) => String(t || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+function firstText(blocks, de) {
+  let f = ''; const walk = (o) => { if (f || !o || typeof o !== 'object') return; for (const [k, v] of Object.entries(o)) { if (f) return; if (typeof v === 'string' && (de ? /^(text|sideText)_de$/ : /^(text|sideText)$/).test(k) && v.trim().length > 60) f = v; else if (typeof v === 'object') walk(v); } };
+  walk(blocks); if (!f && de) return firstText(blocks, false); f = f.replace(/\s+/g, ' ').trim(); return f.length > 158 ? f.slice(0, 155).replace(/\s+\S*$/, '') + ' …' : f;
+}
+async function writeSeo(root, out) {
+  const tpl = await fs.readFile(path.join(root, 'index.html'), 'utf8');
+  const live = out.order.filter(s => out.projects[s] && !out.projects[s].hidden);
+  for (const s of live) {
+    const pr = out.projects[s]; let blocks = [];
+    try { blocks = JSON.parse(await fs.readFile(path.join(root, 'content', 'projects', `${s}.json`), 'utf8')).blocks || []; } catch {}
+    const title = `${pr.title_de || pr.title} – Tom Nüßer, Videograf Flensburg`;
+    const desc = pr.summary_de || firstText(blocks, true) || `${pr.title_de || pr.title} – Projekt von Tom Nüßer, Videograf und Designer aus Flensburg.`;
+    const url = SITE + s, img = pr.image ? SITE + pr.image : SITE + 'assets/icons/icon-512.png';
+    const html = tpl
+      .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
+      .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(desc)}">`)
+      .replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${esc(title)}">`)
+      .replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${esc(desc)}">`)
+      .replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${url}">`)
+      .replace(/<meta property="og:image" content="[^"]*">/, `<meta property="og:image" content="${esc(img)}">`)
+      .replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${url}">`);
+    await fs.mkdir(path.join(root, s), { recursive: true }); await fs.writeFile(path.join(root, s, 'index.html'), html);
+  }
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = ['', ...live].map(s => `  <url><loc>${SITE}${s}</loc><lastmod>${today}</lastmod><priority>${s ? '0.8' : '1.0'}</priority></url>`).join('\n');
+  await fs.writeFile(path.join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
+  await fs.writeFile(path.join(root, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /admin/\nSitemap: ${SITE}sitemap.xml\n`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

@@ -1125,7 +1125,7 @@ a, button, [role="button"], summary, label, .pc__plane, .pcs__t { touch-action: 
 
 body.is-nbend .site-footer { display: none; }
 body.is-nbend { padding-bottom: 0; }
-@media (max-width: 899px) { .dv:has(.dv__vs) .dv__laptop { margin-bottom: 44px; } }
+@media (max-width: 899px) { .dv:has(.dv__vs) .dv__laptop { margin-bottom: 68px; } }   /* genug Luft zwischen Ton-Regler und Überschrift */
 
 /* NOTUA-Board: kleiner Button zum Losfliegen */
 .nb__fly { margin-top: 18px; padding: 9px 18px; border-radius: 999px; border: 1.5px solid var(--nb-ink, #242428); background: transparent; color: var(--nb-ink, #242428); font: 600 13px/1 system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; cursor: pointer; transition: opacity .3s, background .2s, color .2s; pointer-events: auto; }
@@ -1494,3 +1494,6 @@ html.is-fill .site-footer { display: none; }
   .mt--r { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); } .mt--r > .b-stack-wrap { order: 2; }
   .mt__h { font-size: calc(clamp(20px, 1.7vw, 30px) * var(--mt-k, 1)); } .mt__c p { font-size: calc(clamp(14px, 1vw, 16px) * var(--mt-k, 1)); }
 }
+
+/* Karussell wird unter dem Eröffnungs-Vorhang schon gezeichnet, bleibt aber unsichtbar, bis der Einflug startet */
+.cc-pre { opacity: .001 !important; pointer-events: none; }

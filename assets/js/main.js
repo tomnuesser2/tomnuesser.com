@@ -185,9 +185,39 @@ async function loadPage(slug) {
   return null;
 }
 
-function setMeta(title) {
-  document.title = title && title !== state.site.title ? `${title} – ${state.site.title}` : state.site.title;
+// ---------- SEO: Titel, Beschreibung, Vorschaubild, Canonical je Seite ----------
+const SEO = {
+  de: { home: 'Tom Nüßer – Videograf & Designer in Flensburg', desc: 'Tom Nüßer – Videograf, Designer und Entwickler aus Flensburg. Eventvideos, Aftermovies, Social-Media-Reels, Live-Sessions und Websites für Unternehmen, Vereine und Künstler in Flensburg und Schleswig-Holstein.', suffix: 'Videograf Flensburg' },
+  en: { home: 'Tom Nüßer – videographer & designer in Flensburg, Germany', desc: 'Tom Nüßer – videographer, designer and developer based in Flensburg, Germany. Event films, aftermovies, social media reels, live sessions and websites.', suffix: 'videographer Flensburg' },
+};
+const SITE_URL = 'https://tomnuesser.com/';
+const metaTag = (attr, key, val) => { let m = document.head.querySelector(`meta[${attr}="${key}"]`); if (!m) { m = document.createElement('meta'); m.setAttribute(attr, key); document.head.append(m); } m.setAttribute('content', val); };
+const linkTag = (rel, href) => { let l = document.head.querySelector(`link[rel="${rel}"]`); if (!l) { l = document.createElement('link'); l.rel = rel; document.head.append(l); } l.href = href; };
+// erster längerer Text der Seite als Beschreibung (für Google & Link-Vorschau)
+function pageDesc(page) {
+  let found = ''; const walk = (o, re) => { if (found || !o || typeof o !== 'object') return; for (const [k, v] of Object.entries(o)) { if (found) return; if (typeof v === 'string' && re.test(k) && v.trim().length > 60) found = v; else if (typeof v === 'object') walk(v, re); } };
+  if (getLang() === 'de') walk(page && page.blocks, /^(text|sideText|description|summary)_de$/); walk(page && page.blocks, /^(text|sideText|description|summary)$/); found = found.replace(/\s+/g, ' ').trim(); return found.length > 158 ? found.slice(0, 155).replace(/\s+\S*$/, '') + ' …' : found;
 }
+function setMeta(title, page, slug) {
+  const L = SEO[getLang()] || SEO.de, home = !slug || slug === 'home';
+  document.title = home || !title || title === state.site.title ? L.home : `${title} – Tom Nüßer, ${L.suffix}`;
+  const pr = slug && state.index && state.index.projects && state.index.projects[slug];
+  const desc = (!home && ((pr && pr.summary && pr.summary.length > 40 && pr.summary) || pageDesc(page))) || L.desc;
+  const url = SITE_URL + (home ? '' : slug), img = pr && pr.image ? SITE_URL + pr.image : SITE_URL + 'assets/icons/icon-512.png';
+  metaTag('name', 'description', desc); metaTag('property', 'og:title', document.title); metaTag('property', 'og:description', desc); metaTag('property', 'og:url', url);
+  metaTag('property', 'og:image', img); metaTag('name', 'twitter:card', 'summary_large_image'); metaTag('property', 'og:locale', getLang() === 'de' ? 'de_DE' : 'en_US'); linkTag('canonical', url);
+}
+// Alt-Texte für Bilder ohne Beschreibung (Google-Bildersuche & Barrierefreiheit): Projekt-/Bildtitel, sonst Seitentitel + Ort
+function fillAlts(root) {
+  const L = SEO[getLang()] || SEO.de, base = (document.title.split(' – ')[0] || 'Tom Nüßer');
+  root.querySelectorAll('img').forEach((im) => {
+    if (im.hasAttribute('alt') && im.getAttribute('alt').trim()) return;
+    const tile = im.closest('.cc__tile'); if (tile && tile.previousElementSibling) { im.setAttribute('alt', ''); return; }   // Karussell: nur der erste Streifen je Karte beschreibt das Bild
+    let lab = im.closest('[aria-label]')?.getAttribute('aria-label') || im.closest('figure')?.querySelector('figcaption')?.textContent || ''; if (/^\s*(bild|image|foto)?\s*\d+\s*$/i.test(lab) || lab.trim().length < 3) lab = '';   // „1“, „Bild 2“ … sind keine Beschreibung
+    im.setAttribute('alt', `${(lab || base).trim()} – Tom Nüßer, ${L.suffix}`);
+  });
+}
+{ let altQ = 0; new MutationObserver(() => { clearTimeout(altQ); altQ = setTimeout(() => { const m = document.querySelector('main'); if (m) fillAlts(m); }, 400); }).observe(document.documentElement, { childList: true, subtree: true }); }
 
 function renderIntro() {
   document.body.classList.add('is-intro');
@@ -205,7 +235,9 @@ function renderIntro() {
 
 async function render() {
   const { els, site } = state;
-  const slug = routeSlug();
+  let slug = routeSlug();
+  // Alte Projekt-Adressen (z. B. /123) leiten auf die neuen (/norder147) weiter
+  { const rd = state.index && state.index.redirects && state.index.redirects[slug]; if (rd) { slug = rd; try { history.replaceState(history.state, '', BASE + rd + location.search + location.hash); } catch {} } }
   document.body.classList.remove('is-intro');
 
   const target = slug === '' ? 'home' : slug;
@@ -240,7 +272,7 @@ async function render() {
   // Projektseiten: Impressum & Copyright unten standardmäßig aus (im Admin pro Projekt einschaltbar)
   { const isProj = !!(page.card || (state.index && state.index.projects && state.index.projects[target]));
     document.body.classList.toggle('no-foot', isProj ? page.showFooter !== true : !!page.hideFooter); }
-  setMeta((getLang() === 'de' && page.title_de) || page.title);
+  setMeta((getLang() === 'de' && page.title_de) || page.title, page, target);
   window.scrollTo(0, 0);
   state.els.header.classList.remove('is-hidden', 'over-fl-dark', 'over-dark');
   markActiveLinks();

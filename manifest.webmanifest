@@ -1,10 +1,25 @@
 {
-  "name": "tom nuesser",
+  "name": "Tom Nüßer – Videograf & Designer",
   "short_name": "tomnuesser",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["fullscreen", "standalone"],
+  "display_override": [
+    "fullscreen",
+    "standalone"
+  ],
   "background_color": "#fcfcfc",
-  "theme_color": "#fcfcfc"
+  "theme_color": "#fcfcfc",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }

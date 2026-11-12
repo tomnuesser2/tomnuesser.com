@@ -1,5 +1,5 @@
 {
-  "title": "notua - most powerful creative planning app on earth",
+  "title": "notua – the most powerful creative planning app",
   "card": {
     "image": "media/notua-flyer-a4-quer-screenshot.webp",
     "vimeo": "",
@@ -21,7 +21,7 @@
         "linkText": "open NOTUA ↗",
         "linkUrl": "https://notua.site/",
         "projectText": "view the project →",
-        "projectUrl": "test2",
+        "projectUrl": "notua",
         "sub": "web · desktop · android",
         "hint": "scroll to fly",
         "logo": "media/notua-logo.png",
@@ -106,5 +106,5 @@
       }
     }
   ],
-  "title_de": "NOTUA - Die mächtigste kreative Planungs-App der Welt"
+  "title_de": "NOTUA – die mächtigste kreative Planungs-App der Welt"
 }
