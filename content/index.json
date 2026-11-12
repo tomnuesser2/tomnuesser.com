@@ -95,7 +95,7 @@
       "group": 1,
       "hidden": false,
       "featured": false,
-      "showcase": true,
+      "showcase": false,
       "clips": [],
       "summary": "",
       "anim": "expand",

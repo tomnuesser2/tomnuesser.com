@@ -8,7 +8,7 @@
     "category": "video",
     "stills": [],
     "imageMobile": "",
-    "showcase": true
+    "showcase": false
   },
   "blocks": [
     {
@@ -254,7 +254,8 @@
         "scale": 1,
         "textScale": 1,
         "textScaleMobile": 1,
-        "scrollFly": true
+        "scrollFly": true,
+        "noAnim": true
       }
     }
   ],
