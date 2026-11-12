@@ -25,7 +25,14 @@ export default {
     const vid = h('div', { class: 'b-stack-wrap' }, mediaEl({ ...p, viewPlay: true }));
     if (!p.sideTitle && !p.sideText) return vid;
     // Video + Text in EINEM Abschnitt: Video groß auf der einen Seite, Text daneben (Handy: untereinander)
-    return h('section', { class: `mt${p.sidePos === 'rechts' ? ' mt--r' : ''}`, id: p.id, 'data-reveal': 'up' }, vid,
-      h('div', { class: 'mt__c' }, p.sideTitle ? h('h2', { class: 'mt__h' }, p.sideTitle) : null, ...paragraphs(p.sideText).map(t => h('p', {}, t))));   // startet erst, wenn man hinscrollt; andere Videos pausieren dann
+    const copy = h('div', { class: 'mt__c' }, p.sideTitle ? h('h2', { class: 'mt__h' }, p.sideTitle) : null, ...paragraphs(p.sideText).map(t => h('p', {}, t)));
+    const sec = h('section', { class: `mt${p.sidePos === 'rechts' ? ' mt--r' : ''}`, id: p.id, 'data-reveal': 'up' }, vid, copy);
+    // PC: Schriftgröße so anpassen, dass der Text genau so hoch ist wie das Video daneben
+    const fit = () => { const fr = vid.firstElementChild; if (!sec.isConnected || !fr) return; if (innerWidth < 900) { copy.style.removeProperty('--mt-k'); return; }
+      const target = fr.offsetHeight; if (target < 40) return; let lo = .55, hi = 1.6;
+      for (let i = 0; i < 12; i++) { const k = (lo + hi) / 2; copy.style.setProperty('--mt-k', k.toFixed(4)); if (copy.offsetHeight > target) hi = k; else lo = k; }
+      copy.style.setProperty('--mt-k', lo.toFixed(4)); };
+    if ('ResizeObserver' in window) new ResizeObserver(() => requestAnimationFrame(fit)).observe(vid); requestAnimationFrame(fit); document.fonts?.ready?.then(fit);
+    return sec;   // startet erst, wenn man hinscrollt; andere Videos pausieren dann
   },
 };
