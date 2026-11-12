@@ -148,8 +148,8 @@ export const compareBlock = {
       const el = h('figure', { class: `cmp cmp--${p.radius} ${vertical ? 'cmp--h' : ''} ${cls}`, style: { aspectRatio: String(ratio || '16/9').replace(/\s+/g, '') } });
       if (!bef || !aft) { el.append(h('p', { class: 'b-gal__empty' }, 'Vorher- und Nachher-Bild auswählen.')); return el; }
       const handle = h('button', { class: 'cmp__handle', type: 'button', role: 'slider', 'aria-label': `${p.labelBefore} / ${p.labelAfter}`, 'aria-valuemin': '0', 'aria-valuemax': '100' }, h('i', {}));
-      el.append(h('img', { class: 'cmp__img', src: aft, alt: p.labelAfter, draggable: 'false', decoding: 'async' }),
-        h('div', { class: 'cmp__before' }, h('img', { class: 'cmp__img', src: bef, alt: p.labelBefore, draggable: 'false', decoding: 'async' })),
+      el.append(h('img', { 'data-hires': '', class: 'cmp__img', src: aft, alt: p.labelAfter, draggable: 'false', decoding: 'async' }),
+        h('div', { class: 'cmp__before' }, h('img', { 'data-hires': '', class: 'cmp__img', src: bef, alt: p.labelBefore, draggable: 'false', decoding: 'async' })),
         h('span', { class: 'cmp__tag cmp__tag--a' }, p.labelBefore), h('span', { class: 'cmp__tag cmp__tag--b' }, p.labelAfter), handle,
         p.caption ? h('figcaption', { class: 'cmp__cap' }, p.caption) : null);
       let v = clamp(Number(p.start) / 100 || .5), drag = false;

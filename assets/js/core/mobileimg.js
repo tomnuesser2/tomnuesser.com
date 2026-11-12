@@ -8,7 +8,7 @@ if (small() && typeof HTMLImageElement !== 'undefined' && !new URLSearchParams(l
   const d = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src'), setAttr = Element.prototype.setAttribute;
   const apply = (img, v, set) => {
     const m = map(v);
-    if (!m || img.dataset.full) return set(v);
+    if (!m || img.dataset.full || img.hasAttribute('data-hires')) return set(v);   // data-hires: immer Original (z. B. Vorher/Nachher in 4K)
     img.dataset.full = v;
     img.addEventListener('error', function f() { img.removeEventListener('error', f); set(img.dataset.full); }, { once: true });
     set(m);

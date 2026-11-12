@@ -83,8 +83,8 @@
     {
       "type": "compare",
       "props": {
-        "before": "media/1_1.1.1_1.1.2.webp",
-        "after": "media/2_1.1.1.webp",
+        "before": "media/leona-log-4k.webp",
+        "after": "media/leona-graded-4k.webp",
         "labelBefore": "LOG",
         "labelAfter": "graded",
         "ratio": "18/9",
@@ -93,8 +93,8 @@
         "radius": "xl",
         "caption": "High-End Look Development",
         "bg": "weiß",
-        "beforeMobile": "media/4.webp",
-        "afterMobile": "media/3.webp",
+        "beforeMobile": "media/leona-log-mobil.webp",
+        "afterMobile": "media/leona-graded-mobil.webp",
         "ratioMobile_de": "4/5",
         "ratioMobile": "4/5",
         "caption_de": "High-End Look Entwicklung",
