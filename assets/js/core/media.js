@@ -76,7 +76,8 @@ export function mediaEl(p = {}) {
 
   const placeholder = () => h('div', { class: 'ph', style: { '--h1': hashHue(p.vimeo || p.src || p.alt), '--h2': (hashHue(p.vimeo || p.src || p.alt) + 70) % 360 } });
   const setImage = (src) => {
-    inner.replaceChildren(h('img', { src, alt: p.alt || '', loading: 'lazy', decoding: 'async' }));
+    // nur das Vorschaubild tauschen – ein schon geladenes Video (iframe) bleibt drin (sonst löschte ein spät geladenes Vimeo-Vorschaubild das Video)
+    inner.querySelectorAll(':scope > img, :scope > .ph').forEach(n => n.remove()); inner.prepend(h('img', { src, alt: p.alt || '', loading: 'lazy', decoding: 'async' }));
   };
 
   if (posterSrc) setImage(posterSrc); else inner.append(placeholder());
