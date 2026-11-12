@@ -35,7 +35,7 @@ export function aspectOf(format, pcAuto = 16 / 9, mobAuto = 9 / 16) {
   if (m) return Number(m[1]) / Number(m[2]);
   return mobileView() ? mobAuto : pcAuto;
 }
-export const heightOf = (p, pc, mob) => num(mobileView() ? p.heightMobile : p.height, mobileView() ? mob : pc);
+export const heightOf = (p, pc, mob) => mobileView() ? num(p.heightMobile, mob) : Math.round(num(p.height, pc) * Math.min(1.6, Math.max(1, innerWidth / 1600)));   // große Bildschirme: wächst mit
 
 export function getItems(p, ctx) {
   if (p.source === 'alle Projekte' || p.source === 'alle Video-Projekte') {

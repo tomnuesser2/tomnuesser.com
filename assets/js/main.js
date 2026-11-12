@@ -174,6 +174,8 @@ function markActiveLinks() {
 }
 
 /* ---------- Seiten ---------- */
+// Große Bildschirme (z. B. 5K): Inhalte wachsen ab 1600 px Fensterbreite mit (bis 1,6-fach), statt mit viel Rand links/rechts klein in der Mitte zu stehen
+{ const wk = () => document.documentElement.style.setProperty('--wk', Math.min(1.6, Math.max(1, innerWidth / 1600)).toFixed(4)); wk(); addEventListener('resize', wk, { passive: true }); }
 const routeSlug = () => decodeURIComponent(loc().pathname.slice(BASE.length)).replace(/^\/+|\/+$/g, '');
 
 async function loadPage(slug) {
@@ -225,6 +227,10 @@ async function render() {
   const ctx = { site, content: { index: state.index }, route: target };
   const frag = h('div', { class: 'page', 'data-page': target });
   frag.append(renderBlocks(page.blocks, ctx), h('div', { class: 'b-spacer', style: { '--h': '40px' } }));
+  // Endet die Seite mit einem Video/Bild, darf man so weit scrollen, dass es frei unter dem Menü steht (mittig im Bild statt unter dem Menü)
+  { const endSp = frag.lastElementChild; const fitEnd = () => { if (!endSp.isConnected) { removeEventListener('resize', fitEnd); return; } const last = endSp.previousElementSibling;
+      if (!last || !last.matches('.b-stack-wrap, .mt')) return; const hd = 96, vh = innerHeight, bh = last.offsetHeight; endSp.style.setProperty('--h', Math.max(40, Math.round((vh - hd - bh) / 2)) + 'px'); };
+    requestAnimationFrame(fitEnd); setTimeout(fitEnd, 800); addEventListener('resize', fitEnd); }
   els.main.replaceChildren(frag);
   // Seite endet mit dem NOTUA-Board (großer Button am Ende): dahinter gibt es nichts mehr zum Weiterscrollen
   { const nbs = frag.querySelectorAll(':scope > .nb:not(.nb--static)'), lastNb = nbs[nbs.length - 1];

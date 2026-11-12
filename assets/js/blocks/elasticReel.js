@@ -45,7 +45,7 @@ export default {
     const gap = num(p.gap, 10), mag = Math.max(1, num(p.magnify, 2.4)), lift = Math.max(1, num(p.lift, 1.15)), infl = Math.max(40, num(p.influence, 200)), el_ = clamp(num(p.elasticity, .35));
     const S = bars.map(() => ({ s: 0, v: 0 })); // Federzustand je Streifen
     const keepBottom = p.align === 'unten';
-    const geo = () => { const nn = n; bw = Math.max(6, Math.min(num(p.barWidth, 44), (W * .94 - gap * (nn - 1)) / (nn + (mag - 1) * 2.2))); bh = H * clamp(num(p.barHeight, .5), .2, .9); };
+    const geo = () => { const nn = n; bw = Math.max(6, Math.min(num(p.barWidth, 44) * (innerWidth >= 900 ? Math.min(1.6, Math.max(1, innerWidth / 1600)) : 1), (W * .94 - gap * (nn - 1)) / (nn + (mag - 1) * 2.2))); bh = H * clamp(num(p.barHeight, .5), .2, .9); };
     const capH = () => (p.captions !== false ? 70 : 20) + (p.labels !== false ? 24 : 0);
     watchSize(el, (w, hh) => { W = w; H = hh; geo(); });
     const sm = (k) => k * k * (3 - 2 * k);

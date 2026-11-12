@@ -20,7 +20,7 @@
   --radius-btn: 16px;
 
   --header-h: 76px;
-  --max: 1180px;
+  --max: calc(1180px * var(--wk, 1));
 
   --ease: cubic-bezier(.22, 1, .36, 1);
   --ease-io: cubic-bezier(.76, 0, .24, 1);

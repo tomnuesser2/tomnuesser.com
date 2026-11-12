@@ -108,7 +108,7 @@ export const accordionBlock = {
     const R = .52, grow = (R * (n - 1)) / (1 - R);
     const layout = () => {
       const vertical = el.clientWidth < 520; el.classList.toggle('ag--v', vertical);
-      el.style.height = (vertical ? Math.round(Math.max(Number(p.height) || 460, 120 * n)) : Number(p.height) || 460) + 'px';
+      el.style.height = (vertical ? Math.round(Math.max(Number(p.height) || 460, 120 * n)) : Number(p.height) || 460) * Math.min(1.6, Math.max(1, innerWidth / 1600)) + 'px';
       const total = vertical ? el.clientHeight : el.clientWidth, size = Math.max(140, (total - 10 * (n - 1)) * R * 1.22);
       el.style.setProperty('--ag-size', size + 'px');
       panels.forEach(({ a, media }, i) => {
