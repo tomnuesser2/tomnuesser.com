@@ -1,4 +1,4 @@
-import { h } from '../core/dom.js';
+import { h, paragraphs } from '../core/dom.js';
 import { mediaEl } from '../core/media.js';
 
 export const mediaFields = [
@@ -16,8 +16,16 @@ export const mediaFields = [
 export default {
   type: 'media',
   label: 'Bild / Video (Vimeo oder YouTube)',
-  fields: mediaFields,
+  fields: [...mediaFields,
+    { name: 'sideTitle', label: '📝 Text neben dem Video – Überschrift (leer + kein Text = Video allein über die ganze Breite)', type: 'text', default: '' },
+    { name: 'sideText', label: '📝 Text neben dem Video (Leerzeile = neuer Absatz)', type: 'textarea', default: '' },
+    { name: 'sidePos', label: 'Video steht …', type: 'select', options: ['links', 'rechts'], default: 'links' },
+  ],
   render(p) {
-    return h('div', { class: 'b-stack-wrap' }, mediaEl({ ...p, viewPlay: true }));   // startet erst, wenn man hinscrollt; andere Videos pausieren dann
+    const vid = h('div', { class: 'b-stack-wrap' }, mediaEl({ ...p, viewPlay: true }));
+    if (!p.sideTitle && !p.sideText) return vid;
+    // Video + Text in EINEM Abschnitt: Video groß auf der einen Seite, Text daneben (Handy: untereinander)
+    return h('section', { class: `mt${p.sidePos === 'rechts' ? ' mt--r' : ''}`, id: p.id, 'data-reveal': 'up' }, vid,
+      h('div', { class: 'mt__c' }, p.sideTitle ? h('h2', { class: 'mt__h' }, p.sideTitle) : null, ...paragraphs(p.sideText).map(t => h('p', {}, t))));   // startet erst, wenn man hinscrollt; andere Videos pausieren dann
   },
 };
