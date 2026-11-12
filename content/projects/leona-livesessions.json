@@ -82,21 +82,23 @@
     {
       "type": "compare",
       "props": {
-        "before": "media/leona_raw.jpg",
-        "after": "media/still-2026-07-02-232833_4.3.1-4.jpg",
-        "labelBefore": "before",
-        "labelAfter": "after",
+        "before": "media/1_1.1.1_1.1.2.webp",
+        "after": "media/2_1.1.1.webp",
+        "labelBefore": "LOG",
+        "labelAfter": "graded",
         "ratio": "18/9",
         "start": 60,
         "orientation": "senkrecht",
         "radius": "xl",
         "caption": "High-End Look Development",
         "bg": "weiß",
-        "beforeMobile": "media/leona_raw2.webp",
-        "afterMobile": "media/1.webp",
+        "beforeMobile": "media/4.webp",
+        "afterMobile": "media/3.webp",
         "ratioMobile_de": "4/5",
         "ratioMobile": "4/5",
-        "caption_de": "High-End Look Entwicklung"
+        "caption_de": "High-End Look Entwicklung",
+        "labelBefore_de": "LOG",
+        "labelAfter_de": "graded"
       }
     },
     {
